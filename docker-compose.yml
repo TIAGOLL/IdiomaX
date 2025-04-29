@@ -6,29 +6,34 @@ services:
     environment:
       - POSTGRES_USER=docker
       - POSTGRES_PASSWORD=docker
-      - POSTGRES_DB=idiomax_db
+      - POSTGRES_DB=idiomax_db      
 
-  api:
+  # api:
+  #   build:
+  #     context: .
+  #     dockerfile: apps/api/Dockerfile
+  #   working_dir: /app/apps/api
+  #   ports:
+  #     - "3030:3030"
+  #     - "5555:5555"
+  #   environment:
+  #     - NODE_ENV=development
+  #     - DATABASE_URL=postgres://docker:docker@pg:5432/idiomax_db
+  #   depends_on:
+  #     - pg
+  #   command: ["sh", "./start.sh"]
+
+  app:
     build:
       context: .
-      dockerfile: api.Dockerfile
-    ports:
-      - "3030:3030"
-      - "5555:5555"
-    environment:
-      - NODE_ENV=development
-      - DATABASE_URL=postgres://docker:docker@pg:5432/idiomax_db
-    depends_on:
-      - pg
-    command: ["sh", "./start.sh"]
-
-  web:
-    build:
-      context: .
-      dockerfile: web.Dockerfile
-    working_dir: /app
+      dockerfile: apps/app/Dockerfile
+    working_dir: /app/apps/app
     ports:
       - "5173:5173"
     environment:
       - NODE_ENV=development
       - VITE_REACT_BASE_API_URL=http://localhost:3030/api/v1
+      - CHOKIDAR_USEPOLLING=true # ativa o watch baseado em polling
+    volumes:
+      - ./apps/app:/app/apps/app
+      - ./node_modules:/app/node_modules
