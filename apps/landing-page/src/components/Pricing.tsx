@@ -81,7 +81,7 @@ export const Pricing = () => {
         </span>
         Access
       </h2>
-      <h3 className='text-muted-foreground pt-4 pb-8 text-center text-xl'>
+      <h3 className='text-muted-foreground pb-8 pt-4 text-center text-xl'>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias reiciendis.
       </h3>
       <div className='grid gap-8 md:grid-cols-2 lg:grid-cols-3'>

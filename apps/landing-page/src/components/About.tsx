@@ -1,5 +1,5 @@
 import { Statistics } from './Statistics';
-   
+
 export const About = () => {
   return (
     <section id='about' className='container mx-auto px-6 py-24 sm:py-32 2xl:max-w-screen-xl'>

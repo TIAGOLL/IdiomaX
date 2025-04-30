@@ -1,30 +1,14 @@
 {
-    "compilerOptions": {
-        "target": "ES2020",
-        "useDefineForClassFields": true,
-        "lib": [
-            "ES2020",
-            "DOM",
-            "DOM.Iterable"
-        ],
-        "module": "ESNext",
-        "skipLibCheck": true,
-        "moduleResolution": "node",
-        "allowImportingTsExtensions": true,
-        "isolatedModules": true,
-        "allowJs": true,
-        "checkJs": true,
-        "moduleDetection": "force",
-        "noEmit": true,
-        "jsx": "react-jsx",
-        "baseUrl": ".",
-        "paths": {
-            "@/*": [
-                "./src/*"
-            ]
-        }
-    },
-    "include": [
-        "src"
-    ]
+  "extends": "./library.json",
+  "include": ["src"],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "allowJs": true,
+    "checkJs": true,
+    "paths": {
+      "@/*": ["./*"],
+      "@idiomax/ui/*": ["../../packages/ui/src/*"]
+    }
+  }
 }

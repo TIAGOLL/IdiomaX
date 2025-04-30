@@ -28,7 +28,7 @@ export const Hero = () => {
           Build your React landing page effortlessly with the required sections to your project.
         </p>
 
-        <div className='space-y-4 md:space-y-0 md:space-x-4'>
+        <div className='space-y-4 md:space-x-4 md:space-y-0'>
           <Button className='w-full md:w-1/3'>Get Started</Button>
 
           <a

@@ -3,14 +3,16 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "lint": "eslint . --fix"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@idiomax/eslint": "workspace:*"
   },
-  "eslintConfig": {
-    "extends": "@idiomax/eslint"
+  "publishConfig": {
+    "access": "public"
   }
 }

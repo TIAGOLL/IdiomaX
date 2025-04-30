@@ -3,8 +3,19 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "exports": {
+    "./tw-merge": "./tw-merge.ts",
+    "./auth": "./auth.ts"
+  },
+  "scripts": {
+    "lint": "eslint . --fix"
+  },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "nookies": "^2.5.2",
+    "tailwind-merge": "^3.2.0"
+  }
 }

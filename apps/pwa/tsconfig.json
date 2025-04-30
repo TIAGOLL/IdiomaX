@@ -1,0 +1,12 @@
+{
+  "files": [],
+  "extends": "@idiomax/typescript/react",
+  "include": ["src"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@idiomax/ui/*": ["../../packages/ui/src/*"]
+    }
+  }
+}

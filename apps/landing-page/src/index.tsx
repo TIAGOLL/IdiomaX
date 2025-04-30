@@ -13,7 +13,7 @@ import { Services } from './components/Services';
 import { Sponsors } from './components/Sponsors';
 import { Team } from './components/Team';
 import { Testimonials } from './components/Testimonials';
- 
+
 export function LandingPage() {
   return (
     <>

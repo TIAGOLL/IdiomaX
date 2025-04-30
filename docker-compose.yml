@@ -26,8 +26,8 @@ services:
   app:
     build:
       context: .
-      dockerfile: apps/app/Dockerfile
-    working_dir: /app/apps/app
+      dockerfile: apps/pwa/Dockerfile
+    working_dir: /app/apps/pwa
     ports:
       - "5173:5173"
     environment:
@@ -35,5 +35,5 @@ services:
       - VITE_REACT_BASE_API_URL=http://localhost:3030/api/v1
       - CHOKIDAR_USEPOLLING=true # ativa o watch baseado em polling
     volumes:
-      - ./apps/app:/app/apps/app
-      - ./node_modules:/app/node_modules
+      - ./apps/pwa:/app/apps/pwa
+      - ./node_modules:/pwa/node_modules

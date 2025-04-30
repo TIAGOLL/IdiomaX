@@ -10,7 +10,8 @@
     "lint": "turbo run lint"
   },
   "dependencies": {
-    "turbo": "^2.3.0"
+    "turbo": "^2.3.0",
+    "@idiomax/eslint": "workspace:*"
   },
   "engines": {
     "node": ">=18"
