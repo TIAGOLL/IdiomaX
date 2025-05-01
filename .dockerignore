@@ -1,3 +1,14 @@
-node_modules
+# Ignora node_modules de todos os workspaces
+**/node_modules
+
+# Ignora o build
 dist
-.git
+build
+
+# Ignora arquivos temporários
+*.log
+.env
+*.local
+.vscode
+.idea
+.DS_Store

@@ -227,7 +227,7 @@ importers:
         specifier: ^1.2.8
         version: 1.2.8
       vite:
-        specifier: ^6.3.1
+        specifier: ^6.3.3
         version: 6.3.3(@types/node@22.15.2)(jiti@2.4.2)(lightningcss@1.29.2)
 
   configs/eslint:

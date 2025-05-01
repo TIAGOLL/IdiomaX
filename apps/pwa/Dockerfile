@@ -1,38 +1,17 @@
-# FROM node:18-alpine
-
-# WORKDIR /app
-
-# COPY web/package.json web/pnpm-lock.yaml ./
-
-# RUN corepack enable && corepack prepare pnpm@9.11.0 --activate
-
-# RUN pnpm i
-
-# COPY web .
-
-# RUN pnpm build
-
-# EXPOSE 5173
-
-# CMD ["pnpm", "dev"]# Usa imagem base Node
 FROM node:18-alpine
 
-WORKDIR /usr/src/app
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Copy root package.json and lockfile
-COPY package.json ./
-COPY pnpm-lock.yaml ./
+WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@9.11.0 --activate
-
-# Copy the app package.json
-COPY apps/app/package.json ./apps/app/package.json
-
-RUN pnpm install --filter ./apps/app...
-
-# Copy app source
+# Copia os arquivos
 COPY . .
 
+# Instala dependências da workspace
+RUN pnpm install
+
+# Expõe a porta do Vite
 EXPOSE 5173
 
-CMD [ "pnpm", "dev" ]
+# Inicia a aplicação pwa com pnpm dev
+CMD ["pnpm", "--dir", "apps/pwa", "dev"]
