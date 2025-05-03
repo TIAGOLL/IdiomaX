@@ -6,13 +6,20 @@
   "scripts": {
     "lint": "eslint . --fix"
   },
+  "exports": {
+    "./vite": "./vite.json",
+    "./library": "./library.json",
+    "./node": "./vite-node.json"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "@idiomax/eslint": "workspace:*"
-  },
+  "dependencies": {},
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "@idiomax/eslint": "workspace:*",
+    "eslint": "^9.25.1"
   }
 }

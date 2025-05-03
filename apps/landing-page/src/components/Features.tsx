@@ -1,5 +1,5 @@
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@idiomax/ui/components/badge';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@idiomax/ui/components/card';
 
 interface FeatureProps {
   title: string;

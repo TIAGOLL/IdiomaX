@@ -1,6 +1,4 @@
-import { Facebook, Instagram, Linkedin } from 'lucide-react';
-
-import { buttonVariants } from '@/components/ui/button';
+import { buttonVariants } from '@idiomax/ui/components/button';
 import {
   Card,
   CardContent,
@@ -8,7 +6,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from '@idiomax/ui/components/card';
+import { Facebook, Instagram, Linkedin } from 'lucide-react';
 
 interface SociaNetworkslProps {
   name: string;

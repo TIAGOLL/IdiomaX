@@ -6,7 +6,11 @@ import eslintPluginPrettier from 'eslint-plugin-prettier';
 import eslintPluginSimpleImportSort from 'eslint-plugin-simple-import-sort';
 import eslintPluginUnusedImports from 'eslint-plugin-unused-imports';
 
-/** @type {import('eslint').Linter.FlatConfig[]} */
+/**
+ * A custom ESLint configuration for libraries that use Next.js.
+ *
+ * @type {import("eslint").Linter.Config[]}
+ * */
 export default [
   {
     ignores: ['node_modules', 'dist', 'build'],
@@ -48,7 +52,6 @@ export default [
           trailingComma: 'all',
           semi: true,
           printWidth: 100,
-          plugins: ['prettier-plugin-tailwindcss'],
           tabWidth: 2,
           quoteProps: 'as-needed',
           jsxSingleQuote: true,

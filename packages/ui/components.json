@@ -1,21 +1,20 @@
 {
   "$schema": "https://ui.shadcn.com/schema.json",
   "style": "new-york",
-  "rsc": false,
+  "rsc": true,
   "tsx": true,
   "tailwind": {
     "config": "",
     "css": "src/styles/global.css",
-    "baseColor": "slate",
-    "cssVariables": true,
-    "prefix": ""
+    "baseColor": "neutral",
+    "cssVariables": true
   },
+  "iconLibrary": "lucide",
   "aliases": {
     "components": "@idiomax/ui/components",
-    "utils": "@idiomax/utils/twMerge",
-    "ui": "@idiomax/ui/components",
-    "lib": "@idiomax/utils",
-    "hooks": "@idiomax/ui/hooks"
-  },
-  "iconLibrary": "lucide"
+    "utils": "@idiomax/ui/lib/utils",
+    "hooks": "@idiomax/ui/hooks",
+    "lib": "@idiomax/ui/lib",
+    "ui": "@idiomax/ui/components"
+  }
 }

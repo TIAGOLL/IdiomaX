@@ -1,8 +1,6 @@
-import { Check, GithubIcon, Linkedin } from 'lucide-react';
-
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@idiomax/ui/components/avatar';
+import { Badge } from '@idiomax/ui/components/badge';
+import { Button, buttonVariants } from '@idiomax/ui/components/button';
 import {
   Card,
   CardContent,
@@ -10,7 +8,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from '@idiomax/ui/components/card';
+import { Check, GithubIcon, Linkedin } from 'lucide-react';
 
 import { LightBulbIcon } from './Icons';
 

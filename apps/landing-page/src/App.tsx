@@ -10,7 +10,6 @@ import { RoutesApp } from './routes';
 
 export function App() {
   const queryClient = new QueryClient();
-
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>

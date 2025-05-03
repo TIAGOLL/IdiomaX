@@ -1,6 +1,5 @@
+import { Card, CardDescription, CardHeader, CardTitle } from '@idiomax/ui/components/card';
 import type { JSX } from 'react';
-
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { ChartIcon, MagnifierIcon, WalletIcon } from './Icons';
 

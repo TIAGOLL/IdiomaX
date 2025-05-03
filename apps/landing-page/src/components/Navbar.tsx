@@ -1,16 +1,21 @@
-import { GithubIcon, Menu } from 'lucide-react';
-import { useState } from 'react';
-
-import { buttonVariants } from '@/components/ui/button';
+import { buttonVariants } from '@idiomax/ui/components/button';
+import { ModeToggle } from '@idiomax/ui/components/mode-toggle';
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuList,
-} from '@/components/ui/navigation-menu';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+} from '@idiomax/ui/components/navigation-menu';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@idiomax/ui/components/sheet';
+import { GithubIcon, Menu } from 'lucide-react';
+import { useState } from 'react';
 
 import { LogoIcon } from './Icons';
-import { ModeToggle } from './mode-toggle';
 
 interface RouteProps {
   href: string;

@@ -1,12 +1,7 @@
 {
-  "files": [],
-  "extends": "@idiomax/typescript/react",
+  "extends": "@idiomax/typescript/vite",
   "include": ["src"],
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@idiomax/ui/*": ["../../packages/ui/src/*"]
-    }
+    "jsx": "react-jsx"
   }
 }

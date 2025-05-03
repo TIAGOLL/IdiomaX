@@ -9,7 +9,8 @@
   "exports": {
     "./global-css": "./src/styles/global.css",
     "./components/*": "./src/components/*.tsx",
-    "./hooks/*": "./src/hooks/*.ts"
+    "./hooks/*": "./src/hooks/*.ts",
+    "./components": "./src/components"
   },
   "keywords": [],
   "author": "",
@@ -45,6 +46,7 @@
   },
   "devDependencies": {
     "@idiomax/eslint": "workspace:*",
+    "eslint": "^9.25.1",
     "@idiomax/typescript": "workspace:*",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"

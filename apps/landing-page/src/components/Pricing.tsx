@@ -1,7 +1,5 @@
-import { Check } from 'lucide-react';
-
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Badge } from '@idiomax/ui/components/badge';
+import { Button } from '@idiomax/ui/components/button';
 import {
   Card,
   CardContent,
@@ -9,7 +7,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from '@idiomax/ui/components/card';
+import { Check } from 'lucide-react';
 
 enum PopularPlanType {
   NO = 0,

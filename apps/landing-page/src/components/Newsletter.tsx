@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@idiomax/ui/components/button';
+import { Input } from '@idiomax/ui/components/input';
 
 export const Newsletter = () => {
   const handleSubmit = (e: React.FormEvent) => {

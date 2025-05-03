@@ -1,7 +1,6 @@
+import { Button } from '@idiomax/ui/components/button';
 import { ArrowUpToLine } from 'lucide-react';
 import { useEffect, useState } from 'react';
-
-import { Button } from '@/components/ui/button';
 
 export const ScrollToTop = () => {
   const [showTopBtn, setShowTopBtn] = useState(false);

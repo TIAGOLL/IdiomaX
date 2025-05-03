@@ -1,6 +1,5 @@
+import { Button, buttonVariants } from '@idiomax/ui/components/button';
 import { GithubIcon } from 'lucide-react';
-
-import { Button, buttonVariants } from '@/components/ui/button';
 
 import { HeroCards } from './HeroCards';
 
