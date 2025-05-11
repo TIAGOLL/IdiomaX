@@ -1,4 +1,4 @@
-import { cn } from '@idiomax/utils/tw-merge';
+import { cn } from '@idiomax/ui/lib/utils';
 
 function Skeleton({ className, ...props }: React.ComponentProps<'div'>) {
   return (

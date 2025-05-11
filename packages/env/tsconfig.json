@@ -1,0 +1,6 @@
+{
+  "extends": "@idiomax/typescript/library",
+  "include": [
+    "index.ts"
+  ]
+}

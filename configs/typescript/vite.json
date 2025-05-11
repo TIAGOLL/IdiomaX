@@ -1,20 +1,13 @@
 {
   "extends": "./library.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "module": "ESNext",
-    "lib": ["ESNext", "DOM"],
     "sourceMap": true,
-    "resolveJsonModule": true,
-    "noEmit": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "moduleResolution": "nodenext",
+    "module": "NodeNext",
     "noImplicitReturns": true,
     "paths": {
       "@/*": ["./*"],
       "@idiomax/ui/*": ["../../packages/ui/src/*"]
     }
-  },
-  "exclude": ["node_modules"]
+  }
 }

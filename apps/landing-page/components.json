@@ -14,7 +14,7 @@
     "components": "@/components",
     "hooks": "@/hooks",
     "lib": "@/lib",
-    "utils": "@idiomax/utils/tw-merge",
+    "utils": "@idiomax/ui/lib/utils",
     "ui": "@idiomax/ui/components"
   }
 }

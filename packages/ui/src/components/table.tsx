@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@idiomax/utils/tw-merge';
+import { cn } from '@idiomax/ui/lib/utils';
 import * as React from 'react';
 
 function Table({ className, ...props }: React.ComponentProps<'table'>) {

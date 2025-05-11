@@ -1,4 +1,4 @@
-import { cn } from '@idiomax/utils/tw-merge';
+import { cn } from '@idiomax/ui/lib/utils';
 import * as React from 'react';
 
 function Card({ className, ...props }: React.ComponentProps<'div'>) {

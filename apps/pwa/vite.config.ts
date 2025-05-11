@@ -17,9 +17,4 @@ export default defineConfig({
     host: true,
     origin: 'http://0.0.0.0:5173',
   },
-  resolve: {
-    alias: {
-      '@ui': path.resolve(__dirname, '../../packages/ui/src'),
-    },
-  },
 });

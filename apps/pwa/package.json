@@ -12,8 +12,8 @@
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
     "@idiomax/ui": "workspace:*",
-    "@idiomax/utils": "workspace:*",
     "@radix-ui/react-avatar": "^1.1.7",
+    "@radix-ui/react-slot": "^1.2.0",
     "@tailwindcss/vite": "^4.1.4",
     "@tanstack/react-query": "^5.74.4",
     "@vercel/analytics": "^1.5.0",
@@ -35,9 +35,7 @@
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react-swc": "^3.8.0",
-    "eslint": "^9.25.1",
     "globals": "^16.0.0",
-    "prettier-plugin-tailwindcss": "^0.6.11",
     "tw-animate-css": "^1.2.8",
     "typescript": "~5.3.3",
     "vite": "^6.3.3"

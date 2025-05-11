@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@idiomax/utils/tw-merge';
+import { cn } from '@idiomax/ui/lib/utils';
 import * as AvatarPrimitive from '@radix-ui/react-avatar';
 import * as React from 'react';
 

@@ -2,7 +2,6 @@
   "name": "@idiomax/ui",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "lint": "eslint . --fix"
   },
@@ -10,13 +9,12 @@
     "./global-css": "./src/styles/global.css",
     "./components/*": "./src/components/*.tsx",
     "./hooks/*": "./src/hooks/*.ts",
-    "./components": "./src/components"
+    "./lib/*": "./src/lib/*.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@idiomax/utils": "workspace:*",
     "@radix-ui/react-accordion": "^1.2.8",
     "@radix-ui/react-alert-dialog": "^1.1.11",
     "@radix-ui/react-avatar": "^1.1.7",
@@ -36,23 +34,22 @@
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.1.4",
     "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.503.0",
     "next-themes": "^0.4.6",
     "react-hook-form": "^7.56.1",
     "sonner": "^2.0.3",
-    "tailwindcss": "^4.1.4",
+    "tailwind-merge": "^3.2.0",
     "tw-animate-css": "^1.2.8"
   },
   "devDependencies": {
+    "tailwindcss": "^4.1.4",
     "@idiomax/eslint": "workspace:*",
-    "eslint": "^9.25.1",
     "@idiomax/typescript": "workspace:*",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
-  },
-  "peerDependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
   }
 }

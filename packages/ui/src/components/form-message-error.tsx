@@ -1,4 +1,4 @@
-import { cn } from '@idiomax/utils/tw-merge';
+import { cn } from '@idiomax/ui/lib/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { AlertTriangle, CircleX, LucideInfo } from 'lucide-react';
 import type { FieldError, FieldErrorsImpl, Merge } from 'react-hook-form';

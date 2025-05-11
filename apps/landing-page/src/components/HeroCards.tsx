@@ -34,7 +34,7 @@ export const HeroCards = () => {
       </Card>
 
       {/* Team */}
-      <Card className='absolute right-[20px] top-4 flex w-80 flex-col items-center justify-center shadow-black/10 drop-shadow-xl dark:shadow-white/10'>
+      <Card className='absolute top-4 right-[20px] flex w-80 flex-col items-center justify-center shadow-black/10 drop-shadow-xl dark:shadow-white/10'>
         <CardHeader className='mt-8 flex items-center justify-center pb-2'>
           <img
             src='https://i.pravatar.cc/150?img=58'
@@ -99,7 +99,7 @@ export const HeroCards = () => {
       </Card>
 
       {/* Pricing */}
-      <Card className='absolute left-[50px] top-[150px] w-72 shadow-black/10 drop-shadow-xl dark:shadow-white/10'>
+      <Card className='absolute top-[150px] left-[50px] w-72 shadow-black/10 drop-shadow-xl dark:shadow-white/10'>
         <CardHeader>
           <CardTitle className='item-center flex justify-between'>
             Free

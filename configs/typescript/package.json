@@ -9,7 +9,8 @@
   "exports": {
     "./vite": "./vite.json",
     "./library": "./library.json",
-    "./node": "./vite-node.json"
+    "./node": "./node.json",
+    "./react-library": "./react-library.json"
   },
   "keywords": [],
   "author": "",
@@ -19,7 +20,6 @@
     "access": "public"
   },
   "devDependencies": {
-    "@idiomax/eslint": "workspace:*",
-    "eslint": "^9.25.1"
+    "@idiomax/eslint": "workspace:*"
   }
 }

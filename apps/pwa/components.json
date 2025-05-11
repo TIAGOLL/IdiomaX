@@ -11,10 +11,10 @@
   },
   "iconLibrary": "lucide",
   "aliases": {
-    "components": "@/components",
-    "hooks": "@/hooks",
-    "lib": "@/lib",
-    "utils": "@idiomax/utils/tw-merge",
+    "components": "@idiomax/ui/components",
+    "utils": "@idiomax/ui/lib/utils",
+    "hooks": "@idiomax/ui/hooks",
+    "lib": "@idiomax/ui/lib",
     "ui": "@idiomax/ui/components"
   }
 }

@@ -1,16 +1,14 @@
 {
   "name": "idiomax",
   "private": true,
-  "devDependencies": {
-    "turbo": "^1.10.0"
-  },
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint"
-  },
-  "dependencies": {
+  }, 
+  "devDependencies": {
     "@idiomax/eslint": "workspace:*",
+    "@idiomax/typescript": "workspace:*",
     "turbo": "^2.3.0"
   },
   "engines": {
@@ -18,3 +16,4 @@
   },
   "packageManager": "pnpm@10.10.0"
 }
+ 

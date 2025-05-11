@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@idiomax/utils/tw-merge';
+import { cn } from '@idiomax/ui/lib/utils';
 import * as SwitchPrimitive from '@radix-ui/react-switch';
 import * as React from 'react';
 

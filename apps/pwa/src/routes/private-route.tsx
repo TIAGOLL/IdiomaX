@@ -1,5 +1,5 @@
-import { isAuthenticated } from '@idiomax/utils/auth';
 import { Navigate, Outlet, useLocation } from 'react-router';
+import { isAuthenticated } from '../ultis/isAuthenticated';
 
 export function PrivateRoute() {
   const location = useLocation();

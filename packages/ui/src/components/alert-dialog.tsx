@@ -1,7 +1,7 @@
 'use client';
 
 import { buttonVariants } from '@idiomax/ui/components/button';
-import { cn } from '@idiomax/utils/tw-merge';
+import { cn } from '@idiomax/ui/lib/utils';
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
 import * as React from 'react';
 

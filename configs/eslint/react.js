@@ -1,8 +1,7 @@
-/** @type {import('eslint').Linter.FlatConfig[]} */
+/**  @type {import("eslint").Linter.Config[]} */
 
 import library from '@idiomax/eslint/library';
 import eslintPluginJsxA11y from 'eslint-plugin-jsx-a11y';
-import eslintPluginPrettier from 'eslint-plugin-prettier';
 import eslintPluginReact from 'eslint-plugin-react';
 import eslintPluginReactHooks from 'eslint-plugin-react-hooks';
 
@@ -12,7 +11,6 @@ export default [
       react: eslintPluginReact,
       'react-hooks': eslintPluginReactHooks,
       'jsx-a11y': eslintPluginJsxA11y,
-      prettier: eslintPluginPrettier,
     },
     rules: {
       'no-tabs': 'off',
