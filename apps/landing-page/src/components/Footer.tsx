@@ -1,5 +1,3 @@
-import { LogoIcon } from './Icons';
-
 export const Footer = () => {
   return (
     <footer id='footer'>
@@ -7,8 +5,11 @@ export const Footer = () => {
 
       <section className='container mx-auto grid grid-cols-2 gap-x-12 gap-y-8 px-6 py-20 md:grid-cols-4 xl:grid-cols-6 2xl:max-w-screen-xl'>
         <div className='col-span-full xl:col-span-2'>
-          <a rel='noreferrer noopener' href='/' className='flex text-xl font-bold'>
-            <LogoIcon />
+          <a
+            rel='noreferrer noopener'
+            href='/'
+            className='flex place-items-center gap-4 text-xl font-bold'>
+            <img src='/images/logo3-without-bg.png' className='size-10' alt='' />
             ShadcnUI/React
           </a>
         </div>

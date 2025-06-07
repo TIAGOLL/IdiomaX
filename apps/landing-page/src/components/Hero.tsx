@@ -1,7 +1,7 @@
 import { Button, buttonVariants } from '@idiomax/ui/components/button';
 import { GithubIcon } from 'lucide-react';
 
-import { HeroCards } from './HeroCards';
+import { HeroCards } from './HeroCards.tsx';
 
 export const Hero = () => {
   return (
@@ -10,7 +10,7 @@ export const Hero = () => {
         <main className='text-5xl font-bold md:text-6xl'>
           <h1 className='inline'>
             <span className='inline bg-gradient-to-r from-[#F596D3] to-[#D247BF] bg-clip-text text-transparent'>
-              Shadcn
+              IdiomaX
             </span>{' '}
             landing page
           </h1>{' '}

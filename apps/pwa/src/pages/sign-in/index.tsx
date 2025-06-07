@@ -3,7 +3,7 @@ import { ModeToggle } from '@idiomax/ui/components/mode-toggle';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@idiomax/ui/components/tabs';
 import { Info } from 'lucide-react';
 
-import { SignInForm } from './components/sign-in-form';
+import { SignInForm } from './components/sign-in-form.tsx';
 
 function SignIn() {
   return (

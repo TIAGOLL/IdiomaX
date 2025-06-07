@@ -1,4 +1,5 @@
 import { Navigate, Outlet, useLocation } from 'react-router';
+
 import { isAuthenticated } from '../ultis/isAuthenticated';
 
 export function PrivateRoute() {

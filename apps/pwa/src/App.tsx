@@ -6,7 +6,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { BrowserRouter } from 'react-router';
 
-import { RoutesApp } from './routes';
+import { RoutesApp } from './routes/index.tsx';
 
 export function App() {
   const queryClient = new QueryClient();

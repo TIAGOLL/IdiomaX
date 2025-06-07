@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@idiomax/ui/components/card';
 import type { JSX } from 'react';
 
-import { GiftIcon, MapIcon, MedalIcon, PlaneIcon } from '../components/Icons';
+import { GiftIcon, MapIcon, MedalIcon, PlaneIcon } from '../components/Icons.tsx';
 
 interface FeatureProps {
   icon: JSX.Element;

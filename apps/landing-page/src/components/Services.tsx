@@ -1,7 +1,7 @@
 import { Card, CardDescription, CardHeader, CardTitle } from '@idiomax/ui/components/card';
 import type { JSX } from 'react';
 
-import { ChartIcon, MagnifierIcon, WalletIcon } from './Icons';
+import { ChartIcon, MagnifierIcon, WalletIcon } from './Icons.tsx';
 
 interface ServiceProps {
   title: string;
@@ -62,7 +62,7 @@ export const Services = () => {
         </div>
 
         <img
-          src={'/images/landing-page/cube-leg.png'}
+          src={'/images/cube-leg.png'}
           className='w-[300px] object-contain md:w-[500px] lg:w-[600px]'
           alt='About services'
         />

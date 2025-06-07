@@ -1,5 +1,6 @@
 // configs/eslint/base.ts
 
+import prettierConfig from '@idiomax/eslint/prettier-config';
 import eslintPluginTypescript from '@typescript-eslint/eslint-plugin';
 import eslintParser from '@typescript-eslint/parser';
 import eslintPluginPrettier from 'eslint-plugin-prettier';
@@ -41,28 +42,7 @@ export default [
           argsIgnorePattern: '^_',
         },
       ],
-      'prettier/prettier': [
-        'error',
-        {
-          plugins: ['prettier-plugin-tailwindcss'],
-          endOfLine: 'auto',
-          singleQuote: true,
-          trailingComma: 'all',
-          semi: true,
-          printWidth: 100,
-          tabWidth: 2,
-          quoteProps: 'as-needed',
-          jsxSingleQuote: true,
-          bracketSpacing: true,
-          bracketSameLine: true,
-          arrowParens: 'always',
-          singleAttributePerLine: false,
-          requirePragma: false,
-        },
-        {
-          usePrettierrc: false,
-        },
-      ],
+      'prettier/prettier': ['error', prettierConfig],
     },
   },
 ];

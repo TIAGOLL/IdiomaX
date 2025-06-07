@@ -2,7 +2,7 @@
   "name": "api",
   "version": "1.0.0",
   "description": "",
-  "main": "src/server.ts",
+  "main": "src/http/server.ts",
   "type": "module",
   "scripts": {
     "dev": "nodemon --watch src --exec tsx src/server.ts",

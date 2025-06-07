@@ -6,7 +6,8 @@
   "exports": {
     "./library": "./library.js",
     "./react": "./react.js",
-    "./node": "./node.js"
+    "./node": "./node.js",
+    "./prettier-config": "./.prettierrc.js"
   },
   "scripts": {
     "lint": "eslint . --fix"
@@ -25,6 +26,8 @@
     "eslint-plugin-react-refresh": "^0.4.20",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-unused-imports": "^4.1.4",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "typescript-eslint": "^8.26.1"
   },
   "publishConfig": {

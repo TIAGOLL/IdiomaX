@@ -12,10 +12,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@idiomax/ui/components/sheet';
-import { GithubIcon, Menu } from 'lucide-react';
+import { DollarSign, LogIn, Menu } from 'lucide-react';
 import { useState } from 'react';
-
-import { LogoIcon } from './Icons';
 
 interface RouteProps {
   href: string;
@@ -25,15 +23,11 @@ interface RouteProps {
 const routeList: RouteProps[] = [
   {
     href: '#features',
-    label: 'Features',
-  },
-  {
-    href: '#testimonials',
-    label: 'Testimonials',
+    label: 'Funcionalidades',
   },
   {
     href: '#pricing',
-    label: 'Pricing',
+    label: 'Preços',
   },
   {
     href: '#faq',
@@ -48,9 +42,12 @@ export const Navbar = () => {
       <NavigationMenu className='mx-auto'>
         <NavigationMenuList className='container mx-auto flex h-14 w-screen justify-between px-6 2xl:max-w-screen-xl'>
           <NavigationMenuItem className='flex font-bold'>
-            <a rel='noreferrer noopener' href='/' className='ml-2 flex text-xl font-bold'>
-              <LogoIcon />
-              ShadcnUI/React
+            <a
+              rel='noreferrer noopener'
+              href='/'
+              className='ml-2 flex place-items-center gap-3 text-xl font-bold'>
+              <img src='/images/logo3-without-bg.png' className='size-10' alt='Logo IdiomaX' />
+              IdiomaX
             </a>
           </NavigationMenuItem>
 
@@ -61,13 +58,13 @@ export const Navbar = () => {
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger className='px-2'>
                 <Menu className='flex h-5 w-5 md:hidden' onClick={() => setIsOpen(true)}>
-                  <span className='sr-only'>Menu Icon</span>
+                  <span className='sr-only'>Menu</span>
                 </Menu>
               </SheetTrigger>
 
               <SheetContent side={'left'}>
                 <SheetHeader>
-                  <SheetTitle className='text-xl font-bold'>Shadcn/React</SheetTitle>
+                  <SheetTitle className='text-xl font-bold'>IdiomaX</SheetTitle>
                 </SheetHeader>
                 <nav className='mt-4 flex flex-col items-center justify-center gap-2'>
                   {routeList.map(({ href, label }: RouteProps) => (
@@ -76,19 +73,18 @@ export const Navbar = () => {
                       key={label}
                       href={href}
                       onClick={() => setIsOpen(false)}
-                      className={buttonVariants({ variant: 'ghost' })}>
+                      className={`w-8/12 font-semibold ${buttonVariants({ variant: 'outline' })}`}>
                       {label}
                     </a>
                   ))}
                   <a
                     rel='noreferrer noopener'
-                    href='https://github.com/leoMirandaa/shadcn-landing-page.git'
-                    target='_blank'
-                    className={`w-[110px] border ${buttonVariants({
-                      variant: 'secondary',
+                    href='/'
+                    className={`absolute bottom-50 w-[110px] border ${buttonVariants({
+                      variant: 'default',
                     })}`}>
-                    <GithubIcon className='mr-2 h-5 w-5' />
-                    Github
+                    <DollarSign className='mr-2 h-5 w-5' />
+                    Contratar
                   </a>
                 </nav>
               </SheetContent>
@@ -111,16 +107,14 @@ export const Navbar = () => {
           </nav>
 
           <div className='hidden gap-2 md:flex'>
+            <ModeToggle />
             <a
               rel='noreferrer noopener'
-              href='https://github.com/leoMirandaa/shadcn-landing-page.git'
-              target='_blank'
+              href='/'
               className={`border ${buttonVariants({ variant: 'secondary' })}`}>
-              <GithubIcon className='mr-2 h-5 w-5' />
-              Github
+              <LogIn className='mr-2 h-5 w-5' />
+              Logar
             </a>
-
-            <ModeToggle />
           </div>
         </NavigationMenuList>
       </NavigationMenu>

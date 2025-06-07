@@ -12,19 +12,19 @@ const features: FeatureProps[] = [
     title: 'Responsive Design',
     description:
       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi nesciunt est nostrum omnis ab sapiente.',
-    image: '/images/landing-page/looking-ahead.png',
+    image: '/images/looking-ahead.png',
   },
   {
     title: 'Intuitive user interface',
     description:
       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi nesciunt est nostrum omnis ab sapiente.',
-    image: '/images/landing-page/reflecting.png',
+    image: '/images/reflecting.png',
   },
   {
     title: 'AI-Powered insights',
     description:
       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi nesciunt est nostrum omnis ab sapiente.',
-    image: '/images/landing-page/growth.png',
+    image: '/images/growth.png',
   },
 ];
 

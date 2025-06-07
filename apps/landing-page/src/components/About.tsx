@@ -1,15 +1,11 @@
-import { Statistics } from './Statistics';
+import { Statistics } from './Statistics.tsx';
 
 export const About = () => {
   return (
     <section id='about' className='container mx-auto px-6 py-24 sm:py-32 2xl:max-w-screen-xl'>
       <div className='bg-muted/50 rounded-lg border py-12'>
         <div className='flex flex-col-reverse gap-8 px-6 md:flex-row md:gap-12'>
-          <img
-            src={'/images/landing-page/pilot.png'}
-            alt=''
-            className='w-[300px] rounded-lg object-contain'
-          />
+          <img src={'/images/pilot.png'} alt='' className='w-[300px] rounded-lg object-contain' />
           <div className='bg-green-0 flex flex-col justify-between'>
             <div className='pb-6'>
               <h2 className='text-3xl font-bold md:text-4xl'>

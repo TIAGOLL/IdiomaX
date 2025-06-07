@@ -1,13 +1,7 @@
 {
   "extends": "@idiomax/typescript/vite",
+  "include": ["src"],
   "compilerOptions": {
-    "baseUrl": ".",
     "jsx": "react-jsx"
-  },
-  "paths": {
-    "@/*": ["./*"],
-    "@idiomax/ui/*": ["../../packages/ui/src/*"]
-  },
-  "include": ["."],
-  "exclude": ["node_modules", "dist"]
+  }
 }

@@ -2,12 +2,6 @@
   "extends": "./library.json",
   "compilerOptions": {
     "sourceMap": true,
-    "moduleResolution": "nodenext",
-    "module": "NodeNext",
-    "noImplicitReturns": true,
-    "paths": {
-      "@/*": ["./*"],
-      "@idiomax/ui/*": ["../../packages/ui/src/*"]
-    }
+    "noImplicitReturns": true
   }
 }

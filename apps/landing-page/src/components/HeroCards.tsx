@@ -11,7 +11,7 @@ import {
 } from '@idiomax/ui/components/card';
 import { Check, GithubIcon, Linkedin } from 'lucide-react';
 
-import { LightBulbIcon } from './Icons';
+import { LightBulbIcon } from './Icons.tsx';
 
 export const HeroCards = () => {
   return (
