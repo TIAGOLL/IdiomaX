@@ -30,10 +30,10 @@ function SignIn() {
           <Card>
             <div className="items-center justify-center flex flex-col mt-4">
               <div className="dark:hidden">
-                <img src="/images/logo.png" alt="Logo da loja" className="w-40" />
+                <img src="/images/logo.png" alt="Logo da loja" className="w-24" />
               </div>
               <div className="hidden dark:flex">
-                <img src="/images/logoWhite.png" alt="Logo da loja" className="w-40" />
+                <img src="/images/logo.png" alt="Logo da loja" className="w-24" />
               </div>
             </div>
             <form onSubmit={handleSubmit(SignIn)}>
