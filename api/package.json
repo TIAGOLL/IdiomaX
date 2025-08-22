@@ -6,25 +6,35 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsup src --out-dir build",
-    "start": "node build/server.js"
+    "start": "node build/server.js",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed",
+    "db:push": "prisma db push",
+    "db:generate": "prisma generate"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fastify/cors": "^11.1.0",
     "@fastify/jwt": "^10.0.0",
     "@fastify/swagger": "^9.5.1",
     "@fastify/swagger-ui": "^5.2.3",
     "@prisma/client": "^6.14.0",
     "@types/bcryptjs": "^3.0.0",
     "@types/node": "^24.3.0",
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
+    "dotenv": "^17.2.1",
     "fastify": "^5.5.0",
+    "fastify-plugin": "^5.0.1",
     "fastify-type-provider-zod": "^5.0.3",
-    "prisma": "^6.14.0",
     "tsup": "^8.5.0",
     "tsx": "^4.20.4",
-    "typescript": "^5.9.2",
     "zod": "^4.0.17"
+  },
+  "devDependencies": {
+    "prisma": "^6.14.0",
+    "typescript": "^5.9.2"
   }
 }
