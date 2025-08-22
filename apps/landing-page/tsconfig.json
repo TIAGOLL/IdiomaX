@@ -1,4 +1,0 @@
-{
-  "extends": "@idiomax/typescript/vite",
-  "include": ["src"]
-}

@@ -1,22 +1,16 @@
 {
   "name": "idiomax",
-  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "lint": "turbo run lint"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "pnpm --filter ./api dev & pnpm --filter ./app dev",
+    "install": "pnpm --filter ./api install & pnpm --filter ./app install",
+    "docker": "docker-compose -f docker-compose.yml up --build -d"
   },
-  "devDependencies": {
-    "@idiomax/eslint": "workspace:*",
-    "@idiomax/typescript": "workspace:*",
-    "prettier-plugin-tailwindcss": "^0.6.11",
-    "turbo": "^2.3.0"
-  },
-  "engines": {
-    "node": ">=18"
-  },
-  "packageManager": "pnpm@10.12.1",
-  "dependencies": {
-    "eslint": "^9.25.1"
-  }
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.15.0"
 }
