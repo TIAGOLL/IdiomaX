@@ -1,6 +1,0 @@
-{
-  "extends": "@idiomax/typescript/library",
-  "include": [
-    "src/**/*"
-  ]
-}

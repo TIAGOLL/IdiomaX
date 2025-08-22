@@ -1,7 +1,0 @@
-{
-  "extends": "./library.json",
-  "compilerOptions": {
-    "sourceMap": true,
-    "noImplicitReturns": true
-  }
-}
