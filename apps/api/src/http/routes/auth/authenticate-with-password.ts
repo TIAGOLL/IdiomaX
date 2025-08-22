@@ -11,8 +11,8 @@ export async function authenticateWithPassword(app: FastifyInstance) {
     '/sessions/password',
     {
       schema: {
-        tags: ['Auth'],
-        summary: 'Authenticate with e-mail & password',
+        tags: ['Autenticação'],
+        summary: 'Autenticação com senha',
         body: z.object({
           email: z.string().email(),
           password: z.string(),
@@ -27,7 +27,7 @@ export async function authenticateWithPassword(app: FastifyInstance) {
     async (request, reply) => {
       const { email, password } = request.body;
 
-      const userFromEmail = await prisma.user.findUnique({
+      const userFromEmail = await prisma.users.findUnique({
         where: {
           email,
         },

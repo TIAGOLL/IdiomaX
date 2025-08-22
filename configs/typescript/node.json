@@ -2,14 +2,15 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "Node 20",
   "_version": "20.1.0",
-  "extends": "./library.json",
 
   "compilerOptions": {
     "lib": ["es2023"],
-    "allowImportingTsExtensions": true,
+    "module": "node16",
+    "target": "es2022",
+
+    "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true
+    "moduleResolution": "node16"
   }
 }

@@ -11,7 +11,7 @@ COPY . .
 RUN pnpm install
 
 # Expõe a porta do Vite
-EXPOSE 5174
+EXPOSE 5173
 
 # Inicia a aplicação app com pnpm dev
-CMD ["pnpm", "--dir", "apps/landing-page", "dev"]
+CMD ["pnpm", "--dir", "apps/app", "dev"]
