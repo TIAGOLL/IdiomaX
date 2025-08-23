@@ -1,9 +1,16 @@
 {
-  "include": ["src/**/*", "@types/*.d.ts"],
+  "include": [
+    "src/**/*",
+    "@types/*.d.ts",
+    "src/http/routes/user",
+    "src/http/server.ts"
+  ],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   }
 }
