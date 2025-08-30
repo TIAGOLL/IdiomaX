@@ -11,9 +11,9 @@ import {
 } from 'fastify-type-provider-zod'
 import z, { ZodError } from 'zod'
 import * as dotenv from 'dotenv'
-import { SignInWithPassword } from './routes/user/sign-in-with-password'
-import { BadRequestError } from './routes/_errors/bad-request-error'
-import { UnauthorizedError } from './routes/_errors/unauthorized-error'
+import { SignInWithPassword } from './controllers/user/sign-in-with-password'
+import { BadRequestError } from './controllers/_errors/bad-request-error'
+import { UnauthorizedError } from './controllers/_errors/unauthorized-error'
 
 dotenv.config()
 

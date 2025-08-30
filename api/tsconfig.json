@@ -2,7 +2,7 @@
   "include": [
     "src/**/*",
     "@types/*.d.ts",
-    "src/http/routes/user",
+    "src/http/controllers/user",
     "src/http/server.ts"
   ],
   "compilerOptions": {
