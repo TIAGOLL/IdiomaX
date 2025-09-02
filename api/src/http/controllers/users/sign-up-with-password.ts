@@ -1,8 +1,7 @@
 import { hash } from 'bcryptjs';
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { date, z } from 'zod';
-import { v4 as uuidv4 } from 'uuid';
+import { z } from 'zod';
 
 import { BadRequestError } from '@/http/controllers/_errors/bad-request-error';
 import { prisma } from '@/lib/prisma';

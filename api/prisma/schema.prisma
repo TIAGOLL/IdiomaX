@@ -54,18 +54,18 @@ model classrooms {
 }
 
 model companies {
-  id         String    @id
-  name       String
+  id         String    @id @db.VarChar(256)
+  name       String    @db.VarChar(256)
   created_at DateTime? @default(now())
-  updated_at DateTime?
-  users_id   String
-  address    String
+  updated_at DateTime? @updatedAt
+  users_id   String    @db.VarChar(256)
+  address    String    @db.VarChar(256)
 
   classrooms    classrooms[]
   configs       configs[]
   registrations registrations[]
   courses       courses[]
-  users         users[]
+  users         users           @relation(fields: [users_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
 }
 
 model configs {
@@ -236,19 +236,18 @@ model users {
   username      String    @unique @db.VarChar(256)
   gender        String    @db.VarChar(256)
   date_of_birth DateTime
-  companies_id  String    @db.VarChar(256)
   address       String    @db.VarChar(256)
   active        Boolean?  @default(true)
   avatar_url    String?   @db.VarChar(256)
   created_at    DateTime? @default(now())
-  updated_at    DateTime?
+  updated_at    DateTime? @updatedAt
 
   presence_list  presence_list[]
   registrations  registrations[]
   tokens         tokens[]
   users_in_class users_in_class[]
   users_roles    users_roles[]
-  companies      companies        @relation(fields: [companies_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
+  companies      companies[]
 }
 
 model users_in_class {

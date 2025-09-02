@@ -2,9 +2,9 @@
   "include": [
     "src/**/*",
     "@types/*.d.ts",
-    "src/http/controllers/user",
+    "src/http/controllers/users",
     "src/http/server.ts"
-  ],
+, "prisma/seed.ts"  ],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
