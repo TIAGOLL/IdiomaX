@@ -7,7 +7,8 @@
     "dev": "tsx watch src/http/server.ts",
     "build": "tsup src --out-dir build",
     "start": "node build/server.js",
-    "db:migrate": "prisma migrate dev",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:migrate:deploy": "prisma migrate deploy",
     "db:seed": "prisma db seed",
     "db:push": "prisma db push",
     "db:generate": "prisma generate"
@@ -20,7 +21,7 @@
     "@fastify/jwt": "^10.0.0",
     "@fastify/swagger": "^9.5.1",
     "@fastify/swagger-ui": "^5.2.3",
-    "@prisma/client": "^6.14.0",
+    "@prisma/client": "^6.15.0",
     "@types/bcryptjs": "^3.0.0",
     "@types/node": "^24.3.0",
     "bcrypt": "^6.0.0",
@@ -35,7 +36,7 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
-    "prisma": "^6.14.0",
+    "prisma": "^6.15.0",
     "typescript": "^5.9.2"
   }
 }
