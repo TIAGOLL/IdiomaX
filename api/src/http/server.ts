@@ -14,6 +14,7 @@ import * as dotenv from 'dotenv'
 import { SignInWithPassword } from './controllers/user/sign-in-with-password'
 import { BadRequestError } from './controllers/_errors/bad-request-error'
 import { UnauthorizedError } from './controllers/_errors/unauthorized-error'
+import { SignUpWithPassword } from './controllers/user/sign-up-with-password'
 
 dotenv.config()
 
@@ -49,7 +50,8 @@ app.setErrorHandler((error, _, reply) => {
       .status(401)
       .send({ message: 'Acesso não autorizado.' })
   }
-
+  
+  console.error(error)
   return reply.status(500).send({ message: 'Internal server error.' })
 })
 
@@ -85,6 +87,7 @@ app.register(fastifyCors)
 
 //routes
 app.register(SignInWithPassword);
+app.register(SignUpWithPassword);
 
 app.listen({ port: Number(env.data.PORT) }).then(() => {
   console.log(`HTTP server running in http://localhost:${env.data.PORT}`)

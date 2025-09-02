@@ -11,6 +11,7 @@
     "db:migrate:deploy": "prisma migrate deploy",
     "db:seed": "prisma db seed",
     "db:push": "prisma db push",
+    "db:pull": "prisma db pull",
     "db:generate": "prisma generate"
   },
   "keywords": [],
@@ -32,6 +33,7 @@
     "fastify-type-provider-zod": "^5.0.3",
     "tsup": "^8.5.0",
     "tsx": "^4.20.4",
+    "uuid": "^11.1.0",
     "zod": "^4.0.17"
   },
   "devDependencies": {

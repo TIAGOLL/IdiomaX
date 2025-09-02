@@ -22,7 +22,7 @@ export async function SignInWithPassword(app: FastifyInstance) {
                         }),
                     },
                     body: z.object({
-                        email: z.email(),
+                        username: z.string(),
                         password: z.string().min(6),
                         userType: z.string().refine((value) => ['student', 'professional'].includes(value), {
                             message: 'Selecione um tipo de usuário',
@@ -31,35 +31,21 @@ export async function SignInWithPassword(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { email, password, userType } = request.body;
+                const { username, password, userType } = request.body;
+                console.log({ username, password, userType });
                 try {
-                    if (userType === 'professional') {
-                        const user = await prisma.professionals.findUnique({
-                            where: { email },
+                    if (userType === 'professional' || userType === 'student') {
+                        const user = await prisma.users.findUnique({
+                            where: { username },
                         });
 
                         if (!user || !(await bcrypt.compare(password, user.password))) {
-                            throw new BadRequestError('Email ou senha inválidos');
+                            throw new BadRequestError('Username ou senha inválidos');
                         }
 
                         const token = app.jwt.sign({ sub: user.id });
 
                         reply.status(200).send({
-                            token,
-                            message: 'Bem vindo!',
-                        });
-                    } else if (userType == 'student') {
-                        const user = await prisma.students.findUnique({
-                            where: { email },
-                        });
-
-                        if (!user || !(await bcrypt.compare(password, user.password))) {
-                            throw new BadRequestError('Email ou senha inválidos');
-                        }
-
-                        const token = app.jwt.sign({ sub: user.id });
-
-                        reply.send({
                             token,
                             message: 'Bem vindo!',
                         });

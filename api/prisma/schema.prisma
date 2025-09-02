@@ -8,262 +8,264 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model adresses {
-  id            Int             @id @default(autoincrement())
-  street        String?
-  zip_code      String?
-  district      String?
-  complement    String?
-  city          String?
-  state         String?
-  number        String?
-  active        Boolean         @default(true)
-  professionals professionals[]
-  students      students[]
+model Renamedclass {
+  id             String           @id @db.VarChar(256)
+  nome           String           @db.VarChar(256)
+  vacancies      Decimal          @db.Decimal(10, 0)
+  courses_id     String           @db.VarChar(256)
+  class_days     class_days[]
+  classes        classes[]
+  users_in_class users_in_class[]
+
+  courses courses @relation(fields: [courses_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "courses_fk")
+
+  @@map("class")
 }
 
-model auth {
-  token         String   @id @unique
-  type          String   @default("Bearer")
-  expires_at    DateTime
-  refresh_token String
-}
+model class_days {
+  id           String   @id @db.VarChar(256)
+  initial_date DateTime
+  final_date   DateTime
+  class_id     String   @db.VarChar(256)
 
-model boleto_api {
-  id                        Int    @id @default(autoincrement())
-  developer_application_key String
-  client_id                 String
-  client_secret             String
-}
-
-model books {
-  id         Int          @id @default(autoincrement())
-  courses_id Int
-  name       String
-  position   Int
-  courses    courses      @relation(fields: [courses_id], references: [id], onDelete: Cascade)
-  classrooms classrooms[]
-  lessons    lessons[]
-
-  @@index([courses_id])
+  class Renamedclass @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "class_fk")
 }
 
 model classes {
-  id               Int           @id @default(autoincrement())
-  theme            String
-  start_date       DateTime
-  end_date         DateTime
-  professionals_id Int
-  classrooms_id    Int
-  presence_list_id Int
-  classrooms       classrooms    @relation(fields: [classrooms_id], references: [id], onDelete: Cascade)
-  presence_list    presence_list @relation(fields: [presence_list_id], references: [id], onDelete: Cascade)
-  professionals    professionals @relation(fields: [professionals_id], references: [id])
+  id         String   @id @db.VarChar(256)
+  theme      String   @db.VarChar(256)
+  start_date DateTime
+  end_date   DateTime
+  class_id   String   @db.VarChar(256)
 
-  @@index([classrooms_id])
-  @@index([presence_list_id])
-  @@index([professionals_id])
+  class         Renamedclass    @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "class_fk")
+  presence_list presence_list[]
 }
 
 model classrooms {
-  id                      Int                       @id @default(autoincrement())
-  date                    String
-  hour                    String
-  books_id                Int
-  created_at              DateTime                  @default(now())
-  classes                 classes[]
-  books                   books                     @relation(fields: [books_id], references: [id], onDelete: Cascade)
-  students_has_classrooms students_has_classrooms[]
+  id           String   @id @db.VarChar(256)
+  number       Decimal  @db.Decimal(5, 0)
+  created_at   DateTime @default(now())
+  block        String?  @db.VarChar(256)
+  companies_id String?  @db.VarChar(256)
 
-  @@index([books_id])
+  companies   companies? @relation(fields: [companies_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "companies_fk")
+  companiesId String?
+}
+
+model companies {
+  id         String    @id
+  name       String
+  created_at DateTime? @default(now())
+  updated_at DateTime?
+  users_id   String
+  address    String
+
+  classrooms    classrooms[]
+  configs       configs[]
+  registrations registrations[]
+  courses       courses[]
+  users         users[]
 }
 
 model configs {
-  id                 Int  @id @default(autoincrement())
-  registrations_time Int? @default(6)
+  id                 String  @id @db.VarChar(256)
+  registrations_time Decimal @default(6) @db.Decimal(256, 0)
+  companies_id       String  @db.VarChar(256)
+
+  companies   companies @relation(fields: [companies_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
+  companiesId String?
 }
 
 model courses {
-  id            Int             @id @default(autoincrement())
-  name          String
-  price         Float
-  created_at    DateTime        @default(now())
-  books         books[]
-  registrations registrations[]
+  id                 String   @id @db.VarChar(256)
+  description        String?  @db.VarChar(256)
+  created_at         DateTime @default(now())
+  name               String   @db.VarChar(256)
+  registration_value Decimal  @db.Decimal(20, 2)
+  workload           Decimal  @db.Decimal(5, 0)
+  monthly_fee_value  Decimal  @db.Decimal(20, 2)
+  minimum_grade      Decimal  @db.Decimal(20, 0)
+  maximum_grade      Decimal  @db.Decimal(20, 0)
+  minimum_frequency  Decimal  @db.Decimal(20, 0)
+  syllabus           Bytes?
+  companies_id       String   @db.VarChar(256)
+
+  class       Renamedclass[]
+  levels      levels[]
+  companies   companies      @relation(fields: [companies_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
+  companiesId String?
 }
 
-model lessons {
-  id       Int     @id @default(autoincrement())
-  books_id Int
-  name     String?
-  url      String?
-  position Int?
-  books    books   @relation(fields: [books_id], references: [id], onDelete: Cascade)
-  tasks    tasks[]
+model disciplines {
+  id        String @id @db.VarChar(256)
+  name      String @db.VarChar(256)
+  levels_id String @db.VarChar(256)
 
-  @@index([books_id])
+  tasks    tasks[]
+  levels   levels? @relation(fields: [levelsId], references: [id])
+  levelsId String? @db.VarChar(256)
+}
+
+model levels {
+  id         String  @id @db.VarChar(256)
+  name       String  @db.VarChar(256)
+  level      Decimal @db.Decimal(5, 0)
+  courses_id String? @db.VarChar(256)
+
+  disciplines disciplines[]
+  courses     courses?      @relation(fields: [courses_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "courses_fk")
+  materials   materials[]
+  coursesId   String?       @db.VarChar(256)
+}
+
+model materials {
+  id        String  @id @db.VarChar(256)
+  name      String  @db.VarChar(256)
+  file      Bytes
+  levels_id String? @db.VarChar(256)
+
+  levels   levels? @relation(fields: [levels_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "levels_fk")
+  levelsId String? @db.VarChar(256)
 }
 
 model monthly_fee {
-  id                Int           @id @default(autoincrement())
-  registrations_id  Int
-  due_date          DateTime?
-  amount_to_be_paid Float?
-  amount_paid       Float?        @default(0)
-  date_of_paid      DateTime?
-  payment_method    String?
-  paid              Boolean?      @default(false)
-  registrations     registrations @relation(fields: [registrations_id], references: [id], onDelete: Cascade)
+  id                               String    @id @db.VarChar(256)
+  due_date                         DateTime
+  value                            Decimal   @db.Decimal(20, 2)
+  paid                             Boolean   @default(false)
+  discount_payment_before_due_date Decimal   @default(0) @db.Decimal(3, 2)
+  registrations_id                 String    @db.VarChar(256)
+  payment_method                   String?   @db.VarChar(256)
+  date_of_payment                  DateTime? @db.Timestamptz(3)
 
-  @@index([registrations_id])
-}
-
-model permissions {
-  id                   Int      @id @default(autoincrement())
-  create_classes       Boolean? @default(false)
-  update_classes       Boolean? @default(false)
-  delete_classes       Boolean? @default(false)
-  update_students      Boolean? @default(false)
-  delete_students      Boolean?
-  create_students      Boolean? @default(false)
-  update_professionals Boolean? @default(false)
-  create_professionals Boolean? @default(false)
-  delete_professionals Boolean? @default(false)
-  create_registrations Boolean? @default(false)
-  update_registrations Boolean? @default(false)
-  delete_registrations Boolean? @default(false)
-  dashboard            Boolean? @default(false)
-  create_courses       Boolean? @default(false)
-  update_courses       Boolean? @default(false)
-  delete_courses       Boolean? @default(false)
-  create_classrooms    Boolean? @default(false)
-  update_classrooms    Boolean? @default(false)
-  delete_classrooms    Boolean? @default(false)
+  registrations   registrations @relation(fields: [registrations_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "registrations_fk")
+  registrationsId String?       @db.VarChar(256)
 }
 
 model presence_list {
-  id           Int       @id @default(autoincrement())
-  date         DateTime?
-  is_present   Boolean?  @default(false)
-  time_arrived DateTime?
-  classes      classes[]
-}
+  id         String  @id @db.VarChar(256)
+  is_present Boolean @default(false)
+  users_id   String  @db.VarChar(256)
+  classes_id String  @db.VarChar(256)
 
-model professionals {
-  id            Int       @id @default(autoincrement())
-  role_id       Int
-  adresses_id   Int
-  cpf           String    @unique
-  name          String?
-  first_name    String
-  last_name     String
-  phone         String
-  email         String    @unique
-  gender        String
-  date_of_birth DateTime
-  active        Boolean   @default(true)
-  admin         Boolean   @default(true)
-  avatar_url    String?
-  password      String
-  user          String
-  hour_value    Float?
-  created_at    DateTime? @default(now())
-  updated_at    DateTime?
-  classes       classes[]
-  adresses      adresses  @relation(fields: [adresses_id], references: [id])
-  role          role      @relation(fields: [role_id], references: [id])
-
-  @@index([adresses_id])
-  @@index([role_id])
+  classes classes @relation(fields: [classes_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "classes_fk")
+  users   users   @relation(fields: [users_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
 }
 
 model records_of_students {
-  id          Int       @id @default(autoincrement())
-  students_id Int
-  description String?
-  title       String?
-  date        DateTime? @default(now())
-  students    students  @relation(fields: [students_id], references: [id], onDelete: Cascade)
+  id               Int       @id @default(autoincrement())
+  registrations_id String    @db.VarChar(256)
+  description      String?   @db.VarChar(512)
+  title            String?   @db.VarChar(256)
+  created_at       DateTime? @default(now())
 
-  @@index([students_id])
+  registrations   registrations @relation(fields: [registrations_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "registrations_fk")
+  registrationsId String?       @db.VarChar(256)
 }
 
 model registrations {
-  id                      Int                      @id @default(autoincrement())
-  students_id             Int
-  courses_id              Int
-  start_date              DateTime                 @default(now())
-  end_date                DateTime
-  monthly_fee_amount      Float?                   @default(0)
-  created_by              Int?
-  created_at              DateTime?                @default(now())
-  locked                  Boolean?                 @default(false)
-  completed               Boolean?                 @default(false)
-  monthly_fee             monthly_fee[]
-  courses                 courses                  @relation(fields: [courses_id], references: [id], onDelete: Cascade)
-  students                students                 @relation(fields: [students_id], references: [id], onDelete: Cascade)
-  students_has_classrooms students_has_classrooms?
-  tasks                   tasks[]
+  id                 String    @id @db.VarChar(256)
+  start_date         DateTime  @default(now())
+  monthly_fee_amount Decimal   @default(0) @db.Decimal(20, 2)
+  created_at         DateTime? @default(now())
+  locked             Boolean?  @default(false)
+  completed          Boolean?  @default(false)
+  users_id           String?   @db.VarChar(256)
+  companies_id       String?   @db.VarChar(256)
+  usersId            String?   @db.VarChar(256)
 
-  @@index([courses_id])
-  @@index([students_id])
-}
-
-model role {
-  id            Int             @id
-  name          String
-  professionals professionals[]
-}
-
-model students {
-  id                  Int                   @id @default(autoincrement())
-  adresses_id         Int
-  email               String                @unique
-  name                String?
-  first_name          String
-  last_name           String
-  cpf                 String
-  phone               String
-  gender              String
-  date_of_birth       DateTime
-  password            String
-  user                String                @unique
-  created_at          DateTime?             @default(now())
-  created_by          Int?
-  avatar_url          String?
-  updated_at          DateTime?
-  updated_by          Int?
-  active              Boolean               @default(true)
+  monthly_fee         monthly_fee[]
   records_of_students records_of_students[]
-  registrations       registrations[]
-  adresses            adresses              @relation(fields: [adresses_id], references: [id])
-
-  @@index([adresses_id])
+  companies           companies?            @relation(fields: [companies_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
+  users               users?                @relation(fields: [users_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
+  tasks_delivery      tasks_delivery[]
+  companiesId         String?
 }
 
-model students_has_classrooms {
-  id               Int           @id @default(autoincrement())
-  registrations_id Int           @unique
-  classrooms_id    Int
-  classrooms       classrooms    @relation(fields: [classrooms_id], references: [id], onDelete: Cascade)
-  registrations    registrations @relation(fields: [registrations_id], references: [id], onDelete: Cascade)
-
-  @@index([classrooms_id])
-  @@index([registrations_id])
+model roles {
+  id    String        @id @db.VarChar(256)
+  name  String        @db.VarChar(256)
+  users users_roles[]
 }
 
 model tasks {
-  scores_id        Int           @id
-  registrations_id Int
-  lessons_id       Int
-  date             DateTime      @default(now())
-  response         String?
-  score_obtained   Float?
-  question         String?
-  total_score      Float?
-  lessons          lessons       @relation(fields: [lessons_id], references: [id], onDelete: Cascade)
-  registrations    registrations @relation(fields: [registrations_id], references: [id], onDelete: Cascade)
+  id             String    @id @db.VarChar(256)
+  created_at     DateTime  @default(now())
+  file           Bytes?
+  score          Float?
+  description    String?   @db.VarChar(1024)
+  title          String    @db.VarChar(256)
+  disciplines_id String    @db.VarChar(256)
+  due_date       DateTime? @db.Time(3)
 
-  @@index([lessons_id])
-  @@index([registrations_id])
+  disciplines    disciplines      @relation(fields: [disciplines_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "disciplines_fk")
+  tasks_delivery tasks_delivery[]
+}
+
+model tasks_delivery {
+  id               String   @id @db.VarChar(256)
+  tasks_id         String   @db.VarChar(256)
+  registrations_id String   @db.VarChar(256)
+  date             DateTime @default(now())
+  file             Bytes?
+  link             String?  @db.VarChar(512)
+
+  registrations registrations @relation(fields: [registrations_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tasks         tasks         @relation(fields: [tasks_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model tokens {
+  id         String   @id @db.VarChar(256)
+  type       String   @db.VarChar(256)
+  expires_at DateTime
+  created_at DateTime @default(now())
+  users_id   String   @db.VarChar(256)
+
+  users   users   @relation(fields: [users_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_fk")
+  usersId String? @db.VarChar(256)
+}
+
+model users {
+  id            String    @id @db.VarChar(256)
+  name          String    @db.VarChar(256)
+  email         String    @unique @db.VarChar(256)
+  password      String    @db.VarChar(1024)
+  cpf           String    @db.VarChar(256)
+  phone         String    @db.VarChar(256)
+  username      String    @unique @db.VarChar(256)
+  gender        String    @db.VarChar(256)
+  date_of_birth DateTime
+  companies_id  String    @db.VarChar(256)
+  address       String    @db.VarChar(256)
+  active        Boolean?  @default(true)
+  avatar_url    String?   @db.VarChar(256)
+  created_at    DateTime? @default(now())
+  updated_at    DateTime?
+
+  presence_list  presence_list[]
+  registrations  registrations[]
+  tokens         tokens[]
+  users_in_class users_in_class[]
+  users_roles    users_roles[]
+  companies      companies        @relation(fields: [companies_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
+}
+
+model users_in_class {
+  id       String  @id @db.VarChar(256)
+  class_id String  @db.VarChar(256)
+  users_id String  @db.VarChar(256)
+  teacher  Boolean
+
+  class Renamedclass @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "class_fk")
+  users users        @relation(fields: [users_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
+}
+
+model users_roles {
+  id       String @id @db.VarChar(256)
+  users_id String @db.VarChar(256)
+  role_id  String @db.VarChar(256)
+
+  roles roles @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "roles_fk")
+  users users @relation(fields: [users_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_fk")
 }
