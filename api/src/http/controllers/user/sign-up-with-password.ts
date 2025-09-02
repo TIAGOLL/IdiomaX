@@ -12,50 +12,53 @@ export async function createAccount(app: FastifyInstance) {
     {
       schema: {
         tags: ['Autenticação'],
-        summary: 'Criar uma nova conta',
+        summary: 'Criar uma nova conta de usuário',
         body: z.object({
-          name: z.string(),
-          email: z.email(),
+          name: z.string().min(3).max(256),
+          email: z.email().min(3).max(256),
+          username: z.string().min(3).max(100),
+          cpf: z.string().min(11).max(11),
+          phone: z.string().min(10).max(11),
+          gender: z.string().min(1).max(1),
+          date_of_birth: z.date(),
+          address: z.string().min(1).max(255),
           password: z.string().min(6),
         }),
       },
     },
     async (request, reply) => {
-      const { name, email, password } = request.body;
+      const { name, email, password, gender, date_of_birth, address, avatar_url, cpf, users_roles, username, phone, companies_id } = request.body;
 
-      const userWithSameEmail = await prisma.user.findUnique({
+      const userWithSameEmail = await prisma.users.findUnique({
         where: {
           email,
         },
       });
 
       if (userWithSameEmail) {
-        throw new BadRequestError('User with same e-mail already exists.');
+        throw new BadRequestError('Já existe um usuário com este e-mail.');
       }
-
-      const [, domain] = email.split('@');
-
-      const autoJoinOrganization = await prisma.organization.findFirst({
-        where: {
-          domain,
-          shouldAttachUsersByDomain: true,
-        },
-      });
 
       const passwordHash = await hash(password, 6);
 
-      await prisma.user.create({
+      await prisma.users.create({
         data: {
           name,
           email,
-          passwordHash,
-          member_on: autoJoinOrganization
-            ? {
-                create: {
-                  organizationId: autoJoinOrganization.id,
-                },
-              }
-            : undefined,
+          password,
+          gender,
+          date_of_birth,
+          address,
+          avatar_url,
+          cpf,
+          users_roles,
+          username,
+          phone,
+          companies: {
+            connect: {
+              id: companies_id,
+            },
+          },
         },
       });
 

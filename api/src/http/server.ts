@@ -26,7 +26,7 @@ const envSchema = z.object({
 const env = envSchema.safeParse(process.env)
 
 if (!env.success) {
-  console.error('❌ Variáveis de ambiente inválidas:', z.treeifyError(env.error))
+  console.error('Variáveis de ambiente inválidas:', z.treeifyError(env.error))
   process.exit(1)
 }
 

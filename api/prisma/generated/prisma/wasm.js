@@ -20,12 +20,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.14.0
- * Query Engine version: 717184b7b35ea05dfa71a3236b7af656013e1e49
+ * Prisma Client JS version: 6.15.0
+ * Query Engine version: 85179d7826409ee107a6ba334b5e305ae3fba9fb
  */
 Prisma.prismaVersion = {
-  client: "6.14.0",
-  engine: "717184b7b35ea05dfa71a3236b7af656013e1e49"
+  client: "6.15.0",
+  engine: "85179d7826409ee107a6ba334b5e305ae3fba9fb"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -120,37 +120,18 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.AdressesScalarFieldEnum = {
+exports.Prisma.RenamedclassScalarFieldEnum = {
   id: 'id',
-  street: 'street',
-  zip_code: 'zip_code',
-  district: 'district',
-  complement: 'complement',
-  city: 'city',
-  state: 'state',
-  number: 'number',
-  active: 'active'
+  nome: 'nome',
+  courses: 'courses',
+  vacancies: 'vacancies'
 };
 
-exports.Prisma.AuthScalarFieldEnum = {
-  token: 'token',
-  type: 'type',
-  expires_at: 'expires_at',
-  refresh_token: 'refresh_token'
-};
-
-exports.Prisma.Boleto_apiScalarFieldEnum = {
+exports.Prisma.Class_daysScalarFieldEnum = {
   id: 'id',
-  developer_application_key: 'developer_application_key',
-  client_id: 'client_id',
-  client_secret: 'client_secret'
-};
-
-exports.Prisma.BooksScalarFieldEnum = {
-  id: 'id',
-  courses_id: 'courses_id',
-  name: 'name',
-  position: 'position'
+  initial_date: 'initial_date',
+  final_date: 'final_date',
+  class: 'class'
 };
 
 exports.Prisma.ClassesScalarFieldEnum = {
@@ -158,164 +139,150 @@ exports.Prisma.ClassesScalarFieldEnum = {
   theme: 'theme',
   start_date: 'start_date',
   end_date: 'end_date',
-  professionals_id: 'professionals_id',
-  classrooms_id: 'classrooms_id',
-  presence_list_id: 'presence_list_id'
+  class: 'class'
 };
 
 exports.Prisma.ClassroomsScalarFieldEnum = {
   id: 'id',
-  date: 'date',
-  hour: 'hour',
-  books_id: 'books_id',
-  created_at: 'created_at'
+  number: 'number',
+  created_at: 'created_at',
+  block: 'block',
+  companies: 'companies'
+};
+
+exports.Prisma.CompaniesScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  created_at: 'created_at',
+  udpated_at: 'udpated_at',
+  users: 'users',
+  address: 'address'
 };
 
 exports.Prisma.ConfigsScalarFieldEnum = {
   id: 'id',
-  registrations_time: 'registrations_time'
+  registrations_time: 'registrations_time',
+  companies: 'companies'
 };
 
 exports.Prisma.CoursesScalarFieldEnum = {
   id: 'id',
+  description: 'description',
+  created_at: 'created_at',
   name: 'name',
-  price: 'price',
-  created_at: 'created_at'
+  registration_value: 'registration_value',
+  companies: 'companies',
+  workload: 'workload',
+  monthly_fee_value: 'monthly_fee_value',
+  minimum_grade: 'minimum_grade',
+  maximum_grade: 'maximum_grade',
+  minimum_frequency: 'minimum_frequency',
+  syllabus: 'syllabus'
 };
 
-exports.Prisma.LessonsScalarFieldEnum = {
+exports.Prisma.DisciplineScalarFieldEnum = {
   id: 'id',
-  books_id: 'books_id',
   name: 'name',
-  url: 'url',
-  position: 'position'
+  levels: 'levels'
+};
+
+exports.Prisma.LevelsScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  level: 'level',
+  courses: 'courses'
+};
+
+exports.Prisma.MaterialsScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  file: 'file',
+  levels: 'levels'
 };
 
 exports.Prisma.Monthly_feeScalarFieldEnum = {
   id: 'id',
-  registrations_id: 'registrations_id',
   due_date: 'due_date',
-  amount_to_be_paid: 'amount_to_be_paid',
-  amount_paid: 'amount_paid',
-  date_of_paid: 'date_of_paid',
+  value: 'value',
+  paid: 'paid',
+  discount_payment_before_due_date: 'discount_payment_before_due_date',
+  registrations: 'registrations',
   payment_method: 'payment_method',
-  paid: 'paid'
-};
-
-exports.Prisma.PermissionsScalarFieldEnum = {
-  id: 'id',
-  create_classes: 'create_classes',
-  update_classes: 'update_classes',
-  delete_classes: 'delete_classes',
-  update_students: 'update_students',
-  delete_students: 'delete_students',
-  create_students: 'create_students',
-  update_professionals: 'update_professionals',
-  create_professionals: 'create_professionals',
-  delete_professionals: 'delete_professionals',
-  create_registrations: 'create_registrations',
-  update_registrations: 'update_registrations',
-  delete_registrations: 'delete_registrations',
-  dashboard: 'dashboard',
-  create_courses: 'create_courses',
-  update_courses: 'update_courses',
-  delete_courses: 'delete_courses',
-  create_classrooms: 'create_classrooms',
-  update_classrooms: 'update_classrooms',
-  delete_classrooms: 'delete_classrooms'
+  date_of_payment: 'date_of_payment'
 };
 
 exports.Prisma.Presence_listScalarFieldEnum = {
   id: 'id',
-  date: 'date',
   is_present: 'is_present',
-  time_arrived: 'time_arrived'
-};
-
-exports.Prisma.ProfessionalsScalarFieldEnum = {
-  id: 'id',
-  role_id: 'role_id',
-  adresses_id: 'adresses_id',
-  cpf: 'cpf',
-  name: 'name',
-  first_name: 'first_name',
-  last_name: 'last_name',
-  phone: 'phone',
-  email: 'email',
-  gender: 'gender',
-  date_of_birth: 'date_of_birth',
-  active: 'active',
-  admin: 'admin',
-  avatar_url: 'avatar_url',
-  password: 'password',
-  user: 'user',
-  hour_value: 'hour_value',
-  created_at: 'created_at',
-  updated_at: 'updated_at'
+  users: 'users',
+  classes: 'classes'
 };
 
 exports.Prisma.Records_of_studentsScalarFieldEnum = {
   id: 'id',
-  students_id: 'students_id',
+  registrations: 'registrations',
   description: 'description',
   title: 'title',
-  date: 'date'
+  created_at: 'created_at'
 };
 
 exports.Prisma.RegistrationsScalarFieldEnum = {
   id: 'id',
-  students_id: 'students_id',
-  courses_id: 'courses_id',
   start_date: 'start_date',
-  end_date: 'end_date',
   monthly_fee_amount: 'monthly_fee_amount',
-  created_by: 'created_by',
   created_at: 'created_at',
   locked: 'locked',
-  completed: 'completed'
+  completed: 'completed',
+  users: 'users',
+  companies: 'companies'
 };
 
-exports.Prisma.RoleScalarFieldEnum = {
+exports.Prisma.RolesScalarFieldEnum = {
   id: 'id',
   name: 'name'
 };
 
-exports.Prisma.StudentsScalarFieldEnum = {
+exports.Prisma.TasksScalarFieldEnum = {
   id: 'id',
-  adresses_id: 'adresses_id',
-  email: 'email',
+  created_at: 'created_at',
+  file: 'file',
+  score: 'score',
+  description: 'description',
+  title: 'title',
+  disciplines: 'disciplines',
+  due_date: 'due_date'
+};
+
+exports.Prisma.TokensScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  expires_at: 'expires_at',
+  createdAt_: 'createdAt_',
+  users: 'users'
+};
+
+exports.Prisma.UsersScalarFieldEnum = {
+  id: 'id',
   name: 'name',
-  first_name: 'first_name',
-  last_name: 'last_name',
+  email: 'email',
+  password: 'password',
+  avatar_url: 'avatar_url',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
   cpf: 'cpf',
   phone: 'phone',
+  username: 'username',
   gender: 'gender',
   date_of_birth: 'date_of_birth',
-  password: 'password',
-  user: 'user',
-  created_at: 'created_at',
-  created_by: 'created_by',
-  avatar_url: 'avatar_url',
-  updated_at: 'updated_at',
-  updated_by: 'updated_by',
-  active: 'active'
+  active: 'active',
+  address: 'address',
+  companies: 'companies'
 };
 
-exports.Prisma.Students_has_classroomsScalarFieldEnum = {
+exports.Prisma.Users_rolesScalarFieldEnum = {
   id: 'id',
-  registrations_id: 'registrations_id',
-  classrooms_id: 'classrooms_id'
-};
-
-exports.Prisma.TasksScalarFieldEnum = {
-  scores_id: 'scores_id',
-  registrations_id: 'registrations_id',
-  lessons_id: 'lessons_id',
-  date: 'date',
-  response: 'response',
-  score_obtained: 'score_obtained',
-  question: 'question',
-  total_score: 'total_score'
+  users_id: 'users_id',
+  role_id: 'role_id'
 };
 
 exports.Prisma.SortOrder = {
@@ -335,25 +302,25 @@ exports.Prisma.NullsOrder = {
 
 
 exports.Prisma.ModelName = {
-  adresses: 'adresses',
-  auth: 'auth',
-  boleto_api: 'boleto_api',
-  books: 'books',
+  Renamedclass: 'Renamedclass',
+  class_days: 'class_days',
   classes: 'classes',
   classrooms: 'classrooms',
+  companies: 'companies',
   configs: 'configs',
   courses: 'courses',
-  lessons: 'lessons',
+  discipline: 'discipline',
+  levels: 'levels',
+  materials: 'materials',
   monthly_fee: 'monthly_fee',
-  permissions: 'permissions',
   presence_list: 'presence_list',
-  professionals: 'professionals',
   records_of_students: 'records_of_students',
   registrations: 'registrations',
-  role: 'role',
-  students: 'students',
-  students_has_classrooms: 'students_has_classrooms',
-  tasks: 'tasks'
+  roles: 'roles',
+  tasks: 'tasks',
+  tokens: 'tokens',
+  users: 'users',
+  users_roles: 'users_roles'
 };
 
 /**
