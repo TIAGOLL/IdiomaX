@@ -4,41 +4,49 @@ import { z } from 'zod';
 
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/middlewares/auth';
+import { BadRequestError } from '../_errors/bad-request-error';
 
 export async function getUserProfile(app: FastifyInstance) {
     app
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .get(
-            '/users',
+            '/auth/get-profile',
             {
                 schema: {
-                    tags: ['Users'],
+                    tags: ['Autenticação'],
                     summary: 'Resgatar perfil do usuário',
                     security: [{ bearerAuth: [] }],
-                    params: z.object({
-                        id: z.string(),
-                    }),
                     response: {
                         200: z.object({
-                            id: z.string(),
                             email: z.email(),
                             name: z.string().min(2).max(100),
-                            createdAt: z.date(),
-                            updatedAt: z.date(),
+                            created_at: z.date(),
+                            message: z.string().min(2).max(100),
                         }),
                     },
-                    body: z.object({
-                        id: z.string()
-                    })
                 },
             },
-            async (request) => {
-                const { id } = request.params;
+            async (request, reply) => {
                 const userId = await request.getCurrentUserId();
 
-                return {
-                };
+                const userProfile = await prisma.users.findUnique({
+                    where: { id: userId },
+                    select: {
+                        email: true,
+                        name: true,
+                        created_at: true,
+                    },
+                });
+
+                if (!userProfile) {
+                    throw new BadRequestError("Usuário não encontrado.");
+                }
+
+                reply.send({
+                    ...userProfile,
+                    message: "Perfil do usuário recuperado com sucesso."
+                });
             },
         );
 }

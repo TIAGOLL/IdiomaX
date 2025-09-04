@@ -1,3 +1,4 @@
+import { UnauthorizedError } from '@/http/controllers/_errors/unauthorized-error'
 import type { FastifyInstance } from 'fastify'
 import { fastifyPlugin } from 'fastify-plugin'
 
@@ -8,7 +9,7 @@ export const auth = fastifyPlugin(async (app: FastifyInstance) => {
         const { sub } = await request.jwtVerify<{ sub: string }>()
         return sub
       } catch {
-        throw new Error("Não autorizado!")
+        throw new UnauthorizedError()
       }
     }
   })

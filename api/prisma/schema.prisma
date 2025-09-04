@@ -9,10 +9,11 @@ datasource db {
 }
 
 model Renamedclass {
-  id             String           @id @db.VarChar(256)
-  nome           String           @db.VarChar(256)
-  vacancies      Decimal          @db.Decimal(10, 0)
-  courses_id     String           @db.VarChar(256)
+  id         String  @id @default(uuid()) @db.VarChar(256)
+  nome       String  @db.VarChar(256)
+  vacancies  Decimal @db.Decimal(10, 0)
+  courses_id String  @db.VarChar(256)
+
   class_days     class_days[]
   classes        classes[]
   users_in_class users_in_class[]
@@ -23,7 +24,7 @@ model Renamedclass {
 }
 
 model class_days {
-  id           String   @id @db.VarChar(256)
+  id           String   @id @default(uuid()) @db.VarChar(256)
   initial_date DateTime
   final_date   DateTime
   class_id     String   @db.VarChar(256)
@@ -32,7 +33,7 @@ model class_days {
 }
 
 model classes {
-  id         String   @id @db.VarChar(256)
+  id         String   @id @default(uuid()) @db.VarChar(256)
   theme      String   @db.VarChar(256)
   start_date DateTime
   end_date   DateTime
@@ -43,7 +44,7 @@ model classes {
 }
 
 model classrooms {
-  id           String   @id @db.VarChar(256)
+  id           String   @id @default(uuid()) @db.VarChar(256)
   number       Decimal  @db.Decimal(5, 0)
   created_at   DateTime @default(now())
   block        String?  @db.VarChar(256)
@@ -54,22 +55,23 @@ model classrooms {
 }
 
 model companies {
-  id         String    @id @db.VarChar(256)
+  id         String    @id @default(uuid()) @db.VarChar(256)
   name       String    @db.VarChar(256)
   created_at DateTime? @default(now())
   updated_at DateTime? @updatedAt
   users_id   String    @db.VarChar(256)
   address    String    @db.VarChar(256)
 
-  classrooms    classrooms[]
-  configs       configs[]
-  registrations registrations[]
-  courses       courses[]
-  users         users           @relation(fields: [users_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
+  classrooms         classrooms[]
+  users_in_companies users_in_companies[]
+  configs            configs[]
+  registrations      registrations[]
+  courses            courses[]
+  users              users                @relation(fields: [users_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
 }
 
 model configs {
-  id                 String  @id @db.VarChar(256)
+  id                 String  @id @default(uuid()) @db.VarChar(256)
   registrations_time Decimal @default(6) @db.Decimal(256, 0)
   companies_id       String  @db.VarChar(256)
 
@@ -78,7 +80,7 @@ model configs {
 }
 
 model courses {
-  id                 String   @id @db.VarChar(256)
+  id                 String   @id @default(uuid()) @db.VarChar(256)
   description        String?  @db.VarChar(256)
   created_at         DateTime @default(now())
   name               String   @db.VarChar(256)
@@ -98,7 +100,7 @@ model courses {
 }
 
 model disciplines {
-  id        String @id @db.VarChar(256)
+  id        String @id @default(uuid()) @db.VarChar(256)
   name      String @db.VarChar(256)
   levels_id String @db.VarChar(256)
 
@@ -108,7 +110,7 @@ model disciplines {
 }
 
 model levels {
-  id         String  @id @db.VarChar(256)
+  id         String  @id @default(uuid()) @db.VarChar(256)
   name       String  @db.VarChar(256)
   level      Decimal @db.Decimal(5, 0)
   courses_id String? @db.VarChar(256)
@@ -120,7 +122,7 @@ model levels {
 }
 
 model materials {
-  id        String  @id @db.VarChar(256)
+  id        String  @id @default(uuid()) @db.VarChar(256)
   name      String  @db.VarChar(256)
   file      Bytes
   levels_id String? @db.VarChar(256)
@@ -130,7 +132,7 @@ model materials {
 }
 
 model monthly_fee {
-  id                               String    @id @db.VarChar(256)
+  id                               String    @id @default(uuid()) @db.VarChar(256)
   due_date                         DateTime
   value                            Decimal   @db.Decimal(20, 2)
   paid                             Boolean   @default(false)
@@ -144,7 +146,7 @@ model monthly_fee {
 }
 
 model presence_list {
-  id         String  @id @db.VarChar(256)
+  id         String  @id @default(uuid()) @db.VarChar(256)
   is_present Boolean @default(false)
   users_id   String  @db.VarChar(256)
   classes_id String  @db.VarChar(256)
@@ -154,7 +156,7 @@ model presence_list {
 }
 
 model records_of_students {
-  id               Int       @id @default(autoincrement())
+  id               String    @id @default(uuid()) @db.VarChar(256)
   registrations_id String    @db.VarChar(256)
   description      String?   @db.VarChar(512)
   title            String?   @db.VarChar(256)
@@ -165,7 +167,7 @@ model records_of_students {
 }
 
 model registrations {
-  id                 String    @id @db.VarChar(256)
+  id                 String    @id @default(uuid()) @db.VarChar(256)
   start_date         DateTime  @default(now())
   monthly_fee_amount Decimal   @default(0) @db.Decimal(20, 2)
   created_at         DateTime? @default(now())
@@ -184,13 +186,13 @@ model registrations {
 }
 
 model roles {
-  id    String        @id @db.VarChar(256)
-  name  String        @db.VarChar(256)
-  users users_roles[]
+  id                 String               @id @default(uuid()) @db.VarChar(256)
+  name               String               @db.VarChar(256)
+  users_in_companies users_in_companies[]
 }
 
 model tasks {
-  id             String    @id @db.VarChar(256)
+  id             String    @id @default(uuid()) @db.VarChar(256)
   created_at     DateTime  @default(now())
   file           Bytes?
   score          Float?
@@ -204,7 +206,7 @@ model tasks {
 }
 
 model tasks_delivery {
-  id               String   @id @db.VarChar(256)
+  id               String   @id @default(uuid()) @db.VarChar(256)
   tasks_id         String   @db.VarChar(256)
   registrations_id String   @db.VarChar(256)
   date             DateTime @default(now())
@@ -216,7 +218,7 @@ model tasks_delivery {
 }
 
 model tokens {
-  id         String   @id @db.VarChar(256)
+  id         String   @id @default(uuid()) @db.VarChar(256)
   type       String   @db.VarChar(256)
   expires_at DateTime
   created_at DateTime @default(now())
@@ -227,7 +229,7 @@ model tokens {
 }
 
 model users {
-  id            String    @id @db.VarChar(256)
+  id            String    @id @default(uuid()) @db.VarChar(256)
   name          String    @db.VarChar(256)
   email         String    @unique @db.VarChar(256)
   password      String    @db.VarChar(1024)
@@ -242,16 +244,16 @@ model users {
   created_at    DateTime? @default(now())
   updated_at    DateTime? @updatedAt
 
-  presence_list  presence_list[]
-  registrations  registrations[]
-  tokens         tokens[]
-  users_in_class users_in_class[]
-  users_roles    users_roles[]
-  companies      companies[]
+  presence_list      presence_list[]
+  registrations      registrations[]
+  tokens             tokens[]
+  users_in_class     users_in_class[]
+  users_in_companies users_in_companies[]
+  companies          companies[]
 }
 
 model users_in_class {
-  id       String  @id @db.VarChar(256)
+  id       String  @id @default(uuid()) @db.VarChar(256)
   class_id String  @db.VarChar(256)
   users_id String  @db.VarChar(256)
   teacher  Boolean
@@ -260,11 +262,13 @@ model users_in_class {
   users users        @relation(fields: [users_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
 }
 
-model users_roles {
-  id       String @id @db.VarChar(256)
-  users_id String @db.VarChar(256)
-  role_id  String @db.VarChar(256)
+model users_in_companies {
+  id           String @id @default(uuid()) @db.VarChar(256)
+  users_id     String @db.VarChar(256)
+  role_id      String @db.VarChar(256)
+  companies_id String @db.VarChar(256)
 
-  roles roles @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "roles_fk")
-  users users @relation(fields: [users_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_fk")
+  companies companies @relation(fields: [companies_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
+  roles     roles     @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "roles_fk")
+  users     users     @relation(fields: [users_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_fk")
 }

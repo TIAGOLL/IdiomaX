@@ -8,7 +8,7 @@ import { UnauthorizedError } from '../_errors/unauthorized-error';
 
 export async function resetPassword(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
-    'auth/password-reset',
+    '/auth/reset-password',
     {
       schema: {
         tags: ['Autenticação'],
@@ -26,27 +26,27 @@ export async function resetPassword(app: FastifyInstance) {
       try {
         const { code, password } = request.body;
 
-        const tokenFromCode = await prisma.token.findUnique({
+        const tokenFromCode = await prisma.tokens.findUnique({
           where: { id: code },
         });
 
-
-        if (!tokenFromCode) {
+        if (!tokenFromCode || tokenFromCode.type !== 'PASSWORD_RECOVER' || tokenFromCode.expires_at < new Date()) {
           throw new UnauthorizedError();
         }
 
         const passwordHash = await hash(password, 6);
 
         await prisma.$transaction([
-          prisma.user.update({
+          prisma.users.update({
             where: {
-              id: tokenFromCode.userId,
+              id: tokenFromCode.users_id,
             },
             data: {
-              passwordHash,
+              password: passwordHash,
             },
           }),
-          prisma.token.delete({
+
+          prisma.tokens.delete({
             where: {
               id: code,
             },

@@ -25,13 +25,13 @@ export async function SignUpWithPassword(app: FastifyInstance) {
           address: z.string().min(1).max(255),
           password: z.string().min(6),
           avatar_url: z.url().max(256).optional(),
-          users_roles: z.array(z.string().min(1).max(256)),
           companies_id: z.string().min(1).max(256),
+          roles_id: z.string().min(1).max(256),
         }),
       },
     },
     async (request, reply) => {
-      const { name, email, password, gender, date_of_birth, address, avatar_url, cpf, users_roles, username, phone, companies_id } = request.body;
+      const { roles_id, name, email, password, gender, date_of_birth, address, avatar_url, cpf, username, phone, companies_id } = request.body;
 
       const userWithSameEmail = await prisma.users.findUnique({
         where: {
@@ -58,7 +58,6 @@ export async function SignUpWithPassword(app: FastifyInstance) {
 
       await prisma.users.create({
         data: {
-          id: generateUUID(),
           name,
           email,
           password: passwordHash,
@@ -74,13 +73,22 @@ export async function SignUpWithPassword(app: FastifyInstance) {
               id: companies_id,
             },
           },
-          users_roles: {
-            connect: users_roles.map((id) => ({ id }))
+          users_in_companies: {
+            create: {
+              companies: {
+                connect: { id: companies_id },
+              },
+              roles: {
+                connect: { id: roles_id },
+              },
+            },
           },
         },
-      });
+      })
 
-      return reply.status(201).send();
+      return reply.status(201).send({
+        message: 'Usuário criado com sucesso.',
+      });
     },
   );
 }

@@ -32,7 +32,7 @@ export async function SignInWithPassword(app: FastifyInstance) {
             },
             async (request, reply) => {
                 const { username, password, userType } = request.body;
-                console.log({ username, password, userType });
+
                 try {
                     if (userType === 'professional' || userType === 'student') {
                         const user = await prisma.users.findUnique({
@@ -40,7 +40,7 @@ export async function SignInWithPassword(app: FastifyInstance) {
                         });
 
                         if (!user || !(await bcrypt.compare(password, user.password))) {
-                            throw new BadRequestError('Username ou senha inválidos');
+                            throw new BadRequestError('Credenciais inválidas');
                         }
 
                         const token = app.jwt.sign({ sub: user.id });
