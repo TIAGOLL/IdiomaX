@@ -34,24 +34,20 @@ export async function SignInWithPassword(app: FastifyInstance) {
                 const { username, password, userType } = request.body;
 
                 try {
-                    if (userType === 'professional' || userType === 'student') {
-                        const user = await prisma.users.findUnique({
-                            where: { username },
-                        });
+                    const user = await prisma.users.findUnique({
+                        where: { username },
+                    });
 
-                        if (!user || !(await bcrypt.compare(password, user.password))) {
-                            throw new BadRequestError('Credenciais inválidas');
-                        }
-
-                        const token = app.jwt.sign({ sub: user.id });
-
-                        reply.status(200).send({
-                            token,
-                            message: 'Bem vindo!',
-                        });
-                    } else {
-                        throw new BadRequestError('Tipo de usuário inválido');
+                    if (!user || !(await bcrypt.compare(password, user.password))) {
+                        throw new BadRequestError('Credenciais inválidas');
                     }
+
+                    const token = app.jwt.sign({ sub: user.id });
+
+                    reply.status(200).send({
+                        token,
+                        message: 'Bem vindo!',
+                    });
                 } catch (e) {
                     throw new BadRequestError(e);
                 }

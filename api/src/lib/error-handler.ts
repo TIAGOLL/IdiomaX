@@ -19,7 +19,7 @@ export const errorHandler: FastifyErrorHandler = (error, _, reply) => {
   } else if (error instanceof UnauthorizedError) {
     return reply
       .status(401)
-      .send()
+      .send({ message: error.message })
   } else if (error instanceof ServiceUnavailableException) {
     return reply
       .status(503)

@@ -55,12 +55,20 @@ model classrooms {
 }
 
 model companies {
-  id         String    @id @default(uuid()) @db.VarChar(256)
-  name       String    @db.VarChar(256)
-  created_at DateTime? @default(now())
-  updated_at DateTime? @updatedAt
-  users_id   String    @db.VarChar(256)
-  address    String    @db.VarChar(256)
+  id                  String    @id @default(uuid()) @db.VarChar(256)
+  name                String    @db.VarChar(256)
+  cnpj                String    @db.VarChar(256) @unique
+  phone               String    @db.VarChar(256)
+  email               String    @db.VarChar(256)
+  logo_16x16          Bytes?
+  logo_512x512        Bytes?
+  social_reason       String?   @db.VarChar(256)
+  state_registration String?   @db.VarChar(256)
+  tax_regime          String?   @db.VarChar(256)
+  created_at          DateTime? @default(now())
+  updated_at          DateTime? @updatedAt
+  users_id            String    @db.VarChar(256)
+  address             String    @db.VarChar(256)
 
   classrooms         classrooms[]
   users_in_companies users_in_companies[]
@@ -240,7 +248,7 @@ model users {
   date_of_birth DateTime
   address       String    @db.VarChar(256)
   active        Boolean?  @default(true)
-  avatar_url    String?   @db.VarChar(256)
+  avatar        Bytes?
   created_at    DateTime? @default(now())
   updated_at    DateTime? @updatedAt
 

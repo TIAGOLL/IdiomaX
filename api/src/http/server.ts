@@ -20,6 +20,7 @@ import { requestPasswordRecover } from './controllers/users/request-password-rec
 import { getUserProfile } from './controllers/users/get-user-profile'
 import { resetPassword } from './controllers/users/reset-password'
 import { errorHandler } from '../lib/error-handler'
+import { createCompany } from './controllers/companies/create-company'
 
 dotenv.config()
 
@@ -88,6 +89,7 @@ app.register(SignUpWithPassword);
 app.register(requestPasswordRecover);
 app.register(getUserProfile);
 app.register(resetPassword);
+app.register(createCompany);
 
 app.listen({ port: Number(env.data.PORT) }).then(() => {
   console.log(`HTTP server running in http://localhost:${env.data.PORT}`)
