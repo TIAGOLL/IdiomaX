@@ -67,7 +67,7 @@ export async function SignInWithPassword(app: FastifyInstance) {
                         throw new BadRequestError('Tipo de usuário inválido');
                     }
                 } catch (e) {
-                    throw new BadRequestError(e.message);
+                    throw new BadRequestError(e);
                 }
             },
         );
