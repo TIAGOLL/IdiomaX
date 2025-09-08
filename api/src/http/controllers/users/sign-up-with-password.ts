@@ -24,14 +24,12 @@ export async function SignUpWithPassword(app: FastifyInstance) {
           date_of_birth: z.string(),
           address: z.string().min(1).max(255),
           password: z.string().min(6),
-          avatar_url: z.url().max(256).optional(),
-          companies_id: z.string().min(1).max(256),
-          roles_id: z.string().min(1).max(256),
+          avatar: z.instanceof(Buffer).optional(),
         }),
       },
     },
     async (request, reply) => {
-      const { roles_id, name, email, password, gender, date_of_birth, address, avatar_url, cpf, username, phone, companies_id } = request.body;
+      const { name, email, password, gender, date_of_birth, address, avatar, cpf, username, phone, } = request.body;
 
       const userWithSameEmail = await prisma.users.findUnique({
         where: {
@@ -64,25 +62,10 @@ export async function SignUpWithPassword(app: FastifyInstance) {
           gender,
           date_of_birth: date_of_birth_date,
           address,
-          avatar_url,
+          avatar,
           cpf,
           username,
           phone,
-          companies: {
-            connect: {
-              id: companies_id,
-            },
-          },
-          users_in_companies: {
-            create: {
-              companies: {
-                connect: { id: companies_id },
-              },
-              roles: {
-                connect: { id: roles_id },
-              },
-            },
-          },
         },
       })
 

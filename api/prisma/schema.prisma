@@ -54,30 +54,6 @@ model classrooms {
   companiesId String?
 }
 
-model companies {
-  id                  String    @id @default(uuid()) @db.VarChar(256)
-  name                String    @db.VarChar(256)
-  cnpj                String    @db.VarChar(256) @unique
-  phone               String    @db.VarChar(256)
-  email               String    @db.VarChar(256)
-  logo_16x16          Bytes?
-  logo_512x512        Bytes?
-  social_reason       String?   @db.VarChar(256)
-  state_registration String?   @db.VarChar(256)
-  tax_regime          String?   @db.VarChar(256)
-  created_at          DateTime? @default(now())
-  updated_at          DateTime? @updatedAt
-  users_id            String    @db.VarChar(256)
-  address             String    @db.VarChar(256)
-
-  classrooms         classrooms[]
-  users_in_companies users_in_companies[]
-  configs            configs[]
-  registrations      registrations[]
-  courses            courses[]
-  users              users                @relation(fields: [users_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
-}
-
 model configs {
   id                 String  @id @default(uuid()) @db.VarChar(256)
   registrations_time Decimal @default(6) @db.Decimal(256, 0)
@@ -193,12 +169,6 @@ model registrations {
   companiesId         String?
 }
 
-model roles {
-  id                 String               @id @default(uuid()) @db.VarChar(256)
-  name               String               @db.VarChar(256)
-  users_in_companies users_in_companies[]
-}
-
 model tasks {
   id             String    @id @default(uuid()) @db.VarChar(256)
   created_at     DateTime  @default(now())
@@ -236,6 +206,34 @@ model tokens {
   usersId String? @db.VarChar(256)
 }
 
+model companies {
+  id                 String    @id @default(uuid()) @db.VarChar(256)
+  name               String    @db.VarChar(256)
+  cnpj               String    @unique @db.VarChar(256)
+  phone              String    @db.VarChar(256)
+  email              String    @db.VarChar(256)
+  logo_16x16         Bytes?
+  logo_512x512       Bytes?
+  social_reason      String?   @db.VarChar(256)
+  state_registration String?   @db.VarChar(256)
+  tax_regime         String?   @db.VarChar(256)
+  created_at         DateTime? @default(now())
+  updated_at         DateTime? @updatedAt
+  address            String    @db.VarChar(256)
+
+  // Dono da empresa
+  owner    users  @relation("OwnerCompanies", fields: [owner_id], references: [id])
+  owner_id String @db.VarChar(256)
+
+  // Demais usuários que trabalham nessa empresa
+  users users[] @relation("UserCompany")
+
+  classrooms    classrooms[]
+  configs       configs[]
+  registrations registrations[]
+  courses       courses[]
+}
+
 model users {
   id            String    @id @default(uuid()) @db.VarChar(256)
   name          String    @db.VarChar(256)
@@ -252,12 +250,21 @@ model users {
   created_at    DateTime? @default(now())
   updated_at    DateTime? @updatedAt
 
-  presence_list      presence_list[]
-  registrations      registrations[]
-  tokens             tokens[]
-  users_in_class     users_in_class[]
-  users_in_companies users_in_companies[]
-  companies          companies[]
+  // Relação de dono de empresa (um usuário pode ser dono de várias empresas)
+  companies_owned companies[] @relation("OwnerCompanies")
+
+  // Empresa onde o usuário trabalha (um user pertence a uma company)
+  company    companies? @relation("UserCompany", fields: [company_id], references: [id])
+  company_id String?    @db.VarChar(256)
+
+  // Role única
+  role    roles?  @relation(fields: [role_id], references: [id])
+  role_id String? @db.VarChar(256)
+
+  presence_list  presence_list[]
+  registrations  registrations[]
+  tokens         tokens[]
+  users_in_class users_in_class[]
 }
 
 model users_in_class {
@@ -270,13 +277,9 @@ model users_in_class {
   users users        @relation(fields: [users_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
 }
 
-model users_in_companies {
-  id           String @id @default(uuid()) @db.VarChar(256)
-  users_id     String @db.VarChar(256)
-  role_id      String @db.VarChar(256)
-  companies_id String @db.VarChar(256)
+model roles {
+  id   String @id @default(uuid()) @db.VarChar(256)
+  name String @db.VarChar(256)
 
-  companies companies @relation(fields: [companies_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
-  roles     roles     @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "roles_fk")
-  users     users     @relation(fields: [users_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_fk")
+  users users[]
 }

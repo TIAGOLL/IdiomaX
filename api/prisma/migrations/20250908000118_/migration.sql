@@ -51,12 +51,12 @@ CREATE TABLE "public"."companies" (
     "logo_16x16" BYTEA,
     "logo_512x512" BYTEA,
     "social_reason" VARCHAR(256),
-    "estate_registration" VARCHAR(256),
+    "state_registration" VARCHAR(256),
     "tax_regime" VARCHAR(256),
     "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3),
-    "users_id" VARCHAR(256) NOT NULL,
     "address" VARCHAR(256) NOT NULL,
+    "owner_id" VARCHAR(256) NOT NULL,
 
     CONSTRAINT "companies_pkey" PRIMARY KEY ("id")
 );
@@ -176,14 +176,6 @@ CREATE TABLE "public"."registrations" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."roles" (
-    "id" VARCHAR(256) NOT NULL,
-    "name" VARCHAR(256) NOT NULL,
-
-    CONSTRAINT "roles_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "public"."tasks" (
     "id" VARCHAR(256) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -237,6 +229,8 @@ CREATE TABLE "public"."users" (
     "avatar" BYTEA,
     "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3),
+    "company_id" VARCHAR(256) NOT NULL,
+    "role_id" VARCHAR(256) NOT NULL,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -252,20 +246,24 @@ CREATE TABLE "public"."users_in_class" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."users_in_companies" (
+CREATE TABLE "public"."roles" (
     "id" VARCHAR(256) NOT NULL,
-    "users_id" VARCHAR(256) NOT NULL,
-    "role_id" VARCHAR(256) NOT NULL,
-    "companies_id" VARCHAR(256) NOT NULL,
+    "name" VARCHAR(256) NOT NULL,
 
-    CONSTRAINT "users_in_companies_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "roles_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "companies_cnpj_key" ON "public"."companies"("cnpj");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "public"."users"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_username_key" ON "public"."users"("username");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "roles_name_key" ON "public"."roles"("name");
 
 -- AddForeignKey
 ALTER TABLE "public"."class" ADD CONSTRAINT "courses_fk" FOREIGN KEY ("courses_id") REFERENCES "public"."courses"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
@@ -280,7 +278,7 @@ ALTER TABLE "public"."classes" ADD CONSTRAINT "class_fk" FOREIGN KEY ("class_id"
 ALTER TABLE "public"."classrooms" ADD CONSTRAINT "companies_fk" FOREIGN KEY ("companies_id") REFERENCES "public"."companies"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "public"."companies" ADD CONSTRAINT "users_fk" FOREIGN KEY ("users_id") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+ALTER TABLE "public"."companies" ADD CONSTRAINT "companies_owner_id_fkey" FOREIGN KEY ("owner_id") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."configs" ADD CONSTRAINT "companies_fk" FOREIGN KEY ("companies_id") REFERENCES "public"."companies"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -328,16 +326,13 @@ ALTER TABLE "public"."tasks_delivery" ADD CONSTRAINT "tasks_delivery_tasks_id_fk
 ALTER TABLE "public"."tokens" ADD CONSTRAINT "users_fk" FOREIGN KEY ("users_id") REFERENCES "public"."users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
+ALTER TABLE "public"."users" ADD CONSTRAINT "users_company_id_fkey" FOREIGN KEY ("company_id") REFERENCES "public"."companies"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."users" ADD CONSTRAINT "users_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "public"."users_in_class" ADD CONSTRAINT "class_fk" FOREIGN KEY ("class_id") REFERENCES "public"."class"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "public"."users_in_class" ADD CONSTRAINT "users_fk" FOREIGN KEY ("users_id") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
-
--- AddForeignKey
-ALTER TABLE "public"."users_in_companies" ADD CONSTRAINT "companies_fk" FOREIGN KEY ("companies_id") REFERENCES "public"."companies"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- AddForeignKey
-ALTER TABLE "public"."users_in_companies" ADD CONSTRAINT "roles_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- AddForeignKey
-ALTER TABLE "public"."users_in_companies" ADD CONSTRAINT "users_fk" FOREIGN KEY ("users_id") REFERENCES "public"."users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;

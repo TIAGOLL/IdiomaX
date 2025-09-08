@@ -70,7 +70,7 @@ async function main() {
                     state_registration: '123456789012',
                     tax_regime: 'Simples Nacional',
                     cnpj: '12345678000190',
-                    users_id: '1fbf27f8-8306-480c-bfed-83d1a31f987a',
+                    owner_id: '1fbf27f8-8306-480c-bfed-83d1a31f987a',
                     address: 'Rua A, 123 - São Paulo',
                 },
                 {
@@ -78,7 +78,7 @@ async function main() {
                     name: 'Global Languages',
                     phone: '21999990003',
                     email: 'contato@globallanguages.com',
-                    users_id: '2fbf27f8-8306-480c-bfed-83d1a31f987a',
+                    owner_id: '2fbf27f8-8306-480c-bfed-83d1a31f987a',
                     address: 'Av. Central, 456 - Rio de Janeiro',
                     social_reason: 'Ensino de Idiomas',
                     state_registration: '987654321098',
@@ -87,25 +87,6 @@ async function main() {
                 },
             ],
         })
-
-        console.log("Atribuindo papéis aos usuários...")
-        await prisma.users_in_companies.createMany({
-            data: [
-                {
-                    id: '1fbf27f8-8306-480c-bfed-83d1a31f987a',
-                    users_id: '1fbf27f8-8306-480c-bfed-83d1a31f987a',
-                    role_id: 'a23171b0-7d77-48bc-b8bf-b5e0010d671d',
-                    companies_id: '50429773-f9eb-4c8a-a086-8871c7bf1f44',
-                },
-                {
-                    id: '2fbf27f8-8306-480c-bfed-83d1a31f987a',
-                    users_id: '2fbf27f8-8306-480c-bfed-83d1a31f987a',
-                    role_id: 'a23171b0-7d77-48bc-b8bf-b5e0010d671d',
-                    companies_id: '498e5243-ab1a-494f-b089-95cd8081447c',
-                },
-            ],
-        })
-
 
         console.log("Criando professores e alunos...")
         await prisma.users.createMany({
@@ -181,54 +162,6 @@ async function main() {
                     gender: 'M',
                     date_of_birth: new Date('1989-09-17'),
                     address: 'Av. Brasil, 987 - Belo Horizonte',
-                },
-            ],
-        })
-
-        console.log("Atribuindo os papéis aos alunos e professores...")
-        await prisma.users_in_companies.createMany({
-            data: [
-                {
-                    // professor
-                    id: uuidv4(),
-                    users_id: "e1c1a7e2-8f7a-4c2a-9a1a-1a2b3c4d5e6f",
-                    role_id: "b23171b0-7d77-48bc-b8bf-b5e0010d671d",
-                    companies_id: "50429773-f9eb-4c8a-a086-8871c7bf1f44",
-                },
-                {
-                    // professor
-                    id: uuidv4(),
-                    users_id: "f2d2b8e3-9a8b-4d3b-8b2a-2b3c4d5e6f7a",
-                    role_id: "b23171b0-7d77-48bc-b8bf-b5e0010d671d",
-                    companies_id: "498e5243-ab1a-494f-b089-95cd8081447c",
-                },
-                {
-                    // aluno
-                    id: uuidv4(),
-                    users_id: "a3e3c9f4-0b9c-5e4c-9c3b-3c4d5e6f7a8b",
-                    role_id: "c23171b0-7d77-48bc-b8bf-b5e0010d671d",
-                    companies_id: "498e5243-ab1a-494f-b089-95cd8081447c",
-                },
-                {
-                    // aluno
-                    id: uuidv4(),
-                    users_id: "b4f4d0a5-1c0d-6f5d-0d4c-4d5e6f7a8b9c",
-                    role_id: "c23171b0-7d77-48bc-b8bf-b5e0010d671d",
-                    companies_id: "498e5243-ab1a-494f-b089-95cd8081447c",
-                },
-                {
-                    // aluno
-                    id: uuidv4(),
-                    users_id: "c5a5e1b6-2d1e-7a6e-1e5d-5e6f7a8b9c0d",
-                    role_id: "c23171b0-7d77-48bc-b8bf-b5e0010d671d",
-                    companies_id: "50429773-f9eb-4c8a-a086-8871c7bf1f44",
-                },
-                {
-                    // aluno
-                    id: uuidv4(),
-                    users_id: "d6b6f2c7-3e2f-8b7f-2f6e-6f7a8b9c0d1e",
-                    role_id: "c23171b0-7d77-48bc-b8bf-b5e0010d671d",
-                    companies_id: "50429773-f9eb-4c8a-a086-8871c7bf1f44",
                 },
             ],
         })

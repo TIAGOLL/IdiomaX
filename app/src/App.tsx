@@ -5,19 +5,22 @@ import { BrowserRouter } from 'react-router';
 
 import { RoutesApp } from './routes/index.tsx';
 import { ThemeProvider } from './components/ui/theme-provider';
+import { AuthProvider } from './contexts/auth-context.tsx';
 
 export function App() {
   const queryClient = new QueryClient();
 
   return (
     <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
-          <RoutesApp />
-          <SpeedInsights />
-          <Analytics />
-        </ThemeProvider>
-      </QueryClientProvider>
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
+            <RoutesApp />
+            <SpeedInsights />
+            <Analytics />
+          </ThemeProvider>
+        </QueryClientProvider>
+      </AuthProvider>
     </BrowserRouter>
   );
 }
