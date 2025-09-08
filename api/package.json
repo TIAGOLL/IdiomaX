@@ -23,7 +23,7 @@
     "@fastify/jwt": "^10.0.0",
     "@fastify/swagger": "^9.5.1",
     "@fastify/swagger-ui": "^5.2.3",
-    "@prisma/client": "^6.14.0",
+    "@prisma/client": "^6.15.0",
     "@types/bcryptjs": "^3.0.0",
     "@types/node": "^24.3.0",
     "bcrypt": "^6.0.0",
@@ -32,13 +32,18 @@
     "fastify": "^5.5.0",
     "fastify-plugin": "^5.0.1",
     "fastify-type-provider-zod": "^5.0.3",
+    "nodemailer": "^7.0.6",
+    "ts-node": "^10.9.2",
     "tsup": "^8.5.0",
     "tsx": "^4.20.4",
+    "uuid": "^11.1.0",
     "zod": "^4.0.17"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
-    "prisma": "^6.14.0",
+    "@types/nodemailer": "^7.0.1",
+    "@types/uuid": "^10.0.0",
+    "prisma": "^6.15.0",
     "typescript": "^5.9.2"
   }
 }

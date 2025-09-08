@@ -8,10 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import {
-  RadioGroup,
-  RadioGroupItem,
-} from "@/components/ui/radio-group"
+
 import { FormMessageError } from '@/components/ui/form-message-error';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,45 +18,46 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import api from '@/lib/api';
 import { toast } from 'sonner';
+import { signInFormSchema } from '@/services/users/sign-in-with-password';
+import { useAuth } from '@/contexts/auth-context';
+import { SwitchCompany } from '@/components/switch-company-and-role';
 
-export const authFormSchema = z.object({
-  user: z.string().max(45, 'Máximo 45 caracteres').min(1, 'Preencha o usúario').trim(),
-  password: z.string().min(6, 'A senha deve conter no mínimo 6 caracteres').trim(),
-  userType: z.string().refine((value) => ['student', 'professional'].includes(value), {
-    message: 'Selecione um tipo de usuário',
-  })
-})
-
-type AuthFormSchema = z.infer<typeof authFormSchema>;
+type SignInFormSchema = z.infer<typeof signInFormSchema>;
 
 export function SignInForm() {
+  const { login, token, company } = useAuth();
+
   const { mutate, isPending } = useMutation({
-    mutationFn: async (data: AuthFormSchema) => {
+    mutationFn: async (data: SignInFormSchema) => {
       const response = await api.post('/auth/sign-in-with-password', data);
       return response.data;
     },
-    onSuccess: (res) => {
-      toast(res.message)
+    onSuccess: async (res) => {
+      toast.success(res.message);
+      login(res.token)
     },
     onError: (err) => {
-      toast(err.message);
+      toast.error(err.message);
     }
   });
 
-  async function SignIn({ user, password, userType }: AuthFormSchema) {
-    mutate({ user, password, userType });
+  async function SignIn({ username, password }: SignInFormSchema) {
+    mutate({ username, password });
   }
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
   } = useForm({
-    resolver: zodResolver(authFormSchema),
+    resolver: zodResolver(signInFormSchema),
     mode: 'all',
     criteriaMode: 'all',
   });
+
+  if (token && !company) {
+    return <SwitchCompany />
+  }
 
   return (
     <Card>
@@ -83,12 +81,12 @@ export function SignInForm() {
         </CardHeader>
         <CardContent className='flex flex-col gap-2 space-y-2'>
           <div className='space-y-1'>
-            <Label htmlFor='user' className='flex flex-row'>
+            <Label htmlFor='username' className='flex flex-row'>
               <User className='mr-1 h-4 w-4' />
               Usúario
             </Label>
-            <Input type='text' {...register('user')} autoFocus data-test='loginUserInput' />
-            <FormMessageError error={errors.user?.message} />
+            <Input type='text' {...register('username')} autoFocus data-test='loginUsernameInput' />
+            <FormMessageError error={errors.username?.message} />
           </div>
           <div className='space-y-1'>
             <Label htmlFor='name' className='flex flex-row'>
@@ -98,16 +96,6 @@ export function SignInForm() {
             <Input type='password' {...register('password')} data-test='loginPasswordInput' />
             <FormMessageError error={errors.password?.message} />
           </div>
-          <RadioGroup defaultValue="student" {...register('userType')} onValueChange={(value) => setValue('userType', value)}>
-            <div className="flex items-center gap-3">
-              <RadioGroupItem value="student" id="student" defaultChecked />
-              <Label htmlFor="student">Estudante</Label>
-            </div>
-            <div className="flex items-center gap-3">
-              <RadioGroupItem value="professional" id="professional" />
-              <Label htmlFor="professional">Funcionário</Label>
-            </div>
-          </RadioGroup>
         </CardContent>
         <CardFooter className='flex justify-center'>
           <Button
