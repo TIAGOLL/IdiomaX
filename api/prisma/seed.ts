@@ -138,6 +138,7 @@ async function main() {
                     gender: 'M',
                     date_of_birth: new Date('1991-11-30'),
                     address: 'Rua das Palmeiras, 321 - Rio de Janeiro',
+                    role_id: "c23171b0-7d77-48bc-b8bf-b5e0010d671d"
                 },
                 {
                     id: "c5a5e1b6-2d1e-7a6e-1e5d-5e6f7a8b9c0d",
@@ -150,6 +151,7 @@ async function main() {
                     gender: 'F',
                     date_of_birth: new Date('1993-01-05'),
                     address: 'Rua das Flores, 789 - Belo Horizonte',
+                    role_id: "c23171b0-7d77-48bc-b8bf-b5e0010d671d"
                 },
                 {
                     id: "d6b6f2c7-3e2f-8b7f-2f6e-6f7a8b9c0d1e",
@@ -162,6 +164,7 @@ async function main() {
                     gender: 'M',
                     date_of_birth: new Date('1989-09-17'),
                     address: 'Av. Brasil, 987 - Belo Horizonte',
+                    role_id: "c23171b0-7d77-48bc-b8bf-b5e0010d671d"
                 },
             ],
         })

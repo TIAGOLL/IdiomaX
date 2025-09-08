@@ -47,19 +47,13 @@ export async function createCompany(app: FastifyInstance) {
 
                 const userId = await request.getCurrentUserId()
 
-                const user = await prisma.users.findUnique({
-                    where: {
-                        id: userId,
-                    },
-                });
-
                 if (companyAlreadyExists) {
                     throw new BadRequestError('Já existe uma instituição com esse CNPJ.');
                 }
                 await prisma.companies.create({
                     data: {
                         ...data,
-                        users: {
+                        owner: {
                             connect: {
                                 id: userId,
                             }

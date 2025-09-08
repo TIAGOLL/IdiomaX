@@ -5,7 +5,6 @@ import { z } from 'zod';
 
 import { BadRequestError } from '@/http/controllers/_errors/bad-request-error';
 import { prisma } from '@/lib/prisma';
-import { generateUUID } from '@/lib/uuid';
 
 export async function SignUpWithPassword(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
@@ -25,11 +24,13 @@ export async function SignUpWithPassword(app: FastifyInstance) {
           address: z.string().min(1).max(255),
           password: z.string().min(6),
           avatar: z.instanceof(Buffer).optional(),
+          role_id: z.string().optional(),
+          company_id: z.string().optional()
         }),
       },
     },
     async (request, reply) => {
-      const { name, email, password, gender, date_of_birth, address, avatar, cpf, username, phone, } = request.body;
+      const { name, email, password, gender, date_of_birth, address, avatar, cpf, username, phone, role_id, company_id } = request.body;
 
       const userWithSameEmail = await prisma.users.findUnique({
         where: {
@@ -66,6 +67,8 @@ export async function SignUpWithPassword(app: FastifyInstance) {
           cpf,
           username,
           phone,
+          role_id,
+          company_id
         },
       })
 

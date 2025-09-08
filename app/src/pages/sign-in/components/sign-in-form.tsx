@@ -20,12 +20,11 @@ import api from '@/lib/api';
 import { toast } from 'sonner';
 import { signInFormSchema } from '@/services/users/sign-in-with-password';
 import { useAuth } from '@/contexts/auth-context';
-import { SwitchCompany } from '@/components/switch-company-and-role';
 
 type SignInFormSchema = z.infer<typeof signInFormSchema>;
 
 export function SignInForm() {
-  const { login, token, company } = useAuth();
+  const { login } = useAuth();
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: SignInFormSchema) => {
@@ -54,10 +53,6 @@ export function SignInForm() {
     mode: 'all',
     criteriaMode: 'all',
   });
-
-  if (token && !company) {
-    return <SwitchCompany />
-  }
 
   return (
     <Card>

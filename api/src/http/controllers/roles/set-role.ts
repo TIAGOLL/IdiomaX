@@ -4,14 +4,13 @@ import { z } from 'zod';
 
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/middlewares/auth';
-import { BadRequestError } from '../_errors/bad-request-error';
 import { UnauthorizedError } from '../_errors/unauthorized-error';
 
 export async function setRole(app: FastifyInstance) {
     app
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
-        .post(
+        .put(
             '/roles',
             {
                 schema: {
@@ -24,27 +23,21 @@ export async function setRole(app: FastifyInstance) {
                         })
                     },
                     body: z.object({
-                        userId: z.string(),
-                        roleId: z.string(),
-                        companyId: z.string()
+                        user_id: z.string(),
+                        role_id: z.string(),
                     }),
                 },
             },
             async (request, reply) => {
-                const { roleId, userId, companyId } = request.body;
+                const { role_id, user_id, } = request.body;
                 const userIdReq = await request.getCurrentUserId();
 
                 // verifica se o usuário requisitante está na msm empresa solicitada e se ele é ADMIN
-                const userIsAdmin = await prisma.users_in_companies.findFirst({
+                const userIsAdmin = await prisma.users.findFirst({
                     where: {
-                        companies_id: companyId,
-                        users_id: userIdReq,
-                        users_in_companies_roles: {
-                            some: {
-                                roles: {
-                                    name: "ADMIN"
-                                }
-                            }
+                        id: userIdReq,
+                        role: {
+                            name: 'ADMIN'
                         }
                     }
                 })
@@ -53,24 +46,13 @@ export async function setRole(app: FastifyInstance) {
                     throw new UnauthorizedError();
                 }
 
-                await prisma.users_in_companies_roles.create({
+                await prisma.users.update({
+                    where: {
+                        id: user_id
+                    },
                     data: {
-                        users_in_companies: {
-                            connectOrCreate: {
-                                where: {
-                                    users_id_companies_id: {
-                                        users_id: userId,
-                                        companies_id: companyId
-                                    }
-                                },
-                                create: {
-                                    users_id: userId,
-                                    companies_id: companyId,
-                                }
-                            }
-                        },
-                        roles: {
-                            connect: { id: roleId }
+                        role: {
+                            connect: { id: role_id }
                         }
                     }
                 });

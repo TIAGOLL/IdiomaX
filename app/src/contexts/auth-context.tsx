@@ -7,52 +7,51 @@ import {
 } from "react";
 import { useNavigate } from "react-router";
 import nookies from "nookies";
+import { tokenDecode } from "@/lib/token-decode";
 
 export type Role = "ADMIN" | "TEACHER" | "STUDENT";
 
 type AuthContextType = {
     token: string | null;
-    company: string | null;
     login: (token: string) => void;
     logout: () => void;
-    setCompany: (companyId: string) => void;
 };
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [token, setToken] = useState<string | null>(null);
-    const [company, setCompany] = useState<string | null>(null);
 
     const navigate = useNavigate();
 
     useEffect(() => {
         const storedToken = nookies.get(null, "token").token;
-        const companyId = nookies.get(null, "companyId").companyId;
 
         if (storedToken) {
             setToken(storedToken);
-        }
-        if (companyId) {
-            setCompany(companyId);
         }
     }, []);
 
     async function login(newToken: string) {
         nookies.set(null, "token", newToken);
         setToken(newToken);
+        const decoded = tokenDecode(newToken);
+
+        if (decoded?.profile.role === "STUDENT") {
+            navigate("/dashboard");
+        } else {
+            navigate("/admin/dashboard");
+        }
     }
 
     function logout() {
-        nookies.set(null, "token", '');
+        nookies.destroy(null, "token");
         setToken(null);
-        nookies.set(null, "companyId", '');
-        setCompany(null)
         navigate("/auth/sign-in");
     }
 
     return (
-        <AuthContext.Provider value={{ token, login, logout, company, setCompany }}>
+        <AuthContext.Provider value={{ token, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

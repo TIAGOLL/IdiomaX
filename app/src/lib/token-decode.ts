@@ -3,11 +3,7 @@ import { jwtDecode } from 'jwt-decode';
 type TokenPayload = {
     sub: string;
     profile: {
-        companies: {
-            id: string;
-            name: string;
-            role: string[];
-        }[];
+        role: string;
         name: string;
         email: string;
         avatar: string | null;
