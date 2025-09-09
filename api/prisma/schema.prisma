@@ -222,8 +222,8 @@ model companies {
   address            String    @db.VarChar(256)
 
   // Dono da empresa
-  owner    users  @relation("OwnerCompanies", fields: [owner_id], references: [id])
-  owner_id String @db.VarChar(256)
+  owner    users?  @relation("OwnerCompanies", fields: [owner_id], references: [id])
+  owner_id String? @db.VarChar(256)
 
   // Demais usuários que trabalham nessa empresa
   users users[] @relation("UserCompany")
@@ -254,12 +254,12 @@ model users {
   companies_owned companies[] @relation("OwnerCompanies")
 
   // Empresa onde o usuário trabalha (um user pertence a uma company)
-  company    companies? @relation("UserCompany", fields: [company_id], references: [id])
-  company_id String?    @db.VarChar(256)
+  company    companies @relation("UserCompany", fields: [company_id], references: [id])
+  company_id String    @db.VarChar(256)
 
   // Role única
-  role    roles?  @relation(fields: [role_id], references: [id])
-  role_id String? @db.VarChar(256)
+  role    roles  @relation(fields: [role_id], references: [id])
+  role_id String @db.VarChar(256)
 
   presence_list  presence_list[]
   registrations  registrations[]

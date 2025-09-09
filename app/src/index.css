@@ -75,6 +75,7 @@
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.723 0.219 149.579);
 }
+
 .dark {
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.985 0 0);
@@ -113,6 +114,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -142,6 +144,7 @@ html {
     background: hsl(var(--primary) / 20%);
     right: 460px;
   }
+
   to {
     background: hsl(var(--primary) / 80%);
     right: 160px;
@@ -158,6 +161,7 @@ html {
       background: hsl(var(--primary) / 20%);
       right: 460px;
     }
+
     to {
       background: hsl(var(--primary) / 50%);
       right: 160px;
@@ -178,6 +182,7 @@ html {
       background: hsl(var(--primary) / 20%);
       right: 280px;
     }
+
     to {
       background: hsl(var(--primary) / 30%);
       right: 100px;

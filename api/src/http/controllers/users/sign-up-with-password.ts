@@ -25,12 +25,23 @@ export async function SignUpWithPassword(app: FastifyInstance) {
           password: z.string().min(6),
           avatar: z.instanceof(Buffer).optional(),
           role_id: z.string().optional(),
-          company_id: z.string().optional()
+          company_id: z.string().optional(),
+          company: z.object({
+            id: z.string().uuid(),
+            name: z.string().min(3).max(256),
+            cnpj: z.string().min(14).max(14),
+            address: z.string().min(1).max(256),
+            phone: z.string().min(10).max(15),
+            email: z.string().email().max(256),
+            tax_regime: z.string().min(1).max(256),
+            state_registration: z.string().min(1).max(256),
+            social_reason: z.string().min(1).max(256),
+          }).optional(),
         }),
       },
     },
     async (request, reply) => {
-      const { name, email, password, gender, date_of_birth, address, avatar, cpf, username, phone, role_id, company_id } = request.body;
+      const { name, email, password, gender, date_of_birth, company, address, avatar, cpf, username, phone, role_id, company_id } = request.body;
 
       const userWithSameEmail = await prisma.users.findUnique({
         where: {
@@ -67,8 +78,29 @@ export async function SignUpWithPassword(app: FastifyInstance) {
           cpf,
           username,
           phone,
-          role_id,
-          company_id
+          role: {
+            connect: {
+              id: role_id,
+            }
+          },
+          company: {
+            connectOrCreate: {
+              where: {
+                id: company.id || '',
+              },
+              create: {
+                id: company.id,
+                name: company.name,
+                cnpj: company.cnpj,
+                address: company.address,
+                phone: company.phone,
+                email: company.email,
+                tax_regime: company.tax_regime,
+                state_registration: company.state_registration,
+                social_reason: company.social_reason,
+              },
+            }
+          }
         },
       })
 

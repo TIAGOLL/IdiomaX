@@ -48,7 +48,7 @@ export async function SignInWithPassword(app: FastifyInstance) {
                             name: user.name,
                             email: user.email,
                             avatar: user.avatar,
-                            role: user.role.name
+                            role: user?.role?.name ? user.role.name : null,
                         }
                     });
 
