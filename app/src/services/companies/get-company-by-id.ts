@@ -1,6 +1,7 @@
 import api from "@/lib/api";
 
-interface getCompanyProfileResponse {
+interface getCompanyByIdResponse {
+    id: string
     message: string
     logo_16x16: string
     name: string
@@ -16,13 +17,13 @@ interface getCompanyProfileResponse {
     updated_at: string
 }
 
-interface getCompanyProfileRequest {
+interface getCompanyByIdRequest {
     companyId: string
 }
 
-export async function getCompanyProfile({ companyId }: getCompanyProfileRequest) {
+export async function getCompanyById({ companyId }: getCompanyByIdRequest) {
     if (!companyId) return null;
-    const result = await api.get<getCompanyProfileResponse>(`/companies/${companyId}`)
+    const result = await api.get<getCompanyByIdResponse>(`/companies/${companyId}`)
 
     return result.data
 }

@@ -1,9 +1,9 @@
 import nookies from 'nookies';
 
 export function isAuthenticated() {
-  const token = nookies.get(null, 'token');
+  const token = nookies.get(null, 'token').token;
 
-  if (Object.keys(token).find((value) => value === 'token') !== 'token') {
+  if (!token) {
     return false;
   }
 

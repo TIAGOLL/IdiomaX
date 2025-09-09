@@ -22,6 +22,7 @@ import { resetPassword } from './controllers/users/reset-password'
 import { errorHandler } from '../lib/error-handler'
 import { createCompany } from './controllers/companies/create-company'
 import { setRole } from './controllers/roles/set-role'
+import { getCompanyById } from './controllers/companies/get-company-by-id'
 
 dotenv.config()
 
@@ -91,7 +92,8 @@ app.register(requestPasswordRecover);
 app.register(getUserProfile);
 app.register(resetPassword);
 app.register(createCompany);
-app.register(setRole)
+app.register(setRole);
+app.register(getCompanyById);
 
 app.listen({ port: Number(env.data.PORT) }).then(() => {
   console.log(`HTTP server running in http://localhost:${env.data.PORT}`)

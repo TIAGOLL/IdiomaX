@@ -1,5 +1,3 @@
-import * as React from "react"
-
 import {
     Sidebar as SideBarComponent,
     SidebarContent,
@@ -11,19 +9,22 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { NavMain } from "./components/nav-main"
 import { NavUser } from "./components/nav-user"
 import { LayoutDashboardIcon } from "lucide-react"
-import { getUserProfile } from "@/services/users/get-user-profile"
-import { tokenDecode } from "@/lib/token-decode"
-import { getCompanyProfile } from "@/services/companies/get-company-profile"
+import { getCompanyById } from "@/services/companies/get-company-by-id"
+import { getSessionProfile } from "@/lib/get-sub-token"
+import { useQuery } from "@tanstack/react-query"
 
-export async function Sidebar({ ...props }: React.ComponentProps<typeof SideBarComponent>) {
-    const { logo_16x16 } = await getCompanyProfile({ companyId: tokenDecode().profile.company })
+export function Sidebar({ ...props }: React.ComponentProps<typeof SideBarComponent>) {
+    const { data: companyProfile, } = useQuery({
+        queryKey: ['company', getSessionProfile().profile.company],
+        queryFn: () => getCompanyById({ companyId: getSessionProfile().profile.company }),
+    });
 
     return (
         <SideBarComponent collapsible="icon" {...props}>
             <SidebarHeader>
                 <Avatar>
-                    <AvatarImage src={logo_16x16} />
-                    <AvatarFallback>CN</AvatarFallback>
+                    <AvatarImage src={companyProfile?.logo_16x16} />
+                    <AvatarFallback>{companyProfile?.name}</AvatarFallback>
                 </Avatar>
             </SidebarHeader>
             <SidebarContent>
@@ -38,8 +39,8 @@ export async function Sidebar({ ...props }: React.ComponentProps<typeof SideBarC
 }
 
 function navData() {
-    const user = getUserProfile()
-    console.log(user)
+    const sessionProfile = getSessionProfile()
+
     return {
         navMain: [
             { title: "Dashboard", icon: LayoutDashboardIcon, links: [{ name: "Visão geral", to: "/admin/dashboard" }] },
@@ -79,9 +80,8 @@ function navData() {
             },
         ],
         navUser: {
-            name: "shadcn",
-            email: "m@example.com",
-            avatar: "/avatars/shadcn.jpg",
+            name: sessionProfile?.profile.name,
+            email: sessionProfile?.profile.email,
         },
     }
 }

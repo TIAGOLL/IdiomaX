@@ -1,11 +1,21 @@
 import axios, { type AxiosError } from "axios";
+import nookies from 'nookies';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  headers: {
+
+  headers:
+  {
     "Content-Type": "application/json",
-    Authorization: localStorage.getItem("token"),
   },
+});
+
+api.interceptors.request.use((config) => {
+  const token = nookies.get(null, 'token').token;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 api.interceptors.response.use(
@@ -23,7 +33,8 @@ api.interceptors.response.use(
     } else if (error.message) {
       normalizedError.message = error.message;
     }
-
+    window.location.href = '/auth/sign-in';
+    nookies.destroy(null, 'token')
     return Promise.reject(normalizedError);
   }
 );

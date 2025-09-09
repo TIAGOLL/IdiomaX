@@ -52,6 +52,10 @@ export function SignInForm() {
     resolver: zodResolver(signInFormSchema),
     mode: 'all',
     criteriaMode: 'all',
+    defaultValues: {
+      username: 'tiago10',
+      password: 'admin1',
+    }
   });
 
   return (

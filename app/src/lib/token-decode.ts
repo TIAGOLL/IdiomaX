@@ -6,12 +6,11 @@ type TokenPayload = {
         role: string;
         name: string;
         email: string;
-        avatar: string | null;
         company: string;
     };
     iat: number;
 };
 
-export function tokenDecode(jwt: string): TokenPayload {
+export function tokenDecode(jwt: string) {
     return jwtDecode<TokenPayload>(jwt);
 }

@@ -5,5 +5,5 @@ import { Navigate, Outlet, useLocation } from 'react-router';
 export function PrivateRoute() {
   const location = useLocation();
 
-  return isAuthenticated() ? <Outlet /> : <Navigate to='/' state={{ from: location }} replace />;
+  return isAuthenticated() ? <Outlet /> : <Navigate to='/auth/sign-in' state={{ from: location }} replace />;
 }

@@ -43,11 +43,11 @@ export async function SignInWithPassword(app: FastifyInstance) {
                     }
 
                     const token = app.jwt.sign({
-                        sub: user.id, profile: {
+                        sub: user.id,
+                        profile: {
                             company: user.company_id,
                             name: user.name,
                             email: user.email,
-                            avatar: user.avatar,
                             role: user?.role?.name ? user.role.name : null,
                         }
                     });

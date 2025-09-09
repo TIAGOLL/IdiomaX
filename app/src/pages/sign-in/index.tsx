@@ -1,9 +1,7 @@
-import { Info } from 'lucide-react';
 
 import { ModeToggle } from '@/components/ui/mode-toggle.tsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SignInForm } from './components/sign-in-form';
-import { Card, CardContent } from '@/components/ui/card';
 import { useNavigate } from 'react-router';
 import { useEffect } from 'react';
 import { tokenDecode } from '@/lib/token-decode';
@@ -23,7 +21,7 @@ function SignIn() {
         navigate('/admin/dashboard');
       }
     }
-  }, [navigate]);
+  }, []);
 
   return (
     <div className='flex h-screen w-screen items-center justify-center bg-slate-100 dark:bg-slate-600'>
