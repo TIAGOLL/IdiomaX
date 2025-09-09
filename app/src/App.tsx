@@ -3,10 +3,10 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { BrowserRouter } from 'react-router';
 
-import { RoutesApp } from './routes/index.tsx';
 import { ThemeProvider } from './components/ui/theme-provider';
 import { AuthProvider } from './contexts/auth-context.tsx';
 import { SidebarProvider, SidebarTrigger } from './components/ui/sidebar.tsx';
+import { RoutesApp } from './routes/index.tsx';
 
 export function App() {
   const queryClient = new QueryClient();
