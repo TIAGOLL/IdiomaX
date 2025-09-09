@@ -7,11 +7,11 @@ type TokenPayload = {
         name: string;
         email: string;
         avatar: string | null;
+        company: string;
     };
     iat: number;
-} | undefined;
+};
 
-export function tokenDecode(jwt?: string): TokenPayload {
-    if (!jwt) return
+export function tokenDecode(jwt: string): TokenPayload {
     return jwtDecode<TokenPayload>(jwt);
 }

@@ -12,13 +12,17 @@ import { NavMain } from "./components/nav-main"
 import { NavUser } from "./components/nav-user"
 import { LayoutDashboardIcon } from "lucide-react"
 import { getUserProfile } from "@/services/users/get-user-profile"
+import { tokenDecode } from "@/lib/token-decode"
+import { getCompanyProfile } from "@/services/companies/get-company-profile"
 
-export function Sidebar({ ...props }: React.ComponentProps<typeof SideBarComponent>) {
+export async function Sidebar({ ...props }: React.ComponentProps<typeof SideBarComponent>) {
+    const { logo_16x16 } = await getCompanyProfile({ companyId: tokenDecode().profile.company })
+
     return (
         <SideBarComponent collapsible="icon" {...props}>
             <SidebarHeader>
                 <Avatar>
-                    <AvatarImage src="https://github.com/shadcn.png" />
+                    <AvatarImage src={logo_16x16} />
                     <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
             </SidebarHeader>
