@@ -37,11 +37,11 @@ export async function createCompany(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const data = request.body;
+                const { name, address, cnpj, phone, email, logo_16x16, logo_512x512, social_reason, state_registration, tax_regime, } = request.body;
 
                 const companyAlreadyExists = await prisma.companies.findUnique({
                     where: {
-                        cnpj: data.cnpj,
+                        cnpj: cnpj,
                     },
                 });
 
@@ -50,12 +50,28 @@ export async function createCompany(app: FastifyInstance) {
                 if (companyAlreadyExists) {
                     throw new BadRequestError('Já existe uma instituição com esse CNPJ.');
                 }
+
                 await prisma.companies.create({
                     data: {
-                        ...data,
+                        name,
+                        address,
+                        cnpj,
+                        phone,
+                        email,
+                        logo_16x16,
+                        logo_512x512,
+                        social_reason,
+                        state_registration,
+                        tax_regime,
                         owner: {
                             connect: {
                                 id: userId,
+                            }
+                        },
+                        members: {
+                            create: {
+                                user_id: userId,
+                                role: 'ADMIN',
                             }
                         }
                     },

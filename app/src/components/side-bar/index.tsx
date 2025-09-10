@@ -5,13 +5,13 @@ import {
     SidebarHeader,
     SidebarRail,
 } from "@/components/ui/sidebar"
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { NavMain } from "./components/nav-main"
 import { NavUser } from "./components/nav-user"
 import { LayoutDashboardIcon } from "lucide-react"
 import { getCompanyById } from "@/services/companies/get-company-by-id"
 import { getSessionProfile } from "@/lib/get-sub-token"
 import { useQuery } from "@tanstack/react-query"
+import { TeamSwitcher } from "./components/company-switcher"
 
 export function Sidebar({ ...props }: React.ComponentProps<typeof SideBarComponent>) {
     const { data: companyProfile, } = useQuery({
@@ -22,10 +22,7 @@ export function Sidebar({ ...props }: React.ComponentProps<typeof SideBarCompone
     return (
         <SideBarComponent collapsible="icon" {...props}>
             <SidebarHeader>
-                <Avatar>
-                    <AvatarImage src={companyProfile?.logo_16x16} />
-                    <AvatarFallback>{companyProfile?.name}</AvatarFallback>
-                </Avatar>
+                <TeamSwitcher teams={data.teams} />
             </SidebarHeader>
             <SidebarContent>
                 <NavMain items={navData().navMain} />

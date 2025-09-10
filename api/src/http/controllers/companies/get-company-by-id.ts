@@ -1,10 +1,10 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { email, z } from 'zod';
-import { Buffer } from "buffer";
+import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/middlewares/auth';
 import { BadRequestError } from '../_errors/bad-request-error';
+import { toUint8Array } from '@/lib/to-uint-8-array';
 
 export async function getCompanyById(app: FastifyInstance) {
     app
@@ -27,13 +27,11 @@ export async function getCompanyById(app: FastifyInstance) {
                             cnpj: z.string(),
                             phone: z.string(),
                             email: z.email(),
-                            // logo_16x16: z.instanceof(Buffer).optional(),
-                            // logo_512x512: z.instanceof(Buffer).optional(),
                             social_reason: z.string(),
                             state_registration: z.string(),
                             tax_regime: z.string(),
                             address: z.string(),
-                            // owner_id: z.string().optional(),
+                            owner_id: z.string(),
                             created_at: z.coerce.date(),
                             updated_at: z.coerce.date(),
                         }),
@@ -44,28 +42,19 @@ export async function getCompanyById(app: FastifyInstance) {
                 const { id } = request.params;
                 const userId = await request.getCurrentUserId()
 
-                const user = await prisma.users.findUnique({
-                    where: {
-                        id: userId,
-                        company_id: id
-                    },
-                    include: {
-                        company: true,
-                    },
-                });
-
-                if (!user?.company) {
-                    throw new BadRequestError('Usuário não está associado a nenhuma instituição.');
-                }
-
                 const company = await prisma.companies.findUnique({
                     where: {
                         id,
+                        members: {
+                            some: {
+                                user_id: userId,
+                            }
+                        }
                     },
-                });
+                }).catch((err) => console.log(err));
 
                 if (!company) {
-                    throw new BadRequestError('Instituição não encontrada.');
+                    throw new BadRequestError('Instituição não encontrada ou você não tem acesso a ela.');
                 }
 
                 return reply.status(200).send(company);

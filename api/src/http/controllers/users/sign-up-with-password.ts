@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 import { BadRequestError } from '@/http/controllers/_errors/bad-request-error';
 import { prisma } from '@/lib/prisma';
+import { toUint8Array } from '@/lib/to-uint-8-array';
 
 export async function SignUpWithPassword(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
@@ -23,11 +24,21 @@ export async function SignUpWithPassword(app: FastifyInstance) {
           date_of_birth: z.string(),
           address: z.string().min(1).max(255),
           password: z.string().min(6),
-          avatar: z.instanceof(Buffer).optional(),
-          role_id: z.string().optional(),
-          company_id: z.string().optional(),
+          avatar: z.any().transform((val) => {
+            if (val instanceof Uint8Array) return val;
+            if (val instanceof ArrayBuffer) return new Uint8Array(val);
+            if (Array.isArray(val)) return new Uint8Array(val);
+            if (typeof val === "string") {
+              try {
+                const binary = Buffer.from(val, 'base64');
+                return new Uint8Array(binary);
+              } catch {
+                return new Uint8Array();
+              }
+            }
+            return new Uint8Array();
+          }),
           company: z.object({
-            id: z.string().uuid(),
             name: z.string().min(3).max(256),
             cnpj: z.string().min(14).max(14),
             address: z.string().min(1).max(256),
@@ -36,12 +47,40 @@ export async function SignUpWithPassword(app: FastifyInstance) {
             tax_regime: z.string().min(1).max(256),
             state_registration: z.string().min(1).max(256),
             social_reason: z.string().min(1).max(256),
-          }).optional(),
+            logo_16x16: z.any().transform((val) => {
+              if (val instanceof Uint8Array) return val;
+              if (val instanceof ArrayBuffer) return new Uint8Array(val);
+              if (Array.isArray(val)) return new Uint8Array(val);
+              if (typeof val === "string") {
+                try {
+                  const binary = Buffer.from(val, 'base64');
+                  return new Uint8Array(binary);
+                } catch {
+                  return new Uint8Array();
+                }
+              }
+              return new Uint8Array();
+            }),
+            logo_512x512: z.any().transform((val) => {
+              if (val instanceof Uint8Array) return val;
+              if (val instanceof ArrayBuffer) return new Uint8Array(val);
+              if (Array.isArray(val)) return new Uint8Array(val);
+              if (typeof val === "string") {
+                try {
+                  const binary = Buffer.from(val, 'base64');
+                  return new Uint8Array(binary);
+                } catch {
+                  return new Uint8Array();
+                }
+              }
+              return new Uint8Array();
+            }),
+          })
         }),
       },
     },
     async (request, reply) => {
-      const { name, email, password, gender, date_of_birth, company, address, avatar, cpf, username, phone, role_id, company_id } = request.body;
+      const { name, email, password, gender, date_of_birth, company, address, avatar, cpf, username, phone } = request.body;
 
       const userWithSameEmail = await prisma.users.findUnique({
         where: {
@@ -55,6 +94,12 @@ export async function SignUpWithPassword(app: FastifyInstance) {
         },
       });
 
+      const companyWithSameCnpj = await prisma.companies.findUnique({
+        where: {
+          cnpj: company.cnpj,
+        },
+      });
+
       if (userWithSameEmail) {
         throw new BadRequestError('Já existe um usuário com este e-mail.');
       }
@@ -63,49 +108,59 @@ export async function SignUpWithPassword(app: FastifyInstance) {
         throw new BadRequestError('Já existe um usuário com este nome de usuário.');
       }
 
+      if (companyWithSameCnpj) {
+        throw new BadRequestError('Já existe uma empresa com este CNPJ.');
+      }
+
       const passwordHash = await hash(password, 6);
       const date_of_birth_date = new Date(date_of_birth);
-
-      await prisma.users.create({
-        data: {
-          name,
-          email,
-          password: passwordHash,
-          gender,
-          date_of_birth: date_of_birth_date,
-          address,
-          avatar,
-          cpf,
-          username,
-          phone,
-          role: {
-            connect: {
-              id: role_id,
-            }
+      await prisma.$transaction(async (prisma) => {
+        const user = await prisma.users.create({
+          data: {
+            name,
+            email,
+            password: passwordHash,
+            gender,
+            date_of_birth: date_of_birth_date,
+            address,
+            avatar: toUint8Array(avatar),
+            cpf,
+            username,
+            phone,
           },
-          company: {
-            connectOrCreate: {
-              where: {
-                id: company.id || '',
-              },
-              create: {
-                id: company.id,
-                name: company.name,
-                cnpj: company.cnpj,
-                address: company.address,
-                phone: company.phone,
-                email: company.email,
-                tax_regime: company.tax_regime,
-                state_registration: company.state_registration,
-                social_reason: company.social_reason,
-              },
-            }
-          }
-        },
+        })
+
+        const companyCreated = await prisma.companies.create({
+          data: {
+            name: company.name,
+            cnpj: company.cnpj,
+            address: company.address,
+            phone: company.phone,
+            email: company.email,
+            tax_regime: company.tax_regime,
+            state_registration: company.state_registration,
+            social_reason: company.social_reason,
+            logo_16x16: toUint8Array(company.logo_16x16),
+            logo_512x512: toUint8Array(company.logo_512x512),
+            owner: {
+              connect: {
+                id: user.id,
+              }
+            },
+          },
+        })
+
+        await prisma.members.create({
+          data: {
+            user_id: user.id,
+            company_id: companyCreated.id,
+            role: 'ADMIN',
+          },
+        });
       })
 
       return reply.status(201).send({
-        message: 'Usuário criado com sucesso.',
+        message: 'Usuário e instituição criada com sucesso.',
       });
     },
   );

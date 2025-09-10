@@ -34,7 +34,7 @@ export async function SignInWithPassword(app: FastifyInstance) {
                     const user = await prisma.users.findUnique({
                         where: { username },
                         include: {
-                            role: true
+                            companies: true,
                         }
                     });
 
@@ -45,10 +45,8 @@ export async function SignInWithPassword(app: FastifyInstance) {
                     const token = app.jwt.sign({
                         sub: user.id,
                         profile: {
-                            company: user.company_id,
                             name: user.name,
                             email: user.email,
-                            role: user?.role?.name ? user.role.name : null,
                         }
                     });
 
