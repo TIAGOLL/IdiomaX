@@ -5,12 +5,14 @@ import { PrivateRoute } from './private-route';
 import { Dashboard } from '@/pages/dashboard';
 
 export function RoutesApp() {
+
   return (
     <Routes>
-      <Route index element={<Navigate to="/auth/sign-in" replace />} />
       <Route path='/auth/sign-in' element={<SignIn />} />
+      <Route index element={<Navigate to="/dashboard" replace />} />
       <Route element={<PrivateRoute />}>
-        <Route path='/admin/dashboard' element={<Dashboard />} />
+        {/* ADMIN, TEACHER e STUDENT IRÃO DIVIDIR A MESMA DASHBOARD */}
+        <Route path='/dashboard' element={<Dashboard />} />
       </Route>
     </Routes>
   );

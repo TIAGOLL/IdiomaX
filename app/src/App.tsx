@@ -16,17 +16,24 @@ export function App() {
       <AuthProvider>
         <QueryClientProvider client={queryClient}>
           <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
-            <SidebarProvider>
+            {
+              !window.location.pathname.includes('/auth') &&
+              <SidebarProvider>
+                <RoutesApp />
+                <SpeedInsights />
+                <Analytics />
+                <main>
+                  <SidebarTrigger />
+                </main>
+              </SidebarProvider>
+            }
+            {
+              window.location.pathname.includes('/auth') &&
               <RoutesApp />
-              <SpeedInsights />
-              <Analytics />
-              <main>
-                <SidebarTrigger />
-              </main>
-            </SidebarProvider>
+            }
           </ThemeProvider>
         </QueryClientProvider>
       </AuthProvider>
-    </BrowserRouter>
+    </BrowserRouter >
   );
 }

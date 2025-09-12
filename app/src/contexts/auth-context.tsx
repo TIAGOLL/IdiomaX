@@ -7,13 +7,15 @@ import {
 } from "react";
 import { useNavigate } from "react-router";
 import nookies from "nookies";
-import { tokenDecode } from "@/lib/token-decode";
+import { signInWithPassword } from "@/services/users/sign-in-with-password";
+import { toast } from "sonner";
+import { getUserProfile } from "@/services/users/get-user-profile";
 
 export type Role = "ADMIN" | "TEACHER" | "STUDENT";
 
 type AuthContextType = {
     token: string | null;
-    login: (token: string) => void;
+    login: ({ password, username }: { password: string, username: string }) => void;
     logout: () => void;
 };
 
@@ -32,16 +34,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }, []);
 
-    async function login(newToken: string) {
-        nookies.set(null, "token", newToken);
-        setToken(newToken);
-        const decoded = tokenDecode(newToken);
-
-        if (decoded?.profile.role === "STUDENT") {
-            navigate("/dashboard");
+    async function login(data: { password: string, username: string }) {
+        const response = await signInWithPassword(data)
+        nookies.set(null, "token", response.token, {
+            path: '/',
+            maxAge: 60 * 60 * 24 * 7, // 7 days 
+        });
+        setToken(response.token);
+        toast.success(response.message);
+        if ((await getUserProfile()).member_on.length === 0) {
+            toast.error("Nenhuma instituição encontrada para este usuário.");
         } else {
-            navigate("/admin/dashboard");
+            navigate("/dashboard");
         }
+        return response
     }
 
     function logout() {

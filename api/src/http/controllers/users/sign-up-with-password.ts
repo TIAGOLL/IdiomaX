@@ -24,20 +24,7 @@ export async function SignUpWithPassword(app: FastifyInstance) {
           date_of_birth: z.string(),
           address: z.string().min(1).max(255),
           password: z.string().min(6),
-          avatar: z.any().transform((val) => {
-            if (val instanceof Uint8Array) return val;
-            if (val instanceof ArrayBuffer) return new Uint8Array(val);
-            if (Array.isArray(val)) return new Uint8Array(val);
-            if (typeof val === "string") {
-              try {
-                const binary = Buffer.from(val, 'base64');
-                return new Uint8Array(binary);
-              } catch {
-                return new Uint8Array();
-              }
-            }
-            return new Uint8Array();
-          }),
+          avatar: z.instanceof(Buffer).optional(),
           company: z.object({
             name: z.string().min(3).max(256),
             cnpj: z.string().min(14).max(14),
@@ -114,8 +101,9 @@ export async function SignUpWithPassword(app: FastifyInstance) {
 
       const passwordHash = await hash(password, 6);
       const date_of_birth_date = new Date(date_of_birth);
+
       await prisma.$transaction(async (prisma) => {
-        const user = await prisma.users.create({
+        const { id: userId } = await prisma.users.create({
           data: {
             name,
             email,
@@ -123,14 +111,14 @@ export async function SignUpWithPassword(app: FastifyInstance) {
             gender,
             date_of_birth: date_of_birth_date,
             address,
-            avatar: toUint8Array(avatar),
+            avatar,
             cpf,
             username,
             phone,
           },
         })
 
-        const companyCreated = await prisma.companies.create({
+        const { id: companyId } = await prisma.companies.create({
           data: {
             name: company.name,
             cnpj: company.cnpj,
@@ -140,24 +128,18 @@ export async function SignUpWithPassword(app: FastifyInstance) {
             tax_regime: company.tax_regime,
             state_registration: company.state_registration,
             social_reason: company.social_reason,
-            logo_16x16: toUint8Array(company.logo_16x16),
-            logo_512x512: toUint8Array(company.logo_512x512),
-            owner: {
-              connect: {
-                id: user.id,
-              }
-            },
+            owner_id: userId,
           },
         })
 
         await prisma.members.create({
           data: {
-            user_id: user.id,
-            company_id: companyCreated.id,
+            user_id: userId,
+            company_id: companyId,
             role: 'ADMIN',
           },
-        });
-      })
+        })
+      });
 
       return reply.status(201).send({
         message: 'Usuário e instituição criada com sucesso.',
