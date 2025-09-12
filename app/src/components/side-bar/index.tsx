@@ -9,37 +9,36 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { NavMain } from "./components/nav-main"
 import { NavUser } from "./components/nav-user"
 import { LayoutDashboardIcon } from "lucide-react"
-import { getCompanyById } from "@/services/companies/get-company-by-id"
-import { getSessionProfile } from "@/lib/get-sub-token"
-import { useQuery } from "@tanstack/react-query"
+import { type getUserProfileResponse } from './../../services/users/get-user-profile';
+import { useAuth } from "@/contexts/auth-context"
+
 
 export function Sidebar({ ...props }: React.ComponentProps<typeof SideBarComponent>) {
-    const { data: companyProfile, } = useQuery({
-        queryKey: ['company', getSessionProfile().profile.company],
-        queryFn: () => getCompanyById({ companyId: getSessionProfile().profile.company }),
-    });
+
+    const { currentUserProfile } = useAuth();
+
+    if (!currentUserProfile) return null;
 
     return (
         <SideBarComponent collapsible="icon" {...props}>
             <SidebarHeader>
                 <Avatar>
-                    <AvatarImage src={companyProfile?.logo_16x16} />
-                    <AvatarFallback>{companyProfile?.name}</AvatarFallback>
+                    <AvatarImage src={currentUserProfile?.avatar || ""} />
+                    <AvatarFallback>{currentUserProfile?.member_on[0]?.company.name}</AvatarFallback>
                 </Avatar>
             </SidebarHeader>
             <SidebarContent>
-                <NavMain items={navData().navMain} />
+                <NavMain items={navData(currentUserProfile).navMain} />
             </SidebarContent>
             <SidebarFooter>
-                <NavUser user={navData().navUser} />
+                <NavUser user={navData(currentUserProfile).navUser} />
             </SidebarFooter>
             <SidebarRail />
         </SideBarComponent>
     )
 }
 
-function navData() {
-    const sessionProfile = getSessionProfile()
+function navData(userProfile: getUserProfileResponse) {
 
     return {
         navMain: [
@@ -80,8 +79,8 @@ function navData() {
             },
         ],
         navUser: {
-            name: sessionProfile?.profile.name,
-            email: sessionProfile?.profile.email,
+            name: userProfile?.name,
+            email: userProfile?.email,
         },
     }
 }

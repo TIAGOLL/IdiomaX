@@ -23,6 +23,31 @@ export async function getUserProfile(app: FastifyInstance) {
                             name: z.string().min(2).max(100),
                             created_at: z.date(),
                             message: z.string().min(2).max(100),
+                            avatar: z.string().nullable().optional(),
+                            member_on: z.array(
+                                z.object({
+                                    id: z.uuid(),
+                                    role: z.enum(['STUDENT', 'TEACHER', 'ADMIN']),
+                                    company_id: z.uuid(),
+                                    user_id: z.uuid(),
+                                    company: z.object({
+                                        id: z.uuid(),
+                                        email: z.email(),
+                                        name: z.string(),
+                                        created_at: z.date().nullable(),
+                                        phone: z.string(),
+                                        address: z.string(),
+                                        updated_at: z.date().nullable(),
+                                        cnpj: z.string(),
+                                        logo_16x16: z.string().nullable().optional(),
+                                        logo_512x512: z.string().nullable().optional(),
+                                        social_reason: z.string().nullable(),
+                                        state_registration: z.string().nullable(),
+                                        tax_regime: z.string().nullable(),
+                                        owner_id: z.string(),
+                                    }),
+                                })
+                            )
                         }),
                     },
                 },
@@ -36,6 +61,17 @@ export async function getUserProfile(app: FastifyInstance) {
                         email: true,
                         name: true,
                         created_at: true,
+                        avatar: true,
+                        member_on: {
+                            include: {
+                                company: {
+                                    omit: {
+                                        logo_16x16: true,
+                                        logo_512x512: true,
+                                    }
+                                }
+                            }
+                        },
                     },
                 });
 
@@ -45,6 +81,7 @@ export async function getUserProfile(app: FastifyInstance) {
 
                 reply.send({
                     ...userProfile,
+                    avatar: userProfile.avatar ? Buffer.from(userProfile.avatar).toString('base64') : null,
                     message: "Perfil do usuário recuperado com sucesso."
                 });
             },

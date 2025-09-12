@@ -5,6 +5,7 @@ import { Buffer } from "buffer";
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/middlewares/auth';
 import { BadRequestError } from '../_errors/bad-request-error';
+import { UnauthorizedError } from '../_errors/unauthorized-error';
 
 export async function getCompanyById(app: FastifyInstance) {
     app
@@ -27,13 +28,13 @@ export async function getCompanyById(app: FastifyInstance) {
                             cnpj: z.string(),
                             phone: z.string(),
                             email: z.email(),
-                            // logo_16x16: z.instanceof(Buffer).optional(),
-                            // logo_512x512: z.instanceof(Buffer).optional(),
+                            logo_16x16: z.string().nullable().optional(),
+                            logo_512x512: z.string().nullable().optional(),
                             social_reason: z.string(),
                             state_registration: z.string(),
                             tax_regime: z.string(),
                             address: z.string(),
-                            // owner_id: z.string().optional(),
+                            owner_id: z.string().optional(),
                             created_at: z.coerce.date(),
                             updated_at: z.coerce.date(),
                         }),
@@ -47,15 +48,14 @@ export async function getCompanyById(app: FastifyInstance) {
                 const user = await prisma.users.findUnique({
                     where: {
                         id: userId,
-                        company_id: id
-                    },
-                    include: {
-                        company: true,
+                        member_on: {
+                            some: { company_id: id }
+                        }
                     },
                 });
 
-                if (!user?.company) {
-                    throw new BadRequestError('Usuário não está associado a nenhuma instituição.');
+                if (!user) {
+                    throw new UnauthorizedError('Usuário não está associado a essa instituição.');
                 }
 
                 const company = await prisma.companies.findUnique({
@@ -68,7 +68,13 @@ export async function getCompanyById(app: FastifyInstance) {
                     throw new BadRequestError('Instituição não encontrada.');
                 }
 
-                return reply.status(200).send(company);
+                return reply.status(200).send(
+                    {
+                        ...company,
+                        logo_16x16: company.logo_16x16 ? Buffer.from(company.logo_16x16).toString('base64') : null,
+                        logo_512x512: company.logo_512x512 ? Buffer.from(company.logo_512x512).toString('base64') : null,
+                    }
+                );
             },
         );
 }

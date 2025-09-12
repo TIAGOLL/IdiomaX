@@ -33,7 +33,7 @@ api.interceptors.response.use(
     } else if (error.message) {
       normalizedError.message = error.message;
     }
-    window.location.href = '/auth/sign-in';
+    // window.location.href = '/auth/sign-in';
     nookies.destroy(null, 'token')
     return Promise.reject(normalizedError);
   }

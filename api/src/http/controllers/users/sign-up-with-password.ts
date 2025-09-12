@@ -24,10 +24,7 @@ export async function SignUpWithPassword(app: FastifyInstance) {
           address: z.string().min(1).max(255),
           password: z.string().min(6),
           avatar: z.instanceof(Buffer).optional(),
-          role_id: z.string().optional(),
-          company_id: z.string().optional(),
           company: z.object({
-            id: z.string().uuid(),
             name: z.string().min(3).max(256),
             cnpj: z.string().min(14).max(14),
             address: z.string().min(1).max(256),
@@ -41,7 +38,7 @@ export async function SignUpWithPassword(app: FastifyInstance) {
       },
     },
     async (request, reply) => {
-      const { name, email, password, gender, date_of_birth, company, address, avatar, cpf, username, phone, role_id, company_id } = request.body;
+      const { name, email, password, gender, date_of_birth, company, address, avatar, cpf, username, phone } = request.body;
 
       const userWithSameEmail = await prisma.users.findUnique({
         where: {
@@ -66,43 +63,44 @@ export async function SignUpWithPassword(app: FastifyInstance) {
       const passwordHash = await hash(password, 6);
       const date_of_birth_date = new Date(date_of_birth);
 
-      await prisma.users.create({
-        data: {
-          name,
-          email,
-          password: passwordHash,
-          gender,
-          date_of_birth: date_of_birth_date,
-          address,
-          avatar,
-          cpf,
-          username,
-          phone,
-          role: {
-            connect: {
-              id: role_id,
-            }
+      await prisma.$transaction(async (prisma) => {
+        const { id: userId } = await prisma.users.create({
+          data: {
+            name,
+            email,
+            password: passwordHash,
+            gender,
+            date_of_birth: date_of_birth_date,
+            address,
+            avatar,
+            cpf,
+            username,
+            phone,
           },
-          company: {
-            connectOrCreate: {
-              where: {
-                id: company.id || '',
-              },
-              create: {
-                id: company.id,
-                name: company.name,
-                cnpj: company.cnpj,
-                address: company.address,
-                phone: company.phone,
-                email: company.email,
-                tax_regime: company.tax_regime,
-                state_registration: company.state_registration,
-                social_reason: company.social_reason,
-              },
-            }
-          }
-        },
-      })
+        })
+
+        const { id: companyId } = await prisma.companies.create({
+          data: {
+            name: company.name,
+            cnpj: company.cnpj,
+            address: company.address,
+            phone: company.phone,
+            email: company.email,
+            tax_regime: company.tax_regime,
+            state_registration: company.state_registration,
+            social_reason: company.social_reason,
+            owner_id: userId,
+          },
+        })
+
+        await prisma.members.create({
+          data: {
+            user_id: userId,
+            company_id: companyId,
+            role: 'ADMIN',
+          },
+        })
+      });
 
       return reply.status(201).send({
         message: 'Usuário criado com sucesso.',

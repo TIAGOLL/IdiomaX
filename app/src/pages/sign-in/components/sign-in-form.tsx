@@ -16,24 +16,22 @@ import { useMutation } from '@tanstack/react-query';
 import { LoaderIcon, LockIcon, LogIn, User } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import api from '@/lib/api';
 import { toast } from 'sonner';
-import { signInFormSchema } from '@/services/users/sign-in-with-password';
 import { useAuth } from '@/contexts/auth-context';
+import { signInFormRequest } from '@/services/users/sign-in-with-password';
 
-type SignInFormSchema = z.infer<typeof signInFormSchema>;
+type SignInFormSchema = z.infer<typeof signInFormRequest>;
 
 export function SignInForm() {
   const { login } = useAuth();
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: SignInFormSchema) => {
-      const response = await api.post('/auth/sign-in-with-password', data);
-      return response.data;
+      const response = login(data);
+      return response;
     },
     onSuccess: async (res) => {
       toast.success(res.message);
-      login(res.token)
     },
     onError: (err) => {
       toast.error(err.message);
@@ -49,7 +47,7 @@ export function SignInForm() {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(signInFormSchema),
+    resolver: zodResolver(signInFormRequest),
     mode: 'all',
     criteriaMode: 'all',
     defaultValues: {

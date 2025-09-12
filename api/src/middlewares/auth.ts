@@ -8,12 +8,6 @@ export const auth = fastifyPlugin(async (app: FastifyInstance) => {
       try {
         const { sub } = await request.jwtVerify<{
           sub: string,
-          profile: {
-            company: string,
-            name: string,
-            email: string,
-            role: string,
-          },
           iat: number,
         }>()
 

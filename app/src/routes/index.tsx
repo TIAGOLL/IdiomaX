@@ -7,10 +7,12 @@ import { Dashboard } from '@/pages/dashboard';
 export function RoutesApp() {
   return (
     <Routes>
-      <Route index element={<Navigate to="/auth/sign-in" replace />} />
-      <Route path='/auth/sign-in' element={<SignIn />} />
+      <Route element={() => window.location.href.includes('/auth') ? <Navigate to="/" /> : <Navigate to="/admin" replace />}>
+        <Route path='/auth/sign-in' element={<SignIn />} />
+      </Route>
       <Route element={<PrivateRoute />}>
-        <Route path='/admin/dashboard' element={<Dashboard />} />
+        <Route path='/admin' element={<Dashboard />} />
+        <Route index element={<Navigate to="/admin" replace />} />
       </Route>
     </Routes>
   );

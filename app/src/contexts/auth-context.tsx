@@ -7,13 +7,13 @@ import {
 } from "react";
 import { useNavigate } from "react-router";
 import nookies from "nookies";
-import { tokenDecode } from "@/lib/token-decode";
+import { signInWithPassword } from "@/services/users/sign-in-with-password";
 
 export type Role = "ADMIN" | "TEACHER" | "STUDENT";
 
 type AuthContextType = {
     token: string | null;
-    login: (token: string) => void;
+    login: ({ password, username }: { password: string, username: string }) => void;
     logout: () => void;
 };
 
@@ -32,16 +32,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }, []);
 
-    async function login(newToken: string) {
-        nookies.set(null, "token", newToken);
-        setToken(newToken);
-        const decoded = tokenDecode(newToken);
-
-        if (decoded?.profile.role === "STUDENT") {
-            navigate("/dashboard");
-        } else {
-            navigate("/admin/dashboard");
-        }
+    async function login(data: { password: string, username: string }) {
+        const response = await signInWithPassword(data)
+        nookies.set(null, "token", response.token);
+        setToken(response.token);
+        return response
     }
 
     function logout() {
