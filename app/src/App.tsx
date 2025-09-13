@@ -4,36 +4,35 @@ import { SpeedInsights } from '@vercel/speed-insights/react';
 import { BrowserRouter } from 'react-router';
 
 import { ThemeProvider } from './components/ui/theme-provider';
-import { AuthProvider } from './contexts/auth-context.tsx';
 import { SidebarProvider, SidebarTrigger } from './components/ui/sidebar.tsx';
 import { RoutesApp } from './routes/index.tsx';
+import { Toaster } from 'sonner';
 
 export function App() {
   const queryClient = new QueryClient();
 
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
-            {
-              !window.location.pathname.includes('/auth') &&
-              <SidebarProvider>
-                <RoutesApp />
-                <SpeedInsights />
-                <Analytics />
-                <main>
-                  <SidebarTrigger />
-                </main>
-              </SidebarProvider>
-            }
-            {
-              window.location.pathname.includes('/auth') &&
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
+          <Toaster />
+          {
+            !window.location.pathname.includes('/auth') &&
+            <SidebarProvider>
               <RoutesApp />
-            }
-          </ThemeProvider>
-        </QueryClientProvider>
-      </AuthProvider>
+              <SpeedInsights />
+              <Analytics />
+              <main>
+                <SidebarTrigger />
+              </main>
+            </SidebarProvider>
+          }
+          {
+            window.location.pathname.includes('/auth') &&
+            <RoutesApp />
+          }
+        </ThemeProvider>
+      </QueryClientProvider>
     </BrowserRouter >
   );
 }

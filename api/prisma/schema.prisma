@@ -242,7 +242,7 @@ model users {
   name          String    @db.VarChar(256)
   email         String    @unique @db.VarChar(256)
   password      String    @db.VarChar(1024)
-  cpf           String    @db.VarChar(256)
+  cpf           String    @unique @db.VarChar(256)
   phone         String    @db.VarChar(256)
   username      String    @unique @db.VarChar(256)
   gender        String    @db.VarChar(256)

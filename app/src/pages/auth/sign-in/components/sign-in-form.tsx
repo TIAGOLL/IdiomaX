@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Card,
@@ -17,29 +17,38 @@ import { LoaderIcon, LockIcon, LogIn, User } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { toast } from 'sonner';
-import { useAuth } from '@/contexts/auth-context';
-import { signInFormRequest } from '@/services/users/sign-in-with-password';
+import { signInFormRequest, signInWithPassword } from '@/services/users/sign-in-with-password';
+import nookies from 'nookies';
+import { getUserProfile } from '@/services/users/get-user-profile';
+import { Link, useNavigate } from 'react-router';
 
 type SignInFormSchema = z.infer<typeof signInFormRequest>;
 
 export function SignInForm() {
-  const { login } = useAuth();
-
+  const navigate = useNavigate();
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: SignInFormSchema) => {
-      const response = await login(data);
-      return response;
+      const response = await signInWithPassword(data)
+      nookies.set(null, "token", response.token, {
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7, // 7 days 
+      });
+
+      const profile = await getUserProfile()
+
+      if (profile.member_on.length === 0) {
+        toast.error("Você não pertence a nenhuma instituição, para continuar, crie uma.");
+      } else {
+        navigate("/");
+      }
+      return { ...response, ...profile }
     },
     onSuccess: async (res) => {
       toast.success(res.message);
-      if (memberOn.length === 0) {
+      if (res.member_on?.length === 0) {
         toast.error('Nenhuma instituição encontrada para este usuário.');
-      } else if (memberOn.length === 1) {
-        if (memberOn[0].role === 'ADMIN') {
-          window.location.href = '/admin';
-        } else {
-          window.location.href = '/dashboard';
-        }
+      } else {
+        navigate('/');
       }
     },
     onError: (err) => {
@@ -103,7 +112,10 @@ export function SignInForm() {
             <FormMessageError error={errors.password?.message} />
           </div>
         </CardContent>
-        <CardFooter className='flex justify-center'>
+        <CardFooter className='flex justify-between flex-row'>
+          <Link to='/auth/sign-up' className={buttonVariants({ variant: "ghost" })}>
+            Não tenho uma conta
+          </Link>
           <Button
             variant='default'
             type='submit'

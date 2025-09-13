@@ -22,7 +22,6 @@ export async function getUserProfile(app: FastifyInstance) {
                             email: z.email(),
                             name: z.string().min(2).max(100),
                             created_at: z.date(),
-                            message: z.string().min(2).max(100),
                             avatar: z.string().nullable().optional(),
                             member_on: z.array(
                                 z.object({
@@ -78,11 +77,10 @@ export async function getUserProfile(app: FastifyInstance) {
                 if (!userProfile) {
                     throw new BadRequestError("Usuário não encontrado.");
                 }
-
+                console.log(userProfile)
                 reply.send({
                     ...userProfile,
                     avatar: userProfile.avatar ? Buffer.from(userProfile.avatar).toString('base64') : null,
-                    message: "Perfil do usuário recuperado com sucesso."
                 });
             },
         );

@@ -30,38 +30,12 @@ export async function SignUpWithPassword(app: FastifyInstance) {
             cnpj: z.string().min(14).max(14),
             address: z.string().min(1).max(256),
             phone: z.string().min(10).max(15),
-            email: z.string().email().max(256),
-            tax_regime: z.string().min(1).max(256),
-            state_registration: z.string().min(1).max(256),
-            social_reason: z.string().min(1).max(256),
-            logo_16x16: z.any().transform((val) => {
-              if (val instanceof Uint8Array) return val;
-              if (val instanceof ArrayBuffer) return new Uint8Array(val);
-              if (Array.isArray(val)) return new Uint8Array(val);
-              if (typeof val === "string") {
-                try {
-                  const binary = Buffer.from(val, 'base64');
-                  return new Uint8Array(binary);
-                } catch {
-                  return new Uint8Array();
-                }
-              }
-              return new Uint8Array();
-            }),
-            logo_512x512: z.any().transform((val) => {
-              if (val instanceof Uint8Array) return val;
-              if (val instanceof ArrayBuffer) return new Uint8Array(val);
-              if (Array.isArray(val)) return new Uint8Array(val);
-              if (typeof val === "string") {
-                try {
-                  const binary = Buffer.from(val, 'base64');
-                  return new Uint8Array(binary);
-                } catch {
-                  return new Uint8Array();
-                }
-              }
-              return new Uint8Array();
-            }),
+            email: z.email().max(256).optional(),
+            tax_regime: z.string().min(1).max(256).optional(),
+            state_registration: z.string().min(1).max(256).optional(),
+            social_reason: z.string().min(1).max(256).optional(),
+            logo_16x16: z.string().nullable().optional(),
+            logo_512x512: z.string().nullable().optional(),
           })
         }),
       },
@@ -81,6 +55,12 @@ export async function SignUpWithPassword(app: FastifyInstance) {
         },
       });
 
+      const userWithSameCpf = await prisma.users.findUnique({
+        where: {
+          cpf,
+        },
+      });
+
       const companyWithSameCnpj = await prisma.companies.findUnique({
         where: {
           cnpj: company.cnpj,
@@ -94,9 +74,12 @@ export async function SignUpWithPassword(app: FastifyInstance) {
       if (userWithSameUsername) {
         throw new BadRequestError('Já existe um usuário com este nome de usuário.');
       }
-
       if (companyWithSameCnpj) {
         throw new BadRequestError('Já existe uma empresa com este CNPJ.');
+      }
+
+      if (userWithSameCpf) {
+        throw new BadRequestError('Já existe um usuário com este CPF.');
       }
 
       const passwordHash = await hash(password, 6);
@@ -124,7 +107,7 @@ export async function SignUpWithPassword(app: FastifyInstance) {
             cnpj: company.cnpj,
             address: company.address,
             phone: company.phone,
-            email: company.email,
+            email: email,
             tax_regime: company.tax_regime,
             state_registration: company.state_registration,
             social_reason: company.social_reason,

@@ -5,7 +5,6 @@ import z from "zod";
     email: z.email(),
     name: z.string(),
     created_at: z.coerce.date(),
-    message: z.string(),
     avatar: z.string().nullable(),
     member_on: z.array(
         z.object({

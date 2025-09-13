@@ -10,28 +10,28 @@ import { NavMain } from "./components/nav-main"
 import { NavUser } from "./components/nav-user"
 import { LayoutDashboardIcon } from "lucide-react"
 import { type getUserProfileResponse } from './../../services/users/get-user-profile';
-import { useAuth } from "@/contexts/auth-context"
+import { useSession } from "@/hooks/use-session"
 
 
 export function Sidebar({ ...props }: React.ComponentProps<typeof SideBarComponent>) {
 
-    const { currentUserProfile } = useAuth();
+    const { userProfile } = useSession();
 
-    if (!currentUserProfile) return null;
+    if (!userProfile) return null;
     // Fazer com que a instituição e role escolhida esteja sincronizada com a useSession
     return (
         <SideBarComponent collapsible="icon" {...props}>
             <SidebarHeader>
                 <Avatar>
-                    <AvatarImage src={currentUserProfile?.avatar || ""} />
-                    <AvatarFallback>{currentUserProfile?.member_on[0]?.company.name}</AvatarFallback>
+                    <AvatarImage src={userProfile?.avatar || ""} />
+                    <AvatarFallback>{userProfile.member_on[0]?.company.name}</AvatarFallback>
                 </Avatar>
             </SidebarHeader>
             <SidebarContent>
-                <NavMain items={navData(currentUserProfile).navMain} />
+                <NavMain items={navData(userProfile).navMain} />
             </SidebarContent>
             <SidebarFooter>
-                <NavUser user={navData(currentUserProfile).navUser} />
+                <NavUser user={navData(userProfile).navUser} />
             </SidebarFooter>
             <SidebarRail />
         </SideBarComponent>
@@ -42,7 +42,7 @@ function navData(userProfile: getUserProfileResponse) {
 
     return {
         navMain: [
-            { title: "Dashboard", icon: LayoutDashboardIcon, links: [{ name: "Visão geral", to: "/admin/dashboard" }] },
+            { title: "Dashboard", icon: LayoutDashboardIcon, links: [{ name: "Visão geral", to: "/" }] },
             {
                 title: "Alunos",
                 icon: LayoutDashboardIcon,

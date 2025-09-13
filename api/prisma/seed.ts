@@ -55,7 +55,7 @@ async function main() {
                 name: 'Ana Silva',
                 email: 'ana.silva@techacademy.com',
                 password: hashedPassword,
-                cpf: '12345678901',
+                cpf: '12445678901',
                 phone: '11999990001',
                 username: 'ana.silva',
                 gender: 'F',
