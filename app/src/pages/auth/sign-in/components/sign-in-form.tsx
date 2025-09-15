@@ -33,22 +33,15 @@ export function SignInForm() {
         path: '/',
         maxAge: 60 * 60 * 24 * 7, // 7 days 
       });
-
-      const profile = await getUserProfile()
-
-      if (profile.member_on.length === 0) {
-        toast.error("Você não pertence a nenhuma instituição, para continuar, crie uma.");
-      } else {
-        navigate("/");
-      }
-      return { ...response, ...profile }
+      return response
     },
     onSuccess: async (res) => {
-      toast.success(res.message);
-      if (res.member_on?.length === 0) {
+      const profile = await getUserProfile()
+      if (profile.member_on?.length === 0) {
         toast.error('Nenhuma instituição encontrada para este usuário.');
       } else {
         navigate('/');
+        toast.success(res.message);
       }
     },
     onError: (err) => {
@@ -76,7 +69,7 @@ export function SignInForm() {
 
   return (
     <Card>
-      <div className='mt-4 flex flex-col items-center justify-center animate-fade-in'>
+      <div className='mt-4 flex flex-col items-center justify-center'>
         <img
           src='/images/logo.png'
           alt='Logo da loja'

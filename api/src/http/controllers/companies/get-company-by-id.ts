@@ -42,7 +42,7 @@ export async function getCompanyById(app: FastifyInstance) {
             },
             async (request, reply) => {
                 const { id } = request.params;
-                const userId = await request.getCurrentUserId()
+                const userId = await request.getCurrentUserId();
 
                 const user = await prisma.users.findUnique({
                     where: {

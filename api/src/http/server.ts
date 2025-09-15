@@ -11,19 +11,21 @@ import {
 } from 'fastify-type-provider-zod'
 import z, { ZodError } from 'zod'
 import * as dotenv from 'dotenv'
-import { SignInWithPassword } from './controllers/users/sign-in-with-password'
+import { SignInWithPassword } from './controllers/auth/sign-in-with-password'
 import { BadRequestError } from './controllers/_errors/bad-request-error'
 import { UnauthorizedError } from './controllers/_errors/unauthorized-error'
-import { SignUpWithPassword } from './controllers/users/sign-up-with-password'
+import { SignUpWithPassword } from './controllers/auth/sign-up-with-password'
 import { ServiceUnavailableException } from './controllers/_errors/service-unavailable-exception'
-import { requestPasswordRecover } from './controllers/users/request-password-recover'
+import { requestPasswordRecover } from './controllers/auth/request-password-recover'
 import { getUserProfile } from './controllers/users/get-user-profile'
-import { resetPassword } from './controllers/users/reset-password'
+import { resetPassword } from './controllers/auth/reset-password'
 import { errorHandler } from '../lib/error-handler'
 import { createCompany } from './controllers/companies/create-company'
 import { setRole } from './controllers/roles/set-role'
 import { getCompanyById } from './controllers/companies/get-company-by-id'
 import { getUserById } from './controllers/users/get-user-by-id'
+import { UpdateProfile } from './controllers/users/update-profile'
+import { AdminDashboard } from './controllers/dashboard/admin'
 
 dotenv.config()
 
@@ -84,7 +86,10 @@ app.register(fastifyJwt, {
   secret: env.data.JWT_SECRET,
 })
 
-app.register(fastifyCors)
+app.register(fastifyCors, {
+  origin: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+});
 
 //routes
 app.register(SignInWithPassword);
@@ -96,6 +101,8 @@ app.register(createCompany);
 app.register(setRole);
 app.register(getCompanyById);
 app.register(getUserById);
+app.register(UpdateProfile);
+app.register(AdminDashboard);
 
 app.listen({ port: Number(env.data.PORT) }).then(() => {
   console.log(`HTTP server running in http://localhost:${env.data.PORT}`)

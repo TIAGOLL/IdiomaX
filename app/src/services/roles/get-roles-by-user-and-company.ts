@@ -1,4 +1,4 @@
-import api from "@/lib/api";
+import { api } from "@/lib/api";
 import z from "zod";
 
 export const rolesByUserAndCompanySchema = z.object({

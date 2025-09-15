@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { useMutation } from '@tanstack/react-query';
 import { LoaderIcon, Mail, Send } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import api from '@/lib/api';
+import { api } from '@/lib/api';
 import { toast } from 'sonner';
 import { requestPasswordRecoverSchema, type RequestPasswordRecoverSchema } from '@/services/users/request-password-recover';
 

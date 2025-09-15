@@ -15,7 +15,7 @@ import { useMutation } from '@tanstack/react-query';
 import { LoaderIcon, LogIn, Info } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import api from '@/lib/api';
+import { api } from '@/lib/api';
 import { toast } from 'sonner';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -221,7 +221,7 @@ export function SignUpForm() {
                             <LogIn className='ml-2 h-4 w-4' />
                         )}
                     </Button>
-                    <Button variant='ghost' onClick={() => navigate('/auth/sign-in')} className='ml-4'>
+                    <Button variant='ghost' type='button' onClick={() => navigate('/auth/sign-in')} className='ml-4'>
                         Já possuo uma conta
                     </Button>
                 </CardFooter>

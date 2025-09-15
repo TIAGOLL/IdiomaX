@@ -3,7 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { requestPasswordRecoverBody, requestPasswordRecoverSubject } from '@/mails/request-password-recover';
-import { ServiceUnavailableException } from './../_errors/service-unavailable-exception';
+import { ServiceUnavailableException } from '../_errors/service-unavailable-exception';
 import { SendEmail } from '@/services/mail-sender';
 
 export async function requestPasswordRecover(app: FastifyInstance) {

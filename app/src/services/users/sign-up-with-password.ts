@@ -1,4 +1,4 @@
-import api from "@/lib/api";
+import { api } from "@/lib/api";
 import z from "zod";
 
 export const signUpFormSchema = z.object({
@@ -11,9 +11,7 @@ export const signUpFormSchema = z.object({
     date_of_birth: z.string(),
     address: z.string().min(1).max(255),
     password: z.string().min(6),
-    avatar_url: z.url().max(256).optional(),
-    companies_id: z.string().min(1).max(256),
-    roles_id: z.string().min(1).max(256),
+    avatar_url: z.url().max(1024).optional(),
 })
 
 type SignUpFormSchema = z.infer<typeof signUpFormSchema>;

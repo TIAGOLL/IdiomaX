@@ -1,4 +1,4 @@
-import api from "@/lib/api";
+import { api } from "@/lib/api";
 import z from "zod";
 
 export const createCompanySchema = z.object({
@@ -6,8 +6,8 @@ export const createCompanySchema = z.object({
     cnpj: z.string().min(14).max(14),
     phone: z.string().min(11).max(11),
     email: z.email(),
-    logo_16x16: z.instanceof(Buffer).optional(),
-    logo_512x512: z.instanceof(Buffer).optional(),
+    logo_16x16_url: z.url().optional().nullable(),
+    logo_512x512_url: z.url().optional().nullable(),
     social_reason: z.string().min(3).max(256),
     state_registration: z.string().min(3).max(256),
     tax_regime: z.string().min(3).max(256),

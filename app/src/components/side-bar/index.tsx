@@ -5,40 +5,38 @@ import {
     SidebarHeader,
     SidebarRail,
 } from "@/components/ui/sidebar"
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { NavMain } from "./components/nav-main"
 import { NavUser } from "./components/nav-user"
 import { LayoutDashboardIcon } from "lucide-react"
-import { type getUserProfileResponse } from './../../services/users/get-user-profile';
 import { useSession } from "@/hooks/use-session"
+import { CompanySwitcher } from "./components/company-switcher"
+import { ModeToggle } from "../ui/mode-toggle"
 
 
 export function Sidebar({ ...props }: React.ComponentProps<typeof SideBarComponent>) {
 
-    const { userProfile } = useSession();
+    const { userProfile, } = useSession();
 
     if (!userProfile) return null;
-    // Fazer com que a instituição e role escolhida esteja sincronizada com a useSession
+
     return (
         <SideBarComponent collapsible="icon" {...props}>
             <SidebarHeader>
-                <Avatar>
-                    <AvatarImage src={userProfile?.avatar || ""} />
-                    <AvatarFallback>{userProfile.member_on[0]?.company.name}</AvatarFallback>
-                </Avatar>
+                <CompanySwitcher />
             </SidebarHeader>
             <SidebarContent>
-                <NavMain items={navData(userProfile).navMain} />
+                <NavMain items={navData().navMain} />
             </SidebarContent>
             <SidebarFooter>
-                <NavUser user={navData(userProfile).navUser} />
+                <ModeToggle />
+                <NavUser />
             </SidebarFooter>
             <SidebarRail />
         </SideBarComponent>
     )
 }
 
-function navData(userProfile: getUserProfileResponse) {
+function navData() {
 
     return {
         navMain: [
@@ -78,9 +76,5 @@ function navData(userProfile: getUserProfileResponse) {
                 ],
             },
         ],
-        navUser: {
-            name: userProfile?.name,
-            email: userProfile?.email,
-        },
     }
 }

@@ -1,7 +1,7 @@
 import axios, { type AxiosError } from "axios";
 import nookies from 'nookies';
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 
   headers:
@@ -34,11 +34,6 @@ api.interceptors.response.use(
     } else if (error.message) {
       normalizedError.message = error.message;
     }
-
-    // window.location.href = '/auth/sign-in';
-    nookies.destroy(null, 'token')
     return Promise.reject(normalizedError);
   }
 );
-
-export default api;

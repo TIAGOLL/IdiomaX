@@ -1,11 +1,18 @@
-import api from "@/lib/api";
+import { api } from "@/lib/api";
 import z from "zod";
 
- const getUserProfileResponse = z.object({
-    email: z.email(),
-    name: z.string(),
-    created_at: z.coerce.date(),
-    avatar: z.string().nullable(),
+const getUserProfileResponse = z.object({
+    name: z.string().min(3).max(256),
+    email: z.email().min(3).max(256),
+    password: z.string().min(6, { message: 'Senha deve ter pelo menos 6 caracteres' }).optional(),
+    cpf: z.string().min(11).max(11),
+    phone: z.string().min(10).max(11),
+    gender: z.string().min(1).max(1),
+    date_of_birth: z.string(),
+    address: z.string().min(1).max(255),
+    avatar_url: z.url().nullable().optional(),
+    created_at: z.string(),
+    username: z.string().min(3).max(256),
     member_on: z.array(
         z.object({
             id: z.uuid(),
@@ -16,19 +23,21 @@ import z from "zod";
                 id: z.uuid(),
                 email: z.email(),
                 name: z.string(),
-                created_at: z.coerce.date(),
+                created_at: z.string(),
                 phone: z.string(),
                 address: z.string(),
-                updated_at: z.coerce.date(),
+                updated_at: z.string(),
                 cnpj: z.string(),
-                social_reason: z.string(),
-                state_registration: z.string(),
-                tax_regime: z.string(),
-                owner_id: z.uuid(),
+                logo_16x16_url: z.string().nullable().optional(),
+                logo_512x512_url: z.string().nullable().optional(),
+                social_reason: z.string().nullable(),
+                state_registration: z.string().nullable(),
+                tax_regime: z.string().nullable(),
+                owner_id: z.string(),
             }),
         })
-    ),
-});
+    )
+})
 
 export type getUserProfileResponse = z.infer<typeof getUserProfileResponse>;
 

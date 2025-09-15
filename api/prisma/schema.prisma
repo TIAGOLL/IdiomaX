@@ -29,11 +29,20 @@ model Renamedclass {
   @@map("class")
 }
 
+enum WeekDays {
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+}
+
 model class_days {
-  id           String   @id @default(uuid()) @db.VarChar(256)
-  initial_date DateTime
-  final_date   DateTime
-  class_id     String   @db.VarChar(256)
+  id        String   @id @default(uuid()) @db.VarChar(256)
+  week_date WeekDays
+  class_id  String   @db.VarChar(256)
 
   class Renamedclass @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "class_fk")
 }
@@ -124,9 +133,9 @@ model materials {
 model monthly_fee {
   id                               String    @id @default(uuid()) @db.VarChar(256)
   due_date                         DateTime
-  value                            Decimal   @db.Decimal(20, 2)
+  value                            Decimal   @db.Decimal(10, 2)
   paid                             Boolean   @default(false)
-  discount_payment_before_due_date Decimal   @default(0) @db.Decimal(3, 2)
+  discount_payment_before_due_date Decimal   @default(0) @db.Decimal(10, 2)
   registrations_id                 String    @db.VarChar(256)
   payment_method                   String?   @db.VarChar(256)
   date_of_payment                  DateTime? @db.Timestamptz(3)
@@ -218,8 +227,8 @@ model companies {
   cnpj               String    @unique @db.VarChar(256)
   phone              String    @db.VarChar(256)
   email              String    @db.VarChar(256)
-  logo_16x16         Bytes?
-  logo_512x512       Bytes?
+  logo_16x16_url     String?   @db.VarChar(1024)
+  logo_512x512_url   String?   @db.VarChar(1024)
   social_reason      String?   @db.VarChar(256)
   state_registration String?   @db.VarChar(256)
   tax_regime         String?   @db.VarChar(256)
@@ -249,7 +258,7 @@ model users {
   date_of_birth DateTime
   address       String    @db.VarChar(256)
   active        Boolean?  @default(true)
-  avatar        Bytes?
+  avatar_url    String?   @db.VarChar(1024)
   created_at    DateTime? @default(now())
   updated_at    DateTime? @updatedAt
 

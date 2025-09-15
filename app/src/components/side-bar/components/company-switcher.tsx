@@ -1,14 +1,12 @@
 "use client"
 
-import * as React from "react"
-import { ChevronsUpDown, Plus } from "lucide-react"
+import { ChevronsUpDown, Factory } from "lucide-react"
 
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
@@ -18,20 +16,14 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from "@/components/ui/sidebar"
+import { useSession } from "@/hooks/use-session"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-export function TeamSwitcher({
-    teams,
-}: {
-    teams: {
-        name: string
-        logo: React.ElementType
-        plan: string
-    }[]
-}) {
+export function CompanySwitcher() {
     const { isMobile } = useSidebar()
-    const [activeTeam, setActiveTeam] = React.useState(teams[0])
+    const { userProfile, currentCompanyMember, currentRole, setCompany } = useSession();
 
-    if (!activeTeam) {
+    if (!currentCompanyMember) {
         return null
     }
 
@@ -39,17 +31,17 @@ export function TeamSwitcher({
         <SidebarMenu>
             <SidebarMenuItem>
                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton
-                            size="lg"
-                            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                        >
-                            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                                <activeTeam.logo className="size-4" />
-                            </div>
+                    <DropdownMenuTrigger asChild className="shadow-sm shadow-primary/20">
+                        <SidebarMenuButton size="lg">
+                            <Avatar className="rounded-xl justify-center items-center flex">
+                                <AvatarImage src={currentCompanyMember?.company.logo_16x16_url || ''} />
+                                <AvatarFallback>
+                                    <Factory className="size-8" />
+                                </AvatarFallback>
+                            </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
-                                <span className="truncate font-medium">{activeTeam.name}</span>
-                                <span className="truncate text-xs">{activeTeam.plan}</span>
+                                <span className="truncate font-medium">{currentCompanyMember?.company.name}</span>
+                                <span className="truncate text-xs">{currentRole}</span>
                             </div>
                             <ChevronsUpDown className="ml-auto" />
                         </SidebarMenuButton>
@@ -61,28 +53,28 @@ export function TeamSwitcher({
                         sideOffset={4}
                     >
                         <DropdownMenuLabel className="text-muted-foreground text-xs">
-                            Teams
+                            Instituições que você faz parte
                         </DropdownMenuLabel>
-                        {teams.map((team, index) => (
+                        {userProfile?.member_on.map((member, index) => (
                             <DropdownMenuItem
-                                key={team.name}
-                                onClick={() => setActiveTeam(team)}
+                                key={member.company.name}
+                                onClick={() => {
+                                    setCompany(member)
+                                }}
                                 className="gap-2 p-2"
                             >
                                 <div className="flex size-6 items-center justify-center rounded-md border">
-                                    <team.logo className="size-3.5 shrink-0" />
+                                    <Avatar className="size-5 shrink-0 rounded-xl">
+                                        <AvatarImage src={member.company.logo_16x16_url || ""} />
+                                        <AvatarFallback>
+                                            <Factory className="size-8" />
+                                        </AvatarFallback>
+                                    </Avatar>
                                 </div>
-                                {team.name}
+                                {member.company.name}
                                 <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
                             </DropdownMenuItem>
                         ))}
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="gap-2 p-2">
-                            <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
-                                <Plus className="size-4" />
-                            </div>
-                            <div className="text-muted-foreground font-medium">Add team</div>
-                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </SidebarMenuItem>

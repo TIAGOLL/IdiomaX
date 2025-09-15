@@ -203,8 +203,8 @@ CREATE TABLE "public"."companies" (
     "cnpj" VARCHAR(256) NOT NULL,
     "phone" VARCHAR(256) NOT NULL,
     "email" VARCHAR(256) NOT NULL,
-    "logo_16x16" BYTEA,
-    "logo_512x512" BYTEA,
+    "logo_16x16" VARCHAR(1024),
+    "logo_512x512" VARCHAR(1024),
     "social_reason" VARCHAR(256),
     "state_registration" VARCHAR(256),
     "tax_regime" VARCHAR(256),
@@ -229,7 +229,7 @@ CREATE TABLE "public"."users" (
     "date_of_birth" TIMESTAMP(3) NOT NULL,
     "address" VARCHAR(256) NOT NULL,
     "active" BOOLEAN DEFAULT true,
-    "avatar" BYTEA,
+    "avatar_url" VARCHAR(1024),
     "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3),
 
@@ -261,6 +261,9 @@ CREATE UNIQUE INDEX "companies_cnpj_key" ON "public"."companies"("cnpj");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "public"."users"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_cpf_key" ON "public"."users"("cpf");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_username_key" ON "public"."users"("username");

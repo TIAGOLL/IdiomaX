@@ -29,7 +29,7 @@ export async function getUserById(app: FastifyInstance) {
                             date_of_birth: z.coerce.date(),
                             address: z.string(),
                             active: z.boolean(),
-                            avatar: Uint8Array,
+                            avatar_url: z.url().nullable(),
                             created_at: z.date().nullable(),
                             updated_at: z.date().nullable(),
                         }),

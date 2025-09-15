@@ -7,7 +7,7 @@ import { RequestPasswordRecoverForm } from './components/request-password-recove
 export function SignIn() {
 
   return (
-    <div className='flex h-full w-full items-center justify-center bg-slate-100 dark:bg-slate-600'>
+    <div className='flex justify-center min-h-screen items-center bg-slate-100 dark:bg-slate-600 sm:!w-screen'>
       <div className='absolute bottom-10 left-10'>
         <ModeToggle />
       </div>
@@ -19,7 +19,7 @@ export function SignIn() {
         <TabsContent value='auth' data-test='tabAuth'>
           <SignInForm />
         </TabsContent>
-        <TabsContent value='request-password-recover' data-test='tabForgotPassoword'>
+        <TabsContent value='request-password-recover' data-test='tabForgotPassword'>
           <RequestPasswordRecoverForm />
         </TabsContent>
       </Tabs>

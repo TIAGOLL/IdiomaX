@@ -16,21 +16,11 @@ export function App() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
           <Toaster />
-          {
-            !window.location.pathname.includes('/auth') &&
-            <SidebarProvider>
-              <RoutesApp />
-              <SpeedInsights />
-              <Analytics />
-              <main>
-                <SidebarTrigger />
-              </main>
-            </SidebarProvider>
-          }
-          {
-            window.location.pathname.includes('/auth') &&
+          <SidebarProvider>
             <RoutesApp />
-          }
+            <SpeedInsights />
+            <Analytics />
+          </SidebarProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </BrowserRouter >

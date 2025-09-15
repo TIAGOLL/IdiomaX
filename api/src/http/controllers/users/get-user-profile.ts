@@ -19,10 +19,17 @@ export async function getUserProfile(app: FastifyInstance) {
                     security: [{ bearerAuth: [] }],
                     response: {
                         200: z.object({
-                            email: z.email(),
-                            name: z.string().min(2).max(100),
+                            name: z.string().min(3).max(256),
+                            email: z.email().min(3).max(256),
+                            username: z.string().min(3).max(256),
+                            password: z.string().min(6, { message: 'Senha deve ter pelo menos 6 caracteres' }).optional(),
+                            cpf: z.string().min(11).max(11),
+                            phone: z.string().min(10).max(11),
+                            gender: z.string().min(1).max(1),
+                            date_of_birth: z.date(),
+                            address: z.string().min(1).max(255),
+                            avatar_url: z.url().nullable().optional(),
                             created_at: z.date(),
-                            avatar: z.string().nullable().optional(),
                             member_on: z.array(
                                 z.object({
                                     id: z.uuid(),
@@ -38,8 +45,8 @@ export async function getUserProfile(app: FastifyInstance) {
                                         address: z.string(),
                                         updated_at: z.date().nullable(),
                                         cnpj: z.string(),
-                                        logo_16x16: z.string().nullable().optional(),
-                                        logo_512x512: z.string().nullable().optional(),
+                                        logo_16x16_url: z.string().nullable().optional(),
+                                        logo_512x512_url: z.string().nullable().optional(),
                                         social_reason: z.string().nullable(),
                                         state_registration: z.string().nullable(),
                                         tax_regime: z.string().nullable(),
@@ -56,19 +63,10 @@ export async function getUserProfile(app: FastifyInstance) {
 
                 const userProfile = await prisma.users.findUnique({
                     where: { id: userId },
-                    select: {
-                        email: true,
-                        name: true,
-                        created_at: true,
-                        avatar: true,
+                    include: {
                         member_on: {
                             include: {
-                                company: {
-                                    omit: {
-                                        logo_16x16: true,
-                                        logo_512x512: true,
-                                    }
-                                }
+                                company: true
                             }
                         },
                     },
@@ -77,11 +75,8 @@ export async function getUserProfile(app: FastifyInstance) {
                 if (!userProfile) {
                     throw new BadRequestError("Usuário não encontrado.");
                 }
-                console.log(userProfile)
-                reply.send({
-                    ...userProfile,
-                    avatar: userProfile.avatar ? Buffer.from(userProfile.avatar).toString('base64') : null,
-                });
+                console.log(userProfile);
+                reply.send(userProfile);
             },
         );
 }
