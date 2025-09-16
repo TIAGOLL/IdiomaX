@@ -1,10 +1,10 @@
 import type { FastifyInstance } from 'fastify';
 import z, { ZodError } from 'zod';
 
-import { BadRequestError } from '@/http/controllers/_errors/bad-request-error';
-import { UnauthorizedError } from '@/http/controllers/_errors/unauthorized-error';
 import { ServiceUnavailableException } from '../http/controllers/_errors/service-unavailable-exception';
-import { ForbiddenError } from '@/http/controllers/_errors/forbidden-error';
+import { BadRequestError } from 'src/http/controllers/_errors/bad-request-error';
+import { UnauthorizedError } from 'src/http/controllers/_errors/unauthorized-error';
+import { ForbiddenError } from 'src/http/controllers/_errors/forbidden-error';
 
 type FastifyErrorHandler = FastifyInstance['errorHandler'];
 

@@ -1,5 +1,5 @@
-import { env } from '@/http/server';
 import * as nodemailer from 'nodemailer';
+import { env } from 'src/http/server';
 
 export function mailTransport(): nodemailer.Transporter {
     const transport = nodemailer.createTransport({
