@@ -23,6 +23,7 @@ import { getCompanyById } from './controllers/companies/get-company-by-id'
 import { getUserById } from './controllers/users/get-user-by-id'
 import { UpdateProfile } from './controllers/users/update-profile'
 import { AdminDashboard } from './controllers/dashboard/admin'
+import { CreateCheckoutSession } from './controllers/subscriptions/create-checkout-session'
 
 dotenv.config()
 
@@ -35,6 +36,7 @@ const envSchema = z.object({
   USER_MAIL_SENDER: z.string().min(1),
   HOST_MAIL_SENDER: z.string().min(1),
   VERCEL: z.enum(['1', '0']).default('0'),
+  STRIPE_SECRET_KEY: z.string().min(1),
 
   // Nome e endereço que vai aparecer para o usuário
   APP_NAME: z.string().min(1),
@@ -98,6 +100,7 @@ app.register(resetPassword);
 app.register(createCompany);
 app.register(setRole);
 app.register(getCompanyById);
+app.register(CreateCheckoutSession);
 app.register(getUserById);
 app.register(UpdateProfile);
 app.register(AdminDashboard);

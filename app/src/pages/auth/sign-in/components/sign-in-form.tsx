@@ -1,4 +1,4 @@
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Card,
@@ -20,7 +20,7 @@ import { toast } from 'sonner';
 import { signInFormRequest, signInWithPassword } from '@/services/auth/sign-in-with-password';
 import nookies from 'nookies';
 import { getUserProfile } from '@/services/users/get-user-profile';
-import { Link, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 
 type SignInFormSchema = z.infer<typeof signInFormRequest>;
 
@@ -105,16 +105,13 @@ export function SignInForm() {
             <FormMessageError error={errors.password?.message} />
           </div>
         </CardContent>
-        <CardFooter className='flex justify-between flex-row'>
-          <Link to='/auth/sign-up' className={buttonVariants({ variant: "ghost" })}>
-            Não tenho uma conta
-          </Link>
+        <CardFooter className='flex justify-end flex-row'>
           <Button
             variant='default'
             type='submit'
             disabled={isPending}
             data-test='loginSubmitButton'>
-            Logar
+            Entrar
             {isPending ? (
               <LoaderIcon className='ml-2 h-4 w-4 animate-spin' />
             ) : (

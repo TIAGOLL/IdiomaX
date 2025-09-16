@@ -7,6 +7,7 @@ import { SignUp } from '@/pages/auth/sign-up';
 import { AuthLayout } from './auth-layout';
 import ProfilePage from '@/pages/profile';
 import ResetPassword from '@/pages/auth/reset-password';
+import SelectPlan from '@/pages/subscription/select-plan';
 
 export function RoutesApp() {
 
@@ -16,6 +17,7 @@ export function RoutesApp() {
         <Route path='/auth/sign-in' element={<SignIn />} />
         <Route path='/auth/sign-up' element={<SignUp />} />
         <Route path='/auth/reset-password/:token' element={<ResetPassword />} />
+        <Route path='/select-plan' element={<SelectPlan />} />
       </Route>
       <Route element={<PrivateRoute />}>
         {/* ADMIN, TEACHER e STUDENT IRÃO DIVIDIR A MESMA DASHBOARD */}

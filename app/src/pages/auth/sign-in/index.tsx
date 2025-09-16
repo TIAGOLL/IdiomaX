@@ -3,11 +3,18 @@ import { ModeToggle } from '@/components/ui/mode-toggle.tsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SignInForm } from './components/sign-in-form';
 import { RequestPasswordRecoverForm } from './components/request-password-recover-form';
+import { Link } from 'react-router';
+import { buttonVariants } from '@/components/ui/button';
+import { Building } from 'lucide-react';
 
 export function SignIn() {
 
   return (
     <div className='flex justify-center min-h-screen items-center bg-slate-100 dark:bg-slate-600 sm:!w-screen'>
+      <Link to='/auth/sign-up' className={`${buttonVariants({ variant: "ghost" })} absolute top-10 left-10`}>
+        <Building className='mr-1 h-4 w-4' />
+        Cadastrar minha empresa
+      </Link>
       <div className='absolute bottom-10 left-10'>
         <ModeToggle />
       </div>

@@ -1,8 +1,7 @@
-import { PrismaClient, Role, WeekDays, type users } from "./generated/prisma"
+import { Role, WeekDays } from "@prisma/client";
 import * as bcrypt from "bcryptjs"
 import { v4 as uuidv4 } from "uuid"
-
-const prisma = new PrismaClient()
+import { prisma } from "../src/lib/prisma";
 
 function randomDate(start: Date, end: Date) {
     return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()))
@@ -326,6 +325,7 @@ async function main() {
         for (let i = 1; i <= 10; i++) {
             const id = uuidv4()
             registrations.push(id)
+            // Use a referência correta do prisma dentro da transação
             await prisma.registrations.create({
                 data: {
                     id,
@@ -482,6 +482,8 @@ async function main() {
                 companies_id: companyId,
             }
         })
+    }, {
+        timeout: 30000 // 30 segundos    
     })
 }
 

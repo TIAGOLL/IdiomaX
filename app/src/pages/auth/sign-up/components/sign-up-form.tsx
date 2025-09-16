@@ -57,7 +57,7 @@ export function SignUpForm() {
         onSuccess: (res) => {
             toast.success(res.message);
             console.log(res);
-            navigate('/auth/sign-in');
+            navigate('/select-plan');
         },
         onError: (err) => {
             console.log(err);
@@ -117,6 +117,7 @@ export function SignUpForm() {
                         className="sm:grid flex flex-col sm:grid-cols-3 gap-4"
                     >
                         {/* Dados do usuário */}
+                        <div className='col-span-3 mt-4 font-bold'>Dados do usuário</div>
                         <div className="col-span-1 space-y-1">
                             <Label htmlFor='name'>Nome</Label>
                             <Input type='text' id='name' {...register('name')} />
@@ -214,7 +215,7 @@ export function SignUpForm() {
                         type='submit'
                         disabled={isPending}
                         data-test='signUpSubmitButton'>
-                        Cadastrar
+                        Continuar
                         {isPending ? (
                             <LoaderIcon className='ml-2 h-4 w-4 animate-spin' />
                         ) : (
