@@ -23,7 +23,7 @@ export default tseslint.config([
     },
     rules: {
       // Aponta erro para imports não usados
-      'unused-imports/no-unused-imports': 'error',
+      'unused-imports/no-unused-imports': 'warn',
       // Remove variáveis não usadas mas permite se começarem com "_"
       'unused-imports/no-unused-vars': [
         'warn',

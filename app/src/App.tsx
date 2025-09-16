@@ -4,7 +4,7 @@ import { SpeedInsights } from '@vercel/speed-insights/react';
 import { BrowserRouter } from 'react-router';
 
 import { ThemeProvider } from './components/ui/theme-provider';
-import { SidebarProvider, SidebarTrigger } from './components/ui/sidebar.tsx';
+import { SidebarProvider } from './components/ui/sidebar.tsx';
 import { RoutesApp } from './routes/index.tsx';
 import { Toaster } from 'sonner';
 
