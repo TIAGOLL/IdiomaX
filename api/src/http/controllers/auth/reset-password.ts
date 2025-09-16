@@ -20,7 +20,7 @@ export async function resetPassword(app: FastifyInstance) {
           password: z.string().min(6),
         }),
         response: {
-          204: z.object({ message: z.string() }),
+          200: z.object({ message: z.string() }),
           400: z.object({ message: z.string() }),
           403: z.object({ message: z.string() }),
         },
@@ -56,7 +56,7 @@ export async function resetPassword(app: FastifyInstance) {
         }),
       ]);
 
-      return reply.status(204).send({ message: 'Senha alterada com sucesso' });
+      return reply.status(200).send({ message: 'Senha alterada com sucesso!' });
     },
   );
 }
