@@ -34,7 +34,7 @@ const envSchema = z.object({
   PORT_MAIL_SENDER: z.string().min(1),
   USER_MAIL_SENDER: z.string().min(1),
   HOST_MAIL_SENDER: z.string().min(1),
-  NODE_ENV: z.enum(['development', 'production', 'test']).default('production'),
+  VERCEL: z.enum(['1', '0']).default('0'),
 
   // Nome e endereço que vai aparecer para o usuário
   APP_NAME: z.string().min(1),
@@ -102,13 +102,11 @@ app.register(getUserById);
 app.register(UpdateProfile);
 app.register(AdminDashboard);
 
-if (env.data.NODE_ENV !== 'production') {
+if (process.env.VERCEL !== "1") {
   app.listen({ port: Number(env.data.PORT) }).then(() => {
-    console.log(`HTTP server running in http://localhost:${env.data.PORT}`)
-  })
+    console.log(`HTTP server running in http://localhost:${env.data.PORT}`);
+  });
 }
 
-//rodar em produção
-export default app;
-
+export default app; // 👈 Vercel usa esse export
 export const ENV = env.data
