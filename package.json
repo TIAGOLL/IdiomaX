@@ -1,0 +1,23 @@
+{
+  "name": "idiomax",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"pnpm --filter ./api dev\" \"pnpm --filter ./app dev\"",
+    "install": "pnpm --filter ./api install & pnpm --filter ./app install",
+    "docker": "docker-compose -f docker-compose.yml up -d"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.15.0",
+  "dependencies": {
+    "@fastify/cors": "^11.1.0",
+    "dotenv": "^17.2.1"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  }
+}
