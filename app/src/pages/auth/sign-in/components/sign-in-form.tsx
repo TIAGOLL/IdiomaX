@@ -17,7 +17,7 @@ import { LoaderIcon, LockIcon, LogIn, User } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { toast } from 'sonner';
-import { signInFormRequest, signInWithPassword } from '@/services/users/sign-in-with-password';
+import { signInFormRequest, signInWithPassword } from '@/services/auth/sign-in-with-password';
 import nookies from 'nookies';
 import { getUserProfile } from '@/services/users/get-user-profile';
 import { Link, useNavigate } from 'react-router';

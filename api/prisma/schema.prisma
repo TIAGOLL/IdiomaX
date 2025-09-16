@@ -147,8 +147,8 @@ model monthly_fee {
 model presence_list {
   id         String  @id @default(uuid()) @db.VarChar(256)
   is_present Boolean @default(false)
-  users_id   String  @db.VarChar(256)
-  classes_id String  @db.VarChar(256)
+  users_id   String  @db.VarChar(256) @unique
+  classes_id String  @db.VarChar(256) @unique
 
   classes classes @relation(fields: [classes_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "classes_fk")
   users   users   @relation(fields: [users_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")

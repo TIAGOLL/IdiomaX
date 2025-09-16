@@ -1,11 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { BarChart, Bar, XAxis, YAxis, LineChart, Line, CartesianGrid } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { useSession } from "@/hooks/use-session";
-import { TriangleAlert } from "lucide-react";
+import { Info, TriangleAlert } from "lucide-react";
 import { getAdminDashboard } from "@/services/dashboard/admin";
-import { formatDate } from "@/lib/utils";
 import {
     Table,
     TableHeader,
@@ -15,6 +14,7 @@ import {
     TableCell,
 } from "@/components/ui/table";
 import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function AdminDashboard() {
     const { currentCompanyMember } = useSession();
@@ -46,9 +46,9 @@ export default function AdminDashboard() {
     if (!stats) return null;
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-8">
+        <div className="w-11/12 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2 py-8">
             {/* Calendário de encontros */}
-            <Card className="col-span-1">
+            <Card className="col-span-3">
                 <CardHeader>
                     <CardTitle>Calendário de Encontros</CardTitle>
                 </CardHeader>
@@ -57,10 +57,9 @@ export default function AdminDashboard() {
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Turma</TableHead>
-                                <TableHead>Data Inicial</TableHead>
-                                <TableHead>Hora Inicial</TableHead>
-                                <TableHead>Data Final</TableHead>
-                                <TableHead>Hora Final</TableHead>
+                                <TableHead>Dia da Semana</TableHead>
+                                <TableHead>Começo</TableHead>
+                                <TableHead>Fim</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -70,12 +69,14 @@ export default function AdminDashboard() {
                                 const pad = (n: number) => n.toString().padStart(2, "0");
                                 const horaInicial = `${pad(initial.getHours())}:${pad(initial.getMinutes())}`;
                                 const horaFinal = `${pad(final.getHours())}:${pad(final.getMinutes())}`;
+                                // Dia da semana em português
+                                const diasSemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+                                const diaSemana = diasSemana[initial.getDay()];
                                 return (
                                     <TableRow key={day.id}>
                                         <TableCell>{day.className}</TableCell>
-                                        <TableCell>{formatDate(day.initial_date)}</TableCell>
+                                        <TableCell>{diaSemana}</TableCell>
                                         <TableCell>{horaInicial}</TableCell>
-                                        <TableCell>{formatDate(day.final_date)}</TableCell>
                                         <TableCell>{horaFinal}</TableCell>
                                     </TableRow>
                                 );
@@ -86,7 +87,7 @@ export default function AdminDashboard() {
             </Card>
 
             {/* Ocupação média das turmas */}
-            <Card>
+            <Card className="col-span-3 sm:col-span-1">
                 <CardHeader>
                     <CardTitle>Ocupação das Turmas</CardTitle>
                 </CardHeader>
@@ -104,7 +105,7 @@ export default function AdminDashboard() {
             </Card>
 
             {/* Assiduidade média por turma */}
-            <Card>
+            <Card className="col-span-3 sm:col-span-1">
                 <CardHeader>
                     <CardTitle>Assiduidade Média por Turma</CardTitle>
                 </CardHeader>
@@ -112,52 +113,28 @@ export default function AdminDashboard() {
                     <div>
                         <strong>Média:</strong> {stats.avgAttendance}%
                         <Progress value={stats.avgAttendance} className="mt-2" />
-                        <div className="mt-4">
-                            <strong>Top 5 turmas:</strong>
-                            <ul>
-                                {stats.topAttendanceClasses.map((c) => (
-                                    <li key={c.id}>{c.nome}: {c.attendance}%</li>
-                                ))}
-                            </ul>
-                            <strong>Bottom 5 turmas:</strong>
-                            <ul>
-                                {stats.bottomAttendanceClasses.map((c) => (
-                                    <li key={c.id}>{c.nome}: {c.attendance}%</li>
-                                ))}
-                            </ul>
+                        <div className="mt-4 flex flex-row gap-2 justify-between items-center">
+                            <div className="flex flex-col items-start">
+                                <strong>Top 5 turmas:</strong>
+                                <ul>
+                                    {stats.topAttendanceClasses.map((c) => (
+                                        <li key={c.id}>{c.nome}: {c.attendance}%</li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <div className="flex flex-col items-start">
+                                <strong>Bottom 5 turmas:</strong>
+                                <ul>
+                                    {stats.bottomAttendanceClasses.map((c) => (
+                                        <li key={c.id}>{c.nome}: {c.attendance}%</li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </CardContent>
             </Card>
 
-            {/* Carga horária de professores */}
-            <Card className="col-span-3">
-                <CardHeader>
-                    <CardTitle>Carga Horária dos Professores</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    {(() => {
-                        const chartConfig = {
-                            hours: {
-                                label: "Horas",
-                                color: "#8884d8",
-                            },
-                        };
-                        return (
-                            <ChartContainer config={chartConfig} className="min-h-[200px] w-full h-48">
-                                <BarChart data={stats.teacherWorkload}>
-                                    <CartesianGrid vertical={true} />
-                                    <XAxis dataKey="name" />
-                                    <YAxis />
-                                    <ChartTooltip content={<ChartTooltipContent />} />
-                                    <ChartLegend content={<ChartLegendContent nameKey="name" />} />
-                                    <Bar dataKey="hours" fill="#8884d8" />
-                                </BarChart>
-                            </ChartContainer>
-                        );
-                    })()}
-                </CardContent>
-            </Card>
 
             {/* Operação de turmas */}
             <Card className="col-span-3">
@@ -193,8 +170,37 @@ export default function AdminDashboard() {
                 </CardContent>
             </Card>
 
+            {/* Carga horária de professores */}
+            <Card className="col-span-3">
+                <CardHeader>
+                    <CardTitle>Carga Horária dos Professores</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    {(() => {
+                        const chartConfig = {
+                            hours: {
+                                label: "Horas",
+                                color: "#8884d8",
+                            },
+                        };
+                        return (
+                            <ChartContainer config={chartConfig} className="min-h-[200px] w-full h-48">
+                                <BarChart data={stats.teacherWorkload}>
+                                    <CartesianGrid vertical={true} />
+                                    <XAxis dataKey="name" />
+                                    <YAxis />
+                                    <ChartTooltip content={<ChartTooltipContent />} />
+                                    <ChartLegend content={<ChartLegendContent />} />
+                                    <Bar dataKey="hours" fill="#8884d8" />
+                                </BarChart>
+                            </ChartContainer>
+                        );
+                    })()}
+                </CardContent>
+            </Card>
+
             {/* Visão executiva */}
-            <Card>
+            <Card className="col-span-3 sm:col-span-1">
                 <CardHeader>
                     <CardTitle>Visão Executiva</CardTitle>
                 </CardHeader>
@@ -227,7 +233,7 @@ export default function AdminDashboard() {
             </Card>
 
             {/* Financeiro */}
-            <Card className="col-span-2 shadow-lg">
+            <Card className="col-span-3 shadow-lg sm:col-span-2">
                 <CardHeader>
                     <CardTitle className="text-lg">Resumo Financeiro</CardTitle>
                 </CardHeader>
@@ -235,27 +241,107 @@ export default function AdminDashboard() {
                     <Table>
                         <TableBody>
                             <TableRow>
-                                <TableCell className="font-semibold text-blue-200">MRR devido:</TableCell>
+                                <TableCell className="font-semibold text-blue-200">
+                                    <span className="flex flex-row gap-2 items-center">
+                                        MRR devido:
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Info className="size-4 cursor-pointer" />
+                                                </TooltipTrigger>
+                                                <TooltipContent side="top">
+                                                    <span>
+                                                        Soma de todas as mensalidades <b>não pagas</b> (vencidas e a vencer).
+                                                    </span>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    </span>
+                                </TableCell>
                                 <TableCell className="text-blue-200">R$ {stats.mrrDue}</TableCell>
                             </TableRow>
                             <TableRow>
-                                <TableCell className="font-semibold text-green-200">MRR recebido:</TableCell>
+                                <TableCell className="font-semibold text-green-200">
+                                    <span className="flex flex-row gap-2 items-center">
+                                        MRR recebido:
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Info className="size-4 cursor-pointer" />
+                                                </TooltipTrigger>
+                                                <TooltipContent side="top">
+                                                    <span>
+                                                        Soma de todas as mensalidades <b>já pagas</b>.
+                                                    </span>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    </span>
+                                </TableCell>
                                 <TableCell className="text-green-200">R$ {stats.mrrReceived}</TableCell>
                             </TableRow>
                             <TableRow>
-                                <TableCell className="font-semibold text-yellow-200">MRR aberto:</TableCell>
+                                <TableCell className="font-semibold text-yellow-200">
+                                    <span className="flex flex-row gap-2 items-center">
+                                        MRR aberto:
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Info className="size-4 cursor-pointer" />
+                                                </TooltipTrigger>
+                                                <TooltipContent side="top">
+                                                    <span>
+                                                        Soma de todas as mensalidades <b>não pagas e já vencidas</b>.
+                                                    </span>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    </span>
+                                </TableCell>
                                 <TableCell className="text-yellow-200">R$ {stats.mrrOpen}</TableCell>
                             </TableRow>
                             <TableRow>
-                                <TableCell className="font-semibold">DSO:</TableCell>
+                                <TableCell className="font-semibold">
+                                    <span className="flex flex-row gap-2 items-center">
+                                        DSO:
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Info className="size-4 cursor-pointer" />
+                                                </TooltipTrigger>
+                                                <TooltipContent side="top">
+                                                    <span>
+                                                        <b>Days Sales Outstanding</b>: média de dias para receber após o vencimento das mensalidades.
+                                                    </span>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    </span>
+                                </TableCell>
                                 <TableCell>{stats.dso} dias</TableCell>
                             </TableRow>
                             <TableRow>
-                                <TableCell className="font-semibold">Taxa de inadimplência:</TableCell>
+                                <TableCell className="font-semibold">
+                                    <span className="flex flex-row gap-2 items-center">
+                                        Taxa de inadimplência:
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Info className="size-4 cursor-pointer" />
+                                                </TooltipTrigger>
+                                                <TooltipContent side="top">
+                                                    <span>
+                                                        Percentual de mensalidades vencidas que ainda <b>não foram pagas</b>.
+                                                    </span>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    </span>
+                                </TableCell>
                                 <TableCell>{stats.defaultRate}%</TableCell>
                             </TableRow>
                             <TableRow>
-                                <TableCell className="font-semibold align-top">Aging de títulos:</TableCell>
+                                <TableCell className="font-semibold align-top">Mensalidades em atraso (Em dias):</TableCell>
                                 <TableCell>
                                     <ul className="ml-2 mt-1 text-sm">
                                         <li>0–30d: <span className="font-bold text-blue-400">R$ {stats.aging["0-30"]}</span></li>
@@ -284,22 +370,29 @@ export default function AdminDashboard() {
                 </CardHeader>
                 <CardContent>
                     {(() => {
+                        // Combine as curvas para o gráfico de barras
+                        const barChartData = stats.receivablesCurve.map((item, idx) => ({
+                            month: item.month,
+                            aReceber: item.value,
+                            recebidas: stats.receivedCurve[idx]?.value ?? 0,
+                        }));
+
                         const chartConfig = {
-                            value: {
-                                label: "Receitas",
-                                color: "#2563eb",
-                            },
+                            aReceber: { label: "A Receber", color: "#2563eb" },
+                            recebidas: { label: "Recebidas", color: "#22c55e" },
                         };
+
                         return (
                             <ChartContainer config={chartConfig} className="min-h-[200px] w-full h-24">
-                                <LineChart data={stats.receivablesCurve}>
+                                <BarChart data={barChartData}>
                                     <CartesianGrid vertical={true} />
                                     <XAxis dataKey="month" />
                                     <YAxis />
                                     <ChartTooltip content={<ChartTooltipContent />} />
-                                    <ChartLegend content={<ChartLegendContent nameKey="month" />} />
-                                    <Line type="monotone" dataKey="value" stroke="#2563eb" strokeWidth={2} dot={{ r: 3 }} />
-                                </LineChart>
+                                    <ChartLegend content={<ChartLegendContent />} />
+                                    <Bar dataKey="aReceber" fill="#2563eb" name="A Receber" />
+                                    <Bar dataKey="recebidas" fill="#22c55e" name="Recebidas" />
+                                </BarChart>
                             </ChartContainer>
                         );
                     })()}

@@ -4,6 +4,7 @@ import z, { ZodError } from 'zod';
 import { BadRequestError } from '@/http/controllers/_errors/bad-request-error';
 import { UnauthorizedError } from '@/http/controllers/_errors/unauthorized-error';
 import { ServiceUnavailableException } from '../http/controllers/_errors/service-unavailable-exception';
+import { ForbiddenError } from '@/http/controllers/_errors/forbidden-error';
 
 type FastifyErrorHandler = FastifyInstance['errorHandler'];
 
@@ -19,6 +20,10 @@ export const errorHandler: FastifyErrorHandler = (error, _, reply) => {
   } else if (error instanceof UnauthorizedError) {
     return reply
       .status(401)
+      .send({ message: error.message })
+  } else if (error instanceof ForbiddenError) {
+    return reply
+      .status(403)
       .send({ message: error.message })
   } else if (error instanceof ServiceUnavailableException) {
     return reply

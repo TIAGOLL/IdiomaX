@@ -19,6 +19,9 @@ export async function AdminDashboard(app: FastifyInstance) {
                     params: z.object({
                         company: z.string(),
                     }),
+                    querystring: z.object({
+                        receivablesCurveYear: z.number().min(2000).max(2100).default(new Date().getFullYear()),
+                    }),
                     response: {
                         200: z.object({
                             activeStudents: z.number(),
@@ -71,6 +74,7 @@ export async function AdminDashboard(app: FastifyInstance) {
                             dso: z.number(),
                             defaultRate: z.number(),
                             receivablesCurve: z.array(z.object({ month: z.string(), value: z.number() })),
+                            receivedCurve: z.array(z.object({ month: z.string(), value: z.number() })),
                             earlyDiscount: z.number(),
                             paymentMix: z.array(z.object({ method: z.string(), percent: z.number() })),
                             avgTicket: z.number(),
@@ -108,11 +112,11 @@ export async function AdminDashboard(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
+                const { receivablesCurveYear } = request.query
                 const { company } = request.params;
                 const userId = await request.getCurrentUserId();
 
                 // Verifica se o usuário é ADMIN na empresa
-                console.log(userId, company);
                 const member = await prisma.members.findFirst({
                     where: {
                         user_id: userId,
@@ -120,9 +124,7 @@ export async function AdminDashboard(app: FastifyInstance) {
                         role: "ADMIN",
                     },
                 });
-                console.log(member);
                 if (!member) {
-                    console.log("Acesso negado: Usuário não é ADMIN na empresa");
                     throw new ForbiddenError();
                 }
 
@@ -185,9 +187,27 @@ export async function AdminDashboard(app: FastifyInstance) {
                     },
                 });
                 const attendanceStats = attendanceByClass.map(c => {
-                    const totalPresences = c.users_in_class.reduce((acc, uic) => acc + uic.users.presence_list.length, 0);
                     const totalStudents = c.users_in_class.length;
-                    const attendance = totalStudents ? Math.round((totalPresences / totalStudents) * 100) : 0;
+                    // Encontros únicos da turma (cada classes_id representa uma aula)
+                    const allPresences = c.users_in_class.flatMap(uic => uic.users.presence_list);
+                    const uniqueMeetings = Array.from(new Set(allPresences.map(p => p.classes_id)));
+                    const totalMeetings = uniqueMeetings.length;
+
+                    // Para cada aluno, conta em quantas aulas ele esteve presente (1 presença por aula)
+                    let totalAttendancePercent = 0;
+                    for (const uic of c.users_in_class) {
+                        const uniqueStudentMeetings = new Set(uic.users.presence_list.map(p => p.classes_id));
+                        const studentAttendance = totalMeetings
+                            ? (uniqueStudentMeetings.size / totalMeetings) * 100
+                            : 0;
+                        totalAttendancePercent += studentAttendance;
+                    }
+
+                    // Média da turma
+                    const attendance = totalStudents
+                        ? Math.round(totalAttendancePercent / totalStudents)
+                        : 0;
+
                     return { id: c.id, nome: c.nome, attendance };
                 });
                 const avgAttendance = Math.round(
@@ -223,7 +243,6 @@ export async function AdminDashboard(app: FastifyInstance) {
                         }
                     }
                 });
-                console.log(teachers)
                 const teacherWorkload = teachers.map(t => {
                     // Soma as horas trabalhadas
                     let hours = 0;
@@ -276,6 +295,7 @@ export async function AdminDashboard(app: FastifyInstance) {
                 monthlyFees.forEach(f => {
                     if (!f.paid) {
                         const diff = (now.getTime() - new Date(f.due_date).getTime()) / (1000 * 60 * 60 * 24);
+                        if (diff < 0) return;
                         if (diff <= 30) aging["0-30"] += Number(f.value);
                         else if (diff <= 60) aging["31-60"] += Number(f.value);
                         else if (diff <= 90) aging["61-90"] += Number(f.value);
@@ -293,19 +313,44 @@ export async function AdminDashboard(app: FastifyInstance) {
                     : 0;
 
                 // Taxa de inadimplência
-                const defaultRate = monthlyFees.length
-                    ? Math.round((monthlyFees.filter(f => !f.paid).length / monthlyFees.length) * 100)
+                const vencidas = monthlyFees.filter(f => !f.paid && new Date(f.due_date) < now);
+                const totalVencidas = monthlyFees.filter(f => new Date(f.due_date) < now).length;
+
+                const defaultRate = totalVencidas
+                    ? Math.round((vencidas.length / totalVencidas) * 100)
                     : 0;
 
                 // Curva de recebimentos (por mês)
-                const receivablesCurve: any[] = [];
+
+                // Gera todos os meses do ano selecionado
+                const monthsOfYear = Array.from({ length: 12 }, (_, i) => {
+                    const month = (i + 1).toString().padStart(2, "0");
+                    return `${receivablesCurveYear}-${month}`;
+                });
+
+                // Inicializa a curva com todos os meses do ano
+                let receivablesCurve = monthsOfYear.map(month => ({
+                    month,
+                    value: 0
+                }));
+
+                // Soma valores pagos e a receber para cada mês
                 monthlyFees.forEach(f => {
                     const month = new Date(f.due_date).toISOString().slice(0, 7);
-                    const found = receivablesCurve.find(rc => rc.month === month);
-                    if (found) found.value += Number(f.value);
-                    else if (!f.paid) receivablesCurve.push({ month, value: Number(f.value) });
+                    if (month.startsWith(`${receivablesCurveYear}-`)) {
+                        const rc = receivablesCurve.find(rc => rc.month === month);
+                        if (rc) rc.value += Number(f.value);
+                    }
                 });
-                console.log(receivablesCurve)
+
+                // Ajusta o formato do mês para MM/YYYY
+                receivablesCurve = receivablesCurve.map(item => {
+                    const [year, month] = item.month.split("-");
+                    return {
+                        month: `${month}/${year}`,
+                        value: item.value
+                    };
+                });
 
                 // Desconto efetivo por pagamento antecipado
                 const earlyDiscount = monthlyFees.filter(f => f.discount_payment_before_due_date).reduce((acc, f) => acc + Number(f.discount_payment_before_due_date), 0);
@@ -354,6 +399,32 @@ export async function AdminDashboard(app: FastifyInstance) {
                 const pendingTasks: any[] = [];
                 // Implemente conforme sua estrutura de tasks
 
+                // Inicializa a curva de recebidos com todos os meses do ano
+                let receivedCurve = monthsOfYear.map(month => ({
+                    month,
+                    value: 0
+                }));
+
+                // Soma valores pagos para cada mês
+                monthlyFees.forEach(f => {
+                    if (f.paid) {
+                        const month = new Date(f.due_date).toISOString().slice(0, 7);
+                        if (month.startsWith(`${receivablesCurveYear}-`)) {
+                            const rc = receivedCurve.find(rc => rc.month === month);
+                            if (rc) rc.value += Number(f.value);
+                        }
+                    }
+                });
+
+                // Ajusta o formato do mês para MM/YYYY
+                receivedCurve = receivedCurve.map(item => {
+                    const [year, month] = item.month.split("-");
+                    return {
+                        month: `${month}/${year}`,
+                        value: item.value
+                    };
+                });
+
                 reply.send({
                     activeStudents,
                     newRegistrations,
@@ -376,6 +447,7 @@ export async function AdminDashboard(app: FastifyInstance) {
                     dso,
                     defaultRate,
                     receivablesCurve,
+                    receivedCurve,
                     earlyDiscount,
                     paymentMix: paymentMixArr,
                     avgTicket,

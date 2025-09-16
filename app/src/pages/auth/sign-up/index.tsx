@@ -1,5 +1,5 @@
 
-import { Card, CardContent } from '@/components/ui/card';
+import { CardContent } from '@/components/ui/card';
 import { SignUpForm } from './components/sign-up-form';
 
 export function SignUp() {

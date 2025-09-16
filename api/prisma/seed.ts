@@ -45,7 +45,7 @@ type SeederUser = {
 
 async function main() {
     await prisma.$transaction(async (prisma) => {
-        console.log('Iniciando o seeding expandido...')
+        console.log('Iniciando o seeding...')
 
         // 1. Crie o usuário owner primeiro
         const companyId = uuidv4()
@@ -348,20 +348,57 @@ async function main() {
             });
             if (!registration) continue;
             const mensalidades = [];
+            const now = new Date();
+
+            // Faixas de aging para as 3 primeiras mensalidades vencidas
+            const agingFaixas = [
+                { dias: 15 },   // 0-30 dias vencida
+                { dias: 45 },   // 31-60 dias vencida
+                { dias: 75 },   // 61-90 dias vencida
+                { dias: 120 },  // 90+ dias vencida
+            ];
+
+            // Gera 6 mensalidades por registration
             for (let i = 0; i < 6; i++) {
-                const dueDate = new Date(registration.start_date);
-                dueDate.setMonth(dueDate.getMonth() + i);
+                let dueDate: Date;
+                let paid: boolean;
+                let discount_payment_before_due_date = 0;
+                let date_of_payment = undefined;
+
+                if (i < 4) {
+                    // Mensalidades vencidas (1 em cada faixa)
+                    dueDate = new Date(now);
+                    dueDate.setDate(dueDate.getDate() - agingFaixas[i].dias);
+
+                    // 50% pagas, 50% não pagas (alterna entre pagas e não pagas)
+                    paid = i % 2 === 0;
+                    if (paid) {
+                        discount_payment_before_due_date = 10;
+                        date_of_payment = new Date(dueDate.getTime() - 2 * 24 * 60 * 60 * 1000);
+                    }
+                } else {
+                    // As duas últimas: uma paga e uma a vencer (futuro)
+                    dueDate = new Date(now);
+                    dueDate.setDate(dueDate.getDate() + (i - 3) * 15); // datas futuras
+                    paid = i === 4; // a quinta é paga, a sexta não paga
+                    if (paid) {
+                        discount_payment_before_due_date = 10;
+                        date_of_payment = new Date(dueDate.getTime() - 2 * 24 * 60 * 60 * 1000);
+                    }
+                }
+
                 mensalidades.push({
                     id: uuidv4(),
                     due_date: dueDate,
                     value: 350,
-                    paid: i === 0, // só a primeira como paga
-                    discount_payment_before_due_date: i === 0 ? 10 : 0,
+                    paid,
+                    discount_payment_before_due_date,
                     registrations_id: regId,
                     payment_method: randomFromArray(["PIX", "Cartão", "Boleto"]),
-                    ...(i === 0 ? { date_of_payment: new Date(dueDate.getTime() - 2 * 24 * 60 * 60 * 1000) } : {})
+                    ...(paid ? { date_of_payment } : {})
                 });
             }
+
             await prisma.monthly_fee.createMany({
                 data: mensalidades
             });

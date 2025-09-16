@@ -50,6 +50,7 @@ export const adminDashboardResponse = z.object({
     }),
     dso: z.number(),
     defaultRate: z.number(),
+    receivedCurve: z.array(z.object({ month: z.string(), value: z.number() })),
     receivablesCurve: z.array(z.object({ month: z.string(), value: z.number() })),
     earlyDiscount: z.number(),
     paymentMix: z.array(z.object({ method: z.string(), percent: z.number() })),
