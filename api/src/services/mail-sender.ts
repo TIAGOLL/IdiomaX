@@ -1,7 +1,7 @@
 import type { Address } from 'nodemailer/lib/mailer';
 import { Options } from 'nodemailer/lib/mailer';
-import { env } from 'src/http/server';
-import { mailTransport } from 'src/lib/mail-transport';
+import { mailTransport } from '../lib/mail-transport';
+import { env } from '../http/server';
 
 
 export type MailSenderSchema = {

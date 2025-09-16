@@ -1,9 +1,9 @@
 import { hash } from 'bcryptjs';
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { prisma } from 'src/lib/prisma';
-import { auth } from 'src/middlewares/auth';
 import { z } from 'zod';
+import { auth } from '../../../middlewares/auth';
+import { prisma } from '../../../lib/prisma';
 
 
 export async function UpdateProfile(app: FastifyInstance) {

@@ -1,4 +1,4 @@
-import { env } from "src/http/server";
+import { env } from "../http/server";
 
 export const requestPasswordRecoverSubject = '📬 Solicitação de redefinição de senha do IdiomaX';
 export const requestPasswordRecoverBody = ({ token }) => `<!DOCTYPE html>

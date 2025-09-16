@@ -3,7 +3,8 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 
 import { UnauthorizedError } from '../_errors/unauthorized-error';
-import { prisma } from 'src/lib/prisma';
+import { auth } from '../../../middlewares/auth';
+import { prisma } from '../../../lib/prisma';
 
 export async function setRole(app: FastifyInstance) {
     app
@@ -35,8 +36,15 @@ export async function setRole(app: FastifyInstance) {
                 const userIsAdmin = await prisma.users.findFirst({
                     where: {
                         id: userIdReq,
-                        role: {
-                            name: 'ADMIN'
+                        companies: {
+                            some: {
+                                members: {
+                                    some: {
+                                        user_id: userIdReq,
+                                        role: "ADMIN"
+                                    }
+                                }
+                            }
                         }
                     }
                 })

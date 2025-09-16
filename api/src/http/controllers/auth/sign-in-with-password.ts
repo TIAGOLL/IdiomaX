@@ -3,7 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import * as bcrypt from 'bcrypt';
 import { BadRequestError } from '../_errors/bad-request-error';
-import { prisma } from 'src/lib/prisma';
+import { prisma } from '../../../lib/prisma';
 
 export async function SignInWithPassword(app: FastifyInstance) {
     app

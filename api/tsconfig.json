@@ -6,7 +6,4 @@
     "src/http/server.ts",
     "prisma/seed.ts"
   ],
-  "compilerOptions": {
-    "baseUrl": ".",
-  }
 }

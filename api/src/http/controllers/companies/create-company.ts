@@ -1,10 +1,10 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { email, z } from 'zod';
 
 import { BadRequestError } from '../_errors/bad-request-error';
-import { auth } from 'src/middlewares/auth';
-import { prisma } from 'src/lib/prisma';
+import { auth } from '../../../middlewares/auth';
+import z from 'zod';
+import { prisma } from '../../../lib/prisma';
 
 export async function createCompany(app: FastifyInstance) {
     app

@@ -2,9 +2,8 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { BadRequestError } from '../_errors/bad-request-error';
-import { UnauthorizedError } from '../_errors/unauthorized-error';
-import { auth } from 'src/middlewares/auth';
-import { prisma } from 'src/lib/prisma';
+import { prisma } from '../../../lib/prisma';
+import { auth } from '../../../middlewares/auth';
 
 export async function getCompanyById(app: FastifyInstance) {
     app
