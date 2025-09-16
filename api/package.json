@@ -7,7 +7,7 @@
     "dev": "tsx watch src/http/server.ts",
     "build": "tsup src --out-dir build && npx prisma migrate deploy && npx prisma generate",
     "vercel-build": "tsup src --out-dir build && npx prisma migrate deploy && npx prisma generate",
-    "start": "node build/http/server.ts",
+    "start": "node build/http/server.js",
     "db:migrate:dev": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:seed": "ts-node prisma/seed.ts",
