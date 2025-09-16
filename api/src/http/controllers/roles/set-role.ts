@@ -2,9 +2,8 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 
-import { prisma } from '@/lib/prisma';
-import { auth } from '@/middlewares/auth';
 import { UnauthorizedError } from '../_errors/unauthorized-error';
+import { prisma } from 'src/lib/prisma';
 
 export async function setRole(app: FastifyInstance) {
     app

@@ -2,9 +2,9 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { email, z } from 'zod';
 
-import { prisma } from '@/lib/prisma';
-import { auth } from '@/middlewares/auth';
 import { BadRequestError } from '../_errors/bad-request-error';
+import { auth } from 'src/middlewares/auth';
+import { prisma } from 'src/lib/prisma';
 
 export async function createCompany(app: FastifyInstance) {
     app
@@ -27,8 +27,8 @@ export async function createCompany(app: FastifyInstance) {
                         cnpj: z.string().min(14).max(14),
                         phone: z.string().min(11).max(11),
                         email: z.email(),
-                        logo_16x16: z.instanceof(Buffer).optional(),
-                        logo_512x512: z.instanceof(Buffer).optional(),
+                        logo_16x16_url: z.url().optional(),
+                        logo_512x512_url: z.url().optional(),
                         social_reason: z.string().min(3).max(256),
                         state_registration: z.string().min(3).max(256),
                         tax_regime: z.string().min(3).max(256),
@@ -37,7 +37,7 @@ export async function createCompany(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { name, address, cnpj, phone, email, logo_16x16, logo_512x512, social_reason, state_registration, tax_regime, } = request.body;
+                const { name, address, cnpj, phone, email, logo_16x16_url, logo_512x512_url, social_reason, state_registration, tax_regime, } = request.body;
 
                 const companyAlreadyExists = await prisma.companies.findUnique({
                     where: {
@@ -58,8 +58,8 @@ export async function createCompany(app: FastifyInstance) {
                         cnpj,
                         phone,
                         email,
-                        logo_16x16,
-                        logo_512x512,
+                        logo_16x16_url,
+                        logo_512x512_url,
                         social_reason,
                         state_registration,
                         tax_regime,

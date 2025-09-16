@@ -1,9 +1,9 @@
-import { prisma } from "@/lib/prisma";
 import { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { auth } from "@/middlewares/auth";
 import { ForbiddenError } from "../_errors/forbidden-error";
+import { auth } from "src/middlewares/auth";
+import { prisma } from "src/lib/prisma";
 
 export async function AdminDashboard(app: FastifyInstance) {
     app

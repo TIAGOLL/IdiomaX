@@ -1,9 +1,9 @@
-import { prisma } from "@/lib/prisma";
-import { auth } from "@/middlewares/auth";
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import z from "zod";
 import { BadRequestError } from "../_errors/bad-request-error";
+import { prisma } from "src/lib/prisma";
+import { auth } from "src/middlewares/auth";
 
 export async function getUserById(app: FastifyInstance) {
     app

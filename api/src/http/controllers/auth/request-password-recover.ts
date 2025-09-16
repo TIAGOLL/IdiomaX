@@ -1,10 +1,10 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import { prisma } from '@/lib/prisma';
-import { requestPasswordRecoverBody, requestPasswordRecoverSubject } from '@/mails/request-password-recover';
 import { ServiceUnavailableException } from '../_errors/service-unavailable-exception';
-import { SendEmail } from '@/services/mail-sender';
+import { prisma } from 'src/lib/prisma';
+import { requestPasswordRecoverBody, requestPasswordRecoverSubject } from 'src/mails/request-password-recover';
+import { SendEmail } from 'src/services/mail-sender';
 
 export async function requestPasswordRecover(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(

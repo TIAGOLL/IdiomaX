@@ -9,7 +9,7 @@ import {
   validatorCompiler,
   ZodTypeProvider,
 } from 'fastify-type-provider-zod'
-import z, { ZodError } from 'zod'
+import z from 'zod'
 import * as dotenv from 'dotenv'
 import { SignInWithPassword } from './controllers/auth/sign-in-with-password'
 import { SignUpWithPassword } from './controllers/auth/sign-up-with-password'
