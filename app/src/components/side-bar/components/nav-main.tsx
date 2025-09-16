@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import { ChevronRight, type LucideIcon } from "lucide-react"
 
 import {
