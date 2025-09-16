@@ -417,16 +417,20 @@ async function main() {
             })
         }
 
-        // PRESENCE_LIST (30)
-        for (let i = 0; i < 30; i++) {
-            await prisma.presence_list.create({
-                data: {
-                    id: uuidv4(),
-                    is_present: Math.random() > 0.2,
-                    users_id: randomFromArray(users).id,
-                    classes_id: randomFromArray(classes),
-                }
-            })
+        // PRESENCE_LIST (garante 1 presença por aluno por aula)
+        for (const classId of classes) {
+            // Sorteia de 2 a 5 alunos para cada aula
+            const alunosNaAula = [...studentUsers].sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 4) + 2);
+            for (const aluno of alunosNaAula) {
+                await prisma.presence_list.create({
+                    data: {
+                        id: uuidv4(),
+                        is_present: Math.random() > 0.2,
+                        users_id: aluno.id,
+                        classes_id: classId,
+                    }
+                });
+            }
         }
 
         // TASKS (50)
