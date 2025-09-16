@@ -3,8 +3,9 @@
     "src/**/*",
     "@types/*.d.ts",
     "src/http/controllers/users",
-    "src/http/server.ts"
-, "prisma/seed.ts"  ],
+    "src/http/server.ts",
+    "prisma/seed.ts"
+  ],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {

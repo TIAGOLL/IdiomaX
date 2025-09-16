@@ -12,5 +12,6 @@ export type ResetPasswordRequest = z.infer<typeof resetPasswordRequest>;
 
 export async function resetPassword(data: ResetPasswordRequest) {
   const response = await api.post<ResetPasswordResponse>('/auth/reset-password', data);
+  console.log(response);
   return response.data;
 }

@@ -366,7 +366,7 @@ export default function AdminDashboard() {
 
             <Card className="col-span-3">
                 <CardHeader>
-                    <CardTitle>Receitas a Receber</CardTitle>
+                    <CardTitle>Receitas a Receber X Receitas recebidas</CardTitle>
                 </CardHeader>
                 <CardContent>
                     {(() => {
