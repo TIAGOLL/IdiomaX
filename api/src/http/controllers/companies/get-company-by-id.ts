@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { prisma } from '../../../lib/prisma';
 import { auth } from '../../../middlewares/auth';
-
+import { getCompanyByIdRequest, getCompanyByIdResponse } from '@idiomax/http-schemas/get-company-by-id'
 export async function getCompanyById(app: FastifyInstance) {
     app
         .withTypeProvider<ZodTypeProvider>()
@@ -16,25 +16,9 @@ export async function getCompanyById(app: FastifyInstance) {
                     tags: ['Instituições'],
                     summary: 'Obter uma instituição de ensino pelo ID.',
                     security: [{ bearerAuth: [] }],
-                    params: z.object({
-                        companyId: z.uuid()
-                    }),
+                    params: getCompanyByIdRequest,
                     response: {
-                        200: z.object({
-                            id: z.uuid(),
-                            name: z.string(),
-                            cnpj: z.string(),
-                            phone: z.string(),
-                            email: z.email(),
-                            logo_16x16_url: z.url().optional(),
-                            logo_512x512_url: z.url().optional(),
-                            social_reason: z.string(),
-                            state_registration: z.string(),
-                            tax_regime: z.string(),
-                            address: z.string(),
-                            created_at: z.coerce.date(),
-                            updated_at: z.coerce.date(),
-                        }),
+                        200: getCompanyByIdResponse,
                     },
                 },
             },

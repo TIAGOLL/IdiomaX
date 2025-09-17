@@ -4,6 +4,6 @@ export const passwordRecoverRequest = z.object({
     email: z.email(),
 });
 
-export const passwordRecoverResponse201 = z.object({
+export const passwordRecoverResponse = z.object({
     message: z.string(),
 });

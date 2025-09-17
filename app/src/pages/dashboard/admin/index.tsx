@@ -22,7 +22,8 @@ export default function AdminDashboard() {
     const { data: stats, isLoading, error } = useQuery({
         queryKey: ['admin-dashboard', currentCompanyMember?.id],
         queryFn: async () => {
-            const res = await getAdminDashboard(currentCompanyMember?.company_id);
+            if (!currentCompanyMember?.company_id) return null;
+            const res = await getAdminDashboard({ company: currentCompanyMember?.company_id });
             return res;
         },
     });
@@ -47,7 +48,6 @@ export default function AdminDashboard() {
 
     return (
         <div className="w-11/12 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2 py-8">
-            {/* Calendário de encontros */}
             <Card className="col-span-3">
                 <CardHeader>
                     <CardTitle>Calendário de Encontros</CardTitle>

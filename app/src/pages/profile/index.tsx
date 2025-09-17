@@ -16,23 +16,14 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { updateUserProfileRequest } from '@idiomax/http-schemas/update-profile';
 
-export const updateProfileSchema = z.object({
-    name: z.string().min(3).max(256),
-    cpf: z.string().min(11).max(11),
-    phone: z.string().min(10).max(11),
-    gender: z.string().min(1).max(1),
-    date_of_birth: z.string(),
-    address: z.string().min(1).max(255),
-    avatar_url: z.url().max(256).optional(),
-})
-
-type ProfileFormSchema = z.infer<typeof updateProfileSchema>;
+type UpdateUserProfileRequest = z.infer<typeof updateUserProfileRequest>;
 
 export default function ProfilePage() {
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async (data: ProfileFormSchema) => {
+        mutationFn: async (data: UpdateUserProfileRequest) => {
             const response = await api.put('/users', data);
             return response.data;
         },
@@ -55,8 +46,8 @@ export default function ProfilePage() {
         watch,
         setValue,
         reset
-    } = useForm<ProfileFormSchema>({
-        resolver: zodResolver(updateProfileSchema),
+    } = useForm<UpdateUserProfileRequest>({
+        resolver: zodResolver(updateUserProfileRequest),
         mode: 'all',
         criteriaMode: 'all',
     });
@@ -76,7 +67,7 @@ export default function ProfilePage() {
     }, [userProfile, reset]);
 
 
-    async function updateProfile(data: ProfileFormSchema) {
+    async function updateProfile(data: UpdateUserProfileRequest) {
         mutate(data);
     }
 

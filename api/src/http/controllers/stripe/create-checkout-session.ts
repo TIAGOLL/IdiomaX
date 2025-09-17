@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { auth } from '../../../middlewares/auth';
 import { stripe } from '../../../lib/stripe';
 import { env } from '../../server';
+import { createCheckoutSessionRequest, createCheckoutSessionResponse } from '@idiomax/http-schemas/create-checkout-session';
 
 export async function CreateCheckoutSession(app: FastifyInstance) {
     app
@@ -18,13 +19,9 @@ export async function CreateCheckoutSession(app: FastifyInstance) {
                     summary: 'Criar uma sessão de checkout para um plano de assinatura',
                     security: [{ bearerAuth: [] }],
                     response: {
-                        200: z.object({
-                            url: z.url(),
-                        })
+                        201: createCheckoutSessionResponse
                     },
-                    body: z.object({
-                        productId: z.string(),
-                    }),
+                    body: createCheckoutSessionRequest
                 },
             },
             async (request, reply) => {
@@ -37,9 +34,9 @@ export async function CreateCheckoutSession(app: FastifyInstance) {
                 // 4000 0000 0000 9995
 
                 const userId = await request.getCurrentUserId();
-
+                const { productId } = request.body;
                 const prices = await stripe.prices.list({
-                    product: request.body.productId,
+                    product: productId,
                     expand: ['data.product'],
                 });
 
@@ -56,6 +53,6 @@ export async function CreateCheckoutSession(app: FastifyInstance) {
                     cancel_url: `${env.data.WEB_URL}?canceled=true`,
                 })
 
-                reply.status(200).send({ url: session.url });
+                reply.status(201).send({ url: session.url });
             })
 }

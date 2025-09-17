@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 import { ForbiddenError } from '../_errors/forbidden-error';
 import { prisma } from '../../../lib/prisma';
-import { resetPasswordRequest, resetPasswordResponse200, resetPasswordResponse400, resetPasswordResponse403 } from '@idiomax/http-schemas/reset-password'
+import { resetPasswordRequest, resetPasswordResponse, } from '@idiomax/http-schemas/reset-password'
 
 export async function resetPassword(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
@@ -16,9 +16,7 @@ export async function resetPassword(app: FastifyInstance) {
         summary: 'Resetar senha do usuário',
         body: resetPasswordRequest,
         response: {
-          200: resetPasswordResponse200,
-          400: resetPasswordResponse400,
-          403: resetPasswordResponse403,
+          200: resetPasswordResponse,
         },
       },
     },

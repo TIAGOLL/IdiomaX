@@ -17,26 +17,27 @@ import { LoaderIcon, LockIcon, LogIn, User } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { toast } from 'sonner';
-import { signInFormRequest, signInWithPassword } from '@/services/auth/sign-in-with-password';
 import nookies from 'nookies';
 import { getUserProfile } from '@/services/users/get-user-profile';
 import { useNavigate } from 'react-router';
+import { signInWithPassword } from '@/services/auth/sign-in-with-password';
+import { signInWithPasswordRequest } from '@idiomax/http-schemas/sign-in-with-password';
 
-type SignInFormSchema = z.infer<typeof signInFormRequest>;
+type SignInWithPasswordRequest = z.infer<typeof signInWithPasswordRequest>;
 
 export function SignInForm() {
   const navigate = useNavigate();
   const { mutate, isPending } = useMutation({
-    mutationFn: async (data: SignInFormSchema) => {
+    mutationFn: async (data: SignInWithPasswordRequest) => {
       const response = await signInWithPassword(data)
       nookies.set(null, "token", response.token, {
         path: '/',
         maxAge: 60 * 60 * 24 * 7, // 7 days 
       });
-      return response
+      return response;
     },
     onSuccess: async (res) => {
-      const profile = await getUserProfile()
+      const profile = await getUserProfile();
       if (profile.member_on?.length === 0) {
         toast.error('Nenhuma instituição encontrada para este usuário.');
       } else {
@@ -49,7 +50,7 @@ export function SignInForm() {
     }
   });
 
-  async function SignIn({ username, password }: SignInFormSchema) {
+  async function SignIn({ username, password }: SignInWithPasswordRequest) {
     mutate({ username, password });
   }
 
@@ -58,7 +59,7 @@ export function SignInForm() {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(signInFormRequest),
+    resolver: zodResolver(signInWithPasswordRequest),
     mode: 'all',
     criteriaMode: 'all',
     defaultValues: {

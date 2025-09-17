@@ -14,10 +14,10 @@ type CompanyMember = {
         id: string;
         email: string;
         name: string;
-        created_at: string;
+        created_at: Date | null;
         phone: string;
         address: string;
-        updated_at: string;
+        updated_at: Date | null;
         cnpj: string;
         social_reason: string | null;
         state_registration: string | null;

@@ -18,7 +18,7 @@ import { useForm } from 'react-hook-form';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
 import z from 'zod';
-import { passwordRecoverRequest } from '../../../../../../packages/http-schemas/request-password-recover';
+import { passwordRecoverRequest } from '@idiomax/http-schemas/request-password-recover';
 
 type RequestPasswordRecoverRequest = z.infer<typeof passwordRecoverRequest>;
 

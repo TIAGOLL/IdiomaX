@@ -1,14 +1,11 @@
 import { api } from "@/lib/api";
 import z from "zod";
+import { signInWithPasswordRequest, signInWithPasswordResponse } from "@idiomax/http-schemas/sign-in-with-password";
 
-export const signInFormRequest = z.object({
-    username: z.string().max(45, 'Máximo 45 caracteres').min(1, 'Preencha o usúario').trim(),
-    password: z.string().min(6, 'A senha deve conter no mínimo 6 caracteres').trim(),
-})
+type SignInWithPasswordRequest = z.infer<typeof signInWithPasswordRequest>;
+type SignInWithPasswordResponse = z.infer<typeof signInWithPasswordResponse>;
 
-type SignInFormRequest = z.infer<typeof signInFormRequest>;
-
-export async function signInWithPassword(data: SignInFormRequest) {
+export async function signInWithPassword(data: SignInWithPasswordRequest) {
     const response = await api.post('/auth/sign-in-with-password', data);
-    return response.data as { message: string, token: string };
+    return response.data as SignInWithPasswordResponse;
 }

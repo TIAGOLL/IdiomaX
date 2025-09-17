@@ -1,30 +1,11 @@
 import { api } from "@/lib/api";
+import z from "zod";
+import { signUpWithPasswordRequest, signUpWithPasswordResponse } from "@idiomax/http-schemas/sign-up-with-password";
 
-type SignUpFormSchema = {
-    name: string;
-    email: string;
-    username: string;
-    cpf: string;
-    phone: string;
-    gender: string;
-    date_of_birth: Date;
-    address: string;
-    password: string;
-    company: {
-        name: string;
-        cnpj: string;
-        address: string;
-        phone: string;
-    };
-}
+type SignUpWithPasswordRequest = z.infer<typeof signUpWithPasswordRequest>;
+type SignUpWithPasswordResponse = z.infer<typeof signUpWithPasswordResponse>;
 
-type signUpFormResponse = {
-    token: string;
-    message: string;
-}
-
-
-export async function signUpWithPassword(data: SignUpFormSchema) {
-    const response = await api.post<signUpFormResponse>('/auth/sign-up-with-password', data);
-    return response.data;
+export async function signUpWithPassword(data: SignUpWithPasswordRequest) {
+    const response = await api.post('/auth/sign-up-with-password', data);
+    return response.data as SignUpWithPasswordResponse;
 }

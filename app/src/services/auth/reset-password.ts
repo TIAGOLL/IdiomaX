@@ -1,8 +1,8 @@
 import { api } from "@/lib/api";
 import z from "zod";
-import { resetPasswordResponse200, type resetPasswordRequest } from '@idiomax/http-schemas/reset-password';
+import { resetPasswordResponse, resetPasswordRequest } from '@idiomax/http-schemas/reset-password';
 
-export type ResetPasswordResponse = z.infer<typeof resetPasswordResponse200>;
+export type ResetPasswordResponse = z.infer<typeof resetPasswordResponse>;
 
 export type ResetPasswordRequest = z.infer<typeof resetPasswordRequest>;
 

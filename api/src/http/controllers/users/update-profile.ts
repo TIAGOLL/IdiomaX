@@ -1,10 +1,8 @@
-import { hash } from 'bcryptjs';
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 import { auth } from '../../../middlewares/auth';
 import { prisma } from '../../../lib/prisma';
-
+import { updateUserProfileRequest, updateUserProfileResponse } from '@idiomax/http-schemas/update-profile';
 
 export async function UpdateProfile(app: FastifyInstance) {
     app
@@ -15,19 +13,9 @@ export async function UpdateProfile(app: FastifyInstance) {
                 schema: {
                     tags: ['Usuários'],
                     summary: 'Atualizar informações do usuário',
-                    body: z.object({
-                        name: z.string().min(3).max(256),
-                        cpf: z.string().min(11).max(11),
-                        phone: z.string().min(10).max(11),
-                        gender: z.string().min(1).max(1),
-                        date_of_birth: z.string(),
-                        address: z.string().min(1).max(255),
-                        avatar_url: z.url().optional(),
-                    }),
+                    body: updateUserProfileRequest,
                     response: {
-                        200: z.object({
-                            message: z.string(),
-                        }),
+                        200: updateUserProfileResponse
                     },
                 },
             },

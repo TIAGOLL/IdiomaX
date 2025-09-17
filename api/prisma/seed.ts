@@ -2,6 +2,7 @@ import { Role, WeekDays } from "@prisma/client";
 import * as bcrypt from "bcryptjs"
 import { v4 as uuidv4 } from "uuid"
 import { prisma } from "../src/lib/prisma";
+import { generateUUID } from "../src/lib/uuid";
 
 function randomDate(start: Date, end: Date) {
     return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()))
@@ -47,10 +48,10 @@ async function main() {
         console.log('Iniciando o seeding...')
 
         // 1. Crie o usuário owner primeiro
-        const companyId = uuidv4()
+        const companyId = generateUUID()
         const hashedPassword = await bcrypt.hash("admin1", 10)
         const ownerUsername = 'tiago10'
-        const ownerId = uuidv4()
+        const ownerId = generateUUID()
         await prisma.users.create({
             data: {
                 id: ownerId,
@@ -105,7 +106,7 @@ async function main() {
             const baseUsername = `aluno${i}`;
             const username = generateUniqueUsername(baseUsername, existingUsernames);
             users.push({
-                id: uuidv4(),
+                id: generateUUID(),
                 name: `Aluno ${i}`,
                 email: `aluno${i}@idiomax.com`,
                 password: hashedPassword,
@@ -128,7 +129,7 @@ async function main() {
             const baseUsername = `prof${i}`;
             const username = generateUniqueUsername(baseUsername, existingUsernames);
             users.push({
-                id: uuidv4(),
+                id: generateUUID(),
                 name: `Professor ${i}`,
                 email: `prof${i}@idiomax.com`,
                 password: hashedPassword,
@@ -165,7 +166,7 @@ async function main() {
         // COURSES (3)
         const courses: string[] = []
         for (let i = 1; i <= 3; i++) {
-            const id = uuidv4()
+            const id = generateUUID()
             courses.push(id)
             await prisma.courses.create({
                 data: {
@@ -186,7 +187,7 @@ async function main() {
         // LEVELS (10)
         const levels: string[] = []
         for (let i = 1; i <= 10; i++) {
-            const id = uuidv4()
+            const id = generateUUID()
             levels.push(id)
             await prisma.levels.create({
                 data: {
@@ -201,7 +202,7 @@ async function main() {
         // DISCIPLINES (10)
         const disciplines: string[] = []
         for (let i = 1; i <= 10; i++) {
-            const id = uuidv4()
+            const id = generateUUID()
             disciplines.push(id)
             await prisma.disciplines.create({
                 data: {
@@ -215,7 +216,7 @@ async function main() {
         // CLASSROOMS (5)
         const classrooms: string[] = []
         for (let i = 1; i <= 5; i++) {
-            const id = uuidv4()
+            const id = generateUUID()
             classrooms.push(id)
             await prisma.classrooms.create({
                 data: {
@@ -230,7 +231,7 @@ async function main() {
         // RENAMEDCLASS (10)
         const renamedClasses: string[] = []
         for (let i = 1; i <= 10; i++) {
-            const id = uuidv4()
+            const id = generateUUID()
             renamedClasses.push(id)
             await prisma.renamedclass.create({
                 data: {
@@ -249,7 +250,7 @@ async function main() {
             // Sorteia entre 2 e 4 dias da semana para cada turma
             const daysForClass = [...Object.values(WeekDays)].sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 3) + 2);
             for (const weekday of daysForClass) {
-                const id = uuidv4();
+                const id = generateUUID();
                 classDays.push(id);
                 await prisma.class_days.create({
                     data: {
@@ -264,7 +265,7 @@ async function main() {
         // CLASSES (5)
         const classes: string[] = []
         for (let i = 1; i <= 5; i++) {
-            const id = uuidv4()
+            const id = generateUUID()
             classes.push(id)
             // Gera um horário de início aleatório
             const startDate = randomDate(new Date("2025-09-01T19:00:00"), new Date("2025-12-01T21:00:00"));
@@ -295,7 +296,7 @@ async function main() {
             for (const turmaId of turmas) {
                 await prisma.users_in_class.create({
                     data: {
-                        id: uuidv4(),
+                        id: generateUUID(),
                         class_id: turmaId,
                         users_id: teacher.id,
                         teacher: true
@@ -311,7 +312,7 @@ async function main() {
             for (const aluno of alunos) {
                 await prisma.users_in_class.create({
                     data: {
-                        id: uuidv4(),
+                        id: generateUUID(),
                         class_id: classId,
                         users_id: aluno.id,
                         teacher: false
@@ -323,7 +324,7 @@ async function main() {
         // REGISTRATIONS (10)
         const registrations: string[] = []
         for (let i = 1; i <= 10; i++) {
-            const id = uuidv4()
+            const id = generateUUID()
             registrations.push(id)
             // Use a referência correta do prisma dentro da transação
             await prisma.registrations.create({
@@ -388,7 +389,7 @@ async function main() {
                 }
 
                 mensalidades.push({
-                    id: uuidv4(),
+                    id: generateUUID(),
                     due_date: dueDate,
                     value: 350,
                     paid,
@@ -408,7 +409,7 @@ async function main() {
         for (let i = 1; i <= 10; i++) {
             await prisma.records_of_students.create({
                 data: {
-                    id: uuidv4(),
+                    id: generateUUID(),
                     registrations_id: registrations[i - 1], // Corrigido!
                     description: `Registro do aluno ${i}`,
                     title: `Registro ${i}`,
@@ -424,7 +425,7 @@ async function main() {
             for (const aluno of alunosNaAula) {
                 await prisma.presence_list.create({
                     data: {
-                        id: uuidv4(),
+                        id: generateUUID(),
                         is_present: Math.random() > 0.2,
                         users_id: aluno.id,
                         classes_id: classId,
@@ -436,7 +437,7 @@ async function main() {
         // TASKS (50)
         const tasks: string[] = []
         for (let i = 1; i <= 50; i++) {
-            const id = uuidv4()
+            const id = generateUUID()
             tasks.push(id)
             await prisma.tasks.create({
                 data: {
@@ -453,7 +454,7 @@ async function main() {
         for (let i = 0; i < 30; i++) {
             await prisma.tasks_delivery.create({
                 data: {
-                    id: uuidv4(),
+                    id: generateUUID(),
                     tasks_id: randomFromArray(tasks),
                     registrations_id: randomFromArray(registrations),
                     date: randomDate(new Date("2025-09-14"), new Date("2025-12-14")),
@@ -466,7 +467,7 @@ async function main() {
         for (const levelId of levels) {
             await prisma.materials.create({
                 data: {
-                    id: uuidv4(),
+                    id: generateUUID(),
                     name: `Apostila ${levelId.slice(0, 6)}`,
                     file: Buffer.from("Conteúdo fictício da apostila"),
                     levels_id: levelId,
@@ -477,7 +478,7 @@ async function main() {
         // CONFIGS
         await prisma.configs.create({
             data: {
-                id: uuidv4(),
+                id: generateUUID(),
                 registrations_time: 6,
                 companies_id: companyId,
             }

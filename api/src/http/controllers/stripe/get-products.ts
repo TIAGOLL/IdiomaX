@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { auth } from '../../../middlewares/auth';
 import { stripe } from '../../../lib/stripe';
 import { env } from '../../server';
+import { getProductsRequest, getProductsResponse } from '@idiomax/http-schemas/get-products'
 
 export async function GetProducts(app: FastifyInstance) {
     app
@@ -18,13 +19,9 @@ export async function GetProducts(app: FastifyInstance) {
                     summary: 'Obter produtos disponíveis para assinatura',
                     security: [{ bearerAuth: [] }],
                     response: {
-                        200: z.object({
-                            url: z.url(),
-                        })
+                        200: getProductsResponse
                     },
-                    body: z.object({
-                        productId: z.string(),
-                    }),
+                    body: getProductsRequest
                 },
             },
             async (request, reply) => {

@@ -10,7 +10,7 @@ import { LoaderIcon, LockIcon } from 'lucide-react';
 import { resetPassword } from '@/services/auth/reset-password';
 import { toast } from 'sonner';
 import { useMutation } from '@tanstack/react-query';
-import { resetPasswordRequest } from '../../../../../packages/http-schemas/reset-password';
+import { resetPasswordRequest } from '@idiomax/http-schemas/reset-password';
 
 type ResetPasswordSchema = z.infer<typeof resetPasswordRequest>;
 

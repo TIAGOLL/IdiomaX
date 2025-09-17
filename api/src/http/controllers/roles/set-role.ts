@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { UnauthorizedError } from '../_errors/unauthorized-error';
 import { auth } from '../../../middlewares/auth';
 import { prisma } from '../../../lib/prisma';
+import { setRoleRequest, setRoleResponse, } from '@idiomax/http-schemas/set-role'
 
 export async function setRole(app: FastifyInstance) {
     app
@@ -18,14 +19,9 @@ export async function setRole(app: FastifyInstance) {
                     summary: 'Atribuir roles a um usuário',
                     security: [{ bearerAuth: [] }],
                     response: {
-                        200: z.object({
-                            message: z.string()
-                        })
+                        200: setRoleResponse,
                     },
-                    body: z.object({
-                        user_id: z.string(),
-                        role_id: z.string(),
-                    }),
+                    body: setRoleRequest
                 },
             },
             async (request, reply) => {

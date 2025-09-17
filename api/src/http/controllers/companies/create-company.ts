@@ -3,8 +3,8 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { BadRequestError } from '../_errors/bad-request-error';
 import { auth } from '../../../middlewares/auth';
-import z from 'zod';
 import { prisma } from '../../../lib/prisma';
+import { createCompanyRequest, createCompanyResponse } from '@idiomax/http-schemas/create-company'
 
 export async function createCompany(app: FastifyInstance) {
     app
@@ -18,22 +18,9 @@ export async function createCompany(app: FastifyInstance) {
                     summary: 'Criar uma nova instituição de ensino.',
                     security: [{ bearerAuth: [] }],
                     response: {
-                        200: z.object({
-                            message: z.string()
-                        }),
+                        201: createCompanyResponse,
                     },
-                    body: z.object({
-                        name: z.string().min(3).max(100),
-                        cnpj: z.string().min(14).max(14),
-                        phone: z.string().min(11).max(11),
-                        email: z.email(),
-                        logo_16x16_url: z.url().optional(),
-                        logo_512x512_url: z.url().optional(),
-                        social_reason: z.string().min(3).max(256),
-                        state_registration: z.string().min(3).max(256),
-                        tax_regime: z.string().min(3).max(256),
-                        address: z.string().min(3).max(256),
-                    }),
+                    body: createCompanyRequest,
                 },
             },
             async (request, reply) => {
@@ -77,7 +64,7 @@ export async function createCompany(app: FastifyInstance) {
                     },
                 });
 
-                return reply.status(200).send({ message: 'Instituição criada com sucesso.' });
+                return reply.status(201).send({ message: 'Instituição criada com sucesso.' });
             },
         );
 }

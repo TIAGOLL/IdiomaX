@@ -4,6 +4,7 @@ import { z } from 'zod';
 import * as bcrypt from 'bcrypt';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { prisma } from '../../../lib/prisma';
+import { signInWithPasswordResponse, signInWithPasswordRequest } from '@idiomax/http-schemas/sign-in-with-password';
 
 export async function SignInWithPassword(app: FastifyInstance) {
     app
@@ -16,15 +17,9 @@ export async function SignInWithPassword(app: FastifyInstance) {
                     summary: 'Realizar login com email e senha',
                     security: [{ bearerAuth: [] }],
                     response: {
-                        200: z.object({
-                            token: z.string(),
-                            message: z.string(),
-                        }),
+                        200: signInWithPasswordResponse,
                     },
-                    body: z.object({
-                        username: z.string(),
-                        password: z.string().min(6),
-                    }),
+                    body: signInWithPasswordRequest
                 },
             },
             async (request, reply) => {

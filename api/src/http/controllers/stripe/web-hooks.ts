@@ -1,10 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
-
-import { auth } from '../../../middlewares/auth';
-import { stripe } from '../../../lib/stripe';
-import { env } from '../../server';
+import { stripeWebHooksRequest } from '@idiomax/http-schemas/stripe-web-hooks'
 
 export async function GetProducts(app: FastifyInstance) {
     app
@@ -16,59 +12,78 @@ export async function GetProducts(app: FastifyInstance) {
                     tags: ['Subscriptions'],
                     summary: 'Obter dados dos eventos do Stripe',
                     security: [{ bearerAuth: [] }],
-                    body: z.object({
-                        id: z.string().nullable().optional(),
-                        object: z.string().nullable().optional(),
-                        api_version: z.string().nullable().optional(),
-                        created: z.number().nullable().optional(),
-                        data: z.object({
-                            object: z.object({
-                                id: z.string().nullable().optional(),
-                                object: z.string().nullable().optional(),
-                                application: z.any().nullable().optional(),
-                                automatic_payment_methods: z.any().nullable().optional(),
-                                cancellation_reason: z.any().nullable().optional(),
-                                client_secret: z.string().nullable().optional(),
-                                created: z.number().nullable().optional(),
-                                customer: z.any().nullable().optional(),
-                                description: z.any().nullable().optional(),
-                                flow_directions: z.any().nullable().optional(),
-                                last_setup_error: z.any().nullable().optional(),
-                                latest_attempt: z.any().nullable().optional(),
-                                livemode: z.boolean().nullable().optional(),
-                                mandate: z.any().nullable().optional(),
-                                metadata: z.object({}).nullable().optional(),
-                                next_action: z.any().nullable().optional(),
-                                on_behalf_of: z.any().nullable().optional(),
-                                payment_method: z.string().nullable().optional(),
-                                payment_method_options: z.object({
-                                    acss_debit: z.object({
-                                        currency: z.string().nullable().optional(),
-                                        mandate_options: z.object({
-                                            interval_description: z.string().nullable().optional(),
-                                            payment_schedule: z.string().nullable().optional(),
-                                            transaction_type: z.string().nullable().optional(),
-                                        }).nullable().optional(),
-                                        verification_method: z.string().nullable().optional(),
-                                    }).nullable().optional(),
-                                }).nullable().optional(),
-                                payment_method_types: z.array(z.string()).nullable().optional(),
-                                single_use_mandate: z.any().nullable().optional(),
-                                status: z.string().nullable().optional(),
-                                usage: z.string().nullable().optional(),
-                            }).nullable().optional(),
-                        }).nullable().optional(),
-                        livemode: z.boolean().nullable().optional(),
-                        pending_webhooks: z.number().nullable().optional(),
-                        request: z.object({
-                            id: z.any().nullable().optional(),
-                            idempotency_key: z.any().nullable().optional(),
-                        }).nullable().optional(),
-                        type: z.string().nullable().optional(),
-                    }),
+                    body: stripeWebHooksRequest,
+                    response: {
+                        200: { type: 'null' }
+                    }
                 },
             },
             async (request, reply) => {
-
+                // let event = request.body;
+                // // Replace this endpoint secret with your endpoint's unique secret
+                // // If you are testing with the CLI, find the secret by running 'stripe listen'
+                // // If you are using an endpoint defined with the API or dashboard, look in your webhook settings
+                // // at https://dashboard.stripe.com/webhooks
+                // const endpointSecret = 'whsec_12345';
+                // // Only verify the event if you have an endpoint secret defined.
+                // // Otherwise use the basic event deserialized with JSON.parse
+                // if (endpointSecret) {
+                //     // Get the signature sent by Stripe
+                //     const signature = request.headers['stripe-signature'];
+                //     try {
+                //         event = stripe.webhooks.constructEvent(
+                //             request.body,
+                //             signature,
+                //             endpointSecret
+                //         );
+                //     } catch (err) {
+                //         console.log(`⚠️  Webhook signature verification failed.`, err.message);
+                //         return response.sendStatus(400);
+                //     }
+                // }
+                // let subscription;
+                // let status;
+                // // Handle the event
+                // switch (event.type) {
+                //     case 'customer.subscription.trial_will_end':
+                //         subscription = event.data.object;
+                //         status = subscription.status;
+                //         console.log(`Subscription status is ${status}.`);
+                //         // Then define and call a method to handle the subscription trial ending.
+                //         // handleSubscriptionTrialEnding(subscription);
+                //         break;
+                //     case 'customer.subscription.deleted':
+                //         subscription = event.data.object;
+                //         status = subscription.status;
+                //         console.log(`Subscription status is ${status}.`);
+                //         // Then define and call a method to handle the subscription deleted.
+                //         // handleSubscriptionDeleted(subscriptionDeleted);
+                //         break;
+                //     case 'customer.subscription.created':
+                //         subscription = event.data.object;
+                //         status = subscription.status;
+                //         console.log(`Subscription status is ${status}.`);
+                //         // Then define and call a method to handle the subscription created.
+                //         // handleSubscriptionCreated(subscription);
+                //         break;
+                //     case 'customer.subscription.updated':
+                //         subscription = event.data.object;
+                //         status = subscription.status;
+                //         console.log(`Subscription status is ${status}.`);
+                //         // Then define and call a method to handle the subscription update.
+                //         // handleSubscriptionUpdated(subscription);
+                //         break;
+                //     case 'entitlements.active_entitlement_summary.updated':
+                //         subscription = event.data.object;
+                //         console.log(`Active entitlement summary updated for ${subscription}.`);
+                //         // Then define and call a method to handle active entitlement summary updated
+                //         // handleEntitlementUpdated(subscription);
+                //         break;
+                //     default:
+                //         // Unexpected event type
+                //         console.log(`Unhandled event type ${event.type}.`);
+                // }
+                // // Return a 200 response to acknowledge receipt of the event
+                reply.status(200).send();
             })
 }

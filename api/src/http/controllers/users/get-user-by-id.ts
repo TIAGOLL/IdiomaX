@@ -4,6 +4,7 @@ import z from "zod";
 import { BadRequestError } from "../_errors/bad-request-error";
 import { auth } from "../../../middlewares/auth";
 import { prisma } from "../../../lib/prisma";
+import { getUserByIdRequest, getUserByIdResponse } from "@idiomax/http-schemas/get-user-by-id";
 
 export async function getUserById(app: FastifyInstance) {
     app
@@ -17,26 +18,9 @@ export async function getUserById(app: FastifyInstance) {
                     summary: 'Obter informações de um usuário pelo ID.',
                     security: [{ bearerAuth: [] }],
                     response: {
-                        200: z.object({
-                            id: z.string(),
-                            name: z.string(),
-                            email: z.string().email(),
-                            username: z.string(),
-                            password: z.string(),
-                            cpf: z.string(),
-                            phone: z.string(),
-                            gender: z.string(),
-                            date_of_birth: z.coerce.date(),
-                            address: z.string(),
-                            active: z.boolean(),
-                            avatar_url: z.url().nullable(),
-                            created_at: z.date().nullable(),
-                            updated_at: z.date().nullable(),
-                        }),
+                        200: getUserByIdResponse
                     },
-                    params: z.object({
-                        id: z.uuid(),
-                    })
+                    params: getUserByIdRequest
                 },
             },
             async (request, reply) => {

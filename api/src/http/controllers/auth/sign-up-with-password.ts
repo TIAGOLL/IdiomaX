@@ -1,9 +1,9 @@
 import { hash } from 'bcryptjs';
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { prisma } from '../../../lib/prisma';
+import { signUpWithPasswordRequest, signUpWithPasswordResponse } from '@idiomax/http-schemas/sign-up-with-password';
 
 
 export async function SignUpWithPassword(app: FastifyInstance) {
@@ -13,43 +13,14 @@ export async function SignUpWithPassword(app: FastifyInstance) {
       schema: {
         tags: ['Autenticação'],
         summary: 'Criar uma nova conta de usuário',
-        body: z.object({
-          name: z.string().min(3).max(256),
-          email: z.email().min(3).max(256),
-          username: z.string().min(3).max(100),
-          cpf: z.string().min(11).max(11),
-          phone: z.string().min(10).max(11),
-          gender: z.string().min(1).max(1),
-          date_of_birth: z.string(),
-          address: z.string().min(1).max(255),
-          password: z.string().min(6),
-          avatar_url: z.url().optional(),
-          company: z.object({
-            name: z.string().min(3).max(256),
-            cnpj: z.string().min(14).max(14),
-            address: z.string().min(1).max(256),
-            phone: z.string().min(10).max(15),
-            email: z.email().max(256).optional(),
-            tax_regime: z.string().min(1).max(256).optional(),
-            state_registration: z.string().min(1).max(256).optional(),
-            social_reason: z.string().min(1).max(256).optional(),
-            logo_16x16: z.string().nullable().optional(),
-            logo_512x512: z.string().nullable().optional(),
-          })
-        }),
+        body: signUpWithPasswordRequest,
         response: {
-          201: z.object({
-            message: z.string(),
-            token: z.string(),
-          }),
-          400: z.object({
-            message: z.string(),
-          }),
+          201: signUpWithPasswordResponse,
         }
       },
     },
     async (request, reply) => {
-      const { name, email, password, gender, date_of_birth, company, address, avatar_url, cpf, username, phone } = request.body;
+      const { name, email, password, gender, date_of_birth, company, address, cpf, username, phone } = request.body;
 
       const userWithSameEmail = await prisma.users.findUnique({
         where: {
@@ -102,7 +73,6 @@ export async function SignUpWithPassword(app: FastifyInstance) {
             gender,
             date_of_birth: date_of_birth_date,
             address,
-            avatar_url,
             cpf,
             username,
             phone,
@@ -115,9 +85,6 @@ export async function SignUpWithPassword(app: FastifyInstance) {
             address: company.address,
             phone: company.phone,
             email: email,
-            tax_regime: company.tax_regime,
-            state_registration: company.state_registration,
-            social_reason: company.social_reason,
             owner_id: userId,
           },
         })

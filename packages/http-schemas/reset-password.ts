@@ -9,14 +9,6 @@ export const resetPasswordRequest = z.object({
     path: ['confirmPassword'],
 });
 
-export const resetPasswordResponse200 = z.object({
-    message: z.string(),
-});
-
-export const resetPasswordResponse400 = z.object({
-    message: z.string(),
-});
-
-export const resetPasswordResponse403 = z.object({
+export const resetPasswordResponse = z.object({
     message: z.string(),
 });
