@@ -1,11 +1,7 @@
-import type { FastifyInstance } from 'fastify';
-import type { ZodTypeProvider } from 'fastify-type-provider-zod';
+import fastify, { type FastifyInstance } from 'fastify';
 import { stripe } from '../../../lib/stripe';
 import Stripe from 'stripe';
 import { env } from '../../server';
-import { type stripeWebHooksRequest } from '@idiomax/http-schemas/stripe-web-hooks';
-import z from 'zod';
-import { BadRequestError } from '../_errors/bad-request-error';
 import { prisma } from '../../../lib/prisma';
 import { NotFoundError } from '../_errors/not-found-error';
 
@@ -21,7 +17,6 @@ interface iPriceData {
     interval_count: number;
     trial_period_days?: number | null;
     metadata: unknown;
-    lookup_key?: string;
 }
 
 interface iSubscriptionData {
@@ -42,17 +37,15 @@ interface iSubscriptionData {
 }
 
 export async function StripeWebHooks(app: FastifyInstance) {
-    // Adicione este parser ANTES da rota!
-    app.addContentTypeParser(/^application\/json(;.*)?$/, { parseAs: 'buffer' }, function (req, body, done) {
-        done(null, body)
+
+    app.addContentTypeParser('application/json', { parseAs: 'buffer' }, function (req, body, done) {
+        done(null, body);
     });
 
     app
-        .withTypeProvider<ZodTypeProvider>()
         .post(
-            '/stripe/web-hooks',
+            '/stripe/webhooks',
             {
-                config: { rawBody: true },
                 schema: {
                     tags: ['Subscriptions'],
                     summary: 'Obter dados dos eventos do Stripe',
@@ -96,7 +89,6 @@ export async function StripeWebHooks(app: FastifyInstance) {
                         interval_count: price.recurring?.interval_count,
                         trial_period_days: price.recurring?.trial_period_days,
                         metadata: price.metadata,
-                        lookup_key: price.lookup_key,
                     }
 
                     const data = await prisma.stripePrice.findFirst({
@@ -109,7 +101,7 @@ export async function StripeWebHooks(app: FastifyInstance) {
                         },
                     });
 
-                    if (data.id) { priceData.id = data.id; }
+                    if (data?.id) { priceData.id = data.id; }
                     if (price.product) priceData.product_id = price.product as string;
 
                     await prisma.stripePrice.upsert({ where: { id: priceData.id }, create: priceData, update: priceData });
@@ -175,7 +167,7 @@ export async function StripeWebHooks(app: FastifyInstance) {
                 let receivedEvent: Stripe.Event;
                 try {
                     receivedEvent = stripe.webhooks.constructEvent(
-                        request.rawBody, // <--- aqui!
+                        request.body as Buffer,
                         signature,
                         webhookSecret
                     );
@@ -202,18 +194,17 @@ export async function StripeWebHooks(app: FastifyInstance) {
                             case 'checkout.session.completed':
                                 await checkoutSessionCompletedEvent(receivedEvent);
                                 break;
-                            case 'customer.subscription.deleted':
-                                break;
                             case 'customer.subscription.created':
+                                break;
+                            case 'customer.subscription.deleted':
                                 break;
                             case 'customer.subscription.updated':
                                 await subscriptionStatusChangedEvent(receivedEvent);
                                 break;
                             default:
-                                console.log(`Unhandled event type ${event.type}.`);
                         }
                     } catch (error) {
-                        console.error(`Error handling event ${event.type}:`, error);
+                        console.error(`Error:`, error);
                     }
                 }
 

@@ -3,7 +3,6 @@ import fastifyJwt from '@fastify/jwt'
 import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUI from '@fastify/swagger-ui'
 import fastify from 'fastify'
-import fastifyRawBody from 'fastify-raw-body';
 import {
   jsonSchemaTransform,
   serializerCompiler,
@@ -42,12 +41,12 @@ const app = fastify().withTypeProvider<ZodTypeProvider>()
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
 
-app.register(fastifyRawBody, {
-  field: 'rawBody',
-  global: false,
-  encoding: 'buffer', 
-  runFirst: true
-});
+// app.register(fastifyRawBody, {
+//   field: 'rawBody',
+//   global: false,
+//   encoding: 'buffer',
+//   runFirst: true
+// });
 
 
 app.setErrorHandler(errorHandler)
