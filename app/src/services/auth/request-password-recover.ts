@@ -1,5 +1,5 @@
 import { api } from "@/lib/api";
-import { passwordRecoverRequest, type passwordRecoverResponse201 } from './../../../../packages/http-schemas/request-password-recover';
+import type { passwordRecoverRequest, passwordRecoverResponse201 } from "@idiomax/http-schemas/request-password-recover";
 import z from "zod";
 
 type PasswordRecoverRequest = z.infer<typeof passwordRecoverRequest>;

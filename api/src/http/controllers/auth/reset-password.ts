@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 import { ForbiddenError } from '../_errors/forbidden-error';
 import { prisma } from '../../../lib/prisma';
-import { resetPasswordRequest, resetPasswordResponse200, resetPasswordResponse400, resetPasswordResponse403, } from './../../../../../packages/http-schemas/reset-password';
+import { resetPasswordRequest, resetPasswordResponse200, resetPasswordResponse400, resetPasswordResponse403 } from '@idiomax/http-schemas/reset-password'
 
 export async function resetPassword(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(

@@ -6,7 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "concurrently \"pnpm --filter ./api dev\" \"pnpm --filter ./app dev\"",
-    "install": "pnpm --filter ./api install & pnpm --filter ./app install & pnpm --filter ./packages install",
     "docker": "docker-compose -f docker-compose.yml up -d",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
@@ -16,7 +15,8 @@
   "packageManager": "pnpm@10.15.0",
   "dependencies": {
     "@fastify/cors": "^11.1.0",
-    "dotenv": "^17.2.1"
+    "dotenv": "^17.2.1",
+    "zod": "^4.1.9"
   },
   "devDependencies": {
     "concurrently": "^9.2.0"

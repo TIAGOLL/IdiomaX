@@ -5,7 +5,7 @@ import { ServiceUnavailableException } from '../_errors/service-unavailable-exce
 import { prisma } from '../../../lib/prisma';
 import { requestPasswordRecoverBody, requestPasswordRecoverSubject } from '../../../mails/request-password-recover';
 import { SendEmail } from '../../../services/mail-sender';
-import { passwordRecoverRequest, passwordRecoverResponse201 } from './../../../../../packages/http-schemas/request-password-recover';
+import { passwordRecoverRequest, passwordRecoverResponse201 } from '@idiomax/http-schemas/request-password-recover'
 
 export async function requestPasswordRecover(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(

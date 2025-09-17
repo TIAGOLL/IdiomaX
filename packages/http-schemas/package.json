@@ -1,5 +1,5 @@
 {
-  "name": "packages",
+  "name": "@idiomax/http-schemas",
   "version": "1.0.0",
   "description": "",
   "scripts": {
