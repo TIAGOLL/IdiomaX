@@ -3,6 +3,7 @@ import fastifyJwt from '@fastify/jwt'
 import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUI from '@fastify/swagger-ui'
 import fastify from 'fastify'
+import fastifyRawBody from 'fastify-raw-body';
 import {
   jsonSchemaTransform,
   serializerCompiler,
@@ -25,6 +26,7 @@ import { UpdateProfile } from './controllers/users/update-profile'
 import { AdminDashboard } from './controllers/dashboard/admin'
 import { CreateCheckoutSession } from './controllers/stripe/create-checkout-session'
 import { envSchema } from '@idiomax/http-schemas/env'
+import { StripeWebHooks } from './controllers/stripe/stripe-web-hooks'
 
 dotenv.config()
 
@@ -39,6 +41,14 @@ const app = fastify().withTypeProvider<ZodTypeProvider>()
 
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
+
+app.register(fastifyRawBody, {
+  field: 'rawBody',
+  global: false,
+  encoding: 'buffer', 
+  runFirst: true
+});
+
 
 app.setErrorHandler(errorHandler)
 
@@ -78,6 +88,7 @@ app.register(fastifyCors, {
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 });
 
+
 //routes
 app.register(SignInWithPassword);
 app.register(SignUpWithPassword);
@@ -91,6 +102,7 @@ app.register(CreateCheckoutSession);
 app.register(getUserById);
 app.register(UpdateProfile);
 app.register(AdminDashboard);
+app.register(StripeWebHooks);
 
 if (process.env.VERCEL !== "1") {
   app.listen({ port: Number(env.data.PORT) }).then(() => {

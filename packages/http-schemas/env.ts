@@ -10,6 +10,7 @@ export const envSchema = z.object({
   HOST_MAIL_SENDER: z.string().min(1),
   VERCEL: z.enum(['1', '0']).default('0'),
   STRIPE_SECRET_KEY: z.string().min(1),
+  STRIPE_WEBHOOK_SECRET: z.string().min(1),
 
   // Nome e endereço que vai aparecer para o usuário
   APP_NAME: z.string().min(1),

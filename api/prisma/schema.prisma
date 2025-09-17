@@ -240,11 +240,12 @@ model companies {
   owner    users  @relation("OwnerCompanies", fields: [owner_id], references: [id])
   owner_id String @db.VarChar(256)
 
-  members       members[]
-  classrooms    classrooms[]
-  configs       configs[]
-  registrations registrations[]
-  courses       courses[]
+  members               members[]
+  classrooms            classrooms[]
+  configs               configs[]
+  registrations         registrations[]
+  courses               courses[]
+  StripeCompanyCustomer StripeCompanyCustomer[]
 }
 
 model users {
@@ -292,4 +293,84 @@ model users_in_class {
 
   class Renamedclass @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "class_fk")
   users users        @relation(fields: [users_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
+}
+
+// --- INTEGRAÇÃO STRIPE ---
+
+model StripeProduct {
+  id          String  @id @db.VarChar(256) // ID do produto na Stripe
+  active      Boolean
+  name        String  @db.VarChar(256)
+  description String? @db.VarChar(1024)
+  image       String? @db.VarChar(1024)
+  metadata    Json?
+
+  prices StripePrice[]
+}
+
+enum StripePricingType {
+  one_time
+  recurring
+}
+
+enum StripePricingPlanInterval {
+  day
+  week
+  month
+  year
+}
+
+model StripePrice {
+  id                String                     @id @db.VarChar(256) // ID do preço na Stripe
+  product_id        String                     @db.VarChar(256)
+  active            Boolean
+  description       String?                    @db.VarChar(256)
+  unit_amount       BigInt
+  currency          String                     @db.VarChar(3)
+  type              StripePricingType
+  interval          StripePricingPlanInterval?
+  interval_count    Int?
+  trial_period_days Int?
+  metadata          Json?
+
+  product       StripeProduct               @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  subscriptions StripeCompanySubscription[]
+}
+
+model StripeCompanyCustomer {
+  company_id         String                      @id @db.VarChar(256)
+  stripe_customer_id String                      @unique @db.VarChar(256)
+  company            companies                   @relation(fields: [company_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  subscriptions      StripeCompanySubscription[]
+}
+
+enum StripeSubscriptionStatus {
+  trialing
+  active
+  canceled
+  incomplete
+  incomplete_expired
+  past_due
+  unpaid
+}
+
+model StripeCompanySubscription {
+  id                   String                   @id @db.VarChar(256) // ID da assinatura na Stripe
+  company_customer_id  String                   @db.VarChar(256)
+  status               StripeSubscriptionStatus
+  metadata             Json?
+  price_id             String                   @db.VarChar(256)
+  quantity             Int?
+  cancel_at_period_end Boolean?
+  created              DateTime                 @default(now())
+  current_period_start DateTime                 @default(now())
+  current_period_end   DateTime                 @default(now())
+  ended_at             DateTime?
+  cancel_at            DateTime?
+  canceled_at          DateTime?
+  trial_start          DateTime?
+  trial_end            DateTime?
+
+  company_customer StripeCompanyCustomer @relation(fields: [company_customer_id], references: [company_id], onDelete: Cascade, onUpdate: NoAction)
+  price            StripePrice           @relation(fields: [price_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }

@@ -1,6 +1,9 @@
 -- CreateEnum
 CREATE TYPE "public"."Role" AS ENUM ('STUDENT', 'TEACHER', 'ADMIN');
 
+-- CreateEnum
+CREATE TYPE "public"."WeekDays" AS ENUM ('SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY');
+
 -- CreateTable
 CREATE TABLE "public"."class" (
     "id" VARCHAR(256) NOT NULL,
@@ -14,8 +17,7 @@ CREATE TABLE "public"."class" (
 -- CreateTable
 CREATE TABLE "public"."class_days" (
     "id" VARCHAR(256) NOT NULL,
-    "initial_date" TIMESTAMP(3) NOT NULL,
-    "final_date" TIMESTAMP(3) NOT NULL,
+    "week_date" "public"."WeekDays" NOT NULL,
     "class_id" VARCHAR(256) NOT NULL,
 
     CONSTRAINT "class_days_pkey" PRIMARY KEY ("id")
@@ -109,9 +111,9 @@ CREATE TABLE "public"."materials" (
 CREATE TABLE "public"."monthly_fee" (
     "id" VARCHAR(256) NOT NULL,
     "due_date" TIMESTAMP(3) NOT NULL,
-    "value" DECIMAL(20,2) NOT NULL,
+    "value" DECIMAL(10,2) NOT NULL,
     "paid" BOOLEAN NOT NULL DEFAULT false,
-    "discount_payment_before_due_date" DECIMAL(3,2) NOT NULL DEFAULT 0,
+    "discount_payment_before_due_date" DECIMAL(10,2) NOT NULL DEFAULT 0,
     "registrations_id" VARCHAR(256) NOT NULL,
     "payment_method" VARCHAR(256),
     "date_of_payment" TIMESTAMPTZ(3),
@@ -122,10 +124,10 @@ CREATE TABLE "public"."monthly_fee" (
 
 -- CreateTable
 CREATE TABLE "public"."presence_list" (
-    "id" VARCHAR(256) NOT NULL,
-    "is_present" BOOLEAN NOT NULL DEFAULT false,
-    "users_id" VARCHAR(256) NOT NULL,
-    "classes_id" VARCHAR(256) NOT NULL,
+    "id" TEXT NOT NULL,
+    "is_present" BOOLEAN NOT NULL,
+    "users_id" TEXT NOT NULL,
+    "classes_id" TEXT NOT NULL,
 
     CONSTRAINT "presence_list_pkey" PRIMARY KEY ("id")
 );
@@ -203,8 +205,8 @@ CREATE TABLE "public"."companies" (
     "cnpj" VARCHAR(256) NOT NULL,
     "phone" VARCHAR(256) NOT NULL,
     "email" VARCHAR(256) NOT NULL,
-    "logo_16x16" VARCHAR(1024),
-    "logo_512x512" VARCHAR(1024),
+    "logo_16x16_url" VARCHAR(1024),
+    "logo_512x512_url" VARCHAR(1024),
     "social_reason" VARCHAR(256),
     "state_registration" VARCHAR(256),
     "tax_regime" VARCHAR(256),
@@ -255,6 +257,9 @@ CREATE TABLE "public"."users_in_class" (
 
     CONSTRAINT "users_in_class_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "presence_list_users_id_classes_id_key" ON "public"."presence_list"("users_id", "classes_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "companies_cnpj_key" ON "public"."companies"("cnpj");
