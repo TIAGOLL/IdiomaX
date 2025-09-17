@@ -15,11 +15,12 @@ import { useMutation } from '@tanstack/react-query';
 import { LoaderIcon, LogIn, Info } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { api } from '@/lib/api';
 import { toast } from 'sonner';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useNavigate } from 'react-router';
+import nookies from 'nookies';
+import { signUpWithPassword } from '@/services/auth/sign-up-with-password';
 
 const signUpFormSchema = z.object({
     name: z.string().min(3, { message: 'Nome deve ter pelo menos 3 caracteres.' }).max(256),
@@ -51,12 +52,15 @@ export function SignUpForm() {
     const navigate = useNavigate();
     const { mutate, isPending } = useMutation({
         mutationFn: async (data: SignUpFormSchema) => {
-            const response = await api.post('/auth/sign-up-with-password', data);
-            return response.data;
+            const response = await signUpWithPassword(data);
+            return response;
         },
         onSuccess: (res) => {
             toast.success(res.message);
-            console.log(res);
+            nookies.set(null, "token", res.token, {
+                path: '/',
+                maxAge: 60 * 60 * 24 * 7, // 7 days 
+            });
             navigate('/select-plan');
         },
         onError: (err) => {

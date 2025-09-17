@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import nookies from 'nookies';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
+import { toast } from 'sonner';
 
 type CompanyMember = {
     id: string;
@@ -34,9 +35,17 @@ export function useSession() {
     const [currentRole, setCurrentRole] = useState<string | undefined>();
     const { data: userProfile, isLoading, error } = useQuery({
         queryKey: ['user-session'],
-        queryFn: async () =>
-            await getUserProfile(),
+        queryFn: async () => await getUserProfile(),
+        retry: false,
     });
+
+    useEffect(() => {
+        if (!isLoading && (error || (userProfile && !userProfile.name))) {
+            nookies.destroy(null, 'token');
+            toast.error('Sua sessão expirou. Por favor, faça login novamente.');
+            navigate('/auth/sign-in', { replace: true });
+        }
+    }, [isLoading, error, userProfile, navigate]);
 
     useEffect(() => {
         setCurrentCompanyMember(userProfile?.member_on.find(c => c.company.id === searchParams.get('company')));
