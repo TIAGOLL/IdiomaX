@@ -59,7 +59,7 @@ export default function ProfilePage() {
                 cpf: userProfile.cpf,
                 phone: userProfile.phone,
                 gender: userProfile.gender,
-                date_of_birth: userProfile.date_of_birth.slice(0, 10),
+                date_of_birth: userProfile.date_of_birth.toISOString().slice(0, 10),
                 address: userProfile.address,
                 avatar_url: userProfile.avatar_url || undefined,
             });
