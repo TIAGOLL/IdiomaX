@@ -37,6 +37,15 @@ export async function SignUpWithPassword(app: FastifyInstance) {
             logo_512x512: z.string().nullable().optional(),
           })
         }),
+        response: {
+          201: z.object({
+            message: z.string(),
+            token: z.string(),
+          }),
+          400: z.object({
+            message: z.string(),
+          }),
+        }
       },
     },
     async (request, reply) => {
@@ -84,7 +93,7 @@ export async function SignUpWithPassword(app: FastifyInstance) {
       const passwordHash = await hash(password, 6);
       const date_of_birth_date = new Date(date_of_birth);
 
-      await prisma.$transaction(async (prisma) => {
+      const { token } = await prisma.$transaction(async (prisma) => {
         const { id: userId } = await prisma.users.create({
           data: {
             name,
@@ -99,7 +108,6 @@ export async function SignUpWithPassword(app: FastifyInstance) {
             phone,
           },
         })
-
         const { id: companyId } = await prisma.companies.create({
           data: {
             name: company.name,
@@ -121,10 +129,17 @@ export async function SignUpWithPassword(app: FastifyInstance) {
             role: 'ADMIN',
           },
         })
+
+        return {
+          token: app.jwt.sign({
+            sub: userId,
+          }),
+        }
       });
 
       return reply.status(201).send({
         message: 'Usuário e instituição criada com sucesso.',
+        token,
       });
     },
   );

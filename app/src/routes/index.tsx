@@ -17,10 +17,10 @@ export function RoutesApp() {
         <Route path='/auth/sign-in' element={<SignIn />} />
         <Route path='/auth/sign-up' element={<SignUp />} />
         <Route path='/auth/reset-password/:token' element={<ResetPassword />} />
-        <Route path='/select-plan' element={<SelectPlan />} />
       </Route>
       <Route element={<PrivateRoute />}>
         {/* ADMIN, TEACHER e STUDENT IRÃO DIVIDIR A MESMA DASHBOARD */}
+        <Route path='/select-plan' element={<SelectPlan />} />
         <Route index element={<Dashboard />} />
         <Route path='/profile' element={<ProfilePage />} />
       </Route>

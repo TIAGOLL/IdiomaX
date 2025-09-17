@@ -23,7 +23,7 @@ import { getCompanyById } from './controllers/companies/get-company-by-id'
 import { getUserById } from './controllers/users/get-user-by-id'
 import { UpdateProfile } from './controllers/users/update-profile'
 import { AdminDashboard } from './controllers/dashboard/admin'
-import { CreateCheckoutSession } from './controllers/subscriptions/create-checkout-session'
+import { CreateCheckoutSession } from './controllers/stripe/create-checkout-session'
 
 dotenv.config()
 
@@ -84,6 +84,9 @@ app.register(fastifySwaggerUI, {
 
 app.register(fastifyJwt, {
   secret: env.data.JWT_SECRET,
+  sign: {
+    expiresIn: '7d',
+  }
 })
 
 app.register(fastifyCors, {

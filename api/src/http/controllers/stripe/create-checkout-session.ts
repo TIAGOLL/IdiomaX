@@ -2,9 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 
-import { UnauthorizedError } from '../_errors/unauthorized-error';
 import { auth } from '../../../middlewares/auth';
-import { prisma } from '../../../lib/prisma';
 import { stripe } from '../../../lib/stripe';
 import { env } from '../../server';
 
@@ -38,6 +36,8 @@ export async function CreateCheckoutSession(app: FastifyInstance) {
                 // Pagamento recusado
                 // 4000 0000 0000 9995
 
+                const userId = await request.getCurrentUserId();
+
                 const prices = await stripe.prices.list({
                     product: request.body.productId,
                     expand: ['data.product'],
@@ -54,7 +54,7 @@ export async function CreateCheckoutSession(app: FastifyInstance) {
                     mode: 'subscription',
                     success_url: `${env.data.WEB_URL}/?success=true&session_id={CHECKOUT_SESSION_ID}`,
                     cancel_url: `${env.data.WEB_URL}?canceled=true`,
-                });
+                })
 
                 reply.status(200).send({ url: session.url });
             })
