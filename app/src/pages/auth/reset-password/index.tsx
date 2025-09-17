@@ -10,17 +10,9 @@ import { LoaderIcon, LockIcon } from 'lucide-react';
 import { resetPassword } from '@/services/auth/reset-password';
 import { toast } from 'sonner';
 import { useMutation } from '@tanstack/react-query';
+import { resetPasswordRequest } from '../../../../../packages/http-schemas/reset-password';
 
-// Schema de validação
-const resetPasswordSchema = z.object({
-    password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
-    confirmPassword: z.string()
-}).refine((data) => data.password === data.confirmPassword, {
-    message: 'As senhas não coincidem',
-    path: ['confirmPassword'],
-});
-
-type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
+type ResetPasswordSchema = z.infer<typeof resetPasswordRequest>;
 
 export default function ResetPassword() {
     const { token } = useParams();
@@ -31,14 +23,17 @@ export default function ResetPassword() {
         handleSubmit,
         formState: { errors }
     } = useForm<ResetPasswordSchema>({
-        resolver: zodResolver(resetPasswordSchema),
+        resolver: zodResolver(resetPasswordRequest),
         mode: 'all',
         criteriaMode: 'all',
+        defaultValues: {
+            token: token,
+        }
     });
 
     const { mutate, isPending } = useMutation({
         mutationFn: async (data: ResetPasswordSchema) => {
-            const response = await resetPassword({ password: data.password, token: token! });
+            const response = await resetPassword({ password: data.password, token: token!, confirmPassword: data.confirmPassword });
             return response
         },
         onSuccess: async (res) => {

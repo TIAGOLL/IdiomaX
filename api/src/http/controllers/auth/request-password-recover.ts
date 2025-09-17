@@ -5,6 +5,7 @@ import { ServiceUnavailableException } from '../_errors/service-unavailable-exce
 import { prisma } from '../../../lib/prisma';
 import { requestPasswordRecoverBody, requestPasswordRecoverSubject } from '../../../mails/request-password-recover';
 import { SendEmail } from '../../../services/mail-sender';
+import { passwordRecoverRequest, passwordRecoverResponse201 } from './../../../../../packages/http-schemas/request-password-recover';
 
 export async function requestPasswordRecover(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
@@ -13,13 +14,9 @@ export async function requestPasswordRecover(app: FastifyInstance) {
       schema: {
         tags: ['Autenticação'],
         summary: 'Solicitar recuperação de senha',
-        body: z.object({
-          email: z.email(),
-        }),
+        body: passwordRecoverRequest,
         response: {
-          201: z.object({
-            message: z.string(),
-          }),
+          201: passwordRecoverResponse201,
         },
       },
     },

@@ -17,12 +17,15 @@ import { LoaderIcon, Mail, Send } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
-import { requestPasswordRecoverSchema, type RequestPasswordRecoverSchema } from '@/services/auth/request-password-recover';
+import z from 'zod';
+import { passwordRecoverRequest } from '../../../../../../packages/http-schemas/request-password-recover';
+
+type RequestPasswordRecoverRequest = z.infer<typeof passwordRecoverRequest>;
 
 export function RequestPasswordRecoverForm() {
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async (data: RequestPasswordRecoverSchema) => {
+        mutationFn: async (data: RequestPasswordRecoverRequest) => {
             const response = await api.post('/auth/password-recover', data);
             return response.data;
         },
@@ -34,7 +37,7 @@ export function RequestPasswordRecoverForm() {
         }
     });
 
-    async function requestPasswordRecover({ email }: RequestPasswordRecoverSchema) {
+    async function requestPasswordRecover({ email }: RequestPasswordRecoverRequest) {
         mutate({ email });
     }
 
@@ -43,7 +46,7 @@ export function RequestPasswordRecoverForm() {
         handleSubmit,
         formState: { errors },
     } = useForm({
-        resolver: zodResolver(requestPasswordRecoverSchema),
+        resolver: zodResolver(passwordRecoverRequest),
         mode: 'all',
         criteriaMode: 'all',
     });

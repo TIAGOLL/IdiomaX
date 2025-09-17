@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { createCheckoutSession } from "@/services/subscriptions/create-checkou-service";
+import { createCheckoutSession } from "@/services/stripe/create-checkou-service";
 import { useNavigate } from "react-router";
 
 const PLANS = [
@@ -27,7 +27,7 @@ const PLANS = [
 
 export default function SelectPlan() {
     const [selected, setSelected] = useState<{ name: string; productId: string }>({ name: "monthly", productId: "prod_T4DTaGczK2y3Lj" });
-    const navigate = useNavigate();
+
     const { mutate, isPending } = useMutation({
         mutationFn: async (data: { productId: string }) => {
             const response = await createCheckoutSession(data)

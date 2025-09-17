@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 import { ForbiddenError } from '../_errors/forbidden-error';
 import { prisma } from '../../../lib/prisma';
+import { resetPasswordRequest, resetPasswordResponse200, resetPasswordResponse400, resetPasswordResponse403, } from './../../../../../packages/http-schemas/reset-password';
 
 export async function resetPassword(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
@@ -13,14 +14,11 @@ export async function resetPassword(app: FastifyInstance) {
       schema: {
         tags: ['Autenticação'],
         summary: 'Resetar senha do usuário',
-        body: z.object({
-          token: z.string(),
-          password: z.string().min(6),
-        }),
+        body: resetPasswordRequest,
         response: {
-          200: z.object({ message: z.string() }),
-          400: z.object({ message: z.string() }),
-          403: z.object({ message: z.string() }),
+          200: resetPasswordResponse200,
+          400: resetPasswordResponse400,
+          403: resetPasswordResponse403,
         },
       },
     },
