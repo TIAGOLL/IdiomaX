@@ -66,7 +66,7 @@ export async function createCompany(app: FastifyInstance) {
                         address,
                         cnpj,
                         phone,
-                        email: email || "",
+                        email,
                         logo_16x16_url,
                         logo_512x512_url,
                         social_reason,

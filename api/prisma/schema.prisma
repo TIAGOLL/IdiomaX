@@ -227,7 +227,7 @@ model companies {
   name               String    @db.VarChar(256)
   cnpj               String    @unique @db.VarChar(256)
   phone              String    @unique @db.VarChar(256)
-  email              String?   @unique @db.VarChar(256)
+  email              String   @unique @db.VarChar(256)
   logo_16x16_url     String?   @db.VarChar(1024)
   logo_512x512_url   String?   @db.VarChar(1024)
   social_reason      String?   @db.VarChar(256)

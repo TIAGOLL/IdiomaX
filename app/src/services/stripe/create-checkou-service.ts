@@ -3,6 +3,7 @@ import z from "zod";
 import { createCheckoutSessionRequest, createCheckoutSessionResponse } from "@idiomax/http-schemas/create-checkout-session";
 
 type CreateCheckoutSessionResponse = z.infer<typeof createCheckoutSessionResponse>;
+
 type CreateCheckoutSessionRequest = z.infer<typeof createCheckoutSessionRequest>;
 
 export async function createCheckoutSession(data: CreateCheckoutSessionRequest) {
