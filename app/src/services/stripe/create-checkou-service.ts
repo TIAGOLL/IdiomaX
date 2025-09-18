@@ -7,7 +7,7 @@ type CreateCheckoutSessionRequest = z.infer<typeof createCheckoutSessionRequest>
 
 export async function createCheckoutSession(data: CreateCheckoutSessionRequest) {
     const response = await api.post(
-        '/create-checkout-session',
+        '/stripe/create-checkout-session',
         data
     );
 

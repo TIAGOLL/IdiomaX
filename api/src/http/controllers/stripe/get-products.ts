@@ -12,7 +12,7 @@ export async function GetProducts(app: FastifyInstance) {
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .post(
-            '/get-products',
+            '/stripe/get-products',
             {
                 schema: {
                     tags: ['Subscriptions'],

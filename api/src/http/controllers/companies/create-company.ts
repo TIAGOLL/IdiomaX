@@ -33,7 +33,7 @@ export async function createCompany(app: FastifyInstance) {
                 });
 
                 if (email) {
-                    const companyAlreadyExistsByEmail = await prisma.companies.findUnique({
+                    const companyAlreadyExistsByEmail = await prisma.companies.findFirst({
                         where: {
                             email: email,
                         },
@@ -66,7 +66,7 @@ export async function createCompany(app: FastifyInstance) {
                         address,
                         cnpj,
                         phone,
-                        email,
+                        email: email || "",
                         logo_16x16_url,
                         logo_512x512_url,
                         social_reason,

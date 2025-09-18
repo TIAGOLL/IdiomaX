@@ -12,7 +12,7 @@ export async function CreateCheckoutSession(app: FastifyInstance) {
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .post(
-            '/create-checkout-session',
+            '/stripe/create-checkout-session',
             {
                 schema: {
                     tags: ['Subscriptions'],
