@@ -7,16 +7,17 @@ import { getUserProfileResponse } from '@idiomax/http-schemas/get-user-profile';
 import type z from 'zod';
 
 type CompanyMember = z.infer<typeof getUserProfileResponse>['member_on'][number];
+type GetUserProfileResponse = z.infer<typeof getUserProfileResponse>;
 
 type SessionContextType = {
-    userProfile: ReturnType<typeof useQuery>['data'];
+    userProfile?: GetUserProfileResponse;
     isLoading: boolean;
     logout: () => void;
     error: unknown;
-    token: string | undefined;
-    currentCompanyMember: CompanyMember | undefined;
+    token?: string;
+    currentCompanyMember?: CompanyMember;
     setCompany: (company: CompanyMember) => void;
-    currentRole: string | undefined;
+    currentRole?: string;
 };
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
