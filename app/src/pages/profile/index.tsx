@@ -12,7 +12,7 @@ import { useSession } from '@/hooks/use-session';
 import { Info, LoaderIcon, Save } from 'lucide-react';
 import { FormMessageError } from '@/components/ui/form-message-error';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -22,7 +22,7 @@ type UpdateUserProfileRequest = z.infer<typeof updateUserProfileRequest>;
 
 export default function ProfilePage() {
 
-    const { mutate, isPending } = useMutation({
+    const { mutate, isPending, status } = useMutation({
         mutationFn: async (data: UpdateUserProfileRequest) => {
             const response = await api.put('/users', data);
             return response.data;
@@ -44,8 +44,8 @@ export default function ProfilePage() {
         handleSubmit,
         formState: { errors },
         watch,
-        setValue,
-        reset
+        reset,
+        control
     } = useForm<UpdateUserProfileRequest>({
         resolver: zodResolver(updateUserProfileRequest),
         mode: 'all',
@@ -59,23 +59,22 @@ export default function ProfilePage() {
                 cpf: userProfile.cpf,
                 phone: userProfile.phone,
                 gender: userProfile.gender,
-                date_of_birth: userProfile.date_of_birth.toISOString().slice(0, 10),
+                date_of_birth: userProfile.date_of_birth
+                    ? new Date(userProfile.date_of_birth).toISOString().slice(0, 10)
+                    : '',
                 address: userProfile.address,
                 avatar_url: userProfile.avatar_url || undefined,
             });
         }
     }, [userProfile, reset]);
 
-
-    async function updateProfile(data: UpdateUserProfileRequest) {
-        mutate(data);
-    }
+    if (status === 'pending' || !watch("gender")) return <LoaderIcon className='ml-2 h-4 w-4 animate-spin' />;
 
     return (
         <div className='flex justify-center min-h-screen items-center bg-slate-100 dark:bg-slate-600 sm:!w-screen'>
             <Sidebar />
             <Card className='w-10/12'>
-                <form onSubmit={handleSubmit(updateProfile)} className='space-y-4'>
+                <form onSubmit={handleSubmit((data) => mutate(data))} className='space-y-4'>
                     <CardHeader className='flex space-x-4 flex-col'>
                         <div className='flex-col'>
                             <CardTitle>
@@ -108,20 +107,24 @@ export default function ProfilePage() {
                             </div>
                             <div className="col-span-1 space-y-1 w-full">
                                 <Label htmlFor='gender'>Gênero</Label>
-                                <Select
-                                    onValueChange={value => {
-                                        setValue('gender', value);
-                                    }}
-                                    value={watch('gender')}
-                                >
-                                    <SelectTrigger id='gender' className='w-full' >
-                                        <SelectValue placeholder="Selecione o gênero" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="M">Masculino</SelectItem>
-                                        <SelectItem value="F">Feminino</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                <Controller
+                                    name="gender"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Select
+                                            value={field.value ?? undefined}
+                                            onValueChange={field.onChange}
+                                        >
+                                            <SelectTrigger id='gender' className='w-full'>
+                                                <SelectValue placeholder="Selecione o gênero" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="M">Masculino</SelectItem>
+                                                <SelectItem value="F">Feminino</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    )}
+                                />
                                 <FormMessageError error={errors.gender?.message} />
                             </div>
                             <div className="col-span-1 space-y-1">
@@ -159,7 +162,7 @@ export default function ProfilePage() {
                             type='submit'
                             disabled={isPending}
                             data-test='profileSubmitButton'
-                            onClick={() => { console.log(errors) }}
+                            onClick={() => { console.log(watch("gender")) }}
                         >
                             Salvar Alterações
                             {isPending ? (

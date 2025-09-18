@@ -20,7 +20,7 @@ export async function SignUpWithPassword(app: FastifyInstance) {
       },
     },
     async (request, reply) => {
-      const { name, email, password, gender, date_of_birth, company, address, cpf, username, phone } = request.body;
+      const { name, email, password, gender, date_of_birth,  address, cpf, username, phone } = request.body;
 
       const userWithSameEmail = await prisma.users.findUnique({
         where: {
@@ -40,24 +40,11 @@ export async function SignUpWithPassword(app: FastifyInstance) {
         },
       });
 
-      const companyWithSameCnpj = await prisma.companies.findUnique({
-        where: {
-          cnpj: company.cnpj,
-        },
-      });
-
       if (userWithSameEmail) {
         throw new BadRequestError('Já existe um usuário com este e-mail.');
-      }
-
-      if (userWithSameUsername) {
+      } else if (userWithSameUsername) {
         throw new BadRequestError('Já existe um usuário com este nome de usuário.');
-      }
-      if (companyWithSameCnpj) {
-        throw new BadRequestError('Já existe uma empresa com este CNPJ.');
-      }
-
-      if (userWithSameCpf) {
+      } else if (userWithSameCpf) {
         throw new BadRequestError('Já existe um usuário com este CPF.');
       }
 
@@ -78,30 +65,12 @@ export async function SignUpWithPassword(app: FastifyInstance) {
             phone,
           },
         })
-        const { id: companyId } = await prisma.companies.create({
-          data: {
-            name: company.name,
-            cnpj: company.cnpj,
-            address: company.address,
-            phone: company.phone,
-            email: email,
-            owner_id: userId,
-          },
-        })
 
-        await prisma.members.create({
-          data: {
-            user_id: userId,
-            company_id: companyId,
-            role: 'ADMIN',
-          },
-        })
+        const token = app.jwt.sign({
+          sub: userId,
+        });
 
-        return {
-          token: app.jwt.sign({
-            sub: userId,
-          }),
-        }
+        return { token };
       });
 
       return reply.status(201).send({

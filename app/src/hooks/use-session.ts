@@ -4,29 +4,10 @@ import nookies from 'nookies';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { toast } from 'sonner';
+import { getUserProfileResponse } from '@idiomax/http-schemas/get-user-profile';
+import type z from 'zod';
 
-type CompanyMember = {
-    id: string;
-    role: "STUDENT" | "TEACHER" | "ADMIN";
-    company_id: string;
-    user_id: string;
-    company: {
-        id: string;
-        email: string;
-        name: string;
-        created_at: Date | null;
-        phone: string;
-        address: string;
-        updated_at: Date | null;
-        cnpj: string;
-        social_reason: string | null;
-        state_registration: string | null;
-        tax_regime: string | null;
-        owner_id: string;
-        logo_16x16_url?: string | null | undefined;
-        logo_512x512_url?: string | null | undefined;
-    };
-};
+type CompanyMember = z.infer<typeof getUserProfileResponse>['member_on'][number];
 
 export function useSession() {
     const [searchParams, setSearchParams] = useSearchParams();

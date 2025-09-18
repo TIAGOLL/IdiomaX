@@ -226,8 +226,8 @@ model companies {
   id                 String    @id @default(uuid()) @db.VarChar(256)
   name               String    @db.VarChar(256)
   cnpj               String    @unique @db.VarChar(256)
-  phone              String    @db.VarChar(256)
-  email              String    @db.VarChar(256)
+  phone              String    @unique @db.VarChar(256)
+  email              String?   @unique @db.VarChar(256)
   logo_16x16_url     String?   @db.VarChar(1024)
   logo_512x512_url   String?   @db.VarChar(1024)
   social_reason      String?   @db.VarChar(256)
@@ -248,6 +248,11 @@ model companies {
   StripeCompanyCustomer StripeCompanyCustomer[]
 }
 
+enum Gender {
+  M
+  F
+}
+
 model users {
   id            String    @id @default(uuid()) @db.VarChar(256)
   name          String    @db.VarChar(256)
@@ -256,7 +261,7 @@ model users {
   cpf           String    @unique @db.VarChar(256)
   phone         String    @db.VarChar(256)
   username      String    @unique @db.VarChar(256)
-  gender        String    @db.VarChar(256)
+  gender        Gender
   date_of_birth DateTime
   address       String    @db.VarChar(256)
   active        Boolean?  @default(true)

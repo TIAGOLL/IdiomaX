@@ -1,0 +1,116 @@
+import { Button } from '@/components/ui/button';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { FormMessageError } from '@/components/ui/form-message-error';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useMutation } from '@tanstack/react-query';
+import { LoaderIcon, LogIn } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { toast } from 'sonner';
+import { useNavigate } from 'react-router';
+import { createCompanyRequest } from '@idiomax/http-schemas/create-company';
+import { createCompany } from '@/services/companies/create-company';
+
+type CreateCompanyRequest = z.infer<typeof createCompanyRequest>;
+
+export function CreateCompanyPage() {
+    const navigate = useNavigate();
+    const { mutate, isPending } = useMutation({
+        mutationFn: async (data: CreateCompanyRequest) => {
+            const response = await createCompany(data);
+            return response;
+        },
+        onSuccess: (res) => {
+            toast.success(res.message);
+            navigate('/select-plan');
+        },
+        onError: (err) => {
+            console.log(err);
+            toast.error(err.message);
+        }
+    });
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<CreateCompanyRequest>({
+        resolver: zodResolver(createCompanyRequest),
+        mode: 'all',
+        criteriaMode: 'all',
+        defaultValues: {
+            name: 'Empresa Teste',
+            cnpj: '12345458000199',
+            address: 'Av. Paulista, 1000',
+            phone: '42984066200',
+        }
+    });
+
+    return (
+        <Card className='w-10/12'>
+            <form onSubmit={handleSubmit((data) => mutate(data))} className='space-y-4'>
+                <CardHeader className='flex items-center space-x-4'>
+                    <div className='flex flex-col items-center justify-center'>
+                        <img src='/images/logo.png' alt='Logo da loja' className='size-12' />
+                    </div>
+                    <div className='flex-col'>
+                        <CardTitle>
+                            Cadastro
+                        </CardTitle>
+                        <CardDescription>Preencha seus dados e os da instituição.</CardDescription>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <div className='col-span-3 mt-4 font-bold'>Dados da Instituição</div>
+                    <div className="col-span-2 space-y-1">
+                        <Label htmlFor='name'>Nome da empresa</Label>
+                        <Input type='text' id='name' {...register('name')} />
+                        <FormMessageError error={errors.name?.message} />
+                    </div>
+                    <div className="col-span-1 space-y-1">
+                        <Label htmlFor='cnpj'>CNPJ</Label>
+                        <Input type='text' id='cnpj' {...register('cnpj')} />
+                        <FormMessageError error={errors.cnpj?.message} />
+                    </div>
+                    <div className="col-span-1 space-y-1">
+                        <Label htmlFor='address'>Endereço</Label>
+                        <Input type='text' id='address' {...register('address')} />
+                        <FormMessageError error={errors.address?.message} />
+                    </div>
+                    <div className="col-span-1 space-y-1">
+                        <Label htmlFor='phone'>Telefone</Label>
+                        <Input type='text' id='phone' {...register('phone')} />
+                        <FormMessageError error={errors.phone?.message} />
+                    </div>
+                </CardContent>
+                <CardFooter className='flex justify-between flex-row-reverse'>
+                    <Button
+                        variant='default'
+                        type='submit'
+                        disabled={isPending}
+                        onClick={() => console.log(errors)}
+                        data-test='signUpSubmitButton'>
+                        Continuar
+                        {isPending ? (
+                            <LoaderIcon className='ml-2 h-4 w-4 animate-spin' />
+                        ) : (
+                            <LogIn className='ml-2 h-4 w-4' />
+                        )}
+                    </Button>
+                    <Button variant='ghost' type='button' onClick={() => navigate('/auth/sign-in')} className='ml-4'>
+                        Já possuo uma conta
+                    </Button>
+                </CardFooter>
+            </form>
+        </Card >
+    );
+}

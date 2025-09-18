@@ -32,11 +32,33 @@ export async function createCompany(app: FastifyInstance) {
                     },
                 });
 
-                const userId = await request.getCurrentUserId()
+                if (email) {
+                    const companyAlreadyExistsByEmail = await prisma.companies.findUnique({
+                        where: {
+                            email: email,
+                        },
+                    });
+
+                    if (companyAlreadyExistsByEmail) {
+                        throw new BadRequestError('Já existe uma instituição com esse e-mail.');
+                    }
+                }
+
+                const companyAlreadyExistsByPhone = await prisma.companies.findFirst({
+                    where: {
+                        phone: phone,
+                    },
+                });
 
                 if (companyAlreadyExists) {
                     throw new BadRequestError('Já existe uma instituição com esse CNPJ.');
                 }
+
+                if (companyAlreadyExistsByPhone) {
+                    throw new BadRequestError('Já existe uma instituição com esse telefone.');
+                }
+
+                const userId = await request.getCurrentUserId()
 
                 await prisma.companies.create({
                     data: {

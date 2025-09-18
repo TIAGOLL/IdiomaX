@@ -7,7 +7,7 @@ export const getUserProfileResponse = z.object({
     password: z.string().min(6, { message: 'Senha deve ter pelo menos 6 caracteres' }).optional(),
     cpf: z.string().min(11).max(11),
     phone: z.string().min(10).max(11),
-    gender: z.string().min(1).max(1),
+    gender: z.enum(['M', 'F']),
     date_of_birth: z.date(),
     address: z.string().min(1).max(255),
     avatar_url: z.url().nullable().optional(),
@@ -20,7 +20,7 @@ export const getUserProfileResponse = z.object({
             user_id: z.uuid(),
             company: z.object({
                 id: z.uuid(),
-                email: z.email(),
+                email: z.email().optional().nullable(),
                 name: z.string(),
                 created_at: z.date().nullable(),
                 phone: z.string(),

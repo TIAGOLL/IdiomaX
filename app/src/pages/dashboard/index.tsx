@@ -3,7 +3,7 @@ import { useSession } from "@/hooks/use-session";
 import AdminDashboard from "./admin";
 
 
-export function Dashboard() {
+export function DashboardPage() {
     const { currentRole } = useSession()
 
     return (

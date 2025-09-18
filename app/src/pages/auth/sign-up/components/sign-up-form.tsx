@@ -14,7 +14,6 @@ import { Label } from '@/components/ui/label';
 import { useMutation } from '@tanstack/react-query';
 import { LoaderIcon, LogIn, Info } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { toast } from 'sonner';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -22,6 +21,7 @@ import { useNavigate } from 'react-router';
 import nookies from 'nookies';
 import { signUpWithPassword } from '@/services/auth/sign-up-with-password';
 import { signUpWithPasswordRequest } from '@idiomax/http-schemas/sign-up-with-password';
+import type z from 'zod';
 
 type SignUpWithPasswordRequest = z.infer<typeof signUpWithPasswordRequest>;
 
@@ -38,7 +38,7 @@ export function SignUpForm() {
                 path: '/',
                 maxAge: 60 * 60 * 24 * 7, // 7 days 
             });
-            navigate('/select-plan');
+            navigate('/create-company');
         },
         onError: (err) => {
             console.log(err);
@@ -52,36 +52,26 @@ export function SignUpForm() {
         formState: { errors },
         watch,
         setValue
-    } = useForm<SignUpWithPasswordRequest>({
+    } = useForm({
         resolver: zodResolver(signUpWithPasswordRequest),
         mode: 'all',
         criteriaMode: 'all',
         defaultValues: {
             name: 'João da Silva',
-            email: 'joao.silva@email.com',
-            username: 'joaosilva',
+            email: 'tiagoepitanga10@gmail.com',
+            username: 'tiago10',
             cpf: '12345458901',
             phone: '11999999999',
             gender: 'M',
-            date_of_birth: new Date('2000-01-01'),
+            date_of_birth: '2000-01-01',
             address: 'Rua das Flores, 123',
-            password: 'senha123',
-            company: {
-                name: 'Empresa Teste',
-                cnpj: '12345458000199',
-                address: 'Av. Paulista, 1000',
-                phone: '42984066200',
-            },
+            password: 'admin1',
         }
     });
 
-    async function SignUp(data: SignUpWithPasswordRequest) {
-        mutate(data);
-    }
-
     return (
         <Card className='w-10/12'>
-            <form onSubmit={handleSubmit(SignUp)} className='space-y-4'>
+            <form onSubmit={handleSubmit((data) => mutate(data))} className='space-y-4'>
                 <CardHeader className='flex items-center space-x-4'>
                     <div className='flex flex-col items-center justify-center'>
                         <img src='/images/logo.png' alt='Logo da loja' className='size-12' />
@@ -118,7 +108,7 @@ export function SignUpForm() {
                             <Label htmlFor='gender'>Gênero</Label>
                             <Select
                                 onValueChange={value => {
-                                    setValue('gender', value);
+                                    setValue('gender', value as 'M' | 'F');
                                 }}
                                 defaultValue={watch('gender')}
                             >
@@ -139,7 +129,7 @@ export function SignUpForm() {
                         </div>
                         <div className="col-span-1 space-y-1">
                             <Label htmlFor='date_of_birth'>Data de nascimento</Label>
-                            <Input type='date' id='date_of_birth' {...register('date_of_birth', { valueAsDate: true })} />
+                            <Input type='date' id='date_of_birth' {...register('date_of_birth')} />
                             <FormMessageError error={errors.date_of_birth?.message} />
                         </div>
                         <div className="col-span-2 space-y-1">
@@ -165,34 +155,12 @@ export function SignUpForm() {
                             <Input type='password' id='password' {...register('password')} />
                             <FormMessageError error={errors.password?.message} />
                         </div>
-
-                        {/* Dados da empresa */}
-                        <div className='col-span-3 mt-4 font-bold'>Dados da Instituição</div>
-                        <div className="col-span-2 space-y-1">
-                            <Label htmlFor='company.name'>Nome da empresa</Label>
-                            <Input type='text' id='company.name' {...register('company.name')} />
-                            <FormMessageError error={errors.company?.name?.message} />
-                        </div>
-                        <div className="col-span-1 space-y-1">
-                            <Label htmlFor='company.cnpj'>CNPJ</Label>
-                            <Input type='text' id='company.cnpj' {...register('company.cnpj')} />
-                            <FormMessageError error={errors.company?.cnpj?.message} />
-                        </div>
-                        <div className="col-span-1 space-y-1">
-                            <Label htmlFor='company.address'>Endereço</Label>
-                            <Input type='text' id='company.address' {...register('company.address')} />
-                            <FormMessageError error={errors.company?.address?.message} />
-                        </div>
-                        <div className="col-span-1 space-y-1">
-                            <Label htmlFor='company.phone'>Telefone</Label>
-                            <Input type='text' id='company.phone' {...register('company.phone')} />
-                            <FormMessageError error={errors.company?.phone?.message} />
-                        </div>
                     </div>
                 </CardContent>
                 <CardFooter className='flex justify-between flex-row-reverse'>
                     <Button
                         variant='default'
+                        onClick={() => console.log(watch('date_of_birth'))}
                         type='submit'
                         disabled={isPending}
                         data-test='signUpSubmitButton'>

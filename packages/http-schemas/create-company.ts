@@ -1,16 +1,16 @@
 import z from "zod";
 
 export const createCompanyRequest = z.object({
-    name: z.string().min(3).max(100),
-    cnpj: z.string().min(14).max(14),
-    phone: z.string().min(11).max(11),
-    email: z.email(),
+    name: z.string().min(3, { message: 'Nome da empresa deve ter pelo menos 3 caracteres.' }).max(256),
+    cnpj: z.string().min(14, { message: 'CNPJ deve ter 14 caracteres.' }).max(14),
+    address: z.string().min(1, { message: 'Endereço da empresa é obrigatório.' }).max(256),
+    phone: z.string().min(10, { message: 'Telefone da empresa deve ter pelo menos 10 caracteres.' }).max(15),
+    email: z.email({ message: 'E-mail inválido.' }).max(256).optional(),
     logo_16x16_url: z.url().optional(),
     logo_512x512_url: z.url().optional(),
-    social_reason: z.string().min(3).max(256),
-    state_registration: z.string().min(3).max(256),
-    tax_regime: z.string().min(3).max(256),
-    address: z.string().min(3).max(256),
+    social_reason: z.string().max(256).optional(),
+    state_registration: z.string().max(256).optional(),
+    tax_regime: z.string().max(256).optional(),
 })
 
 export const createCompanyResponse = z.object({

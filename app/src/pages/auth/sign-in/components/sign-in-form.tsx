@@ -50,10 +50,6 @@ export function SignInForm() {
     }
   });
 
-  async function SignIn({ username, password }: SignInWithPasswordRequest) {
-    mutate({ username, password });
-  }
-
   const {
     register,
     handleSubmit,
@@ -83,7 +79,7 @@ export function SignInForm() {
           IdiomaX
         </span>
       </div>
-      <form onSubmit={handleSubmit(SignIn)} className='flex flex-col gap-4'>
+      <form onSubmit={handleSubmit((data) => mutate(data))} className='flex flex-col gap-4'>
         <CardHeader>
           <CardTitle>Login</CardTitle>
           <CardDescription>Faça login e entre na plataforma.</CardDescription>

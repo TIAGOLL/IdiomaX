@@ -37,10 +37,6 @@ export function RequestPasswordRecoverForm() {
         }
     });
 
-    async function requestPasswordRecover({ email }: RequestPasswordRecoverRequest) {
-        mutate({ email });
-    }
-
     const {
         register,
         handleSubmit,
@@ -66,7 +62,7 @@ export function RequestPasswordRecoverForm() {
                     IdiomaX
                 </span>
             </div>
-            <form onSubmit={handleSubmit(requestPasswordRecover)} className='flex flex-col gap-4'>
+            <form onSubmit={handleSubmit((data) => mutate(data))} className='flex flex-col gap-4'>
                 <CardHeader>
                     <CardTitle>Recuperação de senha</CardTitle>
                     <CardDescription>Digite seu e-mail para recuperar sua senha.</CardDescription>

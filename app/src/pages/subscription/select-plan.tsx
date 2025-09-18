@@ -24,7 +24,7 @@ const PLANS = [
     },
 ];
 
-export default function SelectPlan() {
+export default function SelectPlanPage() {
     const [selected, setSelected] = useState<{ name: string; productId: string }>({ name: "monthly", productId: "prod_T4DTaGczK2y3Lj" });
 
     const { mutate } = useMutation({

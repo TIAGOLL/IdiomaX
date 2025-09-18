@@ -14,7 +14,7 @@ import { resetPasswordRequest } from '@idiomax/http-schemas/reset-password';
 
 type ResetPasswordSchema = z.infer<typeof resetPasswordRequest>;
 
-export default function ResetPassword() {
+export default function ResetPasswordPage() {
     const { token } = useParams();
     const navigate = useNavigate();
 
@@ -45,10 +45,6 @@ export default function ResetPassword() {
         }
     });
 
-    async function SignIn(data: ResetPasswordSchema) {
-        mutate(data);
-    }
-
     return (
         <div className='flex justify-center min-h-screen items-center bg-slate-100 dark:bg-slate-600 sm:!w-screen'>
             <Card className='min-w-4/12'>
@@ -65,7 +61,7 @@ export default function ResetPassword() {
                         IdiomaX
                     </span>
                 </div>
-                <form onSubmit={handleSubmit(SignIn)} className='flex flex-col gap-4'>
+                <form onSubmit={handleSubmit((data) => mutate(data))} className='flex flex-col gap-4'>
                     <CardHeader>
                         <CardTitle>Redefinir Senha</CardTitle>
                         <CardDescription>Digite sua nova senha abaixo.</CardDescription>

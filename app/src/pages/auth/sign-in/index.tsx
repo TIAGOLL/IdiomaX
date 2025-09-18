@@ -7,7 +7,7 @@ import { Link } from 'react-router';
 import { buttonVariants } from '@/components/ui/button';
 import { Building } from 'lucide-react';
 
-export function SignIn() {
+export function SignInPage() {
 
   return (
     <div className='flex justify-center min-h-screen items-center bg-slate-100 dark:bg-slate-600 sm:!w-screen'>

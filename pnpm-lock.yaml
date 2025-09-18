@@ -284,6 +284,9 @@ importers:
 
   packages/http-schemas:
     dependencies:
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
       zod:
         specifier: ^4.1.9
         version: 4.1.9
