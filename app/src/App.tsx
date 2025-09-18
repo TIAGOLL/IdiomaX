@@ -7,22 +7,25 @@ import { ThemeProvider } from './components/ui/theme-provider';
 import { SidebarProvider } from './components/ui/sidebar.tsx';
 import { RoutesApp } from './routes/index.tsx';
 import { Toaster } from 'sonner';
+import { SessionProvider } from './contexts/session-context.tsx';
 
 export function App() {
   const queryClient = new QueryClient();
 
   return (
     <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
-          <Toaster />
-          <SidebarProvider>
-            <RoutesApp />
-            <SpeedInsights />
-            <Analytics />
-          </SidebarProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
+      <SessionProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
+            <Toaster />
+            <SidebarProvider>
+              <RoutesApp />
+              <SpeedInsights />
+              <Analytics />
+            </SidebarProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </SessionProvider>
     </BrowserRouter >
   );
 }

@@ -60,7 +60,7 @@ export async function createCompany(app: FastifyInstance) {
 
                 const userId = await request.getCurrentUserId()
 
-                await prisma.companies.create({
+                const { id } = await prisma.companies.create({
                     data: {
                         name,
                         address,
@@ -86,7 +86,9 @@ export async function createCompany(app: FastifyInstance) {
                     },
                 });
 
-                return reply.status(201).send({ message: 'Instituição criada com sucesso.' });
+                return reply.status(201).send({
+                    message: 'Instituição criada com sucesso.', companyId: id
+                });
             },
         );
 }

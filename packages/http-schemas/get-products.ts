@@ -1,9 +1,15 @@
 import z from "zod"
+import { getPricesResponse } from './get-prices';
 
-export const getProductsResponse = z.object({
-    url: z.url(),
-})
-
-export const getProductsRequest = z.object({
-    productId: z.string(),
-})
+// Define o schema de um produto
+export const getProductsResponse = z.array(
+    z.object({
+        id: z.string(),
+        active: z.boolean(),
+        name: z.string(),
+        description: z.string().nullable(),
+        image: z.string().nullable(),
+        metadata: z.unknown().nullable(),
+        prices: z.array(getPricesResponse),
+    })
+)

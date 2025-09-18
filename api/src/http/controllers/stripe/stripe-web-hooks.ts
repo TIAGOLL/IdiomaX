@@ -1,40 +1,9 @@
-import fastify, { type FastifyInstance } from 'fastify';
+import { type FastifyInstance } from 'fastify';
 import { stripe } from '../../../lib/stripe';
 import Stripe from 'stripe';
 import { env } from '../../server';
 import { prisma } from '../../../lib/prisma';
 import { NotFoundError } from '../_errors/not-found-error';
-
-interface iPriceData {
-    id: string;
-    product_id: string;
-    active: boolean;
-    currency: string;
-    description?: string | null;
-    type: string;
-    unit_amount: number;
-    interval: string;
-    interval_count: number;
-    trial_period_days?: number | null;
-    metadata: unknown;
-}
-
-interface iSubscriptionData {
-    id: string;
-    company_id: string;
-    status: string;
-    metadata: unknown;
-    price_id: string;
-    quantity: number;
-    cancel_at_period_end: boolean;
-    current_period_start: Date | null;
-    current_period_end: Date | null;
-    ended_at: Date | null;
-    cancel_at: Date | null;
-    canceled_at: Date | null;
-    trial_start: Date | null;
-    trial_end: Date | null;
-}
 
 export async function StripeWebHooks(app: FastifyInstance) {
 
@@ -78,8 +47,19 @@ export async function StripeWebHooks(app: FastifyInstance) {
                 }
 
                 const upsertPriceRecord = async (price: Stripe.Price) => {
-                    const priceData: Partial<iPriceData> = {
-                        id: price.id,
+                    const data = await prisma.stripePrice.findFirst({
+                        where: {
+                            unit_amount: price.unit_amount,
+                            active: true,
+                        },
+                        select: {
+                            id: true,
+                        },
+                    });
+
+                    const priceData = {
+                        id: data?.id ?? price.id,
+                        product_id: price.product as string,
                         active: price.active,
                         currency: price.currency,
                         description: price.nickname ?? undefined,
@@ -89,22 +69,13 @@ export async function StripeWebHooks(app: FastifyInstance) {
                         interval_count: price.recurring?.interval_count,
                         trial_period_days: price.recurring?.trial_period_days,
                         metadata: price.metadata,
-                    }
+                    };
 
-                    const data = await prisma.stripePrice.findFirst({
-                        where: {
-                            unit_amount: priceData.unit_amount,
-                            active: true,
-                        },
-                        select: {
-                            id: true,
-                        },
+                    await prisma.stripePrice.upsert({
+                        where: { id: priceData.id },
+                        create: priceData,
+                        update: priceData,
                     });
-
-                    if (data?.id) { priceData.id = data.id; }
-                    if (price.product) priceData.product_id = price.product as string;
-
-                    await prisma.stripePrice.upsert({ where: { id: priceData.id }, create: priceData, update: priceData });
                 }
 
                 const subscriptionStatusChangedEvent = async (event: Stripe.Event) => {
@@ -129,39 +100,57 @@ export async function StripeWebHooks(app: FastifyInstance) {
                 const convertDate = (date: number | null) => (date ? new Date(date * 1000) : null);
 
                 const manageSubscriptionStatusChange = async (subscriptionId: string, customerId: string) => {
-                    const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+                    const subscriptionResponse = await stripe.subscriptions.retrieve(subscriptionId);
+                    const subscription = (subscriptionResponse as any).data ?? subscriptionResponse;
 
-                    const customerData = await prisma.stripeCompanyCustomer.findUnique({ where: { stripe_customer_id: customerId }, select: { company_id: true }, });
-                    if (!customerData) {
+                    const { company_id } = await prisma.stripeCompanyCustomer.findFirst({
+                        where: { stripe_customer_id: customerId },
+                        select: { company_id: true },
+                    });
+                    if (!company_id) {
                         throw new NotFoundError('Customer not found');
                     }
 
-                    const { company_id } = customerData
-
-                    const subscriptionData: Partial<iSubscriptionData> = {
-                        id: subscription.id,
-                        company_id,
-                        status: subscription.status,
-                        metadata: subscription.metadata,
-                        cancel_at_period_end: subscription.cancel_at_period_end,
-                        current_period_start: convertDate(subscription.current_period_start),
-                        current_period_end: convertDate(subscription.current_period_end),
-                        ended_at: convertDate(subscription.ended_at),
-                        cancel_at: convertDate(subscription.cancel_at),
-                        canceled_at: convertDate(subscription.canceled_at),
-                        trial_start: convertDate(subscription.trial_start),
-                        trial_end: convertDate(subscription.trial_end),
-                    }
-
-                    // Upsert da assinatura
                     await prisma.stripeCompanySubscription.upsert({
-                        where: { id: subscription.id },
-                        create: subscriptionData,
-                        update: subscriptionData,
+                        where: { company_customer_id: String(company_id) },
+                        create: {
+                            id: String(subscription.id),
+                            status: subscription.status,
+                            metadata: subscription.metadata,
+                            quantity: subscription.items.data[0].quantity ? Number(subscription.items.data[0].quantity) : null,
+                            cancel_at_period_end: Boolean(subscription.cancel_at_period_end),
+                            current_period_start: convertDate(subscription.current_period_start) ?? new Date(),
+                            current_period_end: convertDate(subscription.current_period_end) ?? new Date(),
+                            ended_at: convertDate(subscription.ended_at),
+                            cancel_at: convertDate(subscription.cancel_at),
+                            canceled_at: convertDate(subscription.canceled_at),
+                            trial_start: convertDate(subscription.trial_start),
+                            trial_end: convertDate(subscription.trial_end),
+                            price: {
+                                connect: { id: String(subscription.items.data[0].price.id) }
+                            },
+                            company_customer: {
+                                connect: { company_id: company_id }
+                            }
+                        },
+                        update: {
+                            id: String(subscription.id),
+                            status: subscription.status,
+                            metadata: subscription.metadata,
+                            price_id: String(subscription.items.data[0].price.id),
+                            quantity: subscription.items.data[0].quantity ? Number(subscription.items.data[0].quantity) : null,
+                            cancel_at_period_end: Boolean(subscription.cancel_at_period_end),
+                            current_period_start: convertDate(subscription.current_period_start) ?? new Date(),
+                            current_period_end: convertDate(subscription.current_period_end) ?? new Date(),
+                            ended_at: convertDate(subscription.ended_at),
+                            cancel_at: convertDate(subscription.cancel_at),
+                            canceled_at: convertDate(subscription.canceled_at),
+                            trial_start: convertDate(subscription.trial_start),
+                            trial_end: convertDate(subscription.trial_end),
+                        },
                     });
                 }
 
-                // Use SEMPRE request.rawBody como buffer:
                 const signature = request.headers['stripe-signature'];
                 const webhookSecret = env.data.STRIPE_WEBHOOK_SECRET;
                 let receivedEvent: Stripe.Event;
@@ -180,28 +169,23 @@ export async function StripeWebHooks(app: FastifyInstance) {
                     try {
                         switch (receivedEvent.type) {
                             case 'product.created':
-                                await upsertProductRecord(receivedEvent?.data?.object as Stripe.Product);
-                                break;
                             case 'product.updated':
                                 await upsertProductRecord(receivedEvent?.data?.object as Stripe.Product);
                                 break;
                             case 'price.created':
-                                await upsertPriceRecord(receivedEvent?.data?.object as Stripe.Price);
-                                break;
                             case 'price.updated':
                                 await upsertPriceRecord(receivedEvent?.data?.object as Stripe.Price);
+                                break;
+                            case 'customer.subscription.created':
+                            case 'customer.subscription.deleted':
+                            case 'customer.subscription.updated':
+                                await subscriptionStatusChangedEvent(receivedEvent);
                                 break;
                             case 'checkout.session.completed':
                                 await checkoutSessionCompletedEvent(receivedEvent);
                                 break;
-                            case 'customer.subscription.created':
-                                break;
-                            case 'customer.subscription.deleted':
-                                break;
-                            case 'customer.subscription.updated':
-                                await subscriptionStatusChangedEvent(receivedEvent);
-                                break;
                             default:
+                                throw new Error('Unhandled relevant event!');
                         }
                     } catch (error) {
                         console.error(`Error:`, error);

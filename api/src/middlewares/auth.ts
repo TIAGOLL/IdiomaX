@@ -17,4 +17,7 @@ export const auth = fastifyPlugin(async (app: FastifyInstance) => {
       }
     }
   })
+  app.addHook('preHandler', async (request) => {
+    await request.getCurrentUserId()
+  })
 })

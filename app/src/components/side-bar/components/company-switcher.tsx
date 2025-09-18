@@ -16,12 +16,12 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from "@/components/ui/sidebar"
-import { useSession } from "@/hooks/use-session"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useSessionContext } from "@/contexts/session-context"
 
 export function CompanySwitcher() {
     const { isMobile } = useSidebar()
-    const { userProfile, currentCompanyMember, currentRole, setCompany } = useSession();
+    const { userProfile, currentCompanyMember, currentRole, setCompany } = useSessionContext();
 
     if (!currentCompanyMember) {
         return null

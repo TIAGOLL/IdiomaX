@@ -8,14 +8,14 @@ import {
 import { NavMain } from "./components/nav-main"
 import { NavUser } from "./components/nav-user"
 import { LayoutDashboardIcon } from "lucide-react"
-import { useSession } from "@/hooks/use-session"
 import { CompanySwitcher } from "./components/company-switcher"
 import { ModeToggle } from "../ui/mode-toggle"
+import { useSessionContext } from "@/contexts/session-context"
 
 
 export function Sidebar({ ...props }: React.ComponentProps<typeof SideBarComponent>) {
 
-    const { userProfile, } = useSession();
+    const { userProfile, } = useSessionContext();
 
     if (!userProfile) return null;
 

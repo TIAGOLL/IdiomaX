@@ -38,7 +38,7 @@ export function SignUpForm() {
                 path: '/',
                 maxAge: 60 * 60 * 24 * 7, // 7 days 
             });
-            navigate('/create-company');
+            navigate('/auth/create-company');
         },
         onError: (err) => {
             console.log(err);

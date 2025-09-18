@@ -1,10 +1,10 @@
 import { Sidebar } from "@/components/side-bar";
-import { useSession } from "@/hooks/use-session";
 import AdminDashboard from "./admin";
+import { useSessionContext } from "@/contexts/session-context";
 
 
 export function DashboardPage() {
-    const { currentRole } = useSession()
+    const { currentRole } = useSessionContext()
 
     return (
         <div className="flex justify-center min-h-screen items-center bg-slate-100 dark:bg-slate-600 sm:!w-screen">

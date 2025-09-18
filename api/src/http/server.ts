@@ -26,6 +26,9 @@ import { AdminDashboard } from './controllers/dashboard/admin'
 import { CreateCheckoutSession } from './controllers/stripe/create-checkout-session'
 import { envSchema } from '@idiomax/http-schemas/env'
 import { StripeWebHooks } from './controllers/stripe/stripe-web-hooks'
+import { CreateSubscription } from './controllers/stripe/create-subscription'
+import { GetProducts } from './controllers/stripe/get-products'
+import { GetCompanySubscription } from './controllers/stripe/get-company-subscription'
 
 dotenv.config()
 
@@ -40,14 +43,6 @@ const app = fastify().withTypeProvider<ZodTypeProvider>()
 
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
-
-// app.register(fastifyRawBody, {
-//   field: 'rawBody',
-//   global: false,
-//   encoding: 'buffer',
-//   runFirst: true
-// });
-
 
 app.setErrorHandler(errorHandler)
 
@@ -102,6 +97,9 @@ app.register(getUserById);
 app.register(UpdateProfile);
 app.register(AdminDashboard);
 app.register(StripeWebHooks);
+app.register(CreateSubscription);
+app.register(GetProducts);
+app.register(GetCompanySubscription);
 
 if (process.env.VERCEL !== "1") {
   app.listen({ port: Number(env.data.PORT) }).then(() => {

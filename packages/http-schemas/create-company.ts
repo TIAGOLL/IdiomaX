@@ -15,4 +15,5 @@ export const createCompanyRequest = z.object({
 
 export const createCompanyResponse = z.object({
     message: z.string(),
+    companyId: z.string(),
 })

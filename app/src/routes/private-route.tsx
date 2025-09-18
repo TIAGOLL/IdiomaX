@@ -4,13 +4,13 @@ import { Navigate, Outlet, useLocation } from 'react-router';
 
 export function PrivateRoute() {
   const location = useLocation();
-  const [isAuth, setIsAuth] = useState<boolean | null>(null);
+  const [isAuth, setIsAuth] = useState<boolean | null>(true);
 
   useEffect(() => {
-    isAuthenticated().then(setIsAuth);
+    setIsAuth(isAuthenticated());
   }, []);
 
-  if (isAuth === null) return null;
+  if (!isAuth) return <Navigate to='/auth/sign-in' state={{ from: location }} replace />;
 
-  return isAuth ? <Outlet /> : <Navigate to='/auth/sign-in' state={{ from: location }} replace />;
+  return <Outlet />;
 }

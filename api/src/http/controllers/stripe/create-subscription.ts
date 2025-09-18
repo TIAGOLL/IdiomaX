@@ -3,9 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { auth } from '../../../middlewares/auth';
 import { stripe } from '../../../lib/stripe';
-import { env } from '../../server';
 import { createSubscriptionRequest, createSubscriptionResponse } from '@idiomax/http-schemas/create-subscription'
-import { BadRequestError } from '../_errors/bad-request-error';
 import { prisma } from '../../../lib/prisma';
 
 export async function CreateSubscription(app: FastifyInstance) {
@@ -41,11 +39,10 @@ export async function CreateSubscription(app: FastifyInstance) {
                         phone,
                     });
 
-                    const { stripe_customer_id } = await prisma.stripeCompanyCustomer.create({
-                        data: {
-                            company_id: companyId,
-                            stripe_customer_id: stripeCustomerId,
-                        }
+                    const { stripe_customer_id } = await prisma.stripeCompanyCustomer.upsert({
+                        where: { company_id: companyId },
+                        update: { stripe_customer_id: stripeCustomerId },
+                        create: { company_id: companyId, stripe_customer_id: stripeCustomerId }
                     })
 
                     const customerSubscriptions = await stripe.subscriptions.list({
@@ -55,13 +52,26 @@ export async function CreateSubscription(app: FastifyInstance) {
                     const activeSubscriptions = customerSubscriptions.data.filter((subscription: { status: string }) => subscription.status === 'active');
                     if (activeSubscriptions.length > 0) throw new Error('Cliente já possui uma ou mais assinaturas ativas');
 
-                    await stripe.subscriptions.create({
+                    const { id: subscriptionId } = await stripe.subscriptions.create({
                         customer: stripe_customer_id,
                         items: [{ price: priceId }],
                         trial_period_days: 14,
                     });
+
+                    await prisma.stripeCompanySubscription.upsert({
+                        where: { company_customer_id: companyId },
+                        update: {
+                            status: 'trialing',
+                        },
+                        create: {
+                            id: subscriptionId,
+                            price_id: priceId,
+                            company_customer_id: companyId,
+                            status: 'trialing',
+                        }
+                    })
                 })
-                
+
                 reply.status(201).send({ message: "Assinatura criada com sucesso!" });
             })
 }

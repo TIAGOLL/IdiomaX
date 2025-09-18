@@ -1,6 +1,6 @@
 import nookies from 'nookies';
 
-export async function isAuthenticated() {
+export function isAuthenticated() {
   const token = nookies.get(null, 'token').token;
 
   if (!token) {

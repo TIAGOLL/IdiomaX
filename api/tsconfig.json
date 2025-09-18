@@ -4,6 +4,7 @@
     "@types/*.d.ts",
     "src/http/controllers/users",
     "src/http/server.ts",
-    "prisma/seed.ts"
+    "prisma/seed.ts",
+    "eslint.config.js"
   ],
 }

@@ -31,7 +31,7 @@ export function CreateCompanyPage() {
         },
         onSuccess: (res) => {
             toast.success(res.message);
-            navigate('/select-plan');
+            navigate(`/auth/select-plan?companyId=${res.companyId}`);
         },
         onError: (err) => {
             console.log(err);
@@ -97,7 +97,6 @@ export function CreateCompanyPage() {
                         variant='default'
                         type='submit'
                         disabled={isPending}
-                        onClick={() => console.log(errors)}
                         data-test='signUpSubmitButton'>
                         Continuar
                         {isPending ? (

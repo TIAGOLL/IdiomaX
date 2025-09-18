@@ -40,6 +40,7 @@ export function SignInForm() {
       const profile = await getUserProfile();
       if (profile.member_on?.length === 0) {
         toast.error('Nenhuma instituição encontrada para este usuário.');
+        navigate('/auth/create-company');
       } else {
         navigate('/');
         toast.success(res.message);

@@ -24,14 +24,14 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from "@/components/ui/sidebar"
-import { useSession } from "@/hooks/use-session"
 import { useNavigate } from "react-router"
+import { useSessionContext } from "@/contexts/session-context"
 
 export function NavUser() {
     const { isMobile } = useSidebar()
     const navigate = useNavigate()
 
-    const { userProfile, logout } = useSession();
+    const { userProfile, logout } = useSessionContext();
 
     return (
         <SidebarMenu>

@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
-import { useSession } from "@/hooks/use-session";
 import { Info, TriangleAlert } from "lucide-react";
 import { getAdminDashboard } from "@/services/dashboard/admin";
 import {
@@ -15,9 +14,10 @@ import {
 } from "@/components/ui/table";
 import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useSessionContext } from "@/contexts/session-context";
 
 export default function AdminDashboard() {
-    const { currentCompanyMember } = useSession();
+    const { currentCompanyMember } = useSessionContext();
 
     const { data: stats, isLoading, error } = useQuery({
         queryKey: ['admin-dashboard', currentCompanyMember?.id],

@@ -8,7 +8,6 @@ import { Sidebar } from '@/components/side-bar';
 import { toast } from 'sonner';
 import { api } from '@/lib/api';
 import { useMutation } from '@tanstack/react-query';
-import { useSession } from '@/hooks/use-session';
 import { Info, LoaderIcon, Save } from 'lucide-react';
 import { FormMessageError } from '@/components/ui/form-message-error';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,6 +16,7 @@ import { z } from 'zod';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { updateUserProfileRequest } from '@idiomax/http-schemas/update-profile';
+import { useSessionContext } from '@/contexts/session-context';
 
 type UpdateUserProfileRequest = z.infer<typeof updateUserProfileRequest>;
 
@@ -37,7 +37,7 @@ export default function ProfilePage() {
         }
     });
 
-    const { userProfile } = useSession();
+    const { userProfile } = useSessionContext();
 
     const {
         register,
