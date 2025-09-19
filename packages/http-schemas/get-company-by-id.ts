@@ -5,17 +5,18 @@ export const getCompanyByIdRequest = z.object({
 })
 
 export const getCompanyByIdResponse = z.object({
-    id: z.uuid(),
+    id: z.string(),
     name: z.string(),
     cnpj: z.string(),
     phone: z.string(),
-    email: z.email(),
-    logo_16x16_url: z.url().optional(),
-    logo_512x512_url: z.url().optional(),
-    social_reason: z.string(),
-    state_registration: z.string(),
-    tax_regime: z.string(),
+    email: z.string().optional().nullable(),
+    logo_16x16_url: z.string().optional().nullable(),
+    logo_512x512_url: z.string().optional().nullable(),
+    social_reason: z.string().optional().nullable(),
+    state_registration: z.string().optional().nullable(),
+    tax_regime: z.string().optional().nullable(),
+    created_at: z.date().optional().nullable(),
+    updated_at: z.date().optional().nullable(),
     address: z.string(),
-    created_at: z.coerce.date(),
-    updated_at: z.coerce.date(),
-})
+    owner_id: z.string()
+}).optional()

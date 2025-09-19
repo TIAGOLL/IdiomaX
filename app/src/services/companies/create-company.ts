@@ -6,6 +6,6 @@ type CreateCompanyRequest = z.infer<typeof createCompanyRequest>;
 type CreateCompanyResponse = z.infer<typeof createCompanyResponse>;
 
 export async function createCompany(data: CreateCompanyRequest) {
-    const response = await api.post(`/create-companies`, data);
+    const response = await api.post(`/companies`, data);
     return response.data as CreateCompanyResponse;
 }

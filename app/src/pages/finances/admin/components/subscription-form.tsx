@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import type { getCompanySubscriptionResponse } from '@idiomax/http-schemas/get-company-subscription';
 import { getProducts } from '@/services/stripe/get-products';
 import { createSubscriptionRequest } from '@idiomax/http-schemas/create-subscription';
-import { UnsubscribeForm } from './unsubscribe-form';
+import { UnsubscribeButton } from './unsubscribe-form';
 
 type GetCompanySubscriptionResponse = z.infer<typeof getCompanySubscriptionResponse>;
 
@@ -117,7 +117,7 @@ export function SubscriptionForm({ data }: { data: GetCompanySubscriptionRespons
                     ))}
                 </CardContent>
                 <CardFooter className="flex justify-between mt-5">
-                    <UnsubscribeForm />
+                    <UnsubscribeButton />
                     <Button type="submit" disabled={isPending}>
                         Salvar
                         {isPending && <LoaderIcon className="ml-2 h-4 w-4 animate-spin" />}

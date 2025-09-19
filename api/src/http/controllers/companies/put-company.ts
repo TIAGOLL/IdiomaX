@@ -4,38 +4,37 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { auth } from '../../../middlewares/auth';
 import { prisma } from '../../../lib/prisma';
-import { createCompanyRequest, createCompanyResponse } from '@idiomax/http-schemas/create-company'
+import { putCompanyRequest, putCompanyResponse } from '@idiomax/http-schemas/put-company';
+import { ForbiddenError } from '../_errors/forbidden-error';
 
-export async function createCompany(app: FastifyInstance) {
+export async function putCompany(app: FastifyInstance) {
     app
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
-        .post(
+        .put(
             '/companies',
             {
                 schema: {
                     tags: ['Instituições'],
-                    summary: 'Criar uma nova instituição de ensino.',
+                    summary: 'Atualizar uma instituição de ensino.',
                     security: [{ bearerAuth: [] }],
                     response: {
-                        201: createCompanyResponse,
+                        201: putCompanyResponse,
                     },
-                    body: createCompanyRequest,
+                    body: putCompanyRequest,
                 },
             },
             async (request, reply) => {
-                const { name, address, cnpj, phone, email, logo_16x16_url, logo_512x512_url, social_reason, state_registration, tax_regime, } = request.body;
-
-                const companyAlreadyExists = await prisma.companies.findUnique({
-                    where: {
-                        cnpj: cnpj,
-                    },
-                });
+                const { id, name, address, cnpj, phone, email, logo_16x16_url, logo_512x512_url, social_reason, state_registration, tax_regime, } = request.body;
+                const userId = await request.getCurrentUserId()
 
                 if (email) {
                     const companyAlreadyExistsByEmail = await prisma.companies.findFirst({
                         where: {
                             email: email,
+                            NOT: {
+                                id: id, 
+                            },
                         },
                     });
 
@@ -44,23 +43,36 @@ export async function createCompany(app: FastifyInstance) {
                     }
                 }
 
-                const companyAlreadyExistsByPhone = await prisma.companies.findFirst({
+                const userAdminInCompany = await prisma.members.findFirst({
                     where: {
-                        phone: phone,
+                        user_id: userId,
+                        company_id: id,
+                        role: 'ADMIN',
                     },
                 });
 
-                if (companyAlreadyExists) {
-                    throw new BadRequestError('Já existe uma instituição com esse CNPJ.');
+                const companyAlreadyExistsByPhone = await prisma.companies.findFirst({
+                    where: {
+                        phone: phone,
+                        NOT: {
+                            id: id,
+                        },
+                    },
+                });
+
+                if (!userAdminInCompany) {
+                    throw new ForbiddenError('Você não tem permissão para atualizar essa instituição.');
                 }
 
                 if (companyAlreadyExistsByPhone) {
                     throw new BadRequestError('Já existe uma instituição com esse telefone.');
                 }
 
-                const userId = await request.getCurrentUserId()
 
-                const { id } = await prisma.companies.create({
+                await prisma.companies.update({
+                    where: {
+                        id: id,
+                    },
                     data: {
                         name,
                         address,
@@ -72,22 +84,11 @@ export async function createCompany(app: FastifyInstance) {
                         social_reason,
                         state_registration,
                         tax_regime,
-                        owner: {
-                            connect: {
-                                id: userId,
-                            }
-                        },
-                        members: {
-                            create: {
-                                user_id: userId,
-                                role: 'ADMIN',
-                            }
-                        }
                     },
                 });
 
-                return reply.status(201).send({
-                    message: 'Instituição criada com sucesso.', companyId: id
+                return reply.status(200).send({
+                    message: 'Instituição atualizada com sucesso.',
                 });
             },
         );

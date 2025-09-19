@@ -1,9 +1,10 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PaymentMethodForm } from './components/payment-method-form';
 import { useSessionContext } from "@/contexts/session-context";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SubscriptionForm } from "./components/subscription-form";
+import { UpdateCompanyForm } from "./components/update-company-form";
 
 export default function AdminFinances() {
     const { currentCompanyMember, subscription, isLoadingSubscription } = useSessionContext();
@@ -94,11 +95,19 @@ export default function AdminFinances() {
             </Card>
 
             <Card className="col-span-3">
-                <CardHeader className="flex flex-row justify-between">
-                    <CardTitle>Dados da empresa</CardTitle>
+                <CardHeader className='flex space-x-4 flex-col justify-between sm:mx-6 sm:flex-row sm:items-center'>
+                    <div className='flex-col'>
+                        <CardTitle>
+                            Dados da Empresa
+                        </CardTitle>
+                        <CardDescription>Atualize as informações da sua empresa</CardDescription>
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-2">
+                        Data de entrada: {subscription?.company_customer?.company?.created_at ? new Date(subscription.company_customer.company.created_at).toLocaleDateString() : '--'}
+                    </div>
                 </CardHeader>
                 <CardContent>
-                        
+                    <UpdateCompanyForm company={subscription?.company_customer?.company} />
                 </CardContent>
             </Card>
 

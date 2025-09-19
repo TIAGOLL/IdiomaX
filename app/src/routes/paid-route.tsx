@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState, } from 'react';
 import { Outlet, useNavigate } from 'react-router';
 import { useSessionContext } from '@/contexts/session-context';
 import { getCompanySubscription } from '@/services/stripe/get-company-subscription';
@@ -12,24 +12,28 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { SubscriptionForm } from '@/components/subscription-form';
 
 export function PaidRoute() {
   const { currentCompanyMember: company, isLoadingUserProfile } = useSessionContext();
-  const navigate = useNavigate()
+  const [subscriptionIsActive, setSubscriptionIsActive] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    async function subscriptionIsActive() {
-      if (!company?.company_id) return false;
+    async function checkSubscriptionIsActive() {
+      if (!company?.company_id) return true;
       const subscription = await getCompanySubscription({ companyId: company?.company_id });
       if (subscription && subscription.status !== 'active' && subscription.status !== 'trialing') {
+        console.log(subscription.status);
         return false
       }
+      console.log(subscription.status);
       return true;
     }
 
     if (company !== undefined || !isLoadingUserProfile) {
-      subscriptionIsActive()
-        .catch(() => navigate(`/auth/select-plan?companyId=${company?.company_id}`));
+      checkSubscriptionIsActive()
+        .then((isActive) => setSubscriptionIsActive(isActive))
     }
 
   }, [company, isLoadingUserProfile, navigate]);
@@ -61,10 +65,29 @@ export function PaidRoute() {
     }),
   ];
 
+  if (!subscriptionIsActive) return (
+    <SidebarProvider>
+      <Sidebar />
+      <main className='flex-1 min-h-screen min-w-[calc(100vw-16rem)]'>
+        <div className='p-2 border-b h-12 bg-sidebar border-b-slate-200/5 flex items-center gap-4'>
+          <SidebarTrigger />
+          <Breadcrumb>
+            <BreadcrumbList>
+              {breadcrumbItems}
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
+        <div className="flex-1 min-h-[calc(100vh-48px)] flex items-center justify-center">
+          <SubscriptionForm />
+        </div>
+      </main>
+    </SidebarProvider>
+  )
+
   return (
     <SidebarProvider>
       <Sidebar />
-      <main className='flex-1 min-h-screen'>
+      <main className='flex-1 min-h-screen min-w-[calc(100vw-24rem)]'>
         <div className='p-2 border-b h-12 bg-sidebar border-b-slate-200/5 flex items-center gap-4'>
           <SidebarTrigger />
           <Breadcrumb>

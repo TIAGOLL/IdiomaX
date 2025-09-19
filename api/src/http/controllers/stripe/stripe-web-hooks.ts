@@ -93,6 +93,7 @@ export async function StripeWebHooks(app: FastifyInstance) {
                     if (session.mode !== 'subscription') return
                     const customerId = session.customer as string;
                     const subscriptionId = session.subscription as string;
+                    console.log('Checkout session completed:', { customerId, subscriptionId });
 
                     await manageSubscriptionStatusChange(subscriptionId, customerId);
                 }
@@ -103,16 +104,16 @@ export async function StripeWebHooks(app: FastifyInstance) {
                     const subscriptionResponse = await stripe.subscriptions.retrieve(subscriptionId);
                     const subscription = (subscriptionResponse as any).data ?? subscriptionResponse;
 
-                    const { company_id } = await prisma.stripeCompanyCustomer.findFirst({
+                    const data = await prisma.stripeCompanyCustomer.findFirst({
                         where: { stripe_customer_id: customerId },
-                        select: { company_id: true },
                     });
-                    if (!company_id) {
+
+                    if (!data) {
                         throw new NotFoundError('Customer not found');
                     }
 
                     await prisma.stripeCompanySubscription.upsert({
-                        where: { company_customer_id: String(company_id) },
+                        where: { company_customer_id: String(data.company_id) },
                         create: {
                             id: String(subscription.id),
                             status: subscription.status,
@@ -130,7 +131,7 @@ export async function StripeWebHooks(app: FastifyInstance) {
                                 connect: { id: String(subscription.items.data[0].price.id) }
                             },
                             company_customer: {
-                                connect: { company_id: company_id }
+                                connect: { company_id: data.company_id }
                             }
                         },
                         update: {
@@ -149,6 +150,7 @@ export async function StripeWebHooks(app: FastifyInstance) {
                             trial_end: convertDate(subscription.trial_end),
                         },
                     });
+                    console.log("finsinh");
                 }
 
                 const signature = request.headers['stripe-signature'];

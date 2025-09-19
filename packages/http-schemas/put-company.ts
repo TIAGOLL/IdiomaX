@@ -1,6 +1,7 @@
 import z from "zod";
 
-export const createCompanyRequest = z.object({
+export const putCompanyRequest = z.object({
+    id: z.string(),
     name: z.string().min(3, { message: 'Nome da empresa deve ter pelo menos 3 caracteres.' }).max(256),
     cnpj: z.string().min(14, { message: 'CNPJ deve ter 14 caracteres.' }).max(14),
     address: z.string().min(1, { message: 'Endereço da empresa é obrigatório.' }).max(256),
@@ -13,7 +14,6 @@ export const createCompanyRequest = z.object({
     tax_regime: z.string({ message: 'Regime tributário inválido.' }).max(256).optional().nullable(),
 })
 
-export const createCompanyResponse = z.object({
+export const putCompanyResponse = z.object({
     message: z.string(),
-    companyId: z.string(),
 });

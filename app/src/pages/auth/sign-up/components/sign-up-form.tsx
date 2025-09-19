@@ -78,17 +78,13 @@ export function SignUpForm() {
                     </div>
                     <div className='flex-col'>
                         <CardTitle>
-                            Cadastro
+                            Cadastro do usuário ADMIN
                         </CardTitle>
-                        <CardDescription>Preencha seus dados e os da instituição.</CardDescription>
+                        <CardDescription>Depois você poderá cadastrar mais usuários admin em sua empresa.</CardDescription>
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <div
-                        className="sm:grid flex flex-col sm:grid-cols-3 gap-4"
-                    >
-                        {/* Dados do usuário */}
-                        <div className='col-span-3 mt-4 font-bold'>Dados do usuário</div>
+                    <div className="sm:grid flex flex-col sm:grid-cols-3 gap-4">
                         <div className="col-span-1 space-y-1">
                             <Label htmlFor='name'>Nome</Label>
                             <Input type='text' id='name' {...register('name')} />
@@ -176,6 +172,6 @@ export function SignUpForm() {
                     </Button>
                 </CardFooter>
             </form>
-        </Card>
+        </Card >
     );
 }

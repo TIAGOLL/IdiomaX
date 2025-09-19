@@ -71,109 +71,107 @@ export default function ProfilePage() {
 
     return (
         <div className='flex justify-center items-center bg-slate-100 dark:bg-slate-600 sm:w-full'>
-            <div className="flex-1 max-w-11/12 min-h-[calc(100vh-48px)] m-auto py-8 gap-2">
-                <Card>
-                    <form onSubmit={handleSubmit((data) => mutate(data))} className='space-y-4'>
-                        <CardHeader className='flex space-x-4 flex-col'>
-                            <div className='flex-col'>
-                                <CardTitle>
-                                    Meu Perfil
-                                </CardTitle>
-                                <CardDescription>Aqui você pode editar seus dados</CardDescription>
+            <Card className='sm:w-11/12 w-full'>
+                <form onSubmit={handleSubmit((data) => mutate(data))} className='space-y-4'>
+                    <CardHeader className='flex space-x-4 flex-col'>
+                        <div className='flex-col'>
+                            <CardTitle>
+                                Meu Perfil
+                            </CardTitle>
+                            <CardDescription>Aqui você pode editar seus dados</CardDescription>
+                        </div>
+                        <Avatar className="rounded-xl justify-center items-center flex size-48">
+                            <AvatarImage src={userProfile?.avatar_url || ''} />
+                            <AvatarFallback>
+                                <img src="/images/without-avatar.png" className='dark:invert' />
+                            </AvatarFallback>
+                        </Avatar>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="sm:grid flex flex-col sm:grid-cols-3 gap-4">
+                            <div className="col-span-1 space-y-1">
+                                <Label htmlFor='name'>Nome</Label>
+                                <Input type='text' id='name' {...register('name')} />
+                                <FormMessageError error={errors.name?.message} />
                             </div>
-                            <Avatar className="rounded-xl justify-center items-center flex size-48">
-                                <AvatarImage src={userProfile?.avatar_url || ''} />
-                                <AvatarFallback>
-                                    <img src="/images/without-avatar.png" className='dark:invert' />
-                                </AvatarFallback>
-                            </Avatar>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="sm:grid flex flex-col sm:grid-cols-3 gap-4">
-                                <div className="col-span-1 space-y-1">
-                                    <Label htmlFor='name'>Nome</Label>
-                                    <Input type='text' id='name' {...register('name')} />
-                                    <FormMessageError error={errors.name?.message} />
-                                </div>
-                                <div className="col-span-2 space-y-1">
-                                    <Label htmlFor='email'>Email</Label>
-                                    <Input type='email' id='email' value={userProfile?.email} disabled />
-                                </div>
-                                <div className="col-span-1 space-y-1">
-                                    <Label htmlFor='cpf'>CPF</Label>
-                                    <Input type='text' id='cpf' {...register('cpf')} />
-                                    <FormMessageError error={errors.cpf?.message} />
-                                </div>
-                                <div className="col-span-1 space-y-1 w-full">
-                                    <Label htmlFor='gender'>Gênero</Label>
-                                    <Controller
-                                        name="gender"
-                                        control={control}
-                                        render={({ field }) => (
-                                            <Select
-                                                value={field.value ?? undefined}
-                                                onValueChange={field.onChange}
-                                            >
-                                                <SelectTrigger id='gender' className='w-full'>
-                                                    <SelectValue placeholder="Selecione o gênero" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="M">Masculino</SelectItem>
-                                                    <SelectItem value="F">Feminino</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        )}
-                                    />
-                                    <FormMessageError error={errors.gender?.message} />
-                                </div>
-                                <div className="col-span-1 space-y-1">
-                                    <Label htmlFor='phone'>Telefone</Label>
-                                    <Input type='text' id='phone' {...register('phone')} />
-                                    <FormMessageError error={errors.phone?.message} />
-                                </div>
-                                <div className="col-span-1 space-y-1">
-                                    <Label htmlFor='date_of_birth'>Data de nascimento</Label>
-                                    <Input type='date' id='date_of_birth'  {...register('date_of_birth')} />
-                                    <FormMessageError error={errors.date_of_birth?.message} />
-                                </div>
-                                <div className="col-span-1 space-y-1">
-                                    <Label htmlFor='address'>Endereço</Label>
-                                    <Input type='text' id='address' {...register('address')} />
-                                    <FormMessageError error={errors.address?.message} />
-                                </div>
-                                <div className="col-span-1 space-y-1">
-                                    <div className='flex gap-3'>
-                                        <Label htmlFor='username'>Usuário</Label>
-                                        <Tooltip>
-                                            <TooltipTrigger><Info className='size-4' /></TooltipTrigger>
-                                            <TooltipContent>
-                                                <p>Você usará esse nome para fazer login.</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </div>
-                                    <Input type='text' id='username' disabled value={userProfile?.username} />
-                                </div>
+                            <div className="col-span-2 space-y-1">
+                                <Label htmlFor='email'>Email</Label>
+                                <Input type='email' id='email' value={userProfile?.email} disabled />
                             </div>
-                        </CardContent>
-                        <CardFooter className='flex justify-between flex-row-reverse'>
-                            <Button
-                                variant='default'
-                                type='submit'
-                                disabled={isPending}
-                                data-test='profileSubmitButton'
-                                onClick={() => { console.log(watch("gender")) }}
-                            >
-                                Salvar Alterações
-                                {isPending ? (
-                                    <LoaderIcon className='ml-2 h-4 w-4 animate-spin' />
-                                ) : (
-                                    <Save className='ml-2 h-4 w-4' />
-                                )}
-                            </Button>
-                        </CardFooter>
-                    </form>
-                </Card>
-            </div>
+                            <div className="col-span-1 space-y-1">
+                                <Label htmlFor='cpf'>CPF</Label>
+                                <Input type='text' id='cpf' {...register('cpf')} />
+                                <FormMessageError error={errors.cpf?.message} />
+                            </div>
+                            <div className="col-span-1 space-y-1 w-full">
+                                <Label htmlFor='gender'>Gênero</Label>
+                                <Controller
+                                    name="gender"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Select
+                                            value={field.value ?? undefined}
+                                            onValueChange={field.onChange}
+                                        >
+                                            <SelectTrigger id='gender' className='w-full'>
+                                                <SelectValue placeholder="Selecione o gênero" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="M">Masculino</SelectItem>
+                                                <SelectItem value="F">Feminino</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    )}
+                                />
+                                <FormMessageError error={errors.gender?.message} />
+                            </div>
+                            <div className="col-span-1 space-y-1">
+                                <Label htmlFor='phone'>Telefone</Label>
+                                <Input type='text' id='phone' {...register('phone')} />
+                                <FormMessageError error={errors.phone?.message} />
+                            </div>
+                            <div className="col-span-1 space-y-1">
+                                <Label htmlFor='date_of_birth'>Data de nascimento</Label>
+                                <Input type='date' id='date_of_birth'  {...register('date_of_birth')} />
+                                <FormMessageError error={errors.date_of_birth?.message} />
+                            </div>
+                            <div className="col-span-1 space-y-1">
+                                <Label htmlFor='address'>Endereço</Label>
+                                <Input type='text' id='address' {...register('address')} />
+                                <FormMessageError error={errors.address?.message} />
+                            </div>
+                            <div className="col-span-1 space-y-1">
+                                <div className='flex gap-3'>
+                                    <Label htmlFor='username'>Usuário</Label>
+                                    <Tooltip>
+                                        <TooltipTrigger><Info className='size-4' /></TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>Você usará esse nome para fazer login.</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </div>
+                                <Input type='text' id='username' disabled value={userProfile?.username} />
+                            </div>
+                        </div>
+                    </CardContent>
+                    <CardFooter className='flex justify-between flex-row-reverse'>
+                        <Button
+                            variant='default'
+                            type='submit'
+                            disabled={isPending}
+                            data-test='profileSubmitButton'
+                            onClick={() => { console.log(watch("gender")) }}
+                        >
+                            Salvar Alterações
+                            {isPending ? (
+                                <LoaderIcon className='ml-2 h-4 w-4 animate-spin' />
+                            ) : (
+                                <Save className='ml-2 h-4 w-4' />
+                            )}
+                        </Button>
+                    </CardFooter>
+                </form>
+            </Card>
         </div>
     );
 }

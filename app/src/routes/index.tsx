@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router';
+import { Outlet, Route, Routes } from 'react-router';
 
 import { SignInPage } from '../pages/auth/sign-in';
 import { PrivateRoute } from './private-route';
@@ -21,16 +21,26 @@ export function RoutesApp() {
       <Route path='/auth/reset-password/:token' element={<ResetPasswordPage />} />
       <Route element={<PrivateRoute />}>
         {/* ADMIN, TEACHER e STUDENT IRÃO DIVIDIR A MESMA DASHBOARD */}
-        <Route path='/auth/create-company' element={<CreateCompanyPage />} />
-        <Route path='/auth/select-plan' element={<SelectPlanPage />} />
-        <Route path='/congratulations' element={<CongratulationsPage />} />
+        <Route element={
+          <div className='min-h-screen flex'>
+            <Outlet />
+          </div>}>
+          <Route path='/auth/create-company' element={<CreateCompanyPage />} />
+          <Route path='/auth/select-plan' element={<SelectPlanPage />} />
+          <Route path='/congratulations' element={<CongratulationsPage />} />
+        </Route>
 
         <Route element={<PaidRoute />}>
-          <Route index element={<DashboardPage />} />
-          <Route path='/profile' element={<ProfilePage />} />
-          <Route path='/finances' element={<FinanceDashboard />} />
+          <Route element={
+            <div className='min-h-[calc(100vh-48px)] flex flex-1'>
+              <Outlet />
+            </div>}>
+            <Route index element={<DashboardPage />} />
+            <Route path='/profile' element={<ProfilePage />} />
+            <Route path='/finances' element={<FinanceDashboard />} />
+          </Route>
         </Route>
       </Route>
-    </Routes>
+    </Routes >
   );
 }

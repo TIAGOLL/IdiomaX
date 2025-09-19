@@ -1,11 +1,11 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 
 import { auth } from '../../../middlewares/auth';
 import { stripe } from '../../../lib/stripe';
 import { env } from '../../server';
 import { createCheckoutSessionRequest, createCheckoutSessionResponse } from '@idiomax/http-schemas/create-checkout-session';
+import { prisma } from '../../../lib/prisma';
 
 export async function CreateCheckoutSession(app: FastifyInstance) {
     app
@@ -33,8 +33,13 @@ export async function CreateCheckoutSession(app: FastifyInstance) {
                 // Pagamento recusado
                 // 4000 0000 0000 9995
 
-                const userId = await request.getCurrentUserId();
-                const { productId } = request.body;
+                const { productId, companyId } = request.body;
+
+                const { stripe_customer_id } = await prisma.stripeCompanyCustomer.findFirst({
+                    where: { company_id: companyId },
+                    select: { stripe_customer_id: true }
+                })
+
                 const prices = await stripe.prices.list({
                     product: productId,
                     expand: ['data.product'],
@@ -48,6 +53,7 @@ export async function CreateCheckoutSession(app: FastifyInstance) {
                             quantity: 1,
                         },
                     ],
+                    customer: stripe_customer_id,
                     mode: 'subscription',
                     success_url: `${env.data.WEB_URL}/?success=true&session_id={CHECKOUT_SESSION_ID}`,
                     cancel_url: `${env.data.WEB_URL}?canceled=true`,

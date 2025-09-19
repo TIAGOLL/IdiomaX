@@ -56,21 +56,20 @@ export function CreateCompanyPage() {
     });
 
     return (
-        <Card className='w-10/12'>
-            <form onSubmit={handleSubmit((data) => mutate(data))} className='space-y-4'>
+        <Card className='flex justify-center items-center sm:w-full'>
+            <form onSubmit={handleSubmit((data) => mutate(data))} className='space-y-4 min-w-4/12'>
                 <CardHeader className='flex items-center space-x-4'>
                     <div className='flex flex-col items-center justify-center'>
                         <img src='/images/logo.png' alt='Logo da loja' className='size-12' />
                     </div>
                     <div className='flex-col'>
                         <CardTitle>
-                            Cadastro
+                            Cadastro da Instituição
                         </CardTitle>
-                        <CardDescription>Preencha seus dados e os da instituição.</CardDescription>
+                        <CardDescription>Preencha os dados da instituição.</CardDescription>
                     </div>
                 </CardHeader>
-                <CardContent>
-                    <div className='col-span-3 mt-4 font-bold'>Dados da Instituição</div>
+                <CardContent className='grid grid-cols-2 gap-4'>
                     <div className="col-span-2 space-y-1">
                         <Label htmlFor='name'>Nome da empresa</Label>
                         <Input type='text' id='name' {...register('name')} />
