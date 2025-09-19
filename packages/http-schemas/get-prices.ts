@@ -12,4 +12,12 @@ export const getPricesResponse = z.object({
     interval_count: z.number().nullable(),
     trial_period_days: z.number().nullable(),
     metadata: z.unknown().nullable(),
+    product: z.object({
+        id: z.string(),
+        active: z.boolean(),
+        name: z.string(),
+        description: z.string().nullable(),
+        image: z.string().nullable(),
+        metadata: z.unknown().nullable(),
+    }).optional().nullable(),
 });

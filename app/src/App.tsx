@@ -4,7 +4,6 @@ import { SpeedInsights } from '@vercel/speed-insights/react';
 import { BrowserRouter } from 'react-router';
 
 import { ThemeProvider } from './components/ui/theme-provider';
-import { SidebarProvider } from './components/ui/sidebar.tsx';
 import { RoutesApp } from './routes/index.tsx';
 import { Toaster } from 'sonner';
 import { SessionProvider } from './contexts/session-context.tsx';
@@ -18,11 +17,9 @@ export function App() {
         <QueryClientProvider client={queryClient}>
           <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
             <Toaster />
-            <SidebarProvider>
-              <RoutesApp />
-              <SpeedInsights />
-              <Analytics />
-            </SidebarProvider>
+            <RoutesApp />
+            <SpeedInsights />
+            <Analytics />
           </ThemeProvider>
         </QueryClientProvider>
       </SessionProvider>

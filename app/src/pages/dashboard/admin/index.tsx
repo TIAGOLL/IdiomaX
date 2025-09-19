@@ -16,7 +16,7 @@ import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartToo
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useSessionContext } from "@/contexts/session-context";
 
-export default function AdminDashboard() {
+export function AdminDashboard() {
     const { currentCompanyMember } = useSessionContext();
 
     const { data: stats, isLoading, error } = useQuery({
@@ -86,112 +86,35 @@ export default function AdminDashboard() {
                 </CardContent>
             </Card>
 
-            {/* Ocupação média das turmas */}
-            <Card className="col-span-3 sm:col-span-1">
-                <CardHeader>
-                    <CardTitle>Ocupação das Turmas</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div>
-                        <strong>Média:</strong> {stats.avgClassOccupation}%
-                        <Progress value={stats.avgClassOccupation} className="mt-2" />
-                        <div className="mt-4">
-                            <span className="text-xs">Baixa (&lt;60%): {stats.classOccupation.low}</span><br />
-                            <span className="text-xs">Ideal (60–90%): {stats.classOccupation.ideal}</span><br />
-                            <span className="text-xs">Alta (&gt;90%): {stats.classOccupation.high}</span>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Assiduidade média por turma */}
-            <Card className="col-span-3 sm:col-span-1">
-                <CardHeader>
-                    <CardTitle>Assiduidade Média por Turma</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div>
-                        <strong>Média:</strong> {stats.avgAttendance}%
-                        <Progress value={stats.avgAttendance} className="mt-2" />
-                        <div className="mt-4 flex flex-row gap-2 justify-between items-center">
-                            <div className="flex flex-col items-start">
-                                <strong>Top 5 turmas:</strong>
-                                <ul>
-                                    {stats.topAttendanceClasses.map((c) => (
-                                        <li key={c.id}>{c.nome}: {c.attendance}%</li>
-                                    ))}
-                                </ul>
-                            </div>
-                            <div className="flex flex-col items-start">
-                                <strong>Bottom 5 turmas:</strong>
-                                <ul>
-                                    {stats.bottomAttendanceClasses.map((c) => (
-                                        <li key={c.id}>{c.nome}: {c.attendance}%</li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-
-
-            {/* Operação de turmas */}
+            {/* Receitas a receber x Recebidas */}
             <Card className="col-span-3">
                 <CardHeader>
-                    <CardTitle>Operação de Turmas</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Turma</TableHead>
-                                <TableHead>Capacidade</TableHead>
-                                <TableHead>Alunos</TableHead>
-                                <TableHead>Ocupação</TableHead>
-                                <TableHead>Curso</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {stats.classes.map((turma) => (
-                                <TableRow key={turma.id}>
-                                    <TableCell>{turma.nome}</TableCell>
-                                    <TableCell>{turma.vacancies}</TableCell>
-                                    <TableCell>{turma.students}</TableCell>
-                                    <TableCell>
-                                        <Progress value={turma.occupation} />
-                                        <span>{turma.occupation}%</span>
-                                    </TableCell>
-                                    <TableCell>{turma.courseName}</TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
-
-            {/* Carga horária de professores */}
-            <Card className="col-span-3">
-                <CardHeader>
-                    <CardTitle>Carga Horária dos Professores</CardTitle>
+                    <CardTitle>Receitas a Receber X Receitas recebidas</CardTitle>
                 </CardHeader>
                 <CardContent>
                     {(() => {
+                        // Combine as curvas para o gráfico de barras
+                        const barChartData = stats.receivablesCurve.map((item, idx) => ({
+                            month: item.month,
+                            aReceber: item.value,
+                            recebidas: stats.receivedCurve[idx]?.value ?? 0,
+                        }));
+
                         const chartConfig = {
-                            hours: {
-                                label: "Horas",
-                                color: "#8884d8",
-                            },
+                            aReceber: { label: "A Receber", color: "#2563eb" },
+                            recebidas: { label: "Recebidas", color: "#22c55e" },
                         };
+
                         return (
-                            <ChartContainer config={chartConfig} className="min-h-[200px] w-full h-48">
-                                <BarChart data={stats.teacherWorkload}>
+                            <ChartContainer config={chartConfig} className="min-h-[200px] w-full h-24">
+                                <BarChart data={barChartData}>
                                     <CartesianGrid vertical={true} />
-                                    <XAxis dataKey="name" />
+                                    <XAxis dataKey="month" />
                                     <YAxis />
                                     <ChartTooltip content={<ChartTooltipContent />} />
                                     <ChartLegend content={<ChartLegendContent />} />
-                                    <Bar dataKey="hours" fill="#8884d8" />
+                                    <Bar dataKey="aReceber" fill="#2563eb" name="A Receber" />
+                                    <Bar dataKey="recebidas" fill="#22c55e" name="Recebidas" />
                                 </BarChart>
                             </ChartContainer>
                         );
@@ -364,34 +287,112 @@ export default function AdminDashboard() {
                 </CardContent>
             </Card>
 
+
+            {/* Ocupação média das turmas */}
+            <Card className="col-span-3 sm:col-span-1">
+                <CardHeader>
+                    <CardTitle>Ocupação das Turmas</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div>
+                        <strong>Média:</strong> {stats.avgClassOccupation}%
+                        <Progress value={stats.avgClassOccupation} className="mt-2" />
+                        <div className="mt-4">
+                            <span className="text-xs">Baixa (&lt;60%): {stats.classOccupation.low}</span><br />
+                            <span className="text-xs">Ideal (60–90%): {stats.classOccupation.ideal}</span><br />
+                            <span className="text-xs">Alta (&gt;90%): {stats.classOccupation.high}</span>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* Assiduidade média por turma */}
+            <Card className="col-span-3 sm:col-span-1">
+                <CardHeader>
+                    <CardTitle>Assiduidade Média por Turma</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div>
+                        <strong>Média:</strong> {stats.avgAttendance}%
+                        <Progress value={stats.avgAttendance} className="mt-2" />
+                        <div className="mt-4 flex flex-row gap-2 justify-between items-center">
+                            <div className="flex flex-col items-start">
+                                <strong>Top 5 turmas:</strong>
+                                <ul>
+                                    {stats.topAttendanceClasses.map((c) => (
+                                        <li key={c.id}>{c.nome}: {c.attendance}%</li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <div className="flex flex-col items-start">
+                                <strong>Bottom 5 turmas:</strong>
+                                <ul>
+                                    {stats.bottomAttendanceClasses.map((c) => (
+                                        <li key={c.id}>{c.nome}: {c.attendance}%</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* Operação de turmas */}
             <Card className="col-span-3">
                 <CardHeader>
-                    <CardTitle>Receitas a Receber X Receitas recebidas</CardTitle>
+                    <CardTitle>Operação de Turmas</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Turma</TableHead>
+                                <TableHead>Capacidade</TableHead>
+                                <TableHead>Alunos</TableHead>
+                                <TableHead>Ocupação</TableHead>
+                                <TableHead>Curso</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {stats.classes.map((turma) => (
+                                <TableRow key={turma.id}>
+                                    <TableCell>{turma.nome}</TableCell>
+                                    <TableCell>{turma.vacancies}</TableCell>
+                                    <TableCell>{turma.students}</TableCell>
+                                    <TableCell>
+                                        <Progress value={turma.occupation} />
+                                        <span>{turma.occupation}%</span>
+                                    </TableCell>
+                                    <TableCell>{turma.courseName}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
+
+            {/* Carga horária de professores */}
+            <Card className="col-span-3">
+                <CardHeader>
+                    <CardTitle>Carga Horária dos Professores</CardTitle>
                 </CardHeader>
                 <CardContent>
                     {(() => {
-                        // Combine as curvas para o gráfico de barras
-                        const barChartData = stats.receivablesCurve.map((item, idx) => ({
-                            month: item.month,
-                            aReceber: item.value,
-                            recebidas: stats.receivedCurve[idx]?.value ?? 0,
-                        }));
-
                         const chartConfig = {
-                            aReceber: { label: "A Receber", color: "#2563eb" },
-                            recebidas: { label: "Recebidas", color: "#22c55e" },
+                            hours: {
+                                label: "Horas",
+                                color: "#8884d8",
+                            },
                         };
-
                         return (
-                            <ChartContainer config={chartConfig} className="min-h-[200px] w-full h-24">
-                                <BarChart data={barChartData}>
+                            <ChartContainer config={chartConfig} className="min-h-[200px] w-full h-48">
+                                <BarChart data={stats.teacherWorkload}>
                                     <CartesianGrid vertical={true} />
-                                    <XAxis dataKey="month" />
+                                    <XAxis dataKey="name" />
                                     <YAxis />
                                     <ChartTooltip content={<ChartTooltipContent />} />
                                     <ChartLegend content={<ChartLegendContent />} />
-                                    <Bar dataKey="aReceber" fill="#2563eb" name="A Receber" />
-                                    <Bar dataKey="recebidas" fill="#22c55e" name="Recebidas" />
+                                    <Bar dataKey="hours" fill="#8884d8" />
                                 </BarChart>
                             </ChartContainer>
                         );
