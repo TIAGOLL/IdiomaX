@@ -28,21 +28,19 @@ type SignInWithPasswordRequest = z.infer<typeof signInWithPasswordRequest>;
 export function SignInForm() {
   const navigate = useNavigate();
   const { mutate, isPending } = useMutation({
-    mutationFn: async (data: SignInWithPasswordRequest) => {
-      const response = await signInWithPassword(data)
-      nookies.set(null, "token", response.token, {
+    mutationFn: async (data: SignInWithPasswordRequest) => await signInWithPassword(data),
+    onSuccess: async (res) => {
+      nookies.set(null, "token", res.token, {
         path: '/',
         maxAge: 60 * 60 * 24 * 7, // 7 days 
       });
-      return response;
-    },
-    onSuccess: async (res) => {
       const profile = await getUserProfile();
       if (profile.member_on?.length === 0) {
         toast.error('Nenhuma instituição encontrada para este usuário.');
         navigate('/auth/create-company');
       } else {
-        navigate('/');
+        console.log(profile.member_on?.[0]?.company_id);
+        navigate(`/?companyId=${profile.member_on?.[0]?.company_id}`);
         toast.success(res.message);
       }
     },

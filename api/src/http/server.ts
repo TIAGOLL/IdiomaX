@@ -30,6 +30,7 @@ import { CreateSubscription } from './controllers/stripe/create-subscription'
 import { GetProducts } from './controllers/stripe/get-products'
 import { GetCompanySubscription } from './controllers/stripe/get-company-subscription'
 import { putCompany } from './controllers/companies/put-company'
+import { Unsubscribe } from './controllers/stripe/unsubscribe'
 
 dotenv.config()
 
@@ -102,6 +103,7 @@ app.register(CreateSubscription);
 app.register(GetProducts);
 app.register(GetCompanySubscription);
 app.register(putCompany);
+app.register(Unsubscribe);
 
 if (process.env.VERCEL !== "1") {
   app.listen({ port: Number(env.data.PORT) }).then(() => {

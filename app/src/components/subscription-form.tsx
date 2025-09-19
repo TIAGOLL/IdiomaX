@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
+import { LoaderIcon } from "lucide-react";
 
 type CreateCheckoutSessionRequest = z.infer<typeof createCheckoutSessionRequest>;
 
@@ -24,7 +25,6 @@ export function SubscriptionForm() {
         handleSubmit,
         setValue,
         watch,
-        formState: { errors }
     } = useForm<CreateCheckoutSessionRequest>({
         resolver: zodResolver(createCheckoutSessionRequest),
         mode: 'all',
@@ -125,7 +125,8 @@ export function SubscriptionForm() {
                     ))}
                 </div>
                 <Button className='w-full mt-6' type="submit" disabled={isMutating || isLoadingProducts || !watch("productId")}>
-                    {isMutating ? "Assinando..." : "Assinar agora"}
+                    {isMutating ? "Indo para o pagamento..." : "Assinar agora"}
+                    {isMutating && <LoaderIcon className="animate-spin" />}
                 </Button>
                 <p className="text-xs text-muted-foreground text-center mt-3">
                     Precisa de ajuda? <a href="/contato" className="underline hover:text-primary">Fale conosco</a>

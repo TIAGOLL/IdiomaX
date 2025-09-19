@@ -38,6 +38,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
         queryKey: ['user-session'],
         queryFn: async () => await getUserProfile(),
         retry: false,
+        enabled: !!nookies.get(null).token,
     });
 
     const { data: subscription, isLoading: isLoadingSubscription, error: subscriptionError } = useQuery({
@@ -84,7 +85,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     };
 
     const logout = () => {
-        nookies.destroy(null, 'token');
+        nookies.destroy(null, 'token', { path: '/' });
         navigate('/auth/sign-in');
     };
 

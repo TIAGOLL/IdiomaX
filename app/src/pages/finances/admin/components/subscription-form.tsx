@@ -117,7 +117,7 @@ export function SubscriptionForm({ data }: { data: GetCompanySubscriptionRespons
                     ))}
                 </CardContent>
                 <CardFooter className="flex justify-between mt-5">
-                    <UnsubscribeButton />
+                    <UnsubscribeButton subscriptionId={data.id} />
                     <Button type="submit" disabled={isPending}>
                         Salvar
                         {isPending && <LoaderIcon className="ml-2 h-4 w-4 animate-spin" />}
