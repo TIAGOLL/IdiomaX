@@ -46,7 +46,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     const setCompany = (company: CompanyMember) => {
         setCurrentCompanyMember(company);
-        setSearchParams(prev => ({ ...Object.fromEntries(prev.entries()), company: company.company.id }));
+        setSearchParams(prev => ({ ...Object.fromEntries(prev.entries()), companyId: company.company.id }));
     };
 
     const logout = () => {
