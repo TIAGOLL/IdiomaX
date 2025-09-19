@@ -1,6 +1,5 @@
-import { Role, WeekDays } from "@prisma/client";
+import { Gender, Role, WeekDays } from "@prisma/client";
 import * as bcrypt from "bcryptjs"
-import { v4 as uuidv4 } from "uuid"
 import { prisma } from "../src/lib/prisma";
 import { generateUUID } from "../src/lib/uuid";
 
@@ -33,7 +32,7 @@ type SeederUser = {
     cpf: string;
     phone: string;
     username: string;
-    gender: string;
+    gender: Gender;
     date_of_birth: Date;
     address: string;
     active: boolean;
@@ -62,7 +61,7 @@ async function main() {
                 phone: "11999990000",
                 avatar_url: "https://i.pravatar.cc/310",
                 username: ownerUsername,
-                gender: "M",
+                gender: Gender.M,
                 date_of_birth: new Date("1980-01-01"),
                 address: "Rua Admin, 1",
                 active: true
@@ -114,7 +113,7 @@ async function main() {
                 phone: `119999900${i.toString().padStart(2, "0")}`,
                 avatar_url: `https://i.pravatar.cc/3${10 + i}`,
                 username: username,
-                gender: i % 2 === 0 ? "M" : "F",
+                gender: i % 2 === 0 ? Gender.M : Gender.F,
                 date_of_birth: randomDate(new Date("1990-01-01"), new Date("2005-12-31")),
                 address: `Rua Estudante, ${i}`,
                 active: true,
@@ -137,7 +136,7 @@ async function main() {
                 phone: `119888800${i.toString().padStart(2, "0")}`,
                 avatar_url: `https://i.pravatar.cc/3${30 + i}`,
                 username: username,
-                gender: i % 2 === 0 ? "M" : "F",
+                gender: i % 2 === 0 ? Gender.M : Gender.F,
                 date_of_birth: randomDate(new Date("1970-01-01"), new Date("1995-12-31")),
                 address: `Rua Professor, ${i}`,
                 active: true,

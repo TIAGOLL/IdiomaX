@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { getUserProfile } from '@/services/users/get-user-profile';
 import { useQuery } from '@tanstack/react-query';
 import nookies from 'nookies';
@@ -32,6 +32,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const navigate = useNavigate();
     const [currentCompanyMember, setCurrentCompanyMember] = useState<CompanyMember | undefined>();
     const [currentRole, setCurrentRole] = useState<string | undefined>();
+    const alreadySetCompanyId = useRef(false);
 
     const { data: userProfile, isLoading: isLoadingUserProfile, error } = useQuery({
         queryKey: ['user-session'],
@@ -56,10 +57,14 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     useEffect(() => {
         if (!userProfile) return;
 
-        // Se não tem companyId na URL, define o primeiro disponível
         const urlCompanyId = searchParams.get('companyId');
-        if (!urlCompanyId && userProfile.member_on.length > 0) {
-            setSearchParams({ ...Object.fromEntries(searchParams.entries()), companyId: userProfile.member_on[0].company.id });
+        // Só seta se nunca setou antes nesta sessão
+        if (!urlCompanyId && userProfile.member_on.length > 0 && !alreadySetCompanyId.current) {
+            setSearchParams(
+                { ...Object.fromEntries(searchParams.entries()), companyId: userProfile.member_on[0].company.id },
+                { replace: false }
+            );
+            alreadySetCompanyId.current = true;
             return;
         }
 
