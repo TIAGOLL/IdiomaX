@@ -19,7 +19,7 @@ export async function putCompany(app: FastifyInstance) {
                     summary: 'Atualizar uma instituição de ensino.',
                     security: [{ bearerAuth: [] }],
                     response: {
-                        201: putCompanyResponse,
+                        200: putCompanyResponse,
                     },
                     body: putCompanyRequest,
                 },

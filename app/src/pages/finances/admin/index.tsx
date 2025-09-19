@@ -1,10 +1,11 @@
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { PaymentMethodForm } from './components/payment-method-form';
 import { useSessionContext } from "@/contexts/session-context";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SubscriptionForm } from "./components/subscription-form";
 import { UpdateCompanyForm } from "./components/update-company-form";
+import { buttonVariants } from "@/components/ui/button";
+import { Link } from "react-router";
 
 export default function AdminFinances() {
     const { currentCompanyMember, subscription, isLoadingSubscription } = useSessionContext();
@@ -21,14 +22,15 @@ export default function AdminFinances() {
 
     return (
         <div className="flex-1 max-w-11/12 mx-auto py-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-            <Card>
+            <Card className="col-span-1 sm:col-span-2">
                 <CardHeader className="flex flex-row justify-between">
-                    <CardTitle>Assinaturas Ativas</CardTitle>
+                    <div>
+                        <CardTitle>Minha assinatura</CardTitle>
+                        <CardDescription>Para alterar método de pagamento, ver faturas ou alterar planos, clique em gerenciar assinatura</CardDescription>
+                    </div>
                     <div className="text-sm text-muted-foreground">
-                        Válida até: {subscription?.trial_end ? new Date(subscription.trial_end).toLocaleDateString("pt-BR") : "-"}
-                        {subscription?.cancel_at_period_end && (
-                            <span className="ml-2 text-red-500">(Cancelada ao final do período)</span>
-                        )}
+                        {subscription?.trial_end && `Renova em: ${new Date(subscription.trial_end).toLocaleDateString()}`}
+                        {subscription?.current_period_end && `Renova em: ${new Date(subscription.current_period_end).toLocaleDateString()}`}
                     </div>
                 </CardHeader>
                 <CardContent>
@@ -43,41 +45,25 @@ export default function AdminFinances() {
                                         {subscription.status == "active" && "Ativa"}
                                         {subscription.status == "trialing" && "Em teste"}
                                     </Badge>
+                                    <div className="text-sm text-muted-foreground">
+                                        R${(Number(subscription?.price?.unit_amount) / 100).toFixed(2)}
+                                        {" "}/{" "}
+                                        {subscription.price?.interval == "month" && "mês"}
+                                        {subscription.price?.interval == "day" && "dia"}
+                                        {subscription.price?.interval == "year" && "ano"}
+                                        {subscription.price?.interval == "week" && "semana"}
+                                    </div>
                                 </div>
-                                <div className="text-sm text-muted-foreground">
-                                    R${(Number(subscription?.price?.unit_amount) / 100).toFixed(2)}
-                                    {" "}/{" "}
-                                    {subscription.price?.interval == "month" && "mês"}
-                                    {subscription.price?.interval == "day" && "dia"}
-                                    {subscription.price?.interval == "year" && "ano"}
-                                    {subscription.price?.interval == "week" && "semana"}
-                                </div>
+                                <Link
+                                    to={import.meta.env.VITE_STRIPE_CUSTOMER_PORTAL_URL}
+                                    className={buttonVariants({ variant: "outline" })}
+                                    rel="noopener noreferrer"
+                                >
+                                    Gerenciar assinatura
+                                </Link>
                             </li>
                         </ul>
                     )}
-                </CardContent>
-            </Card>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle>Métodos de Pagamento</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    {/* {data.paymentMethods.length === 0 ? (
-                            <div>Nenhum método de pagamento cadastrado.</div>
-                            ) : (
-                            <ul className="space-y-2">
-                                {data.paymentMethods.map((pm) => (
-                                    <li key={pm.id} className="flex items-center gap-4">
-                                        <span className="uppercase">{pm.brand}</span>
-                                        <span>•••• {pm.last4}</span>
-                                        <span>
-                                            Expira {pm.exp_month}/{pm.exp_year}
-                                        </span>
-                                        </li>
-                                        ))}
-                            </ul>
-                            )} */}
                 </CardContent>
             </Card>
 
@@ -110,10 +96,6 @@ export default function AdminFinances() {
                     <UpdateCompanyForm company={subscription?.company_customer?.company} />
                 </CardContent>
             </Card>
-
-            <div className="col-span-1 md:col-span-2 lg:col-span-3">
-                <PaymentMethodForm />
-            </div>
 
             {subscription && (
                 <div className="col-span-1 md:col-span-2 lg:col-span-3">

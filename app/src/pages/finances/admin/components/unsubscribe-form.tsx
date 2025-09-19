@@ -1,31 +1,30 @@
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useSessionContext } from "@/contexts/session-context";
 import { Unsubscribe } from "@/services/stripe/unsubscribe";
 import { useMutation } from "@tanstack/react-query";
 import { LoaderIcon } from "lucide-react";
-import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { useState } from "react";
+import { unsubscribeRequest } from '@idiomax/http-schemas/unsubscribe';
+import type z from "zod";
 
-export function UnsubscribeButton() {
-    const navigate = useNavigate();
-    const { logout } = useSessionContext();
+type UnsubscribeRequest = z.infer<typeof unsubscribeRequest>;
+
+export function UnsubscribeButton({ subscriptionId }: { subscriptionId: string }) {
     const [confirmText, setConfirmText] = useState("");
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async () => {
-            const response = await Unsubscribe()
-            logout();
-            setConfirmText("");
+        mutationFn: async (data: UnsubscribeRequest) => {
+            const response = await Unsubscribe(data)
             return response;
         },
         onSuccess: async (res) => {
             toast.error(res.message);
-            navigate('/auth/create-company');
+            window.location.reload();
         },
         onError: (err) => {
+            setConfirmText("");
             toast.error(err.message);
         },
     });
@@ -59,7 +58,7 @@ export function UnsubscribeButton() {
                     </AlertDialogCancel>
                     <AlertDialogAction asChild>
                         <Button
-                            onClick={() => mutate()}
+                            onClick={() => mutate({ subscriptionId: subscriptionId })}
                             disabled={isPending || confirmText.trim().toLowerCase() !== "cancelar assinatura"}
                             variant={"destructive"}
                             className="text-white"
