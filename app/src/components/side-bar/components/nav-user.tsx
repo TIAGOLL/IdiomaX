@@ -1,5 +1,6 @@
 import {
     BadgeCheck,
+    BriefcaseBusiness,
     ChevronsUpDown,
     CreditCard,
     LogOut,
@@ -76,8 +77,8 @@ export function NavUser() {
                                 Meu perfil
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => navigate('/finances')}>
-                                <CreditCard />
-                                Financeiro
+                                <BriefcaseBusiness />
+                                Minha empresa
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
