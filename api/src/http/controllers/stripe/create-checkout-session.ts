@@ -35,7 +35,7 @@ export async function CreateCheckoutSession(app: FastifyInstance) {
 
                 const { productId, companyId } = request.body;
 
-                const { stripe_customer_id } = await prisma.stripeCompanyCustomer.findFirst({
+                const data = await prisma.stripeCompanyCustomer.findFirst({
                     where: { company_id: companyId },
                     select: { stripe_customer_id: true }
                 })
@@ -53,7 +53,7 @@ export async function CreateCheckoutSession(app: FastifyInstance) {
                             quantity: 1,
                         },
                     ],
-                    customer: stripe_customer_id,
+                    customer: data?.stripe_customer_id ? data.stripe_customer_id : undefined,
                     mode: 'subscription',
                     success_url: `${env.data.WEB_URL}/?success=true&session_id={CHECKOUT_SESSION_ID}`,
                     cancel_url: `${env.data.WEB_URL}?canceled=true`,

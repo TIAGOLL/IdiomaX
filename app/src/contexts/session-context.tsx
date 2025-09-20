@@ -42,17 +42,13 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     });
 
     const { data: subscription, isLoading: isLoadingSubscription, error: subscriptionError } = useQuery({
-        queryKey: [
-            'company-subscription',
-            currentCompanyMember?.company.id,
-            userProfile?.cpf
-        ],
+        queryKey: ['company-subscription', currentCompanyMember?.company.id, userProfile?.cpf],
         queryFn: async () => {
             if (!currentCompanyMember) return undefined;
-            console.log(currentCompanyMember.company.id);
             return await getCompanySubscription({ companyId: currentCompanyMember.company.id });
         },
         enabled: !!currentCompanyMember && !!userProfile,
+        retry: false,
     });
 
     useEffect(() => {

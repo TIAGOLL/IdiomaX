@@ -24,16 +24,17 @@ export function PaidRoute() {
       if (!company?.company_id) return true;
       const subscription = await getCompanySubscription({ companyId: company?.company_id });
       if (subscription && subscription.status !== 'active' && subscription.status !== 'trialing') {
-        console.log(subscription.status);
         return false
       }
-      console.log(subscription.status);
       return true;
     }
 
     if (company !== undefined || !isLoadingUserProfile) {
       checkSubscriptionIsActive()
         .then((isActive) => setSubscriptionIsActive(isActive))
+        .catch(() => {
+          setSubscriptionIsActive(false);
+        });
     }
 
   }, [company, isLoadingUserProfile, navigate]);
@@ -69,7 +70,7 @@ export function PaidRoute() {
     <SidebarProvider>
       <Sidebar />
       <main className='flex-1 min-h-screen min-w-[calc(100vw-16rem)]'>
-        <div className='p-2 border-b h-12 bg-sidebar border-b-slate-200/5 flex items-center gap-4'>
+        <div className='hidden fixed top-0 z-50 w-full p-2 border-b h-12 bg-sidebar border-b-slate-200/5 items-center gap-4 sm:flex'>
           <SidebarTrigger />
           <Breadcrumb>
             <BreadcrumbList>
@@ -77,7 +78,7 @@ export function PaidRoute() {
             </BreadcrumbList>
           </Breadcrumb>
         </div>
-        <div className="flex-1 min-h-[calc(100vh-48px)] flex items-center justify-center">
+        <div className="flex-1 min-h-screen pt-12 flex items-center justify-center">
           <SubscriptionForm />
         </div>
       </main>
@@ -88,7 +89,7 @@ export function PaidRoute() {
     <SidebarProvider>
       <Sidebar />
       <main className='flex-1 min-h-screen min-w-[calc(100vw-24rem)]'>
-        <div className='p-2 border-b h-12 bg-sidebar border-b-slate-200/5 flex items-center gap-4'>
+        <div className='hidden fixed top-0 z-50 w-full p-2 border-b h-12 bg-sidebar border-b-slate-200/5 items-center gap-4 sm:flex'>
           <SidebarTrigger />
           <Breadcrumb>
             <BreadcrumbList>
@@ -96,7 +97,9 @@ export function PaidRoute() {
             </BreadcrumbList>
           </Breadcrumb>
         </div>
-        <Outlet />
+        <div className="pt-12">
+          <Outlet />
+        </div>
       </main>
     </SidebarProvider>
   );

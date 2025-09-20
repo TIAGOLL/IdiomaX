@@ -47,7 +47,7 @@ async function main() {
         console.log('Iniciando o seeding...')
 
         // 1. Crie o usuário owner primeiro
-        const companyId = generateUUID()
+        const uuid = generateUUID()
         const hashedPassword = await bcrypt.hash("admin1", 10)
         const ownerUsername = 'tiago10'
         const ownerId = generateUUID()
@@ -69,9 +69,9 @@ async function main() {
         })
 
         // 2. Crie a empresa usando o id do owner
-        await prisma.companies.create({
+        const company = await prisma.companies.create({
             data: {
-                id: companyId,
+                id: uuid,
                 name: 'IdiomaX',
                 cnpj: '12345678000199',
                 address: 'Av. Paulista, 1000 - São Paulo',
@@ -86,11 +86,62 @@ async function main() {
             }
         })
 
+        await prisma.stripeCompanyCustomer.create({
+            data: {
+                company_id: uuid,
+                stripe_customer_id: 'cus_T5NoBdYRlXRQg2',
+            }
+        })
+
+        await prisma.stripeCompanySubscription.create({
+            data: {
+                id: 'sub_T5NoBdYRlXRQg2',
+                quantity: 1,
+                trial_start: new Date(),
+                trial_end: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days from now
+                created: new Date(),
+                status: 'active',
+                current_period_start: new Date(),
+                current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+                company_customer: {
+                    connect: {
+                        company_id: company.id
+                    }
+                },
+                price: {
+                    connectOrCreate: {
+                        where: { id: 'price_1S851r0277IfhOt7GrPaYKjo' },
+                        create: {
+                            id: 'price_1S851r0277IfhOt7GrPaYKjo',
+                            unit_amount: 7990,
+                            currency: 'brl',
+                            type: 'recurring',
+                            interval: 'month',
+                            interval_count: 1,
+                            trial_period_days: 14,
+                            description: '',
+                            active: true,
+                            product: {
+                                connectOrCreate: {
+                                    where: { id: 'prod_T4DSuvomDey36U' },
+                                    create: {
+                                        id: 'prod_T4DSuvomDey36U',
+                                        name: 'Plano Mensal',
+                                        active: true,
+                                    }
+                                }
+                            },
+                        }
+                    }
+                },
+            }
+        })
+
         // 3. Crie o relacionamento members entre owner e empresa
         await prisma.members.create({
             data: {
                 user_id: ownerId,
-                company_id: companyId,
+                company_id: uuid,
                 role: Role.ADMIN
             }
         })
@@ -156,7 +207,7 @@ async function main() {
             await prisma.members.create({
                 data: {
                     user_id: createdUser.id,
-                    company_id: companyId,
+                    company_id: uuid,
                     role: role
                 }
             });
@@ -178,7 +229,7 @@ async function main() {
                     minimum_grade: 60,
                     maximum_grade: 100,
                     minimum_frequency: 75,
-                    companies_id: companyId, // sempre a mesma empresa
+                    companies_id: uuid, // sempre a mesma empresa
                 }
             })
         }
@@ -222,7 +273,7 @@ async function main() {
                     id,
                     number: 100 + i,
                     block: String.fromCharCode(65 + i),
-                    companies_id: companyId,
+                    companies_id: uuid,
                 }
             })
         }
@@ -334,7 +385,7 @@ async function main() {
                     locked: i % 5 === 0,
                     completed: i % 4 === 0,
                     users_id: users[i + 1].id,
-                    companies_id: companyId,
+                    companies_id: uuid,
                 }
             })
         }
@@ -479,7 +530,7 @@ async function main() {
             data: {
                 id: generateUUID(),
                 registrations_time: 6,
-                companies_id: companyId,
+                companies_id: uuid,
             }
         })
     }, {

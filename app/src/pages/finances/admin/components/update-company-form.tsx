@@ -64,7 +64,7 @@ export function UpdateCompanyForm({ company }: { company: GetCompanyByIdResponse
         }
     }, [company, reset, companyId]);
 
-    if (isPending) return <LoaderIcon className='ml-2 h-4 w-4 animate-spin' />;
+    if (!company) return
 
     return (
         <form onSubmit={handleSubmit((data) => mutate(data))} className='space-y-4'>

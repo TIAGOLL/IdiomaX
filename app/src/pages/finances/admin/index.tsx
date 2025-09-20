@@ -24,13 +24,13 @@ export default function AdminFinances() {
         <div className="flex-1 max-w-11/12 mx-auto py-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
             <Card className="col-span-1 sm:col-span-2">
                 <CardHeader className="flex flex-row justify-between">
-                    <div>
+                    <div className="w-6/12">
                         <CardTitle>Minha assinatura</CardTitle>
                         <CardDescription>Para alterar método de pagamento, ver faturas ou alterar planos, clique em gerenciar assinatura</CardDescription>
                     </div>
                     <div className="text-sm text-muted-foreground">
                         {subscription?.trial_end && `Renova em: ${new Date(subscription.trial_end).toLocaleDateString()}`}
-                        {subscription?.current_period_end && `Renova em: ${new Date(subscription.current_period_end).toLocaleDateString()}`}
+                        {/* {subscription?.current_period_end && `Renova em: ${new Date(subscription.current_period_end).toLocaleDateString()}`} */}
                     </div>
                 </CardHeader>
                 <CardContent>
@@ -96,12 +96,6 @@ export default function AdminFinances() {
                     <UpdateCompanyForm company={subscription?.company_customer?.company} />
                 </CardContent>
             </Card>
-
-            {subscription && (
-                <div className="col-span-1 md:col-span-2 lg:col-span-3">
-                    <SubscriptionForm data={subscription} />
-                </div>
-            )}
         </div>
     );
 }
