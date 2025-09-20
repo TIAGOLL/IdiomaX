@@ -1,5 +1,5 @@
 import { useEffect, useState, } from 'react';
-import { Outlet, useNavigate } from 'react-router';
+import { Outlet, useNavigate, Link, useLocation } from 'react-router';
 import { useSessionContext } from '@/contexts/session-context';
 import { getCompanySubscription } from '@/services/stripe/get-company-subscription';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
@@ -12,17 +12,97 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { SubscriptionForm } from '@/components/subscription-form';
+import { ChevronDownIcon, SlashIcon } from "lucide-react";
+import { getBreadcrumbConfig } from '@/lib/navigation-data';
 
 export function PaidRoute() {
   const { currentCompanyMember: company, isLoadingUserProfile } = useSessionContext();
   const [subscriptionIsActive, setSubscriptionIsActive] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Configuração dos breadcrumbs baseada na navegação da sidebar
+  const breadcrumbConfig = getBreadcrumbConfig();
+
+  const pathnames = location.pathname.split('/').filter((x) => x);
+
+  const generateBreadcrumbItems = () => {
+    const items = [
+      <BreadcrumbItem key="home">
+        <BreadcrumbLink asChild>
+          <Link to="/">Home</Link>
+        </BreadcrumbLink>
+      </BreadcrumbItem>
+    ];
+
+    pathnames.forEach((value, index) => {
+      const to = '/' + pathnames.slice(0, index + 1).join('/');
+      const isLast = index === pathnames.length - 1;
+      const config = breadcrumbConfig[value as keyof typeof breadcrumbConfig];
+
+      items.push(
+        <BreadcrumbSeparator key={`sep-${index}`}>
+          <SlashIcon />
+        </BreadcrumbSeparator>
+      );
+
+      if (config) {
+        // Item com dropdown (sempre que há configuração)
+        items.push(
+          <BreadcrumbItem key={value}>
+            <DropdownMenu modal={false}>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-1 hover:bg-accent hover:text-accent-foreground px-2 py-1 rounded-md transition-colors text-sm font-medium cursor-pointer">
+                  {config.label}
+                  <ChevronDownIcon className="h-3 w-3" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48">
+                {config.items.map((item) => (
+                  <DropdownMenuItem key={item.href} asChild>
+                    <Link to={item.href} className="cursor-pointer">
+                      {item.label}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </BreadcrumbItem>
+        );
+      } else {
+        // Item sem dropdown
+        items.push(
+          <BreadcrumbItem key={value}>
+            {isLast ? (
+              <BreadcrumbPage>
+                {value.charAt(0).toUpperCase() + value.slice(1)}
+              </BreadcrumbPage>
+            ) : (
+              <BreadcrumbLink asChild>
+                <Link to={to}>
+                  {value.charAt(0).toUpperCase() + value.slice(1)}
+                </Link>
+              </BreadcrumbLink>
+            )}
+          </BreadcrumbItem>
+        );
+      }
+    });
+
+    return items;
+  };
 
   useEffect(() => {
     async function checkSubscriptionIsActive() {
       if (!company?.company_id) return true;
-      const subscription = await getCompanySubscription({ companyId: company?.company_id });
+      const subscription = await getCompanySubscription();
       if (subscription && subscription.status !== 'active' && subscription.status !== 'trialing') {
         return false
       }
@@ -39,32 +119,7 @@ export function PaidRoute() {
 
   }, [company, isLoadingUserProfile, navigate]);
 
-  const pathnames = location.pathname.split('/').filter((x) => x);
-  const breadcrumbItems = [
-    <BreadcrumbItem key="home">
-      <BreadcrumbLink href="/">Home</BreadcrumbLink>
-    </BreadcrumbItem>,
-    ...pathnames.map((value, index) => {
-      const to = '/' + pathnames.slice(0, index + 1).join('/');
-      const isLast = index === pathnames.length - 1;
-      return (
-        <span key={to} className='flex items-center gap-3'>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            {isLast ? (
-              <BreadcrumbPage>
-                {value.charAt(0).toUpperCase() + value.slice(1)}
-              </BreadcrumbPage>
-            ) : (
-              <BreadcrumbLink href={to}>
-                {value.charAt(0).toUpperCase() + value.slice(1)}
-              </BreadcrumbLink>
-            )}
-          </BreadcrumbItem>
-        </span>
-      );
-    }),
-  ];
+  const breadcrumbItems = generateBreadcrumbItems();
 
   if (!subscriptionIsActive) return (
     <SidebarProvider>

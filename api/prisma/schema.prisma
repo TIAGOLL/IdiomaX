@@ -7,6 +7,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ===== BASE MODEL PATTERN =====
+// Todos os modelos devem incluir estes campos base:
+// id          String   @id @default(uuid()) @db.VarChar(256)
+// created_at  DateTime @default(now())
+// created_by  String?  @db.VarChar(256)  // UUID do usuário que criou
+// updated_at  DateTime @updatedAt
+// updated_by  String?  @db.VarChar(256)  // UUID do usuário que atualizou
+// active      Boolean  @default(true)
+//
+// Relacionamentos opcionais para auditoria:
+// creator     users?   @relation("CreatedBy", fields: [created_by], references: [id])
+// updater     users?   @relation("UpdatedBy", fields: [updated_by], references: [id])
+// ===== END BASE MODEL PATTERN =====
+
 enum Role {
   STUDENT
   TEACHER
@@ -19,11 +33,22 @@ model Renamedclass {
   vacancies  Decimal @db.Decimal(10, 0)
   courses_id String  @db.VarChar(256)
 
+  // Campos base de auditoria
+  created_at DateTime @default(now())
+  created_by String?  @db.VarChar(256)
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.VarChar(256)
+  active     Boolean  @default(true)
+
   class_days     class_days[]
   classes        classes[]
   users_in_class users_in_class[]
 
   courses courses @relation(fields: [courses_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "courses_fk")
+
+  // Relacionamentos de auditoria
+  creator users? @relation("RenamedclassCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("RenamedclassUpdatedBy", fields: [updated_by], references: [id])
 
   @@map("class")
 }
@@ -43,7 +68,18 @@ model class_days {
   week_date WeekDays
   class_id  String   @db.VarChar(256)
 
+  // Campos base de auditoria
+  created_at DateTime @default(now())
+  created_by String?  @db.VarChar(256)
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.VarChar(256)
+  active     Boolean  @default(true)
+
   class Renamedclass @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "class_fk")
+
+  // Relacionamentos de auditoria
+  creator users? @relation("ClassDaysCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("ClassDaysUpdatedBy", fields: [updated_by], references: [id])
 }
 
 model classes {
@@ -53,19 +89,40 @@ model classes {
   end_date   DateTime
   class_id   String   @db.VarChar(256)
 
+  // Campos base de auditoria
+  created_at DateTime @default(now())
+  created_by String?  @db.VarChar(256)
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.VarChar(256)
+  active     Boolean  @default(true)
+
   class         Renamedclass    @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "class_fk")
   presence_list presence_list[]
+
+  // Relacionamentos de auditoria
+  creator users? @relation("ClassesCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("ClassesUpdatedBy", fields: [updated_by], references: [id])
 }
 
 model classrooms {
-  id           String   @id @default(uuid()) @db.VarChar(256)
-  number       Decimal  @db.Decimal(5, 0)
-  created_at   DateTime @default(now())
-  block        String?  @db.VarChar(256)
-  companies_id String?  @db.VarChar(256)
+  id           String  @id @default(uuid()) @db.VarChar(256)
+  number       Decimal @db.Decimal(5, 0)
+  block        String? @db.VarChar(256)
+  companies_id String? @db.VarChar(256)
+
+  // Campos base de auditoria
+  created_at DateTime @default(now())
+  created_by String?  @db.VarChar(256)
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.VarChar(256)
+  active     Boolean  @default(true)
 
   companies   companies? @relation(fields: [companies_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "companies_fk")
   companiesId String?
+
+  // Relacionamentos de auditoria
+  creator users? @relation("ClassroomsCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("ClassroomsUpdatedBy", fields: [updated_by], references: [id])
 }
 
 model configs {
@@ -73,28 +130,50 @@ model configs {
   registrations_time Decimal @default(6) @db.Decimal(256, 0)
   companies_id       String  @db.VarChar(256)
 
+  // Campos base de auditoria
+  created_at DateTime @default(now())
+  created_by String?  @db.VarChar(256)
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.VarChar(256)
+  active     Boolean  @default(true)
+
   companies   companies @relation(fields: [companies_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
   companiesId String?
+
+  // Relacionamentos de auditoria
+  creator users? @relation("ConfigsCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("ConfigsUpdatedBy", fields: [updated_by], references: [id])
 }
 
 model courses {
-  id                 String   @id @default(uuid()) @db.VarChar(256)
-  description        String?  @db.VarChar(256)
-  created_at         DateTime @default(now())
-  name               String   @db.VarChar(256)
-  registration_value Decimal  @db.Decimal(20, 2)
-  workload           Decimal  @db.Decimal(5, 0)
-  monthly_fee_value  Decimal  @db.Decimal(20, 2)
-  minimum_grade      Decimal  @db.Decimal(20, 0)
-  maximum_grade      Decimal  @db.Decimal(20, 0)
-  minimum_frequency  Decimal  @db.Decimal(20, 0)
-  syllabus           Bytes?
-  companies_id       String   @db.VarChar(256)
+  id                 String  @id @default(uuid()) @db.VarChar(256)
+  name               String  @db.VarChar(256)
+  description        String? @db.VarChar(256)
+  registration_value Decimal @db.Decimal(20, 2)
+  workload           Decimal @db.Decimal(5, 0)
+  monthly_fee_value  Decimal @db.Decimal(20, 2)
+  minimum_grade      Decimal @db.Decimal(20, 0)
+  maximum_grade      Decimal @db.Decimal(20, 0)
+  minimum_frequency  Decimal @db.Decimal(20, 0)
+  syllabus           String?
+  companies_id       String  @db.VarChar(256)
 
+  // Campos base de auditoria
+  created_at DateTime @default(now())
+  created_by String?  @db.VarChar(256)
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.VarChar(256)
+  active     Boolean  @default(true)
+
+  // Relacionamentos existentes
   class       Renamedclass[]
   levels      levels[]
   companies   companies      @relation(fields: [companies_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
   companiesId String?
+
+  // Relacionamentos de auditoria
+  creator users? @relation("CoursesCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("CoursesUpdatedBy", fields: [updated_by], references: [id])
 }
 
 model disciplines {
@@ -102,9 +181,20 @@ model disciplines {
   name      String @db.VarChar(256)
   levels_id String @db.VarChar(256)
 
+  // Campos base de auditoria
+  created_at DateTime @default(now())
+  created_by String?  @db.VarChar(256)
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.VarChar(256)
+  active     Boolean  @default(true)
+
   tasks    tasks[]
   levels   levels? @relation(fields: [levelsId], references: [id])
   levelsId String? @db.VarChar(256)
+
+  // Relacionamentos de auditoria
+  creator users? @relation("DisciplinesCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("DisciplinesUpdatedBy", fields: [updated_by], references: [id])
 }
 
 model levels {
@@ -113,10 +203,21 @@ model levels {
   level      Decimal @db.Decimal(5, 0)
   courses_id String? @db.VarChar(256)
 
+  // Campos base de auditoria
+  created_at DateTime @default(now())
+  created_by String?  @db.VarChar(256)
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.VarChar(256)
+  active     Boolean  @default(true)
+
   disciplines disciplines[]
   courses     courses?      @relation(fields: [courses_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "courses_fk")
   materials   materials[]
   coursesId   String?       @db.VarChar(256)
+
+  // Relacionamentos de auditoria
+  creator users? @relation("LevelsCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("LevelsUpdatedBy", fields: [updated_by], references: [id])
 }
 
 model materials {
@@ -125,8 +226,19 @@ model materials {
   file      Bytes
   levels_id String? @db.VarChar(256)
 
+  // Campos base de auditoria
+  created_at DateTime @default(now())
+  created_by String?  @db.VarChar(256)
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.VarChar(256)
+  active     Boolean  @default(true)
+
   levels   levels? @relation(fields: [levels_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "levels_fk")
   levelsId String? @db.VarChar(256)
+
+  // Relacionamentos de auditoria
+  creator users? @relation("MaterialsCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("MaterialsUpdatedBy", fields: [updated_by], references: [id])
 }
 
 model monthly_fee {
@@ -139,8 +251,19 @@ model monthly_fee {
   payment_method                   String?   @db.VarChar(256)
   date_of_payment                  DateTime? @db.Timestamptz(3)
 
+  // Campos base de auditoria
+  created_at DateTime @default(now())
+  created_by String?  @db.VarChar(256)
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.VarChar(256)
+  active     Boolean  @default(true)
+
   registrations   registrations @relation(fields: [registrations_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "registrations_fk")
   registrationsId String?       @db.VarChar(256)
+
+  // Relacionamentos de auditoria
+  creator users? @relation("MonthlyFeeCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("MonthlyFeeUpdatedBy", fields: [updated_by], references: [id])
 }
 
 model presence_list {
@@ -149,33 +272,60 @@ model presence_list {
   users_id   String
   classes_id String
 
+  // Campos base de auditoria
+  created_at DateTime @default(now())
+  created_by String?  @db.VarChar(256)
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.VarChar(256)
+  active     Boolean  @default(true)
+
   classes classes @relation(fields: [classes_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "classes_fk")
   users   users   @relation(fields: [users_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
+
+  // Relacionamentos de auditoria
+  creator users? @relation("PresenceListCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("PresenceListUpdatedBy", fields: [updated_by], references: [id])
 
   @@unique([users_id, classes_id])
 }
 
 model records_of_students {
-  id               String    @id @default(uuid()) @db.VarChar(256)
-  registrations_id String    @db.VarChar(256)
-  description      String?   @db.VarChar(512)
-  title            String?   @db.VarChar(256)
-  created_at       DateTime? @default(now())
+  id               String  @id @default(uuid()) @db.VarChar(256)
+  registrations_id String  @db.VarChar(256)
+  description      String? @db.VarChar(512)
+  title            String? @db.VarChar(256)
+
+  // Campos base de auditoria
+  created_at DateTime @default(now())
+  created_by String?  @db.VarChar(256)
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.VarChar(256)
+  active     Boolean  @default(true)
 
   registrations   registrations @relation(fields: [registrations_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "registrations_fk")
   registrationsId String?       @db.VarChar(256)
+
+  // Relacionamentos de auditoria
+  creator users? @relation("RecordsOfStudentsCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("RecordsOfStudentsUpdatedBy", fields: [updated_by], references: [id])
 }
 
 model registrations {
-  id                 String    @id @default(uuid()) @db.VarChar(256)
-  start_date         DateTime  @default(now())
-  monthly_fee_amount Decimal   @default(0) @db.Decimal(20, 2)
-  created_at         DateTime? @default(now())
-  locked             Boolean?  @default(false)
-  completed          Boolean?  @default(false)
-  users_id           String?   @db.VarChar(256)
-  companies_id       String?   @db.VarChar(256)
-  usersId            String?   @db.VarChar(256)
+  id                 String   @id @default(uuid()) @db.VarChar(256)
+  start_date         DateTime @default(now())
+  monthly_fee_amount Decimal  @default(0) @db.Decimal(20, 2)
+  locked             Boolean? @default(false)
+  completed          Boolean? @default(false)
+  users_id           String?  @db.VarChar(256)
+  companies_id       String?  @db.VarChar(256)
+  usersId            String?  @db.VarChar(256)
+
+  // Campos base de auditoria
+  created_at DateTime @default(now())
+  created_by String?  @db.VarChar(256)
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.VarChar(256)
+  active     Boolean  @default(true)
 
   monthly_fee         monthly_fee[]
   records_of_students records_of_students[]
@@ -183,11 +333,14 @@ model registrations {
   users               users?                @relation(fields: [users_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
   tasks_delivery      tasks_delivery[]
   companiesId         String?
+
+  // Relacionamentos de auditoria
+  creator users? @relation("RegistrationsCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("RegistrationsUpdatedBy", fields: [updated_by], references: [id])
 }
 
 model tasks {
   id             String    @id @default(uuid()) @db.VarChar(256)
-  created_at     DateTime  @default(now())
   file           Bytes?
   score          Float?
   description    String?   @db.VarChar(1024)
@@ -195,8 +348,19 @@ model tasks {
   disciplines_id String    @db.VarChar(256)
   due_date       DateTime? @db.Time(3)
 
+  // Campos base de auditoria
+  created_at DateTime @default(now())
+  created_by String?  @db.VarChar(256)
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.VarChar(256)
+  active     Boolean  @default(true)
+
   disciplines    disciplines      @relation(fields: [disciplines_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "disciplines_fk")
   tasks_delivery tasks_delivery[]
+
+  // Relacionamentos de auditoria
+  creator users? @relation("TasksCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("TasksUpdatedBy", fields: [updated_by], references: [id])
 }
 
 model tasks_delivery {
@@ -207,45 +371,75 @@ model tasks_delivery {
   file             Bytes?
   link             String?  @db.VarChar(512)
 
+  // Campos base de auditoria
+  created_at DateTime @default(now())
+  created_by String?  @db.VarChar(256)
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.VarChar(256)
+  active     Boolean  @default(true)
+
   registrations registrations @relation(fields: [registrations_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   tasks         tasks         @relation(fields: [tasks_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  // Relacionamentos de auditoria
+  creator users? @relation("TasksDeliveryCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("TasksDeliveryUpdatedBy", fields: [updated_by], references: [id])
 }
 
 model tokens {
   id         String   @id @default(uuid()) @db.VarChar(256)
   type       String   @db.VarChar(256)
   expires_at DateTime
-  created_at DateTime @default(now())
   users_id   String   @db.VarChar(256)
+
+  // Campos base de auditoria
+  created_at DateTime @default(now())
+  created_by String?  @db.VarChar(256)
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.VarChar(256)
+  active     Boolean  @default(true)
 
   users   users   @relation(fields: [users_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_fk")
   usersId String? @db.VarChar(256)
+
+  // Relacionamentos de auditoria
+  creator users? @relation("TokensCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("TokensUpdatedBy", fields: [updated_by], references: [id])
 }
 
 model companies {
-  id                 String    @id @default(uuid()) @db.VarChar(256)
-  name               String    @db.VarChar(256)
-  cnpj               String    @unique @db.VarChar(256)
-  phone              String    @unique @db.VarChar(256)
-  email              String?   @db.VarChar(256)
-  logo_16x16_url     String?   @db.VarChar(1024)
-  logo_512x512_url   String?   @db.VarChar(1024)
-  social_reason      String?   @db.VarChar(256)
-  state_registration String?   @db.VarChar(256)
-  tax_regime         String?   @db.VarChar(256)
-  created_at         DateTime? @default(now())
-  updated_at         DateTime? @updatedAt
-  address            String    @db.VarChar(256)
+  id                 String  @id @default(uuid()) @db.VarChar(256)
+  name               String  @db.VarChar(256)
+  cnpj               String  @unique @db.VarChar(256)
+  phone              String  @unique @db.VarChar(256)
+  email              String? @db.VarChar(256)
+  logo_16x16_url     String? @db.VarChar(1024)
+  logo_512x512_url   String? @db.VarChar(1024)
+  social_reason      String? @db.VarChar(256)
+  state_registration String? @db.VarChar(256)
+  tax_regime         String? @db.VarChar(256)
+  address            String  @db.VarChar(256)
+  owner_id           String  @db.VarChar(256)
 
-  owner    users  @relation("OwnerCompanies", fields: [owner_id], references: [id])
-  owner_id String @db.VarChar(256)
+  // Campos base de auditoria
+  created_at DateTime @default(now())
+  created_by String?  @db.VarChar(256)
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.VarChar(256)
+  active     Boolean  @default(true)
 
+  // Relacionamentos existentes
+  owner                 users                   @relation("OwnerCompanies", fields: [owner_id], references: [id])
   members               members[]
   classrooms            classrooms[]
   configs               configs[]
   registrations         registrations[]
   courses               courses[]
   StripeCompanyCustomer StripeCompanyCustomer[]
+
+  // Relacionamentos de auditoria
+  creator users? @relation("CompaniesCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("CompaniesUpdatedBy", fields: [updated_by], references: [id])
 }
 
 enum Gender {
@@ -254,38 +448,100 @@ enum Gender {
 }
 
 model users {
-  id            String    @id @default(uuid()) @db.VarChar(256)
-  name          String    @db.VarChar(256)
-  email         String    @unique @db.VarChar(256)
-  password      String    @db.VarChar(1024)
-  cpf           String    @unique @db.VarChar(256)
-  phone         String    @db.VarChar(256)
-  username      String    @unique @db.VarChar(256)
+  id            String   @id @default(uuid()) @db.VarChar(256)
+  name          String   @db.VarChar(256)
+  email         String   @unique @db.VarChar(256)
+  password      String   @db.VarChar(1024)
+  cpf           String   @unique @db.VarChar(256)
+  phone         String   @db.VarChar(256)
+  username      String   @unique @db.VarChar(256)
   gender        Gender
   date_of_birth DateTime
-  address       String    @db.VarChar(256)
-  active        Boolean?  @default(true)
-  avatar_url    String?   @db.VarChar(1024)
-  created_at    DateTime? @default(now())
-  updated_at    DateTime? @updatedAt
+  address       String   @db.VarChar(256)
+  avatar_url    String?  @db.VarChar(1024)
 
+  // Campos base de auditoria
+  created_at DateTime @default(now())
+  created_by String?  @db.VarChar(256)
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.VarChar(256)
+  active     Boolean  @default(true)
+
+  // Relacionamentos existentes
   companies      companies[]      @relation("OwnerCompanies")
   member_on      members[]
   presence_list  presence_list[]
   registrations  registrations[]
   tokens         tokens[]
   users_in_class users_in_class[]
+
+  // Relacionamentos de auditoria (self-reference)
+  created_users users[] @relation("CreatedBy")
+  updated_users users[] @relation("UpdatedBy")
+  creator       users?  @relation("CreatedBy", fields: [created_by], references: [id])
+  updater       users?  @relation("UpdatedBy", fields: [updated_by], references: [id])
+
+  // Relacionamentos de auditoria para outras tabelas
+  companies_created           companies[]           @relation("CompaniesCreatedBy")
+  companies_updated           companies[]           @relation("CompaniesUpdatedBy")
+  members_created             members[]             @relation("MembersCreatedBy")
+  members_updated             members[]             @relation("MembersUpdatedBy")
+  courses_created             courses[]             @relation("CoursesCreatedBy")
+  courses_updated             courses[]             @relation("CoursesUpdatedBy")
+  renamedclass_created        Renamedclass[]        @relation("RenamedclassCreatedBy")
+  renamedclass_updated        Renamedclass[]        @relation("RenamedclassUpdatedBy")
+  class_days_created          class_days[]          @relation("ClassDaysCreatedBy")
+  class_days_updated          class_days[]          @relation("ClassDaysUpdatedBy")
+  classes_created             classes[]             @relation("ClassesCreatedBy")
+  classes_updated             classes[]             @relation("ClassesUpdatedBy")
+  classrooms_created          classrooms[]          @relation("ClassroomsCreatedBy")
+  classrooms_updated          classrooms[]          @relation("ClassroomsUpdatedBy")
+  configs_created             configs[]             @relation("ConfigsCreatedBy")
+  configs_updated             configs[]             @relation("ConfigsUpdatedBy")
+  disciplines_created         disciplines[]         @relation("DisciplinesCreatedBy")
+  disciplines_updated         disciplines[]         @relation("DisciplinesUpdatedBy")
+  levels_created              levels[]              @relation("LevelsCreatedBy")
+  levels_updated              levels[]              @relation("LevelsUpdatedBy")
+  materials_created           materials[]           @relation("MaterialsCreatedBy")
+  materials_updated           materials[]           @relation("MaterialsUpdatedBy")
+  monthly_fee_created         monthly_fee[]         @relation("MonthlyFeeCreatedBy")
+  monthly_fee_updated         monthly_fee[]         @relation("MonthlyFeeUpdatedBy")
+  presence_list_created       presence_list[]       @relation("PresenceListCreatedBy")
+  presence_list_updated       presence_list[]       @relation("PresenceListUpdatedBy")
+  records_of_students_created records_of_students[] @relation("RecordsOfStudentsCreatedBy")
+  records_of_students_updated records_of_students[] @relation("RecordsOfStudentsUpdatedBy")
+  registrations_created       registrations[]       @relation("RegistrationsCreatedBy")
+  registrations_updated       registrations[]       @relation("RegistrationsUpdatedBy")
+  tasks_created               tasks[]               @relation("TasksCreatedBy")
+  tasks_updated               tasks[]               @relation("TasksUpdatedBy")
+  tasks_delivery_created      tasks_delivery[]      @relation("TasksDeliveryCreatedBy")
+  tasks_delivery_updated      tasks_delivery[]      @relation("TasksDeliveryUpdatedBy")
+  tokens_created              tokens[]              @relation("TokensCreatedBy")
+  tokens_updated              tokens[]              @relation("TokensUpdatedBy")
+  users_in_class_created      users_in_class[]      @relation("UsersInClassCreatedBy")
+  users_in_class_updated      users_in_class[]      @relation("UsersInClassUpdatedBy")
 }
 
 model members {
-  id   String @id @default(uuid())
-  role Role
+  id         String @id @default(uuid())
+  role       Role
+  company_id String @map("company_id")
+  user_id    String @map("user_id")
 
-  company    companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
-  company_id String    @map("company_id")
+  // Campos base de auditoria
+  created_at DateTime @default(now())
+  created_by String?  @db.VarChar(256)
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.VarChar(256)
+  active     Boolean  @default(true)
 
-  user    users  @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id String @map("user_id")
+  // Relacionamentos existentes
+  company companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  user    users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  // Relacionamentos de auditoria
+  creator users? @relation("MembersCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("MembersUpdatedBy", fields: [updated_by], references: [id])
 
   @@unique([company_id, user_id])
 }
@@ -296,8 +552,19 @@ model users_in_class {
   users_id String  @db.VarChar(256)
   teacher  Boolean
 
+  // Campos base de auditoria
+  created_at DateTime @default(now())
+  created_by String?  @db.VarChar(256)
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.VarChar(256)
+  active     Boolean  @default(true)
+
   class Renamedclass @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "class_fk")
   users users        @relation(fields: [users_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
+
+  // Relacionamentos de auditoria
+  creator users? @relation("UsersInClassCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("UsersInClassUpdatedBy", fields: [updated_by], references: [id])
 }
 
 // --- INTEGRAÇÃO STRIPE ---

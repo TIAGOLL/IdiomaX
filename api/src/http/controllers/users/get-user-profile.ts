@@ -1,10 +1,10 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
-import { BadRequestError } from '../_errors/bad-request-error';
 import { prisma } from '../../../lib/prisma';
 import { auth } from '../../../middlewares/auth';
 import { getUserProfileResponse } from '@idiomax/http-schemas/get-user-profile'
+import { UnauthorizedError } from '../_errors/unauthorized-error';
 
 export async function getUserProfile(app: FastifyInstance) {
     app
@@ -37,10 +37,10 @@ export async function getUserProfile(app: FastifyInstance) {
                 });
 
                 if (!userProfile) {
-                    throw new BadRequestError("Usuário não encontrado.");
+                    throw new UnauthorizedError("Sessão expirada. Faça login novamente.");
                 }
-                console.log(userProfile);
-                reply.send(userProfile);
+
+                reply.status(200).send(userProfile);
             },
         );
 }

@@ -1,8 +1,10 @@
 import { z } from "zod";
+import { percentageDecimalSchema } from "../lib/decimal";
+import { auditFieldsSchema, auditFieldsForCreate, auditFieldsForUpdate } from "../lib/audit-fields";
 
 // Schema de tarefas
 export const TasksSchema = z.object({
-    id: z.string()
+    id: z
         .uuid({ message: 'ID da tarefa deve ser um UUID válido.' }),
 
     title: z.string()
@@ -20,9 +22,7 @@ export const TasksSchema = z.object({
         .nullable()
         .optional(),
 
-    score: z.number()
-        .min(0, { message: 'Pontuação deve ser maior ou igual a zero.' })
-        .max(100, { message: 'Pontuação deve ser no máximo 100.' })
+    score: percentageDecimalSchema()
         .nullable()
         .optional(),
 
@@ -30,27 +30,22 @@ export const TasksSchema = z.object({
         .nullable()
         .optional(),
 
-    disciplines_id: z.string()
+    disciplines_id: z
         .uuid({ message: 'ID da disciplina deve ser um UUID válido.' }),
-
-    created_at: z.coerce.date()
-        .default(() => new Date()),
-});
+})
+    .merge(auditFieldsSchema);
 
 // Schema para criação de tarefa
 export const CreateTaskSchema = TasksSchema.omit({
     id: true,
-    created_at: true,
-});
+}).merge(auditFieldsForCreate);
 
 // Schema para atualização de tarefa
 export const UpdateTaskSchema = TasksSchema.partial()
-    .extend({
-        id: z.string().uuid({ message: 'ID da tarefa deve ser um UUID válido.' }),
+    .safeExtend({
+        id: z.uuid({ message: 'ID da tarefa deve ser um UUID válido.' }),
     })
-    .omit({
-        created_at: true,
-    });
+    .merge(auditFieldsForUpdate);
 
 // Schema para upload de arquivo da tarefa
 export const UploadTaskFileSchema = z.object({
@@ -58,7 +53,7 @@ export const UploadTaskFileSchema = z.object({
         .refine((file) => file instanceof File, { message: 'Deve ser um arquivo válido.' })
         .refine((file) => file.size <= 50 * 1024 * 1024, { message: 'Arquivo deve ter no máximo 50MB.' }),
 
-    task_id: z.string()
+    task_id: z
         .uuid({ message: 'ID da tarefa deve ser um UUID válido.' }),
 });
 

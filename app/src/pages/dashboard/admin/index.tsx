@@ -17,13 +17,13 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useSessionContext } from "@/contexts/session-context";
 
 export function AdminDashboard() {
-    const { currentCompanyMember } = useSessionContext();
+    const { getCompanyId } = useSessionContext();
 
     const { data: stats, isLoading, error } = useQuery({
-        queryKey: ['admin-dashboard', currentCompanyMember?.id],
+        queryKey: ['admin-dashboard', getCompanyId()],
         queryFn: async () => {
-            if (!currentCompanyMember?.company_id) return null;
-            const res = await getAdminDashboard({ company: currentCompanyMember?.company_id });
+            if (!getCompanyId()) return null;
+            const res = await getAdminDashboard();
             return res;
         },
     });
@@ -278,7 +278,7 @@ export function AdminDashboard() {
                                 <TableCell className="font-semibold align-top">Métodos de pagamento utilizados:</TableCell>
                                 <TableCell>
                                     {stats.paymentMix.map((item) => (
-                                        <div>{item.method}: {item.percent}%</div>
+                                        <div key={item.method}>{item.method}: {item.percent}%</div>
                                     ))}
                                 </TableCell>
                             </TableRow>

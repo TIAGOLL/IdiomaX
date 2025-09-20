@@ -11,6 +11,7 @@ import ResetPasswordPage from '@/pages/auth/reset-password';
 import { PaidRoute } from './paid-route';
 import CongratulationsPage from '@/pages/subscription/congratulations';
 import { FinanceDashboard } from '@/pages/finances';
+import { StudentsPage } from '@/pages/students';
 
 export function RoutesApp() {
 
@@ -38,6 +39,7 @@ export function RoutesApp() {
             <Route index element={<DashboardPage />} />
             <Route path='/profile' element={<ProfilePage />} />
             <Route path='/finances' element={<FinanceDashboard />} />
+            <Route path='/admin/students' element={<StudentsPage />} />
           </Route>
         </Route>
       </Route>

@@ -1,6 +1,5 @@
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
-import z from "zod";
 import { BadRequestError } from "../_errors/bad-request-error";
 import { auth } from "../../../middlewares/auth";
 import { prisma } from "../../../lib/prisma";
@@ -11,7 +10,7 @@ export async function getUserById(app: FastifyInstance) {
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .get(
-            '/users/:id',
+            '/companies/:companyId/users/:id',
             {
                 schema: {
                     tags: ['Usuários'],

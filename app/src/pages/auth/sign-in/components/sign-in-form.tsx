@@ -40,7 +40,8 @@ export function SignInForm() {
         navigate('/auth/create-company');
       } else {
         console.log(profile.member_on?.[0]?.company_id);
-        navigate(`/?companyId=${profile.member_on?.[0]?.company_id}`);
+        localStorage.setItem('idiomaX_currentCompanyId', profile.member_on?.[0]?.company_id);
+        navigate(`/`);
         toast.success(res.message);
       }
     },

@@ -2,15 +2,14 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { useSessionContext } from "@/contexts/session-context";
 import { Skeleton } from "@/components/ui/skeleton";
-import { SubscriptionForm } from "./components/subscription-form";
 import { UpdateCompanyForm } from "./components/update-company-form";
 import { buttonVariants } from "@/components/ui/button";
 import { Link } from "react-router";
 
 export default function AdminFinances() {
-    const { currentCompanyMember, subscription, isLoadingSubscription } = useSessionContext();
+    const { currentCompanyMember, subscription, isLoadingSubscription, isInitializingCompany } = useSessionContext();
 
-    if (isLoadingSubscription || !currentCompanyMember) {
+    if (isLoadingSubscription || !currentCompanyMember || !subscription || isInitializingCompany) {
         return (
             <div className="space-y-4">
                 <Skeleton className="h-8 w-1/3" />

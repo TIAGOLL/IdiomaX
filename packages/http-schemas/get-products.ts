@@ -1,15 +1,11 @@
-import z from "zod"
-import { getPricesResponse } from './get-prices';
+import { z } from "zod";
+import { StripeProductSchema, StripePriceSchema } from "./entities";
 
-// Define o schema de um produto
+// Response para obter produtos com seus preços
 export const getProductsResponse = z.array(
-    z.object({
-        id: z.string(),
-        active: z.boolean(),
-        name: z.string(),
-        description: z.string().nullable(),
-        image: z.string().nullable(),
-        metadata: z.unknown().nullable(),
-        prices: z.array(getPricesResponse),
+    StripeProductSchema.safeExtend({
+        prices: z.array(StripePriceSchema.safeExtend({
+            product: StripeProductSchema.optional().nullable(),
+        })),
     })
 )

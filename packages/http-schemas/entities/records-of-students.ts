@@ -2,7 +2,7 @@ import { z } from "zod";
 
 // Schema de registros de estudantes
 export const RecordsOfStudentsSchema = z.object({
-    id: z.string()
+    id: z
         .uuid({ message: 'ID do registro deve ser um UUID válido.' }),
 
     title: z.string()
@@ -17,7 +17,7 @@ export const RecordsOfStudentsSchema = z.object({
         .nullable()
         .optional(),
 
-    registrations_id: z.string()
+    registrations_id: z
         .uuid({ message: 'ID da matrícula deve ser um UUID válido.' }),
 
     created_at: z.coerce.date()
@@ -34,8 +34,8 @@ export const CreateRecordOfStudentSchema = RecordsOfStudentsSchema.omit({
 
 // Schema para atualização de registro
 export const UpdateRecordOfStudentSchema = RecordsOfStudentsSchema.partial()
-    .extend({
-        id: z.string().uuid({ message: 'ID do registro deve ser um UUID válido.' }),
+    .safeExtend({
+        id: z.uuid({ message: 'ID do registro deve ser um UUID válido.' }),
     })
     .omit({
         created_at: true,
@@ -51,7 +51,7 @@ export const CreateOccurrenceSchema = z.object({
         .min(10, { message: 'Descrição deve ter pelo menos 10 caracteres.' })
         .max(512, { message: 'Descrição deve ter no máximo 512 caracteres.' }),
 
-    registrations_id: z.string()
+    registrations_id: z
         .uuid({ message: 'ID da matrícula deve ser um UUID válido.' }),
 });
 
@@ -65,7 +65,7 @@ export const CreateObservationSchema = z.object({
         .min(5, { message: 'Observação deve ter pelo menos 5 caracteres.' })
         .max(512, { message: 'Observação deve ter no máximo 512 caracteres.' }),
 
-    registrations_id: z.string()
+    registrations_id: z
         .uuid({ message: 'ID da matrícula deve ser um UUID válido.' }),
 });
 

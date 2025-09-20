@@ -1,6 +1,7 @@
 import { z } from "zod";
+import { UsersSchema } from "./entities";
 
 export const studentsUpdatePasswordSchema = z.object({
-    password: z.string().min(6, "Senha deve conter no mínimo 6 caracteres"),
-    email: z.email("Email inválido"),
+    password: UsersSchema.shape.password,
+    email: UsersSchema.shape.email,
 });

@@ -42,8 +42,7 @@
     "tsup": "^8.5.0",
     "tsx": "^4.20.4",
     "uuid": "^11.1.0",
-    "zod": "^4.1.9",
-    "zod-prisma-types": "^3.2.4"
+    "zod": "^4.1.9"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",

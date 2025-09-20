@@ -93,7 +93,6 @@ export async function StripeWebHooks(app: FastifyInstance) {
                     if (session.mode !== 'subscription') return
                     const customerId = session.customer as string;
                     const subscriptionId = session.subscription as string;
-                    console.log('Checkout session completed:', { customerId, subscriptionId });
 
                     await manageSubscriptionStatusChange(subscriptionId, customerId);
                 }
@@ -150,7 +149,6 @@ export async function StripeWebHooks(app: FastifyInstance) {
                             trial_end: convertDate(subscription.trial_end),
                         },
                     });
-                    console.log("finsinh");
                 }
 
                 const signature = request.headers['stripe-signature'];

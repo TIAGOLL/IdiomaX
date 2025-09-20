@@ -1,60 +1,16 @@
-import z from "zod";
+import { z } from "zod";
+import { StripeCompanySubscriptionSchema, StripeCompanyCustomerSchema, StripePriceSchema, StripeProductSchema } from "./entities";
+import { getCompanyByIdResponse } from "./get-company-by-id";
 
-import {  getCompanyByIdResponse } from "./get-company-by-id";
-
-
-export const getCompanySubscriptionResponse = z.object({
-    id: z.string(),
-    company_customer_id: z.string(),
-    status: z.enum([
-        'trialing',
-        'active',
-        'canceled',
-        'incomplete',
-        'incomplete_expired',
-        'past_due',
-        'unpaid'
-    ]),
-    metadata: z.unknown().optional(),
-    quantity: z.number().int().optional(),
-    cancel_at_period_end: z.boolean().optional().nullable(),
-    created: z.date(),
-    current_period_start: z.date().optional().nullable(),
-    current_period_end: z.date().optional().nullable(),
-    ended_at: z.date().optional().nullable(),
-    cancel_at: z.date().optional().nullable(),
-    canceled_at: z.date().optional().nullable(),
-    trial_start: z.date().optional().nullable(),
-    trial_end: z.date().optional().nullable(),
-    company_customer: z.object({
-        company_id: z.string(),
-        stripe_customer_id: z.string(),
+export const getCompanySubscriptionResponse = StripeCompanySubscriptionSchema.safeExtend({
+    company_customer: StripeCompanyCustomerSchema.safeExtend({
         company: getCompanyByIdResponse.optional()
     }).optional(),
-    price: z.object({
-        id: z.string(),
-        product_id: z.string(),
-        active: z.boolean(),
-        description: z.string().nullable(),
-        unit_amount: z.union([z.bigint(), z.string(), z.number()]).transform(val => val?.toString()),
-        currency: z.string(),
-        type: z.enum(["one_time", "recurring"]),
-        interval: z.enum(["day", "week", "month", "year"]).nullable(),
-        interval_count: z.number().nullable(),
-        trial_period_days: z.number().nullable(),
-        metadata: z.unknown().nullable(),
-        product: z.object({
-            id: z.string(),
-            active: z.boolean(),
-            name: z.string(),
-            description: z.string().nullable(),
-            image: z.string().nullable(),
-            metadata: z.unknown().nullable(),
-        })
+    price: StripePriceSchema.safeExtend({
+        product: StripeProductSchema
     })
 });
 
-
 export const getCompanySubscriptionParams = z.object({
-    companyId: z.string(),
+    companyId: z.uuid({ message: 'ID da empresa deve ser um UUID válido.' }),
 });

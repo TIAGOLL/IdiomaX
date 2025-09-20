@@ -31,6 +31,15 @@ import { GetProducts } from './controllers/stripe/get-products'
 import { GetCompanySubscription } from './controllers/stripe/get-company-subscription'
 import { putCompany } from './controllers/companies/put-company'
 import { Unsubscribe } from './controllers/stripe/unsubscribe'
+import { getCourses } from './controllers/courses/get-courses'
+import { getBooks } from './controllers/materials/get-books'
+// Importações dos novos controladores genéricos de users
+import { getUsers } from './controllers/users/get-users'
+import { getUserByEmail } from './controllers/users/get-user-by-email'
+import { updateUser } from './controllers/users/update-user'
+import { updateUserPassword } from './controllers/users/update-user-password'
+import { deleteUser } from './controllers/users/delete-user'
+import { deactivateUser } from './controllers/users/deactivate-user'
 
 dotenv.config()
 
@@ -104,6 +113,15 @@ app.register(GetProducts);
 app.register(GetCompanySubscription);
 app.register(putCompany);
 app.register(Unsubscribe);
+app.register(getCourses);
+app.register(getBooks);
+app.register(getUsers);
+app.register(getUserByEmail);
+app.register(updateUser);
+app.register(updateUserPassword);
+app.register(deleteUser);
+app.register(deactivateUser);
+
 
 if (process.env.VERCEL !== "1") {
   app.listen({ port: Number(env.data.PORT) }).then(() => {
@@ -113,7 +131,7 @@ if (process.env.VERCEL !== "1") {
 
 export const ENV = env.data
 
-export default async function handler(req: any, res: any) {
+export default async function handler(req: unknown, res: unknown) {
   await app.ready()
   app.server.emit('request', req, res)
 }

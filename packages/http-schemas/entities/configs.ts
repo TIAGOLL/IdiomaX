@@ -2,7 +2,7 @@ import { z } from "zod";
 
 // Schema de configurações
 export const ConfigsSchema = z.object({
-    id: z.string()
+    id: z
         .uuid({ message: 'ID da configuração deve ser um UUID válido.' }),
 
     registrations_time: z.number()
@@ -11,7 +11,7 @@ export const ConfigsSchema = z.object({
         .max(999999, { message: 'Tempo de matrícula deve ter no máximo 6 dígitos.' })
         .default(6),
 
-    companies_id: z.string()
+    companies_id: z
         .uuid({ message: 'ID da empresa deve ser um UUID válido.' }),
 });
 
@@ -22,8 +22,8 @@ export const CreateConfigSchema = ConfigsSchema.omit({
 
 // Schema para atualização de configuração
 export const UpdateConfigSchema = ConfigsSchema.partial()
-    .extend({
-        id: z.string().uuid({ message: 'ID da configuração deve ser um UUID válido.' }),
+    .safeExtend({
+        id: z.uuid({ message: 'ID da configuração deve ser um UUID válido.' }),
     });
 
 // Tipos TypeScript

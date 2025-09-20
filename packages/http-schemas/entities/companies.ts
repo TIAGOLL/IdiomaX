@@ -1,8 +1,9 @@
 import { z } from "zod";
+import { auditFieldsSchema, auditFieldsForCreate, auditFieldsForUpdate } from "../lib/audit-fields";
 
 // Schema principal de empresas
 export const CompaniesSchema = z.object({
-    id: z.string()
+    id: z
         .uuid({ message: 'ID da empresa deve ser um UUID válido.' }),
 
     name: z.string()
@@ -18,20 +19,20 @@ export const CompaniesSchema = z.object({
         .max(15, { message: 'Telefone deve ter no máximo 15 dígitos.' })
         .regex(/^\d+$/, { message: 'Telefone deve conter apenas números.' }),
 
-    email: z.string()
+    email: z
         .email({ message: 'Email deve ser um endereço válido.' })
         .max(256, { message: 'Email deve ter no máximo 256 caracteres.' })
         .nullable()
         .optional(),
 
-    logo_16x16_url: z.string()
-        .url({ message: 'URL do logo 16x16 deve ser uma URL válida.' })
+    logo_16x16_url: z
+        .string({ message: 'URL do logo 16x16 deve ser uma URL válida.' })
         .max(1024, { message: 'URL do logo 16x16 deve ter no máximo 1024 caracteres.' })
         .nullable()
         .optional(),
 
-    logo_512x512_url: z.string()
-        .url({ message: 'URL do logo 512x512 deve ser uma URL válida.' })
+    logo_512x512_url: z
+        .string({ message: 'URL do logo 512x512 deve ser uma URL válida.' })
         .max(1024, { message: 'URL do logo 512x512 deve ter no máximo 1024 caracteres.' })
         .nullable()
         .optional(),
@@ -58,35 +59,23 @@ export const CompaniesSchema = z.object({
         .min(5, { message: 'Endereço deve ter pelo menos 5 caracteres.' })
         .max(256, { message: 'Endereço deve ter no máximo 256 caracteres.' }),
 
-    owner_id: z.string()
+    owner_id: z
         .uuid({ message: 'ID do proprietário deve ser um UUID válido.' }),
-
-    created_at: z.coerce.date()
-        .default(() => new Date())
-        .nullable()
-        .optional(),
-
-    updated_at: z.coerce.date()
-        .nullable()
-        .optional(),
-});
+})
+    .merge(auditFieldsSchema);
 
 // Schema para criação de empresa
 export const CreateCompanySchema = CompaniesSchema.omit({
     id: true,
-    created_at: true,
-    updated_at: true,
-});
+}).merge(auditFieldsForCreate);
 
 // Schema para atualização de empresa
-export const UpdateCompanySchema = CompaniesSchema.partial()
-    .extend({
-        id: z.string().uuid({ message: 'ID da empresa deve ser um UUID válido.' }),
-    })
-    .omit({
-        created_at: true,
-        updated_at: true,
-    });
+export const UpdateCompanySchema = CompaniesSchema.omit({
+    created_at: true,
+    created_by: true,
+}).partial().extend({
+    id: z.uuid({ message: 'ID da empresa deve ser um UUID válido.' }),
+}).merge(auditFieldsForUpdate);
 
 // Tipos TypeScript
 export type Company = z.infer<typeof CompaniesSchema>;

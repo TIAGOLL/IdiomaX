@@ -1,13 +1,10 @@
-import z from "zod";
+import { z } from "zod";
+import { UpdateUserSchema } from "./entities";
 
-export const updateUserProfileRequest = z.object({
-    name: z.string().min(3).max(256),
-    cpf: z.string().min(11).max(11),
-    phone: z.string().min(10).max(11),
-    gender: z.enum(['M', 'F']),
-    date_of_birth: z.string(),
-    address: z.string().min(1).max(255),
-    avatar_url: z.url().optional(),
+export const updateUserProfileRequest = UpdateUserSchema.omit({
+    id: true,
+    password: true,
+    active: true,
 })
 
 export const updateUserProfileResponse = z.object({

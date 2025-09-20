@@ -1,8 +1,9 @@
 import { z } from "zod";
+import { auditFieldsSchema, auditFieldsForCreate, auditFieldsForUpdate } from "../lib/audit-fields";
 
 // Schema de salas de aula
 export const ClassroomsSchema = z.object({
-    id: z.string()
+    id: z
         .uuid({ message: 'ID da sala deve ser um UUID válido.' }),
 
     number: z.number()
@@ -16,29 +17,24 @@ export const ClassroomsSchema = z.object({
         .nullable()
         .optional(),
 
-    companies_id: z.string()
+    companies_id: z
         .uuid({ message: 'ID da empresa deve ser um UUID válido.' })
         .nullable()
         .optional(),
-
-    created_at: z.coerce.date()
-        .default(() => new Date()),
-});
+})
+    .merge(auditFieldsSchema);
 
 // Schema para criação de sala
 export const CreateClassroomSchema = ClassroomsSchema.omit({
     id: true,
-    created_at: true,
-});
+}).merge(auditFieldsForCreate);
 
 // Schema para atualização de sala
 export const UpdateClassroomSchema = ClassroomsSchema.partial()
-    .extend({
-        id: z.string().uuid({ message: 'ID da sala deve ser um UUID válido.' }),
+    .safeExtend({
+        id: z.uuid({ message: 'ID da sala deve ser um UUID válido.' }),
     })
-    .omit({
-        created_at: true,
-    });
+    .merge(auditFieldsForUpdate);
 
 // Tipos TypeScript
 export type Classroom = z.infer<typeof ClassroomsSchema>;

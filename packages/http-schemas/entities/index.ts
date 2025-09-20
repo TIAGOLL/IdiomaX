@@ -1,3 +1,7 @@
+// Exportações de campos base
+export * from '../lib/audit-fields';
+export * from '../lib/decimal';
+
 // Exportações de usuários e membros
 export * from './users';
 export * from './members';
@@ -42,7 +46,7 @@ export * from './stripe-subscriptions';
 export const IdSchema = {
     uuid: (fieldName: string = 'ID') =>
         import('zod').then(({ z }) =>
-            z.string().uuid({ message: `${fieldName} deve ser um UUID válido.` })
+            z.uuid({ message: `${fieldName} deve ser um UUID válido.` })
         ),
 };
 

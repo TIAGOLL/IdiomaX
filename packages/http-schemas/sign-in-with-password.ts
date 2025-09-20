@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { UsersSchema } from "./entities";
 
 export const signInWithPasswordResponse = z.object({
     message: z.string(),
@@ -6,6 +7,6 @@ export const signInWithPasswordResponse = z.object({
 });
 
 export const signInWithPasswordRequest = z.object({
-    username: z.string(),
-    password: z.string().min(6),
+    username: UsersSchema.shape.username,
+    password: UsersSchema.shape.password,
 })

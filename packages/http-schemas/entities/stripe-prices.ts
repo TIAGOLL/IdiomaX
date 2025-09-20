@@ -22,17 +22,22 @@ export const StripePriceSchema = z.object({
     active: z.boolean({ message: 'Status ativo deve ser verdadeiro ou falso.' }),
 
     description: z.string()
-        .min(1, { message: 'Descrição deve ter pelo menos 1 caractere.' })
         .max(256, { message: 'Descrição deve ter no máximo 256 caracteres.' })
         .nullable()
         .optional(),
 
-    unit_amount: z.bigint()
-        .min(0n, { message: 'Valor unitário deve ser maior ou igual a zero.' }),
+    unit_amount: z.union([z.bigint(), z.string(), z.number()])
+        .transform((val) => {
+            if (typeof val === 'bigint') return val.toString();
+            if (typeof val === 'number') return val.toString();
+            return val;
+        })
+        .refine((val) => {
+            const num = Number(val);
+            return !isNaN(num) && num >= 0;
+        }, { message: 'Valor unitário deve ser maior ou igual a zero.' }),
 
-    currency: z.string()
-        .length(3, { message: 'Moeda deve ter exatamente 3 caracteres.' })
-        .regex(/^[A-Z]{3}$/, { message: 'Moeda deve estar em formato ISO (ex: BRL, USD).' }),
+    currency: z.string(),
 
     type: StripePricingTypeSchema,
 
@@ -53,7 +58,7 @@ export const StripePriceSchema = z.object({
         .nullable()
         .optional(),
 
-    metadata: z.record(z.string(), z.any())
+    metadata: z.any() // Aceita qualquer tipo de JsonValue do Prisma
         .nullable()
         .optional(),
 }).refine((data) => {
@@ -73,7 +78,7 @@ export const CreateStripePriceSchema = StripePriceSchema.omit({
 
 // Schema para atualização de preço
 export const UpdateStripePriceSchema = StripePriceSchema.partial()
-    .extend({
+    .safeExtend({
         id: z.string().min(1, { message: 'ID do preço é obrigatório.' }),
     });
 

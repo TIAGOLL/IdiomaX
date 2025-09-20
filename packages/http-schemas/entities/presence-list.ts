@@ -2,15 +2,15 @@ import { z } from "zod";
 
 // Schema de lista de presença
 export const PresenceListSchema = z.object({
-    id: z.string()
+    id: z
         .uuid({ message: 'ID da presença deve ser um UUID válido.' }),
 
     is_present: z.boolean({ message: 'Presença deve ser verdadeiro ou falso.' }),
 
-    users_id: z.string()
+    users_id: z
         .uuid({ message: 'ID do usuário deve ser um UUID válido.' }),
 
-    classes_id: z.string()
+    classes_id: z
         .uuid({ message: 'ID da aula deve ser um UUID válido.' }),
 });
 
@@ -21,13 +21,13 @@ export const CreatePresenceSchema = PresenceListSchema.omit({
 
 // Schema para atualização de presença
 export const UpdatePresenceSchema = PresenceListSchema.partial()
-    .extend({
-        id: z.string().uuid({ message: 'ID da presença deve ser um UUID válido.' }),
+    .safeExtend({
+        id: z.uuid({ message: 'ID da presença deve ser um UUID válido.' }),
     });
 
 // Schema para marcar presença em lote
 export const BulkPresenceSchema = z.object({
-    classes_id: z.string()
+    classes_id: z
         .uuid({ message: 'ID da aula deve ser um UUID válido.' }),
 
     presences: z.array(z.object({

@@ -11,17 +11,15 @@ import { FormMessageError } from '@/components/ui/form-message-error';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useSearchParams } from 'react-router';
 import { putCompanyRequest } from '@idiomax/http-schemas/put-company';
 import { getCompanyByIdResponse } from '@idiomax/http-schemas/get-company-by-id';
+import { useSessionContext } from '@/contexts/session-context';
 
 type GetCompanyByIdResponse = z.infer<typeof getCompanyByIdResponse>;
 type PutCompanyRequest = z.infer<typeof putCompanyRequest>;
 
 export function UpdateCompanyForm({ company }: { company: GetCompanyByIdResponse }) {
-
-    const [searchParams] = useSearchParams();
-    const companyId = searchParams.get("companyId");
+    const { currentCompanyMember } = useSessionContext();
     const { mutate, isPending } = useMutation({
         mutationFn: async (data: PutCompanyRequest) => {
             const response = await api.put('/companies', data);
@@ -47,9 +45,9 @@ export function UpdateCompanyForm({ company }: { company: GetCompanyByIdResponse
     });
 
     useEffect(() => {
-        if (company && companyId) {
+        if (company && currentCompanyMember) {
             reset({
-                id: companyId,
+                id: currentCompanyMember.company.id,
                 name: company.name,
                 cnpj: company.cnpj,
                 phone: company.phone,
@@ -62,7 +60,7 @@ export function UpdateCompanyForm({ company }: { company: GetCompanyByIdResponse
                 address: company.address,
             });
         }
-    }, [company, reset, companyId]);
+    }, [company, currentCompanyMember, reset]);
 
     if (!company) return
 

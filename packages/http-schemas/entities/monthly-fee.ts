@@ -1,22 +1,20 @@
 import { z } from "zod";
+import { monetaryDecimalSchema } from "../lib/decimal";
+import { auditFieldsSchema, auditFieldsForCreate, auditFieldsForUpdate } from "../lib/audit-fields";
 
 // Schema de mensalidades
 export const MonthlyFeeSchema = z.object({
-    id: z.string()
+    id: z
         .uuid({ message: 'ID da mensalidade deve ser um UUID válido.' }),
 
     due_date: z.coerce.date({ message: 'Data de vencimento deve ser uma data válida.' }),
 
-    value: z.number()
-        .min(0.01, { message: 'Valor da mensalidade deve ser maior que zero.' })
-        .max(9999999.99, { message: 'Valor da mensalidade deve ser no máximo R$ 9.999.999,99.' }),
+    value: monetaryDecimalSchema(0.01, 9999999.99),
 
     paid: z.boolean()
         .default(false),
 
-    discount_payment_before_due_date: z.number()
-        .min(0, { message: 'Desconto deve ser maior ou igual a zero.' })
-        .max(9999999.99, { message: 'Desconto deve ser no máximo R$ 9.999.999,99.' })
+    discount_payment_before_due_date: monetaryDecimalSchema(0, 9999999.99)
         .default(0),
 
     payment_method: z.string()
@@ -29,24 +27,26 @@ export const MonthlyFeeSchema = z.object({
         .nullable()
         .optional(),
 
-    registrations_id: z.string()
+    registrations_id: z
         .uuid({ message: 'ID da matrícula deve ser um UUID válido.' }),
-});
+})
+    .merge(auditFieldsSchema);
 
 // Schema para criação de mensalidade
 export const CreateMonthlyFeeSchema = MonthlyFeeSchema.omit({
     id: true,
-});
+}).merge(auditFieldsForCreate);
 
 // Schema para atualização de mensalidade
 export const UpdateMonthlyFeeSchema = MonthlyFeeSchema.partial()
-    .extend({
-        id: z.string().uuid({ message: 'ID da mensalidade deve ser um UUID válido.' }),
-    });
+    .safeExtend({
+        id: z.uuid({ message: 'ID da mensalidade deve ser um UUID válido.' }),
+    })
+    .merge(auditFieldsForUpdate);
 
 // Schema para pagamento de mensalidade
 export const PayMonthlyFeeSchema = z.object({
-    id: z.string()
+    id: z
         .uuid({ message: 'ID da mensalidade deve ser um UUID válido.' }),
 
     payment_method: z.string()
@@ -62,7 +62,7 @@ export const PayMonthlyFeeSchema = z.object({
 
 // Schema para geração de mensalidades em lote
 export const GenerateMonthlyFeesSchema = z.object({
-    registrations_id: z.string()
+    registrations_id: z
         .uuid({ message: 'ID da matrícula deve ser um UUID válido.' }),
 
     months: z.number()

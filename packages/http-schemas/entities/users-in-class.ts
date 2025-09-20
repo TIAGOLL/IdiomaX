@@ -2,13 +2,13 @@ import { z } from "zod";
 
 // Schema de usuários em turma
 export const UsersInClassSchema = z.object({
-    id: z.string()
+    id: z
         .uuid({ message: 'ID deve ser um UUID válido.' }),
 
-    class_id: z.string()
+    class_id: z
         .uuid({ message: 'ID da turma deve ser um UUID válido.' }),
 
-    users_id: z.string()
+    users_id: z
         .uuid({ message: 'ID do usuário deve ser um UUID válido.' }),
 
     teacher: z.boolean({ message: 'Campo professor deve ser verdadeiro ou falso.' }),
@@ -21,16 +21,16 @@ export const CreateUserInClassSchema = UsersInClassSchema.omit({
 
 // Schema para atualização de usuário em turma
 export const UpdateUserInClassSchema = UsersInClassSchema.partial()
-    .extend({
-        id: z.string().uuid({ message: 'ID deve ser um UUID válido.' }),
+    .safeExtend({
+        id: z.uuid({ message: 'ID deve ser um UUID válido.' }),
     });
 
 // Schema para adicionar aluno à turma
 export const AddStudentToClassSchema = z.object({
-    class_id: z.string()
+    class_id: z
         .uuid({ message: 'ID da turma deve ser um UUID válido.' }),
 
-    users_id: z.string()
+    users_id: z
         .uuid({ message: 'ID do usuário deve ser um UUID válido.' }),
 
     teacher: z.boolean()
@@ -39,10 +39,10 @@ export const AddStudentToClassSchema = z.object({
 
 // Schema para adicionar professor à turma
 export const AddTeacherToClassSchema = z.object({
-    class_id: z.string()
+    class_id: z
         .uuid({ message: 'ID da turma deve ser um UUID válido.' }),
 
-    users_id: z.string()
+    users_id: z
         .uuid({ message: 'ID do usuário deve ser um UUID válido.' }),
 
     teacher: z.boolean()

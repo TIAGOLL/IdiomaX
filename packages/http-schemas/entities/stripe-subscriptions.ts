@@ -14,7 +14,7 @@ export const StripeCompanySubscriptionSchema = z.object({
         .max(256, { message: 'ID da assinatura deve ter no máximo 256 caracteres.' })
         .regex(/^sub_[a-zA-Z0-9]{24}$/, { message: 'ID da assinatura deve ter o formato válido do Stripe (sub_...).' }),
 
-    company_customer_id: z.string()
+    company_customer_id: z
         .uuid({ message: 'ID do cliente da empresa deve ser um UUID válido.' }),
 
     status: StripeSubscriptionStatusSchema,
@@ -33,7 +33,7 @@ export const StripeCompanySubscriptionSchema = z.object({
         .nullable()
         .optional(),
 
-    metadata: z.record(z.string(), z.any())
+    metadata: z.any() // Aceita qualquer tipo de JsonValue do Prisma
         .nullable()
         .optional(),
 
@@ -67,23 +67,25 @@ export const StripeCompanySubscriptionSchema = z.object({
     trial_end: z.coerce.date({ message: 'Fim do período de teste deve ser uma data válida.' })
         .nullable()
         .optional(),
-}).refine((data) => {
-    if (data.current_period_start && data.current_period_end) {
-        return data.current_period_start < data.current_period_end;
-    }
-    return true;
-}, {
-    message: 'Início do período deve ser anterior ao fim do período.',
-    path: ['current_period_start'],
-}).refine((data) => {
-    if (data.trial_start && data.trial_end) {
-        return data.trial_start < data.trial_end;
-    }
-    return true;
-}, {
-    message: 'Início do teste deve ser anterior ao fim do teste.',
-    path: ['trial_start'],
-});
+})
+
+// .refine((data) => {
+//     if (data.current_period_start && data.current_period_end) {
+//         return data.current_period_start < data.current_period_end;
+//     }
+//     return true;
+// }, {
+//     message: 'Início do período deve ser anterior ao fim do período.',
+//     path: ['current_period_start'],
+// }).refine((data) => {
+//     if (data.trial_start && data.trial_end) {
+//         return data.trial_start < data.trial_end; 
+//     }
+//     return true;
+// }, {
+//     message: 'Início do teste deve ser anterior ao fim do teste.',
+//     path: ['trial_start'],
+// });
 
 // Schema para criação de assinatura
 export const CreateStripeCompanySubscriptionSchema = StripeCompanySubscriptionSchema.omit({
@@ -93,7 +95,7 @@ export const CreateStripeCompanySubscriptionSchema = StripeCompanySubscriptionSc
 
 // Schema para atualização de assinatura
 export const UpdateStripeCompanySubscriptionSchema = StripeCompanySubscriptionSchema.partial()
-    .extend({
+    .safeExtend({
         id: z.string().min(1, { message: 'ID da assinatura é obrigatório.' }),
     })
     .omit({

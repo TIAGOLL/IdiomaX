@@ -2,19 +2,19 @@ import { z } from "zod";
 
 // Enum para dias da semana
 export const WeekDaysSchema = z.enum([
-    'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'
+    'DOMINGO', 'SEGUNDA', 'TERCA', 'QUARTA', 'QUINTA', 'SEXTA', 'SABADO'
 ], {
-    message: 'Dia da semana deve ser um valor válido (SUNDAY a SATURDAY).'
+    message: 'Dia da semana deve ser um valor válido (DOMINGO a SABADO).'
 });
 
 // Schema de dias de aula
 export const ClassDaysSchema = z.object({
-    id: z.string()
+    id: z
         .uuid({ message: 'ID do dia de aula deve ser um UUID válido.' }),
 
     week_date: WeekDaysSchema,
 
-    class_id: z.string()
+    class_id: z
         .uuid({ message: 'ID da turma deve ser um UUID válido.' }),
 });
 
@@ -25,8 +25,8 @@ export const CreateClassDaySchema = ClassDaysSchema.omit({
 
 // Schema para atualização de dia de aula
 export const UpdateClassDaySchema = ClassDaysSchema.partial()
-    .extend({
-        id: z.string().uuid({ message: 'ID do dia de aula deve ser um UUID válido.' }),
+    .safeExtend({
+        id: z.uuid({ message: 'ID do dia de aula deve ser um UUID válido.' }),
     });
 
 // Tipos TypeScript

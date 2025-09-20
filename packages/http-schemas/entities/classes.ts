@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-// Schema de turmas (Renamedclass no Prisma)
+// Schema de turmas
 export const ClassesSchema = z.object({
-    id: z.string()
+    id: z
         .uuid({ message: 'ID da turma deve ser um UUID válido.' }),
 
     nome: z.string()
@@ -12,9 +12,9 @@ export const ClassesSchema = z.object({
     vacancies: z.number()
         .int({ message: 'Número de vagas deve ser um número inteiro.' })
         .min(1, { message: 'Deve haver pelo menos 1 vaga.' })
-        .max(9999999999, { message: 'Número de vagas deve ter no máximo 10 dígitos.' }),
+        .max(99999, { message: 'Número de vagas deve ter no máximo 5 dígitos.' }),
 
-    courses_id: z.string()
+    courses_id: z
         .uuid({ message: 'ID do curso deve ser um UUID válido.' }),
 });
 
@@ -25,8 +25,8 @@ export const CreateClassSchema = ClassesSchema.omit({
 
 // Schema para atualização de turma
 export const UpdateClassSchema = ClassesSchema.partial()
-    .extend({
-        id: z.string().uuid({ message: 'ID da turma deve ser um UUID válido.' }),
+    .safeExtend({
+        id: z.uuid({ message: 'ID da turma deve ser um UUID válido.' }),
     });
 
 // Tipos TypeScript

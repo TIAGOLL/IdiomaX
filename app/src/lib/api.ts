@@ -28,6 +28,15 @@ api.interceptors.response.use(
     };
     console.log(error);
 
+    // 401 = Token inválido/expirado → Redirecionar para login
+    if (error.response?.status === 401) {
+      nookies.destroy(null, 'token', { path: '/' });
+      // Só redireciona se não estiver já na página de login
+      if (!window.location.pathname.includes('/auth/sign-in')) {
+        window.location.href = '/auth/sign-in';
+      }
+    }
+
     if (error.response?.data && typeof error.response.data === "object") {
       normalizedError.message =
         (error.response.data as { message: string }).message || normalizedError.message;

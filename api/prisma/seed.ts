@@ -37,8 +37,6 @@ type SeederUser = {
     address: string;
     active: boolean;
     avatar_url: string;
-    created_at: Date;
-    updated_at: Date;
     role: Role;
 };
 
@@ -51,6 +49,8 @@ async function main() {
         const hashedPassword = await bcrypt.hash("admin1", 10)
         const ownerUsername = 'tiago10'
         const ownerId = generateUUID()
+        const now = new Date()
+
         await prisma.users.create({
             data: {
                 id: ownerId,
@@ -64,7 +64,11 @@ async function main() {
                 gender: Gender.M,
                 date_of_birth: new Date("1980-01-01"),
                 address: "Rua Admin, 1",
-                active: true
+                active: true,
+                created_at: now,
+                updated_at: now,
+                created_by: ownerId,
+                updated_by: ownerId
             }
         })
 
@@ -82,7 +86,12 @@ async function main() {
                 social_reason: 'IdiomaX Ltda',
                 logo_16x16_url: "/images/logo.png",
                 logo_512x512_url: "/images/logo.png",
-                owner_id: ownerId // Relaciona owner à empresa
+                owner_id: ownerId, // Relaciona owner à empresa
+                active: true,
+                created_at: now,
+                updated_at: now,
+                created_by: ownerId,
+                updated_by: ownerId
             }
         })
 
@@ -142,7 +151,12 @@ async function main() {
             data: {
                 user_id: ownerId,
                 company_id: uuid,
-                role: Role.ADMIN
+                role: Role.ADMIN,
+                active: true,
+                created_at: now,
+                updated_at: now,
+                created_by: ownerId,
+                updated_by: ownerId
             }
         })
 
@@ -168,8 +182,6 @@ async function main() {
                 date_of_birth: randomDate(new Date("1990-01-01"), new Date("2005-12-31")),
                 address: `Rua Estudante, ${i}`,
                 active: true,
-                created_at: new Date(),
-                updated_at: new Date(),
                 role: Role.STUDENT
             });
         }
@@ -191,8 +203,6 @@ async function main() {
                 date_of_birth: randomDate(new Date("1970-01-01"), new Date("1995-12-31")),
                 address: `Rua Professor, ${i}`,
                 active: true,
-                created_at: new Date(),
-                updated_at: new Date(),
                 role: Role.TEACHER
             });
         }
@@ -201,14 +211,23 @@ async function main() {
             const { role, ...userData } = user;
             const createdUser = await prisma.users.create({
                 data: {
-                    ...userData
+                    ...userData,
+                    created_at: now,
+                    updated_at: now,
+                    created_by: ownerId, // Owner criou todos os usuários
+                    updated_by: ownerId
                 }
             });
             await prisma.members.create({
                 data: {
                     user_id: createdUser.id,
                     company_id: uuid,
-                    role: role
+                    role: role,
+                    active: true,
+                    created_at: now,
+                    updated_at: now,
+                    created_by: ownerId,
+                    updated_by: ownerId
                 }
             });
         }
@@ -230,6 +249,11 @@ async function main() {
                     maximum_grade: 100,
                     minimum_frequency: 75,
                     companies_id: uuid, // sempre a mesma empresa
+                    active: true,
+                    created_at: now,
+                    updated_at: now,
+                    created_by: ownerId,
+                    updated_by: ownerId
                 }
             })
         }
@@ -245,6 +269,11 @@ async function main() {
                     name: `Nível ${i}`,
                     level: i,
                     courses_id: randomFromArray(courses),
+                    created_at: now,
+                    updated_at: now,
+                    created_by: ownerId,
+                    updated_by: ownerId,
+                    active: true
                 }
             })
         }
@@ -259,6 +288,11 @@ async function main() {
                     id,
                     name: `Disciplina ${i}`,
                     levels_id: randomFromArray(levels),
+                    created_at: now,
+                    updated_at: now,
+                    created_by: ownerId,
+                    updated_by: ownerId,
+                    active: true
                 }
             })
         }
@@ -274,6 +308,11 @@ async function main() {
                     number: 100 + i,
                     block: String.fromCharCode(65 + i),
                     companies_id: uuid,
+                    created_at: now,
+                    updated_at: now,
+                    created_by: ownerId,
+                    updated_by: ownerId,
+                    active: true
                 }
             })
         }
@@ -289,6 +328,11 @@ async function main() {
                     nome: `Turma ${i}`,
                     vacancies: 5 + i,
                     courses_id: randomFromArray(courses),
+                    created_at: now,
+                    updated_at: now,
+                    created_by: ownerId,
+                    updated_by: ownerId,
+                    active: true
                 }
             })
         }
@@ -305,8 +349,13 @@ async function main() {
                 await prisma.class_days.create({
                     data: {
                         id,
-                        week_date: weekday, // campo inteiro representando o dia da semana
+                        week_date: weekday,
                         class_id: classId,
+                        created_at: now,
+                        updated_at: now,
+                        created_by: ownerId,
+                        updated_by: ownerId,
+                        active: true
                     }
                 });
             }
@@ -329,6 +378,11 @@ async function main() {
                     start_date: startDate,
                     end_date: endDate,
                     class_id: randomFromArray(renamedClasses),
+                    created_at: now,
+                    updated_at: now,
+                    created_by: ownerId,
+                    updated_by: ownerId,
+                    active: true
                 }
             })
         }
@@ -349,7 +403,12 @@ async function main() {
                         id: generateUUID(),
                         class_id: turmaId,
                         users_id: teacher.id,
-                        teacher: true
+                        teacher: true,
+                        created_at: now,
+                        updated_at: now,
+                        created_by: ownerId,
+                        updated_by: ownerId,
+                        active: true
                     }
                 });
             }
@@ -365,7 +424,12 @@ async function main() {
                         id: generateUUID(),
                         class_id: classId,
                         users_id: aluno.id,
-                        teacher: false
+                        teacher: false,
+                        created_at: now,
+                        updated_at: now,
+                        created_by: ownerId,
+                        updated_by: ownerId,
+                        active: true
                     }
                 });
             }
@@ -386,6 +450,11 @@ async function main() {
                     completed: i % 4 === 0,
                     users_id: users[i + 1].id,
                     companies_id: uuid,
+                    created_at: now,
+                    updated_at: now,
+                    created_by: ownerId,
+                    updated_by: ownerId,
+                    active: true
                 }
             })
         }
@@ -446,6 +515,11 @@ async function main() {
                     discount_payment_before_due_date,
                     registrations_id: regId,
                     payment_method: randomFromArray(["PIX", "Cartão", "Boleto"]),
+                    created_at: now,
+                    updated_at: now,
+                    created_by: ownerId,
+                    updated_by: ownerId,
+                    active: true,
                     ...(paid ? { date_of_payment } : {})
                 });
             }
@@ -464,6 +538,10 @@ async function main() {
                     description: `Registro do aluno ${i}`,
                     title: `Registro ${i}`,
                     created_at: randomDate(new Date("2025-09-01"), new Date("2025-12-01")),
+                    updated_at: now,
+                    created_by: ownerId,
+                    updated_by: ownerId,
+                    active: true
                 }
             })
         }
@@ -479,6 +557,11 @@ async function main() {
                         is_present: Math.random() > 0.2,
                         users_id: aluno.id,
                         classes_id: classId,
+                        created_at: now,
+                        updated_at: now,
+                        created_by: ownerId,
+                        updated_by: ownerId,
+                        active: true
                     }
                 });
             }
@@ -496,6 +579,11 @@ async function main() {
                     description: `Descrição da tarefa ${i}`,
                     disciplines_id: randomFromArray(disciplines),
                     due_date: randomDate(new Date("2025-09-15"), new Date("2025-12-15")),
+                    created_at: now,
+                    updated_at: now,
+                    created_by: ownerId,
+                    updated_by: ownerId,
+                    active: true
                 }
             })
         }
@@ -509,6 +597,11 @@ async function main() {
                     registrations_id: randomFromArray(registrations),
                     date: randomDate(new Date("2025-09-14"), new Date("2025-12-14")),
                     link: `https://drive.google.com/tarefa-${i}`,
+                    created_at: now,
+                    updated_at: now,
+                    created_by: ownerId,
+                    updated_by: ownerId,
+                    active: true
                 }
             })
         }
@@ -521,6 +614,11 @@ async function main() {
                     name: `Apostila ${levelId.slice(0, 6)}`,
                     file: Buffer.from("Conteúdo fictício da apostila"),
                     levels_id: levelId,
+                    created_at: now,
+                    updated_at: now,
+                    created_by: ownerId,
+                    updated_by: ownerId,
+                    active: true
                 }
             })
         }
@@ -531,6 +629,11 @@ async function main() {
                 id: generateUUID(),
                 registrations_time: 6,
                 companies_id: uuid,
+                created_at: now,
+                updated_at: now,
+                created_by: ownerId,
+                updated_by: ownerId,
+                active: true
             }
         })
     }, {

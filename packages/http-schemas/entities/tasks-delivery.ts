@@ -2,13 +2,13 @@ import { z } from "zod";
 
 // Schema de entrega de tarefas
 export const TasksDeliverySchema = z.object({
-    id: z.string()
+    id: z
         .uuid({ message: 'ID da entrega deve ser um UUID válido.' }),
 
-    tasks_id: z.string()
+    tasks_id: z
         .uuid({ message: 'ID da tarefa deve ser um UUID válido.' }),
 
-    registrations_id: z.string()
+    registrations_id: z
         .uuid({ message: 'ID da matrícula deve ser um UUID válido.' }),
 
     date: z.coerce.date({ message: 'Data de entrega deve ser uma data válida.' })
@@ -19,7 +19,7 @@ export const TasksDeliverySchema = z.object({
         .nullable()
         .optional(),
 
-    link: z.string()
+    link: z
         .url({ message: 'Link deve ser uma URL válida.' })
         .max(512, { message: 'Link deve ter no máximo 512 caracteres.' })
         .nullable()
@@ -37,8 +37,8 @@ export const CreateTaskDeliverySchema = TasksDeliverySchema.omit({
 
 // Schema para atualização de entrega
 export const UpdateTaskDeliverySchema = TasksDeliverySchema.partial()
-    .extend({
-        id: z.string().uuid({ message: 'ID da entrega deve ser um UUID válido.' }),
+    .safeExtend({
+        id: z.uuid({ message: 'ID da entrega deve ser um UUID válido.' }),
     })
     .omit({
         date: true,
@@ -46,10 +46,10 @@ export const UpdateTaskDeliverySchema = TasksDeliverySchema.partial()
 
 // Schema para entrega de arquivo
 export const SubmitTaskFileSchema = z.object({
-    tasks_id: z.string()
+    tasks_id: z
         .uuid({ message: 'ID da tarefa deve ser um UUID válido.' }),
 
-    registrations_id: z.string()
+    registrations_id: z
         .uuid({ message: 'ID da matrícula deve ser um UUID válido.' }),
 
     file: z.any()
@@ -59,13 +59,13 @@ export const SubmitTaskFileSchema = z.object({
 
 // Schema para entrega de link
 export const SubmitTaskLinkSchema = z.object({
-    tasks_id: z.string()
+    tasks_id: z
         .uuid({ message: 'ID da tarefa deve ser um UUID válido.' }),
 
-    registrations_id: z.string()
+    registrations_id: z
         .uuid({ message: 'ID da matrícula deve ser um UUID válido.' }),
 
-    link: z.string()
+    link: z
         .url({ message: 'Link deve ser uma URL válida.' })
         .max(512, { message: 'Link deve ter no máximo 512 caracteres.' }),
 });

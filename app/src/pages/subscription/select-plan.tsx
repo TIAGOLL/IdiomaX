@@ -5,18 +5,20 @@ import { toast } from "sonner";
 import { createSubscription } from "@/services/stripe/create-subscription";
 import { createSubscriptionRequest } from '@idiomax/http-schemas/create-subscription';
 import type z from "zod";
-import { useNavigate, useSearchParams } from "react-router";
+import { useNavigate } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { getProducts } from "@/services/stripe/get-products";
 import { useEffect } from "react";
+import { useSessionContext } from "@/contexts/session-context";
 
 type CreateSubscriptionRequest = z.infer<typeof createSubscriptionRequest>;
 
 export default function SelectPlanPage() {
     const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
+
+    const { getCompanyId } = useSessionContext();
 
     const { data: products, isLoading } = useQuery({
         queryKey: ['products'],
@@ -53,8 +55,8 @@ export default function SelectPlanPage() {
 
     useEffect(() => {
         setValue("priceId", products?.[0]?.prices[0]?.id || "");
-        setValue("companyId", searchParams.get("companyId") || "");
-    }, [navigate, products, searchParams, setValue]);
+        setValue("companyId", getCompanyId() || "");
+    }, [navigate, products, getCompanyId, setValue]);
 
     if (isLoading) {
         return <div className="flex justify-center items-center h-64">Carregando planos...</div>;

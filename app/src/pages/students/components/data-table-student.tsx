@@ -8,21 +8,19 @@ import { LoaderIcon, Power, Trash2, ScrollText, Save, KeyRound, Pencil } from 'l
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from "@/components/ui/tooltip"
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
-import { BookCheck, LockKeyhole } from 'lucide-react';
 import { Text } from 'lucide-react';
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui/alert-dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { format } from 'date-fns';
 import { PaginationSection } from '@/components/pagination-section';
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useSearchParams } from "react-router";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
-import { studentsUpdatePasswordSchema } from "@idiomax/http-schemas/update-password";
+import { updateUserPasswordBody } from "@idiomax/http-schemas/update-user-password";
 import { CreatePaginationArray } from "@/lib/utils";
 import { toast } from "sonner";
+import { updateStudentPassword, deleteStudent, deactivateStudent } from '@/services/students';
+import { getStudents } from '@/services/students';
 
 export function DataTableStudents() {
 
@@ -30,18 +28,16 @@ export function DataTableStudents() {
         register,
         handleSubmit,
         formState: { errors },
-        setValue,
     } = useForm({
-        resolver: zodResolver(studentsUpdatePasswordSchema),
+        resolver: zodResolver(updateUserPasswordBody),
         mode: "all",
         criteriaMode: "all",
     });
 
     const [searchParams, setSearchParams] = useSearchParams();
-    const [loading, setLoading] = useState(false);
 
-    const page = searchParams.get("page");
-    const per_page = searchParams.get("per_page");
+    const page = parseInt(searchParams.get("page") || "1");
+    const per_page = parseInt(searchParams.get("per_page") || "10");
     const name = searchParams.get("name");
     const email = searchParams.get("email");
     const course = searchParams.get("course");
@@ -53,55 +49,67 @@ export function DataTableStudents() {
         refetch,
     } = useQuery({
         queryKey: ["students1", name, email, course],
-        queryFn: () => api.professionals.GetActiveStudents(name, email, course),
+        queryFn: () => getStudents(),
     });
-    
-    const studentsPages = CreatePaginationArray(students, page, per_page);
 
-    async function UpdatePassword(data) {
-        setLoading(true);
-        await api.professionals
-            .UpdateStudentPassword(data)
-            .then((res) => {
-                toast.success(res.message);
-            })
-            .catch((err) => {
-                toast.error(err.response.data.message);
-            })
-            .finally(() => setLoading(false));
-    }
+    const studentsPages = CreatePaginationArray(students?.users || [], page, per_page);
 
-    function setValueOnDialogOpen(student) {
-        setValue("email", student.email);
-    }
+    // Mutation para atualizar senha
+    const updatePasswordMutation = useMutation({
+        mutationFn: async (formData: { currentPassword: string; newPassword: string; studentId: string }) => {
+            const response = await updateStudentPassword(formData.studentId, {
+                currentPassword: formData.currentPassword,
+                newPassword: formData.newPassword
+            });
+            return response;
+        },
+        onSuccess: () => {
+            toast.success("Senha atualizada com sucesso!");
+            refetch();
+        },
+        onError: (error: unknown) => {
+            const errorMessage = error instanceof Error && 'response' in error
+                ? (error as { response?: { data?: { message?: string } } }).response?.data?.message
+                : "Erro ao atualizar senha";
+            toast.error(errorMessage);
+        }
+    });
 
-    async function deleteStudent(id, adresses_id) {
-        setLoading(true);
-        await api.professionals
-            .DeleteStudent(id, adresses_id)
-            .then((res) => {
-                toast.info(res.message);
-                refetch();
-            })
-            .catch((err) => {
-                toast.error(err.response.data.message);
-            })
-            .finally(() => setLoading(false));
-    }
+    // Mutation para deletar estudante
+    const deleteStudentMutation = useMutation({
+        mutationFn: async (studentId: string) => {
+            const response = await deleteStudent(studentId);
+            return response;
+        },
+        onSuccess: () => {
+            toast.success("Estudante excluído com sucesso!");
+            refetch();
+        },
+        onError: (error: unknown) => {
+            const errorMessage = error instanceof Error && 'response' in error
+                ? (error as { response?: { data?: { message?: string } } }).response?.data?.message || "Erro ao excluir estudante"
+                : "Erro ao excluir estudante";
+            toast.error(errorMessage);
+        }
+    });
 
-    async function desactiveStudent(id) {
-        setLoading(true);
-        await api.professionals
-            .DesactiveStudent(id)
-            .then((res) => {
-                toast.info(res.message);
-                refetch();
-            })
-            .catch((err) => {
-                toast.error(err.response.data.message);
-            })
-            .finally(() => setLoading(false));
-    }
+    // Mutation para desativar estudante
+    const deactivateStudentMutation = useMutation({
+        mutationFn: async (studentId: string) => {
+            const response = await deactivateStudent(studentId);
+            return response;
+        },
+        onSuccess: () => {
+            toast.success("Estudante desativado com sucesso!");
+            refetch();
+        },
+        onError: (error: unknown) => {
+            const errorMessage = error instanceof Error && 'response' in error
+                ? (error as { response?: { data?: { message?: string } } }).response?.data?.message || "Erro ao desativar estudante"
+                : "Erro ao desativar estudante";
+            toast.error(errorMessage);
+        }
+    });
 
     useEffect(() => {
         if (!activeTab) {
@@ -135,27 +143,13 @@ export function DataTableStudents() {
                                     <TableCell className="font-medium">{student?.name}</TableCell>
                                     <TableCell>{student?.email}</TableCell>
                                     <TableCell className="flex flex-row gap-1">
-                                        {
-                                            student?.registrations?.map((registration) => registration).length == 0 ? 'S/C' : student?.registrations?.map((registration) => {
-                                                return (
-                                                    <a href={`/admin/registrations?id=${registration.id}`} key={registration?.id} className={cn('hover:!bg-zinc-600 flex gap-1 flex-row items-center justify-center bg-zinc-100 dark:bg-zinc-700 p-1 rounded-md', registration?.locked == 1 ? "text-red-400" : "text-green-400")}>
-                                                        {registration?.locked == 1 ? <LockKeyhole className='w-4 h-4' /> : <BookCheck className='w-4 h-4' />}
-                                                        <span >{registration?.courses.name}</span>
-                                                    </a>
-                                                )
-                                            })
-                                        }
+                                        {/* TODO: Implementar busca de matrículas por usuário */}
+                                        S/C
                                     </TableCell>
                                     <TableCell>{student?.cpf}</TableCell>
                                     <TableCell>
-                                        R$ {
-                                            student?.registrations?.reduce((acc, item) => {
-                                                if (!item.completed && !item.locked) {
-                                                    acc += item?.monthly_fee_amount;
-                                                }
-                                                return acc;
-                                            }, 0)
-                                        }
+                                        {/* TODO: Calcular mensalidades quando implementar matrículas */}
+                                        R$ 0,00
                                     </TableCell>
                                     <TableCell className="space-x-2">
                                         <TooltipProvider>
@@ -177,29 +171,30 @@ export function DataTableStudents() {
                                                 <TooltipTrigger asChild>
                                                     <span className='pt-3'>
                                                         <AlertDialog>
-                                                            <AlertDialogTrigger onClick={() => setValue("email", student.email)} className='bg-orange-300 p-1 m-0 rounded-md'>
+                                                            <AlertDialogTrigger className='bg-orange-300 p-1 m-0 rounded-md'>
                                                                 <KeyRound className="w-4 h-4 dark:text-black" />
                                                             </AlertDialogTrigger>
                                                             <AlertDialogContent >
-                                                                <form onSubmit={handleSubmit(UpdatePassword)} className='flex flex-col gap-6'>
+                                                                <form onSubmit={handleSubmit((data) => updatePasswordMutation.mutate({ ...data, studentId: student.id }))} className='flex flex-col gap-6'>
                                                                     <AlertDialogTitle>Editar senha</AlertDialogTitle>
                                                                     <AlertDialogDescription>
                                                                         Digite a nova senha para o usuário: <span className='font-bold'>{student?.name}</span>
                                                                     </AlertDialogDescription>
                                                                     <div className='grid grid-cols-2 gap-3'>
                                                                         <div className='col-span-2 gap-1 grid w-8/12'>
-                                                                            <Label htmlFor="email">Email</Label>
-                                                                            <Input type="email" {...register("email")} readOnly />
+                                                                            <Label htmlFor="currentPassword">Senha Atual</Label>
+                                                                            <Input type="password" {...register("currentPassword")} />
+                                                                            {errors.currentPassword && <span className="text-red-500 text-sm">{errors.currentPassword.message}</span>}
                                                                         </div>
                                                                         <div className='col-span-2 gap-1 grid w-8/12'>
-                                                                            <Label htmlFor="password">Senha</Label>
-                                                                            <Input type="password" {...register("password")} />
-                                                                            {errors.password && <span className="text-red-500 text-sm">{errors.password.message}</span>}
+                                                                            <Label htmlFor="newPassword">Nova Senha</Label>
+                                                                            <Input type="password" {...register("newPassword")} />
+                                                                            {errors.newPassword && <span className="text-red-500 text-sm">{errors.newPassword.message}</span>}
                                                                         </div>
                                                                         <AlertDialogFooter className="col-span-2">
                                                                             <AlertDialogCancel>Cancelar</AlertDialogCancel>
                                                                             <AlertDialogAction type="submit">
-                                                                                {loading ? <LoaderIcon className='animate-spin w-4 h-4 dark:text-black mr-2' /> : <Save className='w-4 h-4 dark:text-black mr-2' />}
+                                                                                {updatePasswordMutation.isPending ? <LoaderIcon className='animate-spin w-4 h-4 dark:text-black mr-2' /> : <Save className='w-4 h-4 dark:text-black mr-2' />}
                                                                                 Salvar
                                                                             </AlertDialogAction>
                                                                         </AlertDialogFooter>
@@ -229,28 +224,10 @@ export function DataTableStudents() {
                                                                 <DialogDescription>
                                                                     Aqui você tem um histórico de registros do aluno: <span className='font-bold'>{student?.name}</span>
                                                                 </DialogDescription>
-                                                                {student?.records_of_students?.length == 0 && <div className='h-auto'>
+                                                                {/* TODO: Implementar busca de registros quando disponível */}
+                                                                <div className='h-auto'>
                                                                     <Label>Nenhum registro encontrado</Label>
                                                                 </div>
-                                                                }
-                                                                {student?.records_of_students?.map((record) => {
-                                                                    return (
-                                                                        <div className='grid grid-cols-8 gap-3'>
-                                                                            <div className='col-span-2 gap-1 grid h-auto'>
-                                                                                <Label htmlFor="title">Título</Label>
-                                                                                <Textarea id="title" readOnly value={record.title} />
-                                                                            </div>
-                                                                            <div className='col-span-2 gap-1 grid'>
-                                                                                <Label htmlFor="date">Data</Label>
-                                                                                <Textarea id="date" readOnly value={format(record.date, "dd/MM/yyyy - hh:mm")} />
-                                                                            </div>
-                                                                            <div className='col-span-4 gap-1 grid'>
-                                                                                <Label htmlFor="description">Descrição</Label>
-                                                                                <Textarea id="description" readOnly value={record.description} />
-                                                                            </div>
-                                                                        </div>
-                                                                    )
-                                                                })}
                                                             </DialogContent>
                                                         </Dialog>
                                                     </span>
@@ -280,11 +257,19 @@ export function DataTableStudents() {
                                                                         Matricular aluno
                                                                         <DropdownMenuShortcut><ScrollText className='w-4 h-4 dark:text-white' /></DropdownMenuShortcut>
                                                                     </DropdownMenuItem>
-                                                                    <DropdownMenuItem onSelect={async () => await desactiveStudent(student?.id)}>
+                                                                    <DropdownMenuItem onSelect={() => {
+                                                                        if (student?.id) {
+                                                                            deactivateStudentMutation.mutate(student.id);
+                                                                        }
+                                                                    }}>
                                                                         Desativar aluno
                                                                         <DropdownMenuShortcut><Power className='w-4 h-4 dark:text-white' /></DropdownMenuShortcut>
                                                                     </DropdownMenuItem>
-                                                                    <DropdownMenuItem onSelect={async () => await deleteStudent(student?.id, student?.adresses_id)}>
+                                                                    <DropdownMenuItem onSelect={() => {
+                                                                        if (student?.id) {
+                                                                            deleteStudentMutation.mutate(student.id);
+                                                                        }
+                                                                    }}>
                                                                         Excluir
                                                                         <DropdownMenuShortcut><Trash2 className='w-4 h-4 dark:text-white' /></DropdownMenuShortcut>
                                                                     </DropdownMenuItem>
@@ -321,7 +306,7 @@ export function DataTableStudents() {
                     <TableFooter>
                         <TableRow>
                             <TableCell className="text-right" colSpan={6}>Total de alunos:</TableCell>
-                            <TableCell className="text-left">{students?.length}</TableCell>
+                            <TableCell className="text-left">{students?.totalCount || 0}</TableCell>
                         </TableRow>
                     </TableFooter>
                 </Table>

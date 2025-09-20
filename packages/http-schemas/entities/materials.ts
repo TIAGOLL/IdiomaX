@@ -1,8 +1,9 @@
 import { z } from "zod";
+import { auditFieldsSchema, auditFieldsForCreate, auditFieldsForUpdate } from "../lib/audit-fields";
 
 // Schema de materiais
 export const MaterialsSchema = z.object({
-    id: z.string()
+    id: z
         .uuid({ message: 'ID do material deve ser um UUID válido.' }),
 
     name: z.string()
@@ -12,22 +13,24 @@ export const MaterialsSchema = z.object({
     file: z.string()
         .base64({ message: 'Arquivo deve ser válido em formato base64.' }),
 
-    levels_id: z.string()
+    levels_id: z
         .uuid({ message: 'ID do nível deve ser um UUID válido.' })
         .nullable()
         .optional(),
-});
+})
+    .merge(auditFieldsSchema);
 
 // Schema para criação de material
 export const CreateMaterialSchema = MaterialsSchema.omit({
     id: true,
-});
+}).merge(auditFieldsForCreate);
 
 // Schema para atualização de material
 export const UpdateMaterialSchema = MaterialsSchema.partial()
-    .extend({
-        id: z.string().uuid({ message: 'ID do material deve ser um UUID válido.' }),
-    });
+    .safeExtend({
+        id: z.uuid({ message: 'ID do material deve ser um UUID válido.' }),
+    })
+    .merge(auditFieldsForUpdate);
 
 // Schema para upload de material
 export const UploadMaterialSchema = z.object({
@@ -39,7 +42,7 @@ export const UploadMaterialSchema = z.object({
         .refine((file) => file instanceof File, { message: 'Deve ser um arquivo válido.' })
         .refine((file) => file.size <= 10 * 1024 * 1024, { message: 'Arquivo deve ter no máximo 10MB.' }),
 
-    levels_id: z.string()
+    levels_id: z
         .uuid({ message: 'ID do nível deve ser um UUID válido.' })
         .nullable()
         .optional(),

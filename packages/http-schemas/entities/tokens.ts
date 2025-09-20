@@ -2,7 +2,7 @@ import { z } from "zod";
 
 // Schema de tokens
 export const TokensSchema = z.object({
-    id: z.string()
+    id: z
         .uuid({ message: 'ID do token deve ser um UUID válido.' }),
 
     type: z.string()
@@ -11,7 +11,7 @@ export const TokensSchema = z.object({
 
     expires_at: z.coerce.date({ message: 'Data de expiração deve ser uma data válida.' }),
 
-    users_id: z.string()
+    users_id: z
         .uuid({ message: 'ID do usuário deve ser um UUID válido.' }),
 
     created_at: z.coerce.date()
@@ -26,7 +26,7 @@ export const CreateTokenSchema = TokensSchema.omit({
 
 // Schema para validação de token
 export const ValidateTokenSchema = z.object({
-    token: z.string()
+    token: z
         .uuid({ message: 'Token deve ser um UUID válido.' }),
 
     type: z.string()
@@ -35,7 +35,7 @@ export const ValidateTokenSchema = z.object({
 
 // Schema para token de recuperação de senha
 export const PasswordRecoveryTokenSchema = z.object({
-    users_id: z.string()
+    users_id: z
         .uuid({ message: 'ID do usuário deve ser um UUID válido.' }),
 
     type: z.literal('password_recovery', { message: 'Tipo deve ser password_recovery.' }),
@@ -50,7 +50,7 @@ export const PasswordRecoveryTokenSchema = z.object({
 
 // Schema para token de verificação de email
 export const EmailVerificationTokenSchema = z.object({
-    users_id: z.string()
+    users_id: z
         .uuid({ message: 'ID do usuário deve ser um UUID válido.' }),
 
     type: z.literal('email_verification', { message: 'Tipo deve ser email_verification.' }),

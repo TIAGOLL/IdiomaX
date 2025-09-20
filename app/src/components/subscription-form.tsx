@@ -5,13 +5,14 @@ import { createCheckoutSession } from "@/services/stripe/create-checkou-service"
 import { createCheckoutSessionRequest } from '@idiomax/http-schemas/create-checkout-session';
 import type z from "zod";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
-import { useNavigate, useSearchParams } from "react-router";
+import { useNavigate } from "react-router";
 import { getProducts } from "@/services/stripe/get-products";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { LoaderIcon } from "lucide-react";
+import { useSessionContext } from "@/contexts/session-context";
 
 type CreateCheckoutSessionRequest = z.infer<typeof createCheckoutSessionRequest>;
 
@@ -19,7 +20,7 @@ export function SubscriptionForm() {
 
     const navigate = useNavigate();
 
-    const [searchParams] = useSearchParams();
+    const { getCompanyId } = useSessionContext();
 
     const {
         handleSubmit,
@@ -52,8 +53,8 @@ export function SubscriptionForm() {
 
     useEffect(() => {
         setValue("productId", products?.[0]?.id || "");
-        setValue("companyId", searchParams.get("companyId") || "");
-    }, [navigate, products, searchParams, setValue]);
+        setValue("companyId", getCompanyId() || "");
+    }, [navigate, products, getCompanyId, setValue]);
 
     return (
         <div className="bg-card border border-slate-200/10 rounded-xl shadow-lg p-8 flex flex-col items-center w-">

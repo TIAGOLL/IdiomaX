@@ -1,67 +1,25 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
-import { useNavigate, useSearchParams } from "react-router";
+import { useSearchParams } from "react-router";
 import { useEffect } from "react";
+import type { UsersFilterType } from "@idiomax/http-schemas/users-filter";
+import { getStudentByEmail, updateStudent } from '@/services/students';
 
 export const useStudent = () => {
-    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const activeTab = searchParams.get("tab");
-
-    const {
-        register: registerCreate,
-        handleSubmit: handleSubmitCreate,
-        formState: errorsCreate,
-        watch: watchCreate,
-        setValue: setValueCreate,
-    } = useForm({
-        resolver: zodResolver(studentsCreateSchema),
-        mode: "all",
-        criteriaMode: "all",
-    });
+    const email = searchParams.get("email") || "";
 
     const { data: courses } = useQuery({
-        queryKey: ["coursesSearch"],
-        queryFn: () => api.professionals.GetCourses(),
-    });
-
-    const {
-        register: registerUpdate,
-        handleSubmit: handleSubmitUpdate,
-        formState: errorsUpdate,
-        watch: watchUpdate,
-        setValue: setValueUpdate,
-    } = useForm({
-        resolver: zodResolver(studentsUpdateSchema),
-        mode: "all",
-        criteriaMode: "all",
-        defaultValues: async () => {
-            const data = await api.professionals.GetStudentByEmail(email);
-            return {
-                email: data?.email,
-                dateOfBirth: data?.date_of_birth,
-                firstName: data?.first_name,
-                lastName: data?.last_name,
-                cpf: data?.cpf,
-                phone: data?.phone,
-                gender: data?.gender,
-                zipCode: data?.adresses?.zip_code,
-                street: data?.adresses?.street,
-                district: data?.adresses?.district,
-                complement: data?.adresses?.complement,
-                state: data?.adresses?.state,
-                city: data?.adresses?.city,
-                book: data?.registrations?.classrooms?.books_id,
-                id: data?.id,
-                number: data?.adresses?.number,
-                user: data?.user,
-                password: data?.password,
-            };
+        queryKey: ["courses-search"],
+        queryFn: () => {
+            // TODO: Implementar busca de cursos quando disponível
+            return Promise.resolve([]);
         },
     });
 
-    const email = searchParams.get("email");
+
+
+
 
     function datesForCalendar() {
         const date = new Date();
@@ -74,41 +32,21 @@ export const useStudent = () => {
         return ans;
     }
 
-    async function createStudent(data) {
-        await api.professionals
-            .CreateStudent({ ...data, createdBy: GetUser().id })
-            .then((res) => {
-                toast.success(res.message);
-                navigate("/admin/students");
-            })
-            .catch((error) => {
-                console.error(error);
-                toast.error(error.message);
-            });
-    }
 
-    async function updateStudent(data) {
-        await api.professionals
-            .UpdateStudent({ ...data, updatedBy: GetUser().id })
-            .then((res) => {
-                toast.success(res.message);
-                navigate("/admin/students");
-            })
-            .catch((error) => {
-                console.error(error);
-                toast.error(error.response.data.message);
-            });
-    }
 
     function Data() {
         const { data: books, isLoading } = useQuery({
             queryKey: ["book"],
-            queryFn: () => api.books.GetBooks(),
+            queryFn: () => {
+                // TODO: Implementar busca de livros quando disponível
+                return Promise.resolve([]);
+            },
         });
 
         const { data: student } = useQuery({
             queryKey: ["student", email],
-            queryFn: () => api.professionals.GetStudentByEmail(email),
+            queryFn: () => email ? getStudentByEmail(email) : Promise.resolve(null),
+            enabled: !!email,
         });
 
         return { books, student, isLoading };
@@ -134,7 +72,7 @@ export const useStudent = () => {
         });
     }
 
-    function handleFilterStudents({ name, email, course }) {
+    function handleFilterStudents({ name, email, course }: UsersFilterType) {
         setSearchParams((state) => {
             if (name) {
                 state.set("name", name);
@@ -163,7 +101,7 @@ export const useStudent = () => {
         });
     }
 
-    function handleTab(e) {
+    function handleTab(e: string) {
         setSearchParams((state) => {
             state.set("tab", e);
             return state;
@@ -181,13 +119,7 @@ export const useStudent = () => {
     }, [activeTab, setSearchParams]);
 
     return {
-        registerCreate,
-        handleSubmitCreate,
         handleTab,
-        errorsCreate: errorsCreate.errors,
-        watchCreate,
-        setValueCreate,
-        createStudent,
         updateStudent,
         books: Data().books,
         isLoading: Data().isLoading,
@@ -196,12 +128,6 @@ export const useStudent = () => {
         handleFilterStudents,
         cleanFilter,
         searchParams,
-        registerUpdate,
-        handleSubmitUpdate,
-        errorsUpdate: errorsUpdate.errors,
-        watchUpdate,
-        setValueUpdate,
-        user: GetUser(),
         courses,
     };
 };

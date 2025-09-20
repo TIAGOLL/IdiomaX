@@ -1,8 +1,9 @@
 import { z } from "zod";
+import { auditFieldsSchema, auditFieldsForCreate, auditFieldsForUpdate } from "../lib/audit-fields";
 
 // Schema de níveis
 export const LevelsSchema = z.object({
-    id: z.string()
+    id: z
         .uuid({ message: 'ID do nível deve ser um UUID válido.' }),
 
     name: z.string()
@@ -14,22 +15,24 @@ export const LevelsSchema = z.object({
         .min(1, { message: 'Nível deve ser pelo menos 1.' })
         .max(99999, { message: 'Nível deve ter no máximo 5 dígitos.' }),
 
-    courses_id: z.string()
+    courses_id: z
         .uuid({ message: 'ID do curso deve ser um UUID válido.' })
         .nullable()
         .optional(),
-});
+})
+    .merge(auditFieldsSchema);
 
 // Schema para criação de nível
 export const CreateLevelSchema = LevelsSchema.omit({
     id: true,
-});
+}).merge(auditFieldsForCreate);
 
 // Schema para atualização de nível
 export const UpdateLevelSchema = LevelsSchema.partial()
-    .extend({
-        id: z.string().uuid({ message: 'ID do nível deve ser um UUID válido.' }),
-    });
+    .safeExtend({
+        id: z.uuid({ message: 'ID do nível deve ser um UUID válido.' }),
+    })
+    .merge(auditFieldsForUpdate);
 
 // Tipos TypeScript
 export type Level = z.infer<typeof LevelsSchema>;
