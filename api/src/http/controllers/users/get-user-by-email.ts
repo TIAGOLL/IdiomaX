@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { checkMemberAccess } from '../../../lib/permissions';
-import { getUserByEmailParams, getUserByEmailQuery, getUserByEmailResponse } from '@idiomax/http-schemas/get-user-by-email';
+import { getUserByEmailQuery, getUserByEmailResponse } from '@idiomax/http-schemas/get-user-by-email';
 import { prisma } from '../../../lib/prisma';
 
 export async function getUserByEmail(app: FastifyInstance) {
@@ -10,13 +10,12 @@ export async function getUserByEmail(app: FastifyInstance) {
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .get(
-            '/companies/:companyId/users/email/:email',
+            '/users/by-email',
             {
                 schema: {
                     tags: ['Usuários'],
                     summary: 'Buscar usuário por email e role.',
                     security: [{ bearerAuth: [] }],
-                    params: getUserByEmailParams,
                     querystring: getUserByEmailQuery,
                     response: {
                         200: getUserByEmailResponse,
@@ -24,8 +23,7 @@ export async function getUserByEmail(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { companyId, email } = request.params;
-                const { role } = request.query;
+                const { companyId, email, role } = request.query;
                 const userId = await request.getCurrentUserId();
 
                 const { company } = await checkMemberAccess(companyId, userId);

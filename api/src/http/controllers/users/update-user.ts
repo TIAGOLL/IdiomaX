@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { checkMemberAccess } from '../../../lib/permissions';
-import { updateUserParams, updateUserQuery, updateUserBody, updateUserResponse } from '@idiomax/http-schemas/update-user';
+import { updateUserBody, updateUserResponse } from '@idiomax/http-schemas/update-user';
 import { prisma } from '../../../lib/prisma';
 import { BadRequestError } from '../_errors/bad-request-error';
 
@@ -11,14 +11,12 @@ export async function updateUser(app: FastifyInstance) {
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .put(
-            '/companies/:companyId/users/:userId',
+            '/users/update',
             {
                 schema: {
                     tags: ['Usuários'],
                     summary: 'Atualizar dados de um usuário.',
                     security: [{ bearerAuth: [] }],
-                    params: updateUserParams,
-                    querystring: updateUserQuery,
                     body: updateUserBody,
                     response: {
                         200: updateUserResponse,
@@ -26,10 +24,8 @@ export async function updateUser(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { companyId, userId: targetUserId } = request.params;
-                const { role } = request.query;
+                const { companyId, role, id: targetUserId, ...updateData } = request.body;
                 const userId = await request.getCurrentUserId();
-                const updateData = request.body;
 
                 const { company } = await checkMemberAccess(companyId, userId);
 

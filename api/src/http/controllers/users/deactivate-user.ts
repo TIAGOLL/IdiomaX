@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { checkMemberAccess } from '../../../lib/permissions';
-import { deactivateUserParams, deactivateUserQuery, deactivateUserResponse } from '@idiomax/http-schemas/deactivate-user';
+import { deactivateUserBody, deactivateUserResponse } from '@idiomax/http-schemas/deactivate-user';
 import { prisma } from '../../../lib/prisma';
 import { BadRequestError } from '../_errors/bad-request-error';
 
@@ -11,22 +11,20 @@ export async function deactivateUser(app: FastifyInstance) {
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .patch(
-            '/companies/:companyId/users/:userId/deactivate',
+            '/users/deactivate',
             {
                 schema: {
                     tags: ['Usuários'],
-                    summary: 'Desativar um usuário (soft delete).',
+                    summary: 'Ativar ou desativar um usuário via body.',
                     security: [{ bearerAuth: [] }],
-                    params: deactivateUserParams,
-                    querystring: deactivateUserQuery,
+                    body: deactivateUserBody,
                     response: {
                         200: deactivateUserResponse,
                     },
                 },
             },
             async (request, reply) => {
-                const { companyId, userId: targetUserId } = request.params;
-                const { role } = request.query;
+                const { userId: targetUserId, role, companyId, active } = request.body;
                 const userId = await request.getCurrentUserId();
 
                 const { company } = await checkMemberAccess(companyId, userId);
@@ -48,18 +46,18 @@ export async function deactivateUser(app: FastifyInstance) {
                     throw new BadRequestError(`Usuário não encontrado ou não está associado a esta empresa com o role ${role}.`);
                 }
 
-                // Desativar o usuário
+                // Ativar ou desativar o usuário
                 await prisma.users.update({
                     where: { id: targetUserId },
                     data: {
-                        active: false,
+                        active: active,
                         updated_by: userId,
                         updated_at: new Date(),
                     },
                 });
 
                 return reply.status(200).send({
-                    message: 'Usuário desativado com sucesso.',
+                    message: active ? 'Usuário ativado com sucesso.' : 'Usuário desativado com sucesso.',
                 });
             },
         );

@@ -13,8 +13,7 @@ export const UsersSchema = z.object({
 
     name: z.string()
         .min(2, { message: 'Nome deve ter pelo menos 2 caracteres.' })
-        .max(256, { message: 'Nome deve ter no máximo 256 caracteres.' })
-        .regex(/^[a-zA-ZÀ-ÿ\s]+$/, { message: 'Nome deve conter apenas letras e espaços.' }),
+        .max(256, { message: 'Nome deve ter no máximo 256 caracteres.' }),
 
     email: z
         .email({ message: 'Email deve ser um endereço válido.' })

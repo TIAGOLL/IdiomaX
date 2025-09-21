@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { checkMemberAccess } from '../../../lib/permissions';
-import { deleteUserParams, deleteUserQuery, deleteUserResponse } from '@idiomax/http-schemas/delete-user';
+import { deleteUserBody, deleteUserResponse } from '@idiomax/http-schemas/delete-user';
 import { prisma } from '../../../lib/prisma';
 import { BadRequestError } from '../_errors/bad-request-error';
 
@@ -11,22 +11,20 @@ export async function deleteUser(app: FastifyInstance) {
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .delete(
-            '/companies/:companyId/users/:userId',
+            '/users/delete',
             {
                 schema: {
                     tags: ['Usuários'],
                     summary: 'Deletar um usuário permanentemente.',
                     security: [{ bearerAuth: [] }],
-                    params: deleteUserParams,
-                    querystring: deleteUserQuery,
+                    body: deleteUserBody,
                     response: {
                         200: deleteUserResponse,
                     },
                 },
             },
             async (request, reply) => {
-                const { companyId, userId: targetUserId } = request.params;
-                const { role } = request.query;
+                const { companyId, userId: targetUserId, role } = request.body;
                 const userId = await request.getCurrentUserId();
 
                 const { company } = await checkMemberAccess(companyId, userId);

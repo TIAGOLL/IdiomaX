@@ -1,19 +1,15 @@
 import z from "zod";
 import { UserRoleSchema } from "./get-users";
 
-export const deleteUserParams = z.object({
+export const deleteUserBody = z.object({
     companyId: z.uuid({ message: 'ID da empresa deve ser um UUID válido.' }),
     userId: z.uuid({ message: 'ID do usuário deve ser um UUID válido.' }),
-});
-
-export const deleteUserQuery = z.object({
-    role: UserRoleSchema, // Role obrigatório na query
+    role: UserRoleSchema,
 });
 
 export const deleteUserResponse = z.object({
     message: z.string(),
 });
 
-export type DeleteUserParams = z.infer<typeof deleteUserParams>;
-export type DeleteUserQuery = z.infer<typeof deleteUserQuery>;
+export type DeleteUserBody = z.infer<typeof deleteUserBody>;
 export type DeleteUserResponse = z.infer<typeof deleteUserResponse>;

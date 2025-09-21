@@ -3,8 +3,10 @@ export { getUsers } from './get-users';
 export { getUserByEmail } from './get-user-by-email';
 export { updateUser } from './update-user';
 export { updateUserPassword } from './update-user-password';
+export { adminResetPassword } from './admin-reset-password';
 export { deleteUser } from './delete-user';
 export { deactivateUser } from './deactivate-user';
+export { updateUserRole } from './manage-roles';
 
 // Types
 export type {

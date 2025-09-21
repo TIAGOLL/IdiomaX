@@ -1,12 +1,9 @@
 import z from "zod";
 import { UserRoleSchema } from "./get-users";
 
-export const getUserByEmailParams = z.object({
+export const getUserByEmailQuery = z.object({
     companyId: z.uuid({ message: 'ID da empresa deve ser um UUID válido.' }),
     email: z.email({ message: 'Email deve ser um endereço válido.' }),
-});
-
-export const getUserByEmailQuery = z.object({
     role: UserRoleSchema, // Role obrigatório na query
 });
 
@@ -28,6 +25,5 @@ export const getUserByEmailResponse = z.object({
     updated_by: z.uuid().nullable(),
 }).nullable();
 
-export type GetUserByEmailParams = z.infer<typeof getUserByEmailParams>;
 export type GetUserByEmailQuery = z.infer<typeof getUserByEmailQuery>;
 export type GetUserByEmailResponse = z.infer<typeof getUserByEmailResponse>;

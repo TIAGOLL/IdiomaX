@@ -21,7 +21,7 @@ export default function AdminFinances() {
 
     return (
         <div className="flex-1 max-w-11/12 mx-auto py-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-            <Card className="col-span-1 sm:col-span-2">
+            <Card className="col-span-3 sm:col-span-3">
                 <CardHeader className="flex flex-row justify-between">
                     <div className="w-6/12">
                         <CardTitle>Minha assinatura</CardTitle>
@@ -63,19 +63,6 @@ export default function AdminFinances() {
                             </li>
                         </ul>
                     )}
-                </CardContent>
-            </Card>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle>Cliente Stripe</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div>
-                        <span className="font-semibold">E-mail:</span>
-                        {subscription?.company_customer?.company?.email && <span>{subscription.company_customer.company.email}</span>}
-                        {!subscription?.company_customer?.company?.email && <span className="text-muted-foreground">{" "}Nenhum e-mail cadastrado</span>}
-                    </div>
                 </CardContent>
             </Card>
 

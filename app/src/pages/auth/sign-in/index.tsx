@@ -10,7 +10,7 @@ import { Building } from 'lucide-react';
 export function SignInPage() {
 
   return (
-    <div className='flex justify-center min-h-screen items-center bg-slate-100 dark:bg-slate-600 sm:!w-screen'>
+    <div className='flex justify-center min-h-screen items-center sm:!w-screen'>
       <Link to='/auth/sign-up' className={`${buttonVariants({ variant: "ghost" })} absolute top-10 left-10`}>
         <Building className='mr-1 h-4 w-4' />
         Cadastrar minha empresa

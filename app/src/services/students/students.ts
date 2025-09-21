@@ -1,5 +1,6 @@
 // Services específicos para Students que usam os genéricos
 import { getUsers, getUserByEmail, updateUser, updateUserPassword, deleteUser, deactivateUser } from '../users';
+import { api } from '@/lib/api';
 import type {
     GetUsersQuery,
     GetUsersResponse,
@@ -11,6 +12,8 @@ import type {
     DeleteUserResponse,
     DeactivateUserResponse
 } from '../users';
+import type { AdminUpdateStudentPasswordBody } from '@idiomax/http-schemas/admin-update-student-password';
+import { getCurrentCompanyId } from '@/lib/company-utils';
 
 // Aliases para manter compatibilidade
 export type GetStudentsQuery = GetUsersQuery;
@@ -49,6 +52,27 @@ export async function updateStudentPassword(
     return updateUserPassword('STUDENT', studentId, body);
 }
 
+export async function adminUpdateStudentPassword(
+    studentId: string,
+    body: AdminUpdateStudentPasswordBody
+): Promise<{ message: string }> {
+    const companyId = getCurrentCompanyId();
+    if (!companyId) {
+        throw new Error('Company ID não encontrado');
+    }
+
+    const response = await api.patch(
+        `/users/admin-reset-password`,
+        {
+            ...body,
+            companyId,
+            userId: studentId,
+            role: 'STUDENT'
+        }
+    );
+    return response.data;
+}
+
 export async function deleteStudent(
     studentId: string
 ): Promise<DeleteStudentResponse> {
@@ -56,7 +80,8 @@ export async function deleteStudent(
 }
 
 export async function deactivateStudent(
-    studentId: string
+    studentId: string,
+    active: boolean = false
 ): Promise<DeactivateStudentResponse> {
-    return deactivateUser('STUDENT', studentId);
+    return deactivateUser('STUDENT', studentId, active);
 }

@@ -16,10 +16,10 @@ export async function updateUser(
 ): Promise<UpdateUserResponse> {
     const companyId = getCurrentCompanyId();
 
-    const { data } = await api.put(`/companies/${companyId}/users/${body.id}`, body, {
-        params: {
-            role
-        }
+    const { data } = await api.put(`/users/update`, {
+        ...body,
+        companyId,
+        role
     });
     return data;
 }

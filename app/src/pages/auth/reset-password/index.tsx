@@ -46,7 +46,7 @@ export default function ResetPasswordPage() {
     });
 
     return (
-        <div className='flex justify-center min-h-screen items-center bg-slate-100 dark:bg-slate-600 sm:!w-screen'>
+        <div className='flex justify-center min-h-screen items-center sm:!w-screen'>
             <Card className='min-w-4/12'>
                 <div className='mt-4 flex flex-col items-center justify-center'>
                     <img

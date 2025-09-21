@@ -38,8 +38,12 @@ import { getUsers } from './controllers/users/get-users'
 import { getUserByEmail } from './controllers/users/get-user-by-email'
 import { updateUser } from './controllers/users/update-user'
 import { updateUserPassword } from './controllers/users/update-user-password'
+import { adminUpdateStudentPassword } from './controllers/users/admin-update-student-password'
 import { deleteUser } from './controllers/users/delete-user'
 import { deactivateUser } from './controllers/users/deactivate-user'
+import { addUserRole } from './controllers/users/add-user-role'
+import { removeUserRole } from './controllers/users/remove-user-role'
+import { updateUserRole } from './controllers/users/update-user-role'
 
 dotenv.config()
 
@@ -90,7 +94,7 @@ app.register(fastifyJwt, {
 
 app.register(fastifyCors, {
   origin: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
 });
 
 
@@ -119,8 +123,12 @@ app.register(getUsers);
 app.register(getUserByEmail);
 app.register(updateUser);
 app.register(updateUserPassword);
+app.register(adminUpdateStudentPassword);
 app.register(deleteUser);
 app.register(deactivateUser);
+app.register(addUserRole);
+app.register(removeUserRole);
+app.register(updateUserRole);
 
 
 if (process.env.VERCEL !== "1") {

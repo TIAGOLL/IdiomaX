@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { checkMemberAccess } from '../../../lib/permissions';
-import { getUsersParams, getUsersQuery, getUsersResponse } from '@idiomax/http-schemas/get-users';
+import { getUsersQuery, getUsersResponse } from '@idiomax/http-schemas/get-users';
 import { prisma } from '../../../lib/prisma';
 
 export async function getUsers(app: FastifyInstance) {
@@ -10,13 +10,12 @@ export async function getUsers(app: FastifyInstance) {
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .get(
-            '/companies/:companyId/users',
+            '/users',
             {
                 schema: {
                     tags: ['Usuários'],
                     summary: 'Obter uma lista de usuários de uma empresa por role.',
                     security: [{ bearerAuth: [] }],
-                    params: getUsersParams,
                     querystring: getUsersQuery,
                     response: {
                         200: getUsersResponse,
@@ -24,8 +23,8 @@ export async function getUsers(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { companyId } = request.params;
                 const userId = await request.getCurrentUserId();
+                const { companyId } = request.query;
 
                 const { company } = await checkMemberAccess(companyId, userId);
 
@@ -39,12 +38,11 @@ export async function getUsers(app: FastifyInstance) {
 
                 const offset = (page - 1) * limit;
 
-                // Construir filtros
                 const whereClause: Record<string, unknown> = {
                     member_on: {
                         some: {
                             company_id: company.id,
-                            role: role,
+                            ...(role && { role: role }),
                         }
                     }
                 };
@@ -59,6 +57,7 @@ export async function getUsers(app: FastifyInstance) {
                         { email: { contains: search, mode: 'insensitive' } },
                         { username: { contains: search, mode: 'insensitive' } },
                         { cpf: { contains: search } },
+                        { company_id: { equals: company.id } }
                     ];
                 }
 
@@ -85,6 +84,12 @@ export async function getUsers(app: FastifyInstance) {
                             updated_at: true,
                             created_by: true,
                             updated_by: true,
+                            member_on: {
+                                select: {
+                                    company_id: true,
+                                    role: true,
+                                }
+                            }
                         }
                     }),
                     prisma.users.count({ where: whereClause })

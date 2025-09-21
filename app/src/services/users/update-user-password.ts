@@ -17,10 +17,11 @@ export async function updateUserPassword(
 ): Promise<UpdateUserPasswordResponse> {
     const companyId = getCurrentCompanyId();
 
-    const { data } = await api.patch(`/companies/${companyId}/users/${userId}/password`, body, {
-        params: {
-            role
-        }
+    const { data } = await api.patch(`/users/update-password`, {
+        ...body,
+        userId,
+        companyId,
+        role
     });
     return data;
 }

@@ -7,7 +7,7 @@ export default function CongratulationsPage() {
     const navigate = useNavigate();
 
     return (
-        <div className='flex m-auto min-w-screen justify-center min-h-screen items-center bg-slate-100 dark:bg-slate-600'>
+        <div className='flex m-auto min-w-screen justify-center min-h-screen items-center'>
             <Card className='w-[400px] sm:w-[500px] lg:w-[600px] xl:w-[700px] 2xl:w-[800px] p-6 shadow-lg'>
                 <div className='mt-4 flex flex-col items-center justify-center'>
                     <img

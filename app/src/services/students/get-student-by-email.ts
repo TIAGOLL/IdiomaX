@@ -12,8 +12,10 @@ export async function getStudentByEmail(
 ): Promise<GetStudentByEmailResponse> {
     const companyId = getCurrentCompanyId();
 
-    const { data } = await api.get(`/companies/${companyId}/users/email/${encodeURIComponent(email)}`, {
+    const { data } = await api.get(`/users/by-email`, {
         params: {
+            companyId,
+            email,
             role: 'STUDENT'
         }
     });

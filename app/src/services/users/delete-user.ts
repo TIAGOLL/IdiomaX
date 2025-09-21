@@ -14,9 +14,11 @@ export async function deleteUser(
 ): Promise<DeleteUserResponse> {
     const companyId = getCurrentCompanyId();
 
-    const { data } = await api.delete(`/companies/${companyId}/users/${userId}`, {
-        params: {
-            role
+    const { data } = await api.delete(`/users/delete`, {
+        data: {
+            companyId,
+            role,
+            userId
         }
     });
     return data;

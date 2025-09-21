@@ -14,9 +14,11 @@ export async function getUserByEmail(
 ): Promise<GetUserByEmailResponse> {
     const companyId = getCurrentCompanyId();
 
-    const { data } = await api.get(`/companies/${companyId}/users/email/${encodeURIComponent(email)}`, {
+    const { data } = await api.get(`/users/by-email`, {
         params: {
-            role
+            companyId,
+            role,
+            email
         }
     });
     return data;

@@ -11,6 +11,7 @@ import { Info, LoaderIcon, Save } from 'lucide-react';
 import { FormMessageError } from '@/components/ui/form-message-error';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
+import type { Resolver } from 'react-hook-form';
 import { z } from 'zod';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -46,7 +47,7 @@ export default function ProfilePage() {
         reset,
         control
     } = useForm<UpdateUserProfileRequest>({
-        resolver: zodResolver(updateUserProfileRequest),
+        resolver: zodResolver(updateUserProfileRequest) as Resolver<UpdateUserProfileRequest>,
         mode: 'all',
         criteriaMode: 'all',
     });
@@ -58,9 +59,7 @@ export default function ProfilePage() {
                 cpf: userProfile.cpf,
                 phone: userProfile.phone,
                 gender: userProfile.gender,
-                date_of_birth: userProfile.date_of_birth
-                    ? new Date(userProfile.date_of_birth).toISOString().slice(0, 10)
-                    : '',
+                date_of_birth: new Date(userProfile.date_of_birth),
                 address: userProfile.address,
                 avatar_url: userProfile.avatar_url || undefined,
             });
@@ -70,7 +69,7 @@ export default function ProfilePage() {
     if (status === 'pending' || !watch("gender")) return <LoaderIcon className='ml-2 h-4 w-4 animate-spin' />;
 
     return (
-        <div className='flex justify-center items-center bg-slate-100 dark:bg-slate-600 sm:w-full'>
+        <div className='flex justify-center items-center sm:w-full'>
             <Card className='sm:w-11/12 w-full'>
                 <form onSubmit={handleSubmit((data) => mutate(data))} className='space-y-4'>
                     <CardHeader className='flex space-x-4 flex-col'>
@@ -132,7 +131,22 @@ export default function ProfilePage() {
                             </div>
                             <div className="col-span-1 space-y-1">
                                 <Label htmlFor='date_of_birth'>Data de nascimento</Label>
-                                <Input type='date' id='date_of_birth'  {...register('date_of_birth')} />
+                                <Controller
+                                    name="date_of_birth"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Input
+                                            type='date'
+                                            id='date_of_birth'
+                                            value={field.value ? field.value.toISOString().split('T')[0] : ''}
+                                            onChange={(e) => {
+                                                // Converte string do input para Date object para enviar à API
+                                                const dateValue = e.target.value ? new Date(e.target.value) : undefined;
+                                                field.onChange(dateValue);
+                                            }}
+                                        />
+                                    )}
+                                />
                                 <FormMessageError error={errors.date_of_birth?.message} />
                             </div>
                             <div className="col-span-1 space-y-1">

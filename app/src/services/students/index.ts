@@ -4,6 +4,7 @@ export {
     getStudentByEmail,
     updateStudent,
     updateStudentPassword,
+    adminUpdateStudentPassword,
     deleteStudent,
     deactivateStudent
 } from './students';

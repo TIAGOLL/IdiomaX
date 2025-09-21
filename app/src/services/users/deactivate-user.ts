@@ -10,14 +10,16 @@ export type DeactivateUserResponse = z.infer<typeof deactivateUserResponse>;
 
 export async function deactivateUser(
     role: UserRole,
-    userId: string
+    userId: string,
+    active: boolean
 ): Promise<DeactivateUserResponse> {
     const companyId = getCurrentCompanyId();
 
-    const { data } = await api.patch(`/companies/${companyId}/users/${userId}/deactivate`, {}, {
-        params: {
-            role
-        }
+    const { data } = await api.patch(`/users/deactivate`, {
+        companyId,
+        role,
+        userId,
+        active
     });
     return data;
 }

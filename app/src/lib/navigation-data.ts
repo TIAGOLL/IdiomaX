@@ -5,14 +5,6 @@ export function getNavigationData() {
         navMain: [
             { title: "Dashboard", icon: LayoutDashboardIcon, links: [{ name: "Visão geral", to: "/" }] },
             {
-                title: "Alunos",
-                icon: LayoutDashboardIcon,
-                links: [
-                    { name: "Ver alunos", to: "/admin/students?tab=all" },
-                    { name: "Cadastrar aluno", to: "/admin/students?tab=create" },
-                ],
-            },
-            {
                 title: "Cursos",
                 icon: LayoutDashboardIcon,
                 links: [
@@ -31,11 +23,11 @@ export function getNavigationData() {
                 ],
             },
             {
-                title: "Funcionários",
+                title: "Usuários",
                 icon: LayoutDashboardIcon,
                 links: [
-                    { name: "Ver todos", to: "/admin/professionals?tab=all" },
-                    { name: "Cadastrar funcionário", to: "/admin/professionals?tab=create" },
+                    { name: "Criar usuário", to: "/admin/users?tab=create" },
+                    { name: "Listar usuários", to: "/admin/users?tab=list" },
                 ],
             },
         ],
@@ -54,8 +46,7 @@ export function getBreadcrumbConfig() {
 
         // Mapear nomes de seções para chaves de URL
         let urlKey = sectionKey;
-        if (sectionKey === 'alunos') urlKey = 'students';
-        else if (sectionKey === 'funcionários') urlKey = 'professionals';
+        if (sectionKey === 'usuários') urlKey = 'users';
         else if (sectionKey === 'dashboard') urlKey = 'admin';
 
         breadcrumbConfig[urlKey] = {
@@ -72,23 +63,22 @@ export function getBreadcrumbConfig() {
         label: 'Admin',
         items: [
             { label: 'Dashboard', href: '/' },
-            { label: 'Ver alunos', href: '/admin/students?tab=all' },
-            { label: 'Cadastrar aluno', href: '/admin/students?tab=create' },
+            { label: 'Criar usuário', href: '/admin/users?tab=create' },
+            { label: 'Listar usuários', href: '/admin/users?tab=list' },
             { label: 'Ver cursos', href: '/admin/courses?tab=all' },
-            { label: 'Ver funcionários', href: '/admin/professionals?tab=all' },
         ]
     };
 
-    // Alunos/Students - usar dados da seção "Alunos" se existir
-    const alunosSection = navData.navMain.find(section => section.title === 'Alunos');
-    breadcrumbConfig.students = {
-        label: 'Alunos',
-        items: alunosSection?.links.map(link => ({
+    // Usuários - usar dados da seção "Usuários" se existir
+    const usuariosSection = navData.navMain.find(section => section.title === 'Usuários');
+    breadcrumbConfig.users = {
+        label: 'Usuários',
+        items: usuariosSection?.links.map(link => ({
             label: link.name,
             href: link.to
         })) || [
-                { label: 'Ver alunos', href: '/admin/students?tab=all' },
-                { label: 'Cadastrar aluno', href: '/admin/students?tab=create' },
+                { label: 'Criar usuário', href: '/admin/users?tab=create' },
+                { label: 'Listar usuários', href: '/admin/users?tab=list' },
             ]
     };
 

@@ -21,8 +21,6 @@ export async function UpdateProfile(app: FastifyInstance) {
             },
             async (request, reply) => {
                 const { name, gender, date_of_birth, address, avatar_url, cpf, phone } = request.body;
-
-                const date_of_birth_date = new Date(date_of_birth);
                 const userId = await request.getCurrentUserId();
 
                 await prisma.$transaction(async (prisma) => {
@@ -33,7 +31,7 @@ export async function UpdateProfile(app: FastifyInstance) {
                         data: {
                             name,
                             gender,
-                            date_of_birth: date_of_birth_date,
+                            date_of_birth,
                             address,
                             avatar_url,
                             cpf,

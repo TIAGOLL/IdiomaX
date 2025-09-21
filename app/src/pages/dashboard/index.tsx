@@ -6,7 +6,7 @@ export function DashboardPage() {
     const { currentRole } = useSessionContext()
 
     return (
-        <div className="flex justify-center items-center bg-slate-100 dark:bg-slate-600 sm:w-full">
+        <div className="flex justify-center items-center sm:w-full">
             {
                 currentRole === 'ADMIN' && <AdminDashboard />
             }

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { UsersSchema } from "./entities";
 
-export const getUserByIdRequest = z.object({
+export const getUserByIdQuery = z.object({
     id: z.uuid(),
     companyId: z.uuid(),
 })

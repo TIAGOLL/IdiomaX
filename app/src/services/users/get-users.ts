@@ -11,15 +11,16 @@ export type GetUsersQuery = z.infer<typeof getUsersQuery>;
 export type GetUsersResponse = z.infer<typeof getUsersResponse>;
 
 export async function getUsers(
-    role: UserRole,
+    role?: UserRole,
     query?: Partial<Omit<GetUsersQuery, 'role'>>
 ): Promise<GetUsersResponse> {
     const companyId = getCurrentCompanyId();
 
-    const { data } = await api.get(`/companies/${companyId}/users`, {
+    const { data } = await api.get(`/users`, {
         params: {
+            companyId,
             ...query,
-            role
+            ...(role && { role })
         }
     });
     return data;

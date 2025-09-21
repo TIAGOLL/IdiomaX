@@ -14,12 +14,10 @@ export async function updateStudent(
 ): Promise<UpdateStudentResponse> {
     const companyId = getCurrentCompanyId();
 
-    const { data } = await api.put(`/companies/${companyId}/users/${body.id}`, {
+    const { data } = await api.put(`/users/update`, {
         ...body,
-    }, {
-        params: {
-            role: 'STUDENT'
-        }
+        companyId,
+        role: 'STUDENT'
     });
     return data;
 }

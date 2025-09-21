@@ -2,35 +2,47 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { checkMemberAccess } from '../../../lib/permissions';
-import { updateUserPasswordBody, updateUserPasswordResponse } from '@idiomax/http-schemas/update-user-password';
+import { adminUpdateStudentPasswordBody } from '@idiomax/http-schemas/admin-update-student-password';
+import { updateUserPasswordResponse } from '@idiomax/http-schemas/update-user-password';
 import { prisma } from '../../../lib/prisma';
 import { BadRequestError } from '../_errors/bad-request-error';
-import { hash, compare } from 'bcryptjs';
+import { UnauthorizedError } from '../_errors/unauthorized-error';
+import { hash } from 'bcryptjs';
 
-export async function updateUserPassword(app: FastifyInstance) {
+export async function adminUpdateStudentPassword(app: FastifyInstance) {
     app
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .patch(
-            '/users/update-password',
+            '/users/admin-reset-password',
             {
                 schema: {
                     tags: ['Usuários'],
-                    summary: 'Atualizar senha de um usuário.',
+                    summary: 'Admin redefinir senha de estudante/professor via body.',
                     security: [{ bearerAuth: [] }],
-                    body: updateUserPasswordBody,
+                    body: adminUpdateStudentPasswordBody,
                     response: {
                         200: updateUserPasswordResponse,
                     },
                 },
             },
             async (request, reply) => {
-                const { companyId, userId: targetUserId, role, currentPassword, newPassword } = request.body;
+                const { companyId, userId: targetUserId, role, newPassword } = request.body;
                 const userId = await request.getCurrentUserId();
 
-                const { company } = await checkMemberAccess(companyId, userId);
+                const { company, member } = await checkMemberAccess(companyId, userId);
 
-                // Verificar se o usuário existe e está associado à empresa com o role correto
+                // Verificar se o usuário logado é ADMIN
+                if (member.role !== 'ADMIN') {
+                    throw new UnauthorizedError('Apenas administradores podem redefinir senhas de usuários.');
+                }
+
+                // Verificar se o target é um estudante ou professor
+                if (role !== 'STUDENT' && role !== 'TEACHER') {
+                    throw new BadRequestError('Esta operação é permitida apenas para estudantes e professores.');
+                }
+
+                // Verificar se o usuário existe e está associado à empresa com a role especificada
                 const user = await prisma.users.findFirst({
                     where: {
                         id: targetUserId,
@@ -43,25 +55,18 @@ export async function updateUserPassword(app: FastifyInstance) {
                     },
                     select: {
                         id: true,
-                        password: true,
+                        name: true,
                     },
                 });
 
                 if (!user) {
-                    throw new BadRequestError(`Usuário não encontrado ou não está associado a esta empresa com o role ${role}.`);
-                }
-
-                // Verificar senha atual
-                const isCurrentPasswordValid = await compare(currentPassword, user.password);
-
-                if (!isCurrentPasswordValid) {
-                    throw new BadRequestError('Senha atual incorreta.');
+                    throw new BadRequestError(`${role === 'STUDENT' ? 'Estudante' : 'Professor'} não encontrado ou não está associado a esta empresa.`);
                 }
 
                 // Hash da nova senha
                 const hashedNewPassword = await hash(newPassword, 6);
 
-                // Atualizar senha
+                // Atualizar senha sem verificar a senha atual
                 await prisma.users.update({
                     where: { id: targetUserId },
                     data: {
@@ -72,8 +77,8 @@ export async function updateUserPassword(app: FastifyInstance) {
                 });
 
                 return reply.status(200).send({
-                    message: 'Senha atualizada com sucesso.',
+                    message: `Senha do ${role === 'STUDENT' ? 'estudante' : 'professor'} ${user.name} redefinida com sucesso pelo administrador.`,
                 });
-            },
+            }
         );
 }
