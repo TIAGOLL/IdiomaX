@@ -1,10 +1,9 @@
 import { api } from "@/lib/api";
-import z from "zod";
-import { resetPasswordResponse, resetPasswordRequest } from '@idiomax/http-schemas/reset-password';
+import type { ResetPasswordRequestType, ResetPasswordResponseType } from '@idiomax/http-schemas/auth/reset-password';
 
-export type ResetPasswordResponse = z.infer<typeof resetPasswordResponse>;
+export type ResetPasswordResponse = ResetPasswordResponseType;
 
-export type ResetPasswordRequest = z.infer<typeof resetPasswordRequest>;
+export type ResetPasswordRequest = ResetPasswordRequestType;
 
 export async function resetPassword(data: ResetPasswordRequest) {
   const response = await api.post('/auth/reset-password', data);

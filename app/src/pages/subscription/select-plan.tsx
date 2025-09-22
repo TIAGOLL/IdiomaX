@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { createSubscription } from "@/services/stripe/create-subscription";
-import { createSubscriptionRequest } from '@idiomax/http-schemas/create-subscription';
+import { CreateSubscriptionFormSchema } from '@idiomax/http-schemas/subscriptions/create-subscription';
 import type z from "zod";
 import { useNavigate } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,14 +11,11 @@ import { useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { getProducts } from "@/services/stripe/get-products";
 import { useEffect } from "react";
-import { useSessionContext } from "@/contexts/session-context";
 
-type CreateSubscriptionRequest = z.infer<typeof createSubscriptionRequest>;
+type CreateSubscriptionRequest = z.infer<typeof CreateSubscriptionFormSchema>;
 
 export default function SelectPlanPage() {
     const navigate = useNavigate();
-
-    const { getCompanyId } = useSessionContext();
 
     const { data: products, isLoading } = useQuery({
         queryKey: ['products'],
@@ -32,7 +29,7 @@ export default function SelectPlanPage() {
         watch,
         formState: { errors }
     } = useForm<CreateSubscriptionRequest>({
-        resolver: zodResolver(createSubscriptionRequest),
+        resolver: zodResolver(CreateSubscriptionFormSchema),
         mode: 'all',
         criteriaMode: 'all',
     });
@@ -55,8 +52,7 @@ export default function SelectPlanPage() {
 
     useEffect(() => {
         setValue("priceId", products?.[0]?.prices[0]?.id || "");
-        setValue("companyId", getCompanyId() || "");
-    }, [navigate, products, getCompanyId, setValue]);
+    }, [navigate, products, setValue]);
 
     if (isLoading) {
         return <div className="flex justify-center items-center h-64">Carregando planos...</div>;
@@ -95,16 +91,16 @@ export default function SelectPlanPage() {
                                     ? `R$ ${(Number(product.prices[0].unit_amount) / 100).toFixed(2)}`
                                     : "--"}
                                 <span className="text-base font-normal text-muted-foreground">
-                                    {product.prices[0]?.interval === "year" ? " /ano" : " /mês"}
+                                    {product.prices[0]?.recurring?.interval === "year" ? " /ano" : " /mês"}
                                 </span>
                             </div>
                             <div className="text-muted-foreground mb-2">{product.description}</div>
                             <div className="text-xs text-muted-foreground">
-                                {product.prices[0]?.interval_count
-                                    ? `Pagamento recorrente a cada ${product.prices[0].interval_count} ${product.prices[0].interval}`
+                                {product.prices[0]?.recurring?.interval_count
+                                    ? `Pagamento recorrente a cada ${product.prices[0].recurring.interval_count} ${product.prices[0].recurring.interval}`
                                     : ""}
                             </div>
-                            {product.prices[0]?.interval === "year" && (
+                            {product.prices[0]?.recurring?.interval === "year" && (
                                 <div className="mt-4 text-sm">
                                     <span className="font-semibold">Parcelamento:</span>
                                     <div className="mt-1">

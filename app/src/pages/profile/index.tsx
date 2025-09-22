@@ -15,10 +15,10 @@ import type { Resolver } from 'react-hook-form';
 import { z } from 'zod';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { updateUserProfileRequest } from '@idiomax/http-schemas/update-profile';
+import { UpdateProfileFormSchema } from '@idiomax/http-schemas/auth/update-profile';
 import { useSessionContext } from '@/contexts/session-context';
 
-type UpdateUserProfileRequest = z.infer<typeof updateUserProfileRequest>;
+type UpdateUserProfileRequest = z.infer<typeof UpdateProfileFormSchema>;
 
 export default function ProfilePage() {
 
@@ -47,7 +47,7 @@ export default function ProfilePage() {
         reset,
         control
     } = useForm<UpdateUserProfileRequest>({
-        resolver: zodResolver(updateUserProfileRequest) as Resolver<UpdateUserProfileRequest>,
+        resolver: zodResolver(UpdateProfileFormSchema) as Resolver<UpdateUserProfileRequest>,
         mode: 'all',
         criteriaMode: 'all',
     });
@@ -59,9 +59,9 @@ export default function ProfilePage() {
                 cpf: userProfile.cpf,
                 phone: userProfile.phone,
                 gender: userProfile.gender,
-                date_of_birth: new Date(userProfile.date_of_birth),
+                dateOfBirth: new Date(userProfile.date_of_birth),
                 address: userProfile.address,
-                avatar_url: userProfile.avatar_url || undefined,
+                avatarUrl: userProfile.avatar_url || undefined,
             });
         }
     }, [userProfile, reset]);
@@ -130,14 +130,14 @@ export default function ProfilePage() {
                                 <FormMessageError error={errors.phone?.message} />
                             </div>
                             <div className="col-span-1 space-y-1">
-                                <Label htmlFor='date_of_birth'>Data de nascimento</Label>
+                                <Label htmlFor='dateOfBirth'>Data de nascimento</Label>
                                 <Controller
-                                    name="date_of_birth"
+                                    name="dateOfBirth"
                                     control={control}
                                     render={({ field }) => (
                                         <Input
                                             type='date'
-                                            id='date_of_birth'
+                                            id='dateOfBirth'
                                             value={field.value ? field.value.toISOString().split('T')[0] : ''}
                                             onChange={(e) => {
                                                 // Converte string do input para Date object para enviar à API
@@ -147,7 +147,7 @@ export default function ProfilePage() {
                                         />
                                     )}
                                 />
-                                <FormMessageError error={errors.date_of_birth?.message} />
+                                <FormMessageError error={errors.dateOfBirth?.message} />
                             </div>
                             <div className="col-span-1 space-y-1">
                                 <Label htmlFor='address'>Endereço</Label>

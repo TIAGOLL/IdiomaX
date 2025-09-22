@@ -3,24 +3,24 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { prisma } from '../../../lib/prisma';
-import { signUpWithPasswordRequest, signUpWithPasswordResponse } from '@idiomax/http-schemas/sign-up-with-password';
+import { SignUpApiRequest, SignUpApiResponse } from '@idiomax/http-schemas/auth/sign-up';
 
 
-export async function SignUpWithPassword(app: FastifyInstance) {
+export async function SignUp(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
-    '/auth/sign-up-with-password',
+    '/auth/sign-up',
     {
       schema: {
         tags: ['Autenticação'],
         summary: 'Criar uma nova conta de usuário',
-        body: signUpWithPasswordRequest,
+        body: SignUpApiRequest,
         response: {
-          201: signUpWithPasswordResponse,
+          201: SignUpApiResponse,
         }
       },
     },
     async (request, reply) => {
-      const { name, email, password, gender, date_of_birth,  address, cpf, username, phone } = request.body;
+      const { name, email, password, gender, date_of_birth, address, cpf, username, phone } = request.body;
 
       const userWithSameEmail = await prisma.users.findUnique({
         where: {

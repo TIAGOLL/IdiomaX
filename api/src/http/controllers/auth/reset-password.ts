@@ -1,11 +1,10 @@
 import { hash } from 'bcryptjs';
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 
 import { ForbiddenError } from '../_errors/forbidden-error';
 import { prisma } from '../../../lib/prisma';
-import { resetPasswordRequest, resetPasswordResponse, } from '@idiomax/http-schemas/reset-password'
+import { ResetPasswordApiRequest, ResetPasswordApiResponse } from '@idiomax/http-schemas/auth/reset-password'
 
 export async function resetPassword(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
@@ -14,9 +13,9 @@ export async function resetPassword(app: FastifyInstance) {
       schema: {
         tags: ['Autenticação'],
         summary: 'Resetar senha do usuário',
-        body: resetPasswordRequest,
+        body: ResetPasswordApiRequest,
         response: {
-          200: resetPasswordResponse,
+          200: ResetPasswordApiResponse,
         },
       },
     },

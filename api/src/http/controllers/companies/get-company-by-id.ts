@@ -3,7 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { prisma } from '../../../lib/prisma';
 import { auth } from '../../../middlewares/auth';
-import { getCompanyByIdRequest, getCompanyByIdResponse } from '@idiomax/http-schemas/get-company-by-id'
+import { GetCompanyByIdApiRequestSchema, GetCompanyByIdApiResponseSchema } from '@idiomax/http-schemas/companies/get-company-by-id'
 export async function getCompanyById(app: FastifyInstance) {
     app
         .withTypeProvider<ZodTypeProvider>()
@@ -15,20 +15,20 @@ export async function getCompanyById(app: FastifyInstance) {
                     tags: ['Instituições'],
                     summary: 'Obter uma instituição de ensino pelo ID.',
                     security: [{ bearerAuth: [] }],
-                    params: getCompanyByIdRequest,
+                    params: GetCompanyByIdApiRequestSchema,
                     response: {
-                        200: getCompanyByIdResponse,
+                        200: GetCompanyByIdApiResponseSchema,
                     },
                 },
             },
             async (request, reply) => {
-                const { companyId } = request.params;
+                const { company_id } = request.params;
                 const userId = await request.getCurrentUserId();
 
                 const userIsMember = await prisma.members.findFirst({
                     where: {
                         user_id: userId,
-                        company_id: companyId,
+                        company_id: company_id,
                     }
                 });
 
@@ -38,7 +38,7 @@ export async function getCompanyById(app: FastifyInstance) {
 
                 const company = await prisma.companies.findUnique({
                     where: {
-                        id: companyId,
+                        id: company_id,
                         members: {
                             some: {
                                 user_id: userId,
@@ -51,7 +51,7 @@ export async function getCompanyById(app: FastifyInstance) {
                     throw new BadRequestError('Instituição não encontrada ou você não tem acesso a ela.');
                 }
 
-                return reply.status(200).send(company);
+                return reply.status(200).send({ company });
             },
         );
 }

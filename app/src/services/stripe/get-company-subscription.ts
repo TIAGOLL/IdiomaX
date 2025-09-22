@@ -1,9 +1,7 @@
 import { api } from "@/lib/api";
 import { getCurrentCompanyId } from "@/lib/company-utils";
-import z from "zod";
-import { getCompanySubscriptionResponse } from "@idiomax/http-schemas/get-company-subscription";
+import type { GetCompanySubscriptionHttpResponse } from "@idiomax/http-schemas/subscriptions/get-company-subscription";
 
-type GetCompanySubscriptionResponse = z.infer<typeof getCompanySubscriptionResponse>;
 
 export async function getCompanySubscription() {
     const companyId = getCurrentCompanyId();
@@ -12,5 +10,5 @@ export async function getCompanySubscription() {
         `/stripe/get-subscription/${companyId}`,
     );
 
-    return response.data as GetCompanySubscriptionResponse;
+    return response.data as GetCompanySubscriptionHttpResponse;
 }

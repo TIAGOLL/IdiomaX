@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { prisma } from '../../../lib/prisma';
-import { updateUserProfileRequest, updateUserProfileResponse } from '@idiomax/http-schemas/update-profile';
+import { UpdateProfileApiRequest, UpdateProfileApiResponse } from '@idiomax/http-schemas/auth/update-profile';
 
 export async function UpdateProfile(app: FastifyInstance) {
     app
@@ -13,9 +13,9 @@ export async function UpdateProfile(app: FastifyInstance) {
                 schema: {
                     tags: ['Usuários'],
                     summary: 'Atualizar informações do usuário',
-                    body: updateUserProfileRequest,
+                    body: UpdateProfileApiRequest,
                     response: {
-                        200: updateUserProfileResponse
+                        200: UpdateProfileApiResponse
                     },
                 },
             },

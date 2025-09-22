@@ -17,10 +17,10 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router';
-import { createCompanyRequest } from '@idiomax/http-schemas/create-company';
 import { createCompany } from '@/services/companies/create-company';
+import { CreateCompanyFormSchema } from '@idiomax/http-schemas/companies/create-company';
 
-type CreateCompanyRequest = z.infer<typeof createCompanyRequest>;
+type CreateCompanyRequest = z.infer<typeof CreateCompanyFormSchema>;
 
 export function CreateCompanyPage() {
     const navigate = useNavigate();
@@ -44,7 +44,7 @@ export function CreateCompanyPage() {
         handleSubmit,
         formState: { errors },
     } = useForm<CreateCompanyRequest>({
-        resolver: zodResolver(createCompanyRequest),
+        resolver: zodResolver(CreateCompanyFormSchema),
         mode: 'all',
         criteriaMode: 'all',
         defaultValues: {

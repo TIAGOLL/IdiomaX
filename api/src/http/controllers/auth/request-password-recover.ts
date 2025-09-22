@@ -1,11 +1,10 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 import { ServiceUnavailableException } from '../_errors/service-unavailable-exception';
 import { prisma } from '../../../lib/prisma';
 import { requestPasswordRecoverBody, requestPasswordRecoverSubject } from '../../../mails/request-password-recover';
 import { SendEmail } from '../../../services/mail-sender';
-import { passwordRecoverRequest, passwordRecoverResponse } from '@idiomax/http-schemas/request-password-recover'
+import { RequestPasswordRecoverApiRequest, RequestPasswordRecoverApiResponse } from '@idiomax/http-schemas/auth/request-password-recover'
 
 export async function requestPasswordRecover(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
@@ -14,9 +13,9 @@ export async function requestPasswordRecover(app: FastifyInstance) {
       schema: {
         tags: ['Autenticação'],
         summary: 'Solicitar recuperação de senha',
-        body: passwordRecoverRequest,
+        body: RequestPasswordRecoverApiRequest,
         response: {
-          201: passwordRecoverResponse,
+          201: RequestPasswordRecoverApiResponse,
         },
       },
     },

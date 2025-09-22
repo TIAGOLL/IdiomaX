@@ -1,6 +1,6 @@
 import { api } from '../../lib/api';
 import { getCurrentCompanyId } from '../../lib/company-utils';
-import type { UserRole } from '@idiomax/http-schemas/get-users';
+import type { UserRole } from '@idiomax/http-schemas/users/get-users';
 
 export interface UpdateUserRoleData {
     userId: string;

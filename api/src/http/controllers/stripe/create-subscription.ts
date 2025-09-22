@@ -3,7 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { auth } from '../../../middlewares/auth';
 import { stripe } from '../../../lib/stripe';
-import { createSubscriptionRequest, createSubscriptionResponse } from '@idiomax/http-schemas/create-subscription'
+import { CreateSubscriptionApiRequestSchema, CreateSubscriptionApiResponseSchema } from '@idiomax/http-schemas/subscriptions/create-subscription'
 import { prisma } from '../../../lib/prisma';
 
 export async function CreateSubscription(app: FastifyInstance) {
@@ -18,14 +18,14 @@ export async function CreateSubscription(app: FastifyInstance) {
                     summary: 'Criar uma nova assinatura Stripe',
                     security: [{ bearerAuth: [] }],
                     response: {
-                        201: createSubscriptionResponse,
+                        201: CreateSubscriptionApiResponseSchema,
                     },
-                    body: createSubscriptionRequest
+                    body: CreateSubscriptionApiRequestSchema
                 },
             },
             async (request, reply) => {
 
-                const { priceId, companyId } = request.body;
+                const { price_id, company_id } = request.body;
                 const userId = await request.getCurrentUserId();
 
                 const { email, name, phone } = await prisma.users.findUnique({
@@ -40,9 +40,9 @@ export async function CreateSubscription(app: FastifyInstance) {
                     });
 
                     const { stripe_customer_id } = await prisma.stripeCompanyCustomer.upsert({
-                        where: { company_id: companyId },
+                        where: { company_id: company_id },
                         update: { stripe_customer_id: stripeCustomerId },
-                        create: { company_id: companyId, stripe_customer_id: stripeCustomerId }
+                        create: { company_id: company_id, stripe_customer_id: stripeCustomerId }
                     })
 
                     const customerSubscriptions = await stripe.subscriptions.list({
@@ -54,24 +54,28 @@ export async function CreateSubscription(app: FastifyInstance) {
 
                     const { id: subscriptionId } = await stripe.subscriptions.create({
                         customer: stripe_customer_id,
-                        items: [{ price: priceId }],
+                        items: [{ price: price_id }],
                         trial_period_days: 14,
                     });
 
                     await prisma.stripeCompanySubscription.upsert({
-                        where: { company_customer_id: companyId },
+                        where: { company_customer_id: company_id },
                         update: {
                             status: 'trialing',
                         },
                         create: {
                             id: subscriptionId,
-                            price_id: priceId,
-                            company_customer_id: companyId,
+                            price_id: price_id,
+                            company_customer_id: company_id,
                             status: 'trialing',
                         }
                     })
-                })
 
-                reply.status(201).send({ message: "Assinatura criada com sucesso!" });
+                    reply.status(201).send({
+                        message: "Assinatura criada com sucesso!",
+                        subscription_id: subscriptionId,
+                        status: 'trialing'
+                    });
+                })
             })
 }

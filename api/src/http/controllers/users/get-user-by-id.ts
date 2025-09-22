@@ -3,7 +3,7 @@ import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { BadRequestError } from "../_errors/bad-request-error";
 import { auth } from "../../../middlewares/auth";
 import { prisma } from "../../../lib/prisma";
-import { getUserByIdQuery, getUserByIdResponse } from "@idiomax/http-schemas/get-user-by-id";
+import { GetUserByIdApiRequestSchema, GetUserByIdApiResponseSchema } from "@idiomax/http-schemas/users/get-user-by-id";
 
 export async function getUserById(app: FastifyInstance) {
     app
@@ -17,25 +17,36 @@ export async function getUserById(app: FastifyInstance) {
                     summary: 'Obter informações de um usuário pelo ID.',
                     security: [{ bearerAuth: [] }],
                     response: {
-                        200: getUserByIdResponse
+                        200: GetUserByIdApiResponseSchema
                     },
-                    querystring: getUserByIdQuery
+                    querystring: GetUserByIdApiRequestSchema
                 },
             },
             async (request, reply) => {
-                const { id } = request.query;
+                const { user_id, company_id } = request.query;
 
-                const user = await prisma.users.findUnique({
+                const member = await prisma.members.findUnique({
                     where: {
-                        id: id,
+                        company_id_user_id: {
+                            company_id: company_id,
+                            user_id: user_id
+                        }
                     },
+                    include: {
+                        user: true
+                    }
                 });
 
-                if (!user) {
-                    throw new BadRequestError('Usuário não encontrado.');
+                if (!member) {
+                    throw new BadRequestError('Usuário não encontrado nesta empresa.');
                 }
 
-                return reply.send(user);
+                const userWithRole = {
+                    ...member.user,
+                    role: member.role
+                };
+
+                return reply.send({ user: userWithRole });
             },
         );
 }

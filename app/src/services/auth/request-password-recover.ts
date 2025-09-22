@@ -1,10 +1,9 @@
 import { api } from "@/lib/api";
-import { passwordRecoverRequest, passwordRecoverResponse } from "@idiomax/http-schemas/request-password-recover";
-import z from "zod";
+import type { RequestPasswordRecoverRequestType, RequestPasswordRecoverResponseType } from "@idiomax/http-schemas/auth/request-password-recover";
 
-type PasswordRecoverRequest = z.infer<typeof passwordRecoverRequest>;
+type PasswordRecoverRequest = RequestPasswordRecoverRequestType;
 
-type PasswordRecoverResponse = z.infer<typeof passwordRecoverResponse>;
+type PasswordRecoverResponse = RequestPasswordRecoverResponseType;
 
 export async function requestPasswordRecover(data: PasswordRecoverRequest) {
     const response = await api.post('/auth/request-password-recover', data);

@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { checkMemberAccess } from '../../../lib/permissions';
-import { deleteUserBody, deleteUserResponse } from '@idiomax/http-schemas/delete-user';
+import { DeleteUserApiRequestSchema, DeleteUserApiResponseSchema } from '@idiomax/http-schemas/users/delete-user';
 import { prisma } from '../../../lib/prisma';
 import { BadRequestError } from '../_errors/bad-request-error';
 
@@ -17,9 +17,9 @@ export async function deleteUser(app: FastifyInstance) {
                     tags: ['Usuários'],
                     summary: 'Deletar um usuário permanentemente.',
                     security: [{ bearerAuth: [] }],
-                    body: deleteUserBody,
+                    body: DeleteUserApiRequestSchema,
                     response: {
-                        200: deleteUserResponse,
+                        200: DeleteUserApiResponseSchema,
                     },
                 },
             },
@@ -64,14 +64,30 @@ export async function deleteUser(app: FastifyInstance) {
 
                 // Se não for membro de nenhuma outra empresa, deletar o usuário
                 if (!otherMemberships) {
-                    await prisma.users.delete({
+                    const deletedUser = await prisma.users.delete({
                         where: { id: targetUserId },
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true,
+                        },
+                    });
+
+                    return reply.status(200).send({
+                        message: 'Usuário removido com sucesso.',
+                        deleted_user: deletedUser,
+                    });
+                } else {
+                    // Se ainda tiver memberships, apenas remover o membro
+                    return reply.status(200).send({
+                        message: 'Usuário removido da empresa com sucesso.',
+                        deleted_user: {
+                            id: user.id,
+                            name: user.name,
+                            email: user.email,
+                        },
                     });
                 }
-
-                return reply.status(200).send({
-                    message: 'Usuário removido com sucesso.',
-                });
             },
         );
 }

@@ -1,11 +1,7 @@
 import { api } from "@/lib/api";
-import z from "zod";
-import { createCompanyRequest, createCompanyResponse } from "@idiomax/http-schemas/create-company";
+import type { CreateCompanyHttpRequest, CreateCompanyHttpResponse } from "@idiomax/http-schemas/companies/create-company";
 
-type CreateCompanyRequest = z.infer<typeof createCompanyRequest>;
-type CreateCompanyResponse = z.infer<typeof createCompanyResponse>;
-
-export async function createCompany(data: CreateCompanyRequest) {
+export async function createCompany(data: CreateCompanyHttpRequest) {
     const response = await api.post(`/companies`, data);
-    return response.data as CreateCompanyResponse;
+    return response.data as CreateCompanyHttpResponse;
 }

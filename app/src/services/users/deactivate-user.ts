@@ -1,12 +1,11 @@
 import { api } from '../../lib/api';
 import { getCurrentCompanyId } from '../../lib/company-utils';
 import type {
-    deactivateUserResponse
-} from '@idiomax/http-schemas/deactivate-user';
-import type { UserRole } from '@idiomax/http-schemas/get-users';
-import type { z } from 'zod';
+    DeactivateUserHttpResponse
+} from '@idiomax/http-schemas/users/deactivate-user';
+import type { UserRole } from '@idiomax/http-schemas/users/get-users';
 
-export type DeactivateUserResponse = z.infer<typeof deactivateUserResponse>;
+export type DeactivateUserResponse = DeactivateUserHttpResponse;
 
 export async function deactivateUser(
     role: UserRole,

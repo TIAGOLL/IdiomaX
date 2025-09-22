@@ -1,16 +1,24 @@
 import { api } from "@/lib/api";
-import z from "zod";
-import { createSubscriptionResponse, createSubscriptionRequest } from "@idiomax/http-schemas/create-subscription";
+import type { CreateSubscriptionHttpRequest, CreateSubscriptionHttpResponse } from "@idiomax/http-schemas/subscriptions/create-subscription";
+import { getCurrentCompanyId } from "@/lib/company-utils";
 
-type CreateSubscriptionRequest = z.infer<typeof createSubscriptionRequest>;
-
-type CreateSubscriptionResponse = z.infer<typeof createSubscriptionResponse>;
+interface CreateSubscriptionRequest {
+    priceId: string;
+    companyId?: string;
+    userId?: string;
+}
 
 export async function createSubscription(data: CreateSubscriptionRequest) {
+    const requestData: CreateSubscriptionHttpRequest = {
+        price_id: data.priceId,
+        company_id: data.companyId || getCurrentCompanyId() || '',
+        user_id: data.userId || '', // Será obtido do token no backend
+    };
+
     const response = await api.post(
         '/stripe/create-subscription',
-        data
+        requestData
     );
 
-    return response.data as CreateSubscriptionResponse;
+    return response.data as CreateSubscriptionHttpResponse;
 }

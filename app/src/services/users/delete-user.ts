@@ -1,12 +1,11 @@
 import { api } from '../../lib/api';
 import { getCurrentCompanyId } from '../../lib/company-utils';
 import type {
-    deleteUserResponse
-} from '@idiomax/http-schemas/delete-user';
-import type { UserRole } from '@idiomax/http-schemas/get-users';
-import type { z } from 'zod';
+    DeleteUserHttpResponse
+} from '@idiomax/http-schemas/users/delete-user';
+import type { UserRole } from '@idiomax/http-schemas/users/get-users';
 
-export type DeleteUserResponse = z.infer<typeof deleteUserResponse>;
+export type DeleteUserResponse = DeleteUserHttpResponse;
 
 export async function deleteUser(
     role: UserRole,

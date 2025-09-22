@@ -3,23 +3,20 @@ import { getUserProfile } from '@/services/users/get-user-profile';
 import { useQuery } from '@tanstack/react-query';
 import nookies from 'nookies';
 import { useNavigate } from 'react-router';
-import { getUserProfileResponse } from '@idiomax/http-schemas/get-user-profile';
-import type z from 'zod';
 import { getCompanySubscription } from '@/services/stripe/get-company-subscription';
-import type { getCompanySubscriptionResponse } from '@idiomax/http-schemas/get-company-subscription';
+import { type GetProfileResponseType } from '@idiomax/http-schemas/auth/get-profile';
+import { type GetCompanySubscriptionHttpResponse } from '@idiomax/http-schemas/subscriptions/get-company-subscription';
 
-type CompanyMember = z.infer<typeof getUserProfileResponse>['member_on'][number];
-type GetUserProfileResponse = z.infer<typeof getUserProfileResponse>;
 
 type SessionContextType = {
-    userProfile?: GetUserProfileResponse;
+    userProfile?: GetProfileResponseType;
     logout: () => void;
     error: unknown;
     token?: string;
-    currentCompanyMember?: CompanyMember;
-    setCompany: (company: CompanyMember) => void;
+    currentCompanyMember?: GetProfileResponseType['member_on'][number];
+    setCompany: (company: GetProfileResponseType['member_on'][number]) => void;
     currentRole?: string;
-    subscription?: z.infer<typeof getCompanySubscriptionResponse>;
+    subscription?: GetCompanySubscriptionHttpResponse;
     isLoadingSubscription: boolean;
     isLoadingUserProfile: boolean;
     subscriptionError: unknown;
@@ -34,7 +31,7 @@ const CURRENT_COMPANY_KEY = 'idiomaX_currentCompanyId';
 
 export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const navigate = useNavigate();
-    const [currentCompanyMember, setCurrentCompanyMember] = useState<CompanyMember | undefined>();
+    const [currentCompanyMember, setCurrentCompanyMember] = useState<GetProfileResponseType['member_on'][number] | undefined>();
     const [currentRole, setCurrentRole] = useState<string | undefined>();
     const [isInitializingCompany, setIsInitializingCompany] = useState(true);
 
@@ -79,7 +76,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
         // Tenta usar a empresa salva no localStorage
         const savedCompanyId = getCompanyId();
-        let companyToSet: CompanyMember | undefined;
+        let companyToSet: GetProfileResponseType['member_on'][number] | undefined;
 
         if (savedCompanyId) {
             // Verifica se a empresa salva ainda é válida
@@ -100,7 +97,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     const token = nookies.get(null).token;
 
-    const setCompany = (company: CompanyMember) => {
+    const setCompany = (company: GetProfileResponseType['member_on'][number]) => {
         setCurrentCompanyMember(company);
         setCurrentRole(company.role);
         saveCompanyId(company.company.id);

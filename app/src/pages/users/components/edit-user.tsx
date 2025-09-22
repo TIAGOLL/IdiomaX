@@ -20,9 +20,10 @@ import { toast } from 'sonner';
 import { updateUser, adminResetPassword, deleteUser, deactivateUser } from '@/services/users';
 import { updateUserRole } from '@/services/users/manage-roles';
 import { useSessionContext } from '@/contexts/session-context';
-import type { UserWithRole } from '@idiomax/http-schemas/get-users';
-import { editUserFormSchema, adminPasswordResetFormSchema } from '@idiomax/http-schemas/edit-user-form';
-import type { EditUserFormData as EditFormData, AdminPasswordResetFormData } from '@idiomax/http-schemas/edit-user-form';
+import type { UserWithRole } from '@idiomax/http-schemas/users/get-users';
+import { UpdateUserFormSchema as editUserFormSchema } from '@idiomax/http-schemas/users/update-user';
+import { AdminResetPasswordFormSchema as adminPasswordResetFormSchema } from '@idiomax/http-schemas/users/admin-reset-password';
+import type { z } from 'zod';
 
 // Schema para edição de usuário baseado nas entities
 const editUserSchema = editUserFormSchema;
@@ -30,8 +31,8 @@ const editUserSchema = editUserFormSchema;
 // Schema para alteração de senha baseado no schema oficial
 const passwordSchema = adminPasswordResetFormSchema;
 
-type EditUserFormData = EditFormData;
-type PasswordFormData = AdminPasswordResetFormData;
+type EditUserFormData = z.infer<typeof editUserFormSchema>;
+type PasswordFormData = z.infer<typeof adminPasswordResetFormSchema>;
 
 interface EditUserProps {
     user: UserWithRole;
@@ -61,7 +62,7 @@ export function EditUser({ user, onClose }: EditUserProps) {
             phone: user.phone,
             username: user.username,
             gender: user.gender,
-            date_of_birth: new Date(user.date_of_birth),
+            dateOfBirth: new Date(user.date_of_birth),
             address: user.address,
             role: user.role,
         },
@@ -293,7 +294,7 @@ export function EditUser({ user, onClose }: EditUserProps) {
                                     <div className="space-y-2">
                                         <Label>Data de nascimento</Label>
                                         <Controller
-                                            name="date_of_birth"
+                                            name="dateOfBirth"
                                             control={control}
                                             render={({ field }) => (
                                                 <Popover>
@@ -326,7 +327,7 @@ export function EditUser({ user, onClose }: EditUserProps) {
                                                 </Popover>
                                             )}
                                         />
-                                        <FormMessageError error={errors?.date_of_birth?.message} />
+                                        <FormMessageError error={errors?.dateOfBirth?.message} />
                                     </div>
                                 </div>
 

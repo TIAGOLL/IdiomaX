@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { checkMemberAccess } from '../../../lib/permissions';
-import { updateUserBody, updateUserResponse } from '@idiomax/http-schemas/update-user';
+import { UpdateUserApiRequestSchema, UpdateUserApiResponseSchema } from '@idiomax/http-schemas/users/update-user';
 import { prisma } from '../../../lib/prisma';
 import { BadRequestError } from '../_errors/bad-request-error';
 
@@ -17,9 +17,9 @@ export async function updateUser(app: FastifyInstance) {
                     tags: ['Usuários'],
                     summary: 'Atualizar dados de um usuário.',
                     security: [{ bearerAuth: [] }],
-                    body: updateUserBody,
+                    body: UpdateUserApiRequestSchema,
                     response: {
-                        200: updateUserResponse,
+                        200: UpdateUserApiResponseSchema,
                     },
                 },
             },
@@ -82,16 +82,28 @@ export async function updateUser(app: FastifyInstance) {
                         updated_by: userId,
                         updated_at: new Date(),
                     },
-                    select: {
-                        id: true,
-                        name: true,
-                        email: true,
+                    include: {
+                        member_on: {
+                            where: {
+                                company_id: companyId,
+                            },
+                            select: {
+                                role: true,
+                            },
+                        },
                     },
                 });
 
                 return reply.status(200).send({
                     message: 'Usuário atualizado com sucesso.',
-                    user: updatedUser,
+                    user: {
+                        id: updatedUser.id,
+                        name: updatedUser.name,
+                        email: updatedUser.email,
+                        username: updatedUser.username,
+                        role: updatedUser.member_on[0]?.role || 'STUDENT',
+                        updated_at: updatedUser.updated_at,
+                    },
                 });
             },
         );

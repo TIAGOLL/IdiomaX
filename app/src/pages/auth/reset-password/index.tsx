@@ -10,9 +10,9 @@ import { LoaderIcon, LockIcon } from 'lucide-react';
 import { resetPassword } from '@/services/auth/reset-password';
 import { toast } from 'sonner';
 import { useMutation } from '@tanstack/react-query';
-import { resetPasswordRequest } from '@idiomax/http-schemas/reset-password';
+import { ResetPasswordFormSchema } from '@idiomax/http-schemas/auth/reset-password';
 
-type ResetPasswordSchema = z.infer<typeof resetPasswordRequest>;
+type ResetPasswordSchema = z.infer<typeof ResetPasswordFormSchema>;
 
 export default function ResetPasswordPage() {
     const { token } = useParams();
@@ -23,7 +23,7 @@ export default function ResetPasswordPage() {
         handleSubmit,
         formState: { errors }
     } = useForm<ResetPasswordSchema>({
-        resolver: zodResolver(resetPasswordRequest),
+        resolver: zodResolver(ResetPasswordFormSchema),
         mode: 'all',
         criteriaMode: 'all',
         defaultValues: {

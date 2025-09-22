@@ -1,11 +1,10 @@
 import { api } from '../../lib/api';
 import { getCurrentCompanyId } from '../../lib/company-utils';
 import type {
-    getUserByEmailResponse
-} from '@idiomax/http-schemas/get-user-by-email';
-import type { z } from 'zod';
+    GetUserByEmailHttpResponse
+} from '@idiomax/http-schemas/users/get-user-by-email';
 
-export type GetStudentByEmailResponse = z.infer<typeof getUserByEmailResponse>;
+export type GetStudentByEmailResponse = GetUserByEmailHttpResponse;
 
 export async function getStudentByEmail(
     email: string

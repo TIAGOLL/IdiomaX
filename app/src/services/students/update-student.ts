@@ -1,13 +1,12 @@
 import { api } from '../../lib/api';
 import { getCurrentCompanyId } from '../../lib/company-utils';
 import type {
-    updateUserBody,
-    updateUserResponse
-} from '@idiomax/http-schemas/update-user';
-import type { z } from 'zod';
+    UpdateUserHttpRequest,
+    UpdateUserHttpResponse
+} from '@idiomax/http-schemas/users/update-user';
 
-export type UpdateStudentBody = z.infer<typeof updateUserBody>;
-export type UpdateStudentResponse = z.infer<typeof updateUserResponse>;
+export type UpdateStudentBody = UpdateUserHttpRequest;
+export type UpdateStudentResponse = UpdateUserHttpResponse;
 
 export async function updateStudent(
     body: UpdateStudentBody

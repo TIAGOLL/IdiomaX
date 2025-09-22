@@ -1,14 +1,13 @@
 import { api } from '../../lib/api';
 import { getCurrentCompanyId } from '../../lib/company-utils';
 import type {
-    updateUserPasswordBody,
-    updateUserPasswordResponse
-} from '@idiomax/http-schemas/update-user-password';
-import type { UserRole } from '@idiomax/http-schemas/get-users';
-import type { z } from 'zod';
+    UpdateUserPasswordHttpRequest,
+    UpdateUserPasswordHttpResponse
+} from '@idiomax/http-schemas/users/update-user-password';
+import type { UserRole } from '@idiomax/http-schemas/users/get-users';
 
-export type UpdateUserPasswordBody = z.infer<typeof updateUserPasswordBody>;
-export type UpdateUserPasswordResponse = z.infer<typeof updateUserPasswordResponse>;
+export type UpdateUserPasswordBody = UpdateUserPasswordHttpRequest;
+export type UpdateUserPasswordResponse = UpdateUserPasswordHttpResponse;
 
 export async function updateUserPassword(
     role: UserRole,

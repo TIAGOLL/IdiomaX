@@ -1,9 +1,8 @@
 import { api } from "@/lib/api";
 import { getCurrentCompanyId } from "@/lib/company-utils";
-import { getCompanyByIdResponse } from "@idiomax/http-schemas/get-company-by-id";
-import type z from "zod";
+import type { GetCompanyByIdHttpResponse } from "@idiomax/http-schemas/companies/get-company-by-id";
 
-type GetCompanyByIdResponse = z.infer<typeof getCompanyByIdResponse>;
+type GetCompanyByIdResponse = GetCompanyByIdHttpResponse;
 
 export async function getCompanyById() {
     const companyId = getCurrentCompanyId();

@@ -18,9 +18,9 @@ import { useForm } from 'react-hook-form';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
 import z from 'zod';
-import { passwordRecoverRequest } from '@idiomax/http-schemas/request-password-recover';
+import { RequestPasswordRecoverFormSchema } from '@idiomax/http-schemas/auth/request-password-recover';
 
-type RequestPasswordRecoverRequest = z.infer<typeof passwordRecoverRequest>;
+type RequestPasswordRecoverRequest = z.infer<typeof RequestPasswordRecoverFormSchema>;
 
 export function RequestPasswordRecoverForm() {
 
@@ -42,7 +42,7 @@ export function RequestPasswordRecoverForm() {
         handleSubmit,
         formState: { errors },
     } = useForm({
-        resolver: zodResolver(passwordRecoverRequest),
+        resolver: zodResolver(RequestPasswordRecoverFormSchema),
         mode: 'all',
         criteriaMode: 'all',
     });

@@ -4,7 +4,7 @@ import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { ForbiddenError } from "../_errors/forbidden-error";
 import { auth } from "../../../middlewares/auth";
 import { prisma } from "../../../lib/prisma";
-import { dashboardAdminRequest, dashboardAdminResponse } from "@idiomax/http-schemas/admin-dashboard";
+import { AdminDashboardApiRequestSchema, AdminDashboardApiResponseSchema } from "@idiomax/http-schemas/dashboard/admin-dashboard";
 
 export async function AdminDashboard(app: FastifyInstance) {
     app
@@ -17,26 +17,26 @@ export async function AdminDashboard(app: FastifyInstance) {
                     tags: ["Dashboard"],
                     summary: "Dashboard administrativa filtrada por empresa",
                     security: [{ bearerAuth: [] }],
-                    params: dashboardAdminRequest,
+                    params: AdminDashboardApiRequestSchema,
                     querystring: z.object({
                         receivablesCurveYear: z.number().min(2000).max(2100).default(new Date().getFullYear()),
                     }),
                     response: {
-                        200: dashboardAdminResponse,
+                        200: AdminDashboardApiResponseSchema,
                     },
                 },
             },
             async (request, reply) => {
                 const { receivablesCurveYear } = request.query
-                const { company } = request.params;
+                const { company_id } = request.params;
                 const userId = await request.getCurrentUserId();
-                console.log("User ID:", userId, "Company ID:", company);
+                console.log("User ID:", userId, "Company ID:", company_id);
 
                 // Verifica se o usuário é ADMIN na empresa
                 const member = await prisma.members.findFirst({
                     where: {
                         user_id: userId,
-                        company_id: company,
+                        company_id: company_id,
                         role: "ADMIN",
                     },
                 });
@@ -48,28 +48,28 @@ export async function AdminDashboard(app: FastifyInstance) {
                 const activeStudents = await prisma.users.count({
                     where: {
                         active: true,
-                        member_on: { some: { company_id: company, role: "STUDENT" } },
-                        registrations: { some: { companies_id: company, completed: false } },
+                        member_on: { some: { company_id: company_id, role: "STUDENT" } },
+                        registrations: { some: { companies_id: company_id, completed: false } },
                     },
                 });
                 const newRegistrations = await prisma.registrations.count({
                     where: {
                         start_date: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
-                        companies_id: company,
+                        companies_id: company_id,
                     },
                 });
                 const completedRegistrations = await prisma.registrations.count({
-                    where: { completed: true, companies_id: company },
+                    where: { completed: true, companies_id: company_id },
                 });
 
                 //locked registrations
                 const lockedRegistrations = await prisma.registrations.count({
-                    where: { locked: true, companies_id: company },
+                    where: { locked: true, companies_id: company_id },
                 });
 
                 // Ocupação média das turmas
                 const classes = await prisma.renamedclass.findMany({
-                    where: { courses: { companies_id: company } },
+                    where: { courses: { companies_id: company_id } },
                     include: { users_in_class: true, courses: true },
                 });
                 const classStats = classes.map(c => {
@@ -89,7 +89,7 @@ export async function AdminDashboard(app: FastifyInstance) {
 
                 // Assiduidade média por turma
                 const attendanceByClass = await prisma.renamedclass.findMany({
-                    where: { courses: { companies_id: company } },
+                    where: { courses: { companies_id: company_id } },
                     include: {
                         users_in_class: {
                             include: {
@@ -135,7 +135,7 @@ export async function AdminDashboard(app: FastifyInstance) {
                 // Carga horária de professores
                 const teachers = await prisma.users.findMany({
                     where: {
-                        member_on: { some: { company_id: company } },
+                        member_on: { some: { company_id: company_id } },
                         users_in_class: {
                             some: {
                                 teacher: true, class: {
@@ -174,7 +174,7 @@ export async function AdminDashboard(app: FastifyInstance) {
 
                 // Calendário de encontros (classes)
                 const classDays = await prisma.classes.findMany({
-                    where: { class: { courses: { companies_id: company } } },
+                    where: { class: { courses: { companies_id: company_id } } },
                     include: { class: true },
                 });
                 const classDaysList = classDays.map(cd => ({
@@ -198,7 +198,7 @@ export async function AdminDashboard(app: FastifyInstance) {
                 const monthlyFees = await prisma.monthly_fee.findMany({
                     where: {
                         registrations: {
-                            companies_id: company
+                            companies_id: company_id
                         }
                     },
                 });
@@ -283,7 +283,7 @@ export async function AdminDashboard(app: FastifyInstance) {
 
                 // Ticket médio por matrícula
                 const registrations = await prisma.registrations.findMany({
-                    where: { companies_id: company },
+                    where: { companies_id: company_id },
                 });
                 const avgTicket =
                     registrations.length

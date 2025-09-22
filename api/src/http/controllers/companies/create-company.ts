@@ -4,7 +4,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { auth } from '../../../middlewares/auth';
 import { prisma } from '../../../lib/prisma';
-import { createCompanyRequest, createCompanyResponse } from '@idiomax/http-schemas/create-company'
+import { CreateCompanyApiRequestSchema, CreateCompanyApiResponseSchema } from '@idiomax/http-schemas/companies/create-company'
 
 export async function createCompany(app: FastifyInstance) {
     app
@@ -18,9 +18,9 @@ export async function createCompany(app: FastifyInstance) {
                     summary: 'Criar uma nova instituição de ensino.',
                     security: [{ bearerAuth: [] }],
                     response: {
-                        201: createCompanyResponse,
+                        201: CreateCompanyApiResponseSchema,
                     },
-                    body: createCompanyRequest,
+                    body: CreateCompanyApiRequestSchema,
                 },
             },
             async (request, reply) => {

@@ -37,4 +37,4 @@ export type {
 } from './deactivate-user';
 
 // Role type
-export type { UserRole } from '@idiomax/http-schemas/get-users';
+export type { UserRole } from '@idiomax/http-schemas/users/get-users';

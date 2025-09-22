@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { checkMemberAccess } from '../../../lib/permissions';
-import { getUsersQuery, getUsersResponse } from '@idiomax/http-schemas/get-users';
+import { GetUsersApiRequestSchema, GetUsersApiResponseSchema } from '@idiomax/http-schemas/users/get-users';
 import { prisma } from '../../../lib/prisma';
 
 export async function getUsers(app: FastifyInstance) {
@@ -16,17 +16,17 @@ export async function getUsers(app: FastifyInstance) {
                     tags: ['Usuários'],
                     summary: 'Obter uma lista de usuários de uma empresa por role.',
                     security: [{ bearerAuth: [] }],
-                    querystring: getUsersQuery,
+                    querystring: GetUsersApiRequestSchema,
                     response: {
-                        200: getUsersResponse,
+                        200: GetUsersApiResponseSchema,
                     },
                 },
             },
             async (request, reply) => {
                 const userId = await request.getCurrentUserId();
-                const { companyId } = request.query;
+                const { company_id } = request.query;
 
-                const { company } = await checkMemberAccess(companyId, userId);
+                const { company } = await checkMemberAccess(company_id, userId);
 
                 const {
                     page = 1,
@@ -97,12 +97,32 @@ export async function getUsers(app: FastifyInstance) {
 
                 const totalPages = Math.ceil(totalCount / limit);
 
+                // Formatar dados dos usuários para incluir o role
+                const formattedUsers = users.map(user => ({
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    cpf: user.cpf,
+                    phone: user.phone,
+                    username: user.username,
+                    gender: user.gender,
+                    date_of_birth: user.date_of_birth,
+                    address: user.address,
+                    avatar_url: user.avatar_url,
+                    active: user.active,
+                    role: user.member_on.find(member => member.company_id === company.id)?.role || 'STUDENT',
+                    created_at: user.created_at,
+                    updated_at: user.updated_at,
+                }));
+
                 return reply.status(200).send({
-                    users,
-                    totalCount,
-                    page,
-                    limit,
-                    totalPages,
+                    users: formattedUsers,
+                    pagination: {
+                        total: totalCount,
+                        page,
+                        limit,
+                        pages: totalPages,
+                    },
                 });
             },
         );

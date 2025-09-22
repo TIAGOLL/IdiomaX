@@ -1,9 +1,8 @@
 import { api } from "@/lib/api";
 import { getCurrentCompanyId } from "@/lib/company-utils";
-import { dashboardAdminResponse } from "@idiomax/http-schemas/admin-dashboard";
-import type z from "zod";
+import type { AdminDashboardHttpResponseData } from "@idiomax/http-schemas/dashboard/admin-dashboard";
 
-type DashboardAdminResponse = z.infer<typeof dashboardAdminResponse>;
+type DashboardAdminResponse = AdminDashboardHttpResponseData;
 
 export async function getAdminDashboard() {
     const companyId = getCurrentCompanyId();

@@ -1,25 +1,24 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 import * as bcrypt from 'bcrypt';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { prisma } from '../../../lib/prisma';
-import { signInWithPasswordResponse, signInWithPasswordRequest } from '@idiomax/http-schemas/sign-in-with-password';
+import { SignInApiRequest, SignInApiResponse } from '@idiomax/http-schemas/auth/sign-in';
 
-export async function SignInWithPassword(app: FastifyInstance) {
+export async function SignIn(app: FastifyInstance) {
     app
         .withTypeProvider<ZodTypeProvider>()
         .post(
-            '/auth/sign-in-with-password',
+            '/auth/sign-in',
             {
                 schema: {
                     tags: ['Autenticação'],
                     summary: 'Realizar login com email e senha',
                     security: [{ bearerAuth: [] }],
                     response: {
-                        200: signInWithPasswordResponse,
+                        200: SignInApiResponse,
                     },
-                    body: signInWithPasswordRequest
+                    body: SignInApiRequest
                 },
             },
             async (request, reply) => {

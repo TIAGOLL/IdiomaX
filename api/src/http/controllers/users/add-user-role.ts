@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { checkMemberAccess } from '../../../lib/permissions';
-import { addUserRoleBody, addUserRoleResponse } from '@idiomax/http-schemas/add-user-role';
+import { AddUserRoleApiRequestSchema, AddUserRoleApiResponseSchema } from '@idiomax/http-schemas/users/add-user-role';
 import { prisma } from '../../../lib/prisma';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { UnauthorizedError } from '../_errors/unauthorized-error';
@@ -18,9 +18,9 @@ export async function addUserRole(app: FastifyInstance) {
                     tags: ['Usuários'],
                     summary: 'Adicionar role a um usuário na empresa.',
                     security: [{ bearerAuth: [] }],
-                    body: addUserRoleBody,
+                    body: AddUserRoleApiRequestSchema,
                     response: {
-                        200: addUserRoleResponse,
+                        200: AddUserRoleApiResponseSchema,
                     },
                 },
             },
@@ -58,7 +58,7 @@ export async function addUserRole(app: FastifyInstance) {
                 }
 
                 // Adicionar a role
-                await prisma.members.create({
+                const newMember = await prisma.members.create({
                     data: {
                         user_id: targetUserId,
                         company_id: company.id,
@@ -69,6 +69,13 @@ export async function addUserRole(app: FastifyInstance) {
 
                 return reply.status(200).send({
                     message: `Role ${role} adicionada com sucesso.`,
+                    member: {
+                        id: newMember.id,
+                        role: newMember.role,
+                        company_id: newMember.company_id,
+                        user_id: newMember.user_id,
+                        created_at: newMember.created_at,
+                    },
                 });
             },
         );

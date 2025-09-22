@@ -9,16 +9,19 @@ import { PasswordGenerator, UserGenerator } from '@/lib/utils';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
-import { createUserWithRoleRequest, type CreateUserWithRoleRequest } from '@idiomax/http-schemas/create-user-with-role';
+import { CreateUserFormSchema } from '@idiomax/http-schemas/users/create-user';
 import { FormMessageError } from '@/components/ui/form-message-error';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { z } from 'zod';
+
+type CreateUserRequest = z.infer<typeof CreateUserFormSchema>;
 
 export function CreateUser() {
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async (data: CreateUserWithRoleRequest) => {
+        mutationFn: async (data: CreateUserRequest) => {
             // TODO: Implementar criação de usuário quando o endpoint estiver disponível
             console.log("Dados para criação:", data);
             // Simular sucesso por enquanto
@@ -42,19 +45,22 @@ export function CreateUser() {
         watch,
         setValue,
         control
-    } = useForm<CreateUserWithRoleRequest>({
-        resolver: zodResolver(createUserWithRoleRequest) as Resolver<CreateUserWithRoleRequest>,
+    } = useForm<CreateUserRequest>({
+        resolver: zodResolver(CreateUserFormSchema) as Resolver<CreateUserRequest>,
         mode: "all",
         criteriaMode: "all",
     });
 
-    const dateOfBirth = watch('date_of_birth');
+    const dateOfBirth = watch('dateOfBirth');
     const selectedRole = watch('role');
+    const userName = watch('name');
 
     useEffect(() => {
-        setValue("password", PasswordGenerator(dateOfBirth, watch('name')?.toLowerCase()))
-        setValue("username", UserGenerator(dateOfBirth, watch('name')?.toLowerCase()))
-    }, [dateOfBirth, setValue, watch])
+        if (dateOfBirth && userName) {
+            setValue("password", PasswordGenerator(dateOfBirth, userName.toLowerCase()))
+            setValue("username", UserGenerator(dateOfBirth, userName.toLowerCase()))
+        }
+    }, [dateOfBirth, userName, setValue])
 
     // Função para obter o título baseado na role
     const getRoleTitle = (role: string | undefined) => {
@@ -167,13 +173,13 @@ export function CreateUser() {
                             <div className="col-span-1 space-y-1">
                                 <Label htmlFor='date_of_birth'>Data de nascimento</Label>
                                 <Controller
-                                    name="date_of_birth"
+                                    name="dateOfBirth"
                                     control={control}
                                     render={({ field }) => (
                                         <Input
                                             type='date'
                                             id='date_of_birth'
-                                            value={field.value ? field.value.toISOString().split('T')[0] : ''}
+                                            value={field.value instanceof Date ? field.value.toISOString().split('T')[0] : ''}
                                             onChange={(e) => {
                                                 const dateValue = e.target.value ? new Date(e.target.value) : undefined;
                                                 field.onChange(dateValue);
@@ -181,7 +187,7 @@ export function CreateUser() {
                                         />
                                     )}
                                 />
-                                <FormMessageError error={errors.date_of_birth?.message} />
+                                <FormMessageError error={errors.dateOfBirth?.message} />
                             </div>
                             <div className="col-span-1 space-y-1">
                                 <Label htmlFor='address'>Endereço</Label>
@@ -194,7 +200,7 @@ export function CreateUser() {
                                     type='text'
                                     id='username'
                                     placeholder="Nome de usuário"
-                                    value={UserGenerator(dateOfBirth, watch('name')?.toLowerCase())}
+                                    value={UserGenerator(dateOfBirth, userName?.toLowerCase())}
                                     {...register('username')}
                                 />
                                 <FormMessageError error={errors.username?.message} />
@@ -205,7 +211,7 @@ export function CreateUser() {
                                     type='text'
                                     id='password'
                                     placeholder="Senha gerada automaticamente"
-                                    value={PasswordGenerator(dateOfBirth, watch('name')?.toLowerCase())}
+                                    value={PasswordGenerator(dateOfBirth, userName?.toLowerCase())}
                                     {...register('password')}
                                 />
                             </div>

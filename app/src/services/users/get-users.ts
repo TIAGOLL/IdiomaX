@@ -1,14 +1,13 @@
 import { api } from '../../lib/api';
 import { getCurrentCompanyId } from '../../lib/company-utils';
 import type {
-    getUsersQuery,
-    getUsersResponse,
+    GetUsersHttpRequest,
+    GetUsersHttpResponse,
     UserRole
-} from '@idiomax/http-schemas/get-users';
-import type { z } from 'zod';
+} from '@idiomax/http-schemas/users/get-users';
 
-export type GetUsersQuery = z.infer<typeof getUsersQuery>;
-export type GetUsersResponse = z.infer<typeof getUsersResponse>;
+export type GetUsersQuery = GetUsersHttpRequest;
+export type GetUsersResponse = GetUsersHttpResponse;
 
 export async function getUsers(
     role?: UserRole,

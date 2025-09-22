@@ -4,7 +4,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { stripe } from '../../../lib/stripe';
 import { env } from '../../server';
-import { createCheckoutSessionRequest, createCheckoutSessionResponse } from '@idiomax/http-schemas/create-checkout-session';
+import { CreateCheckoutSessionApiRequestSchema, CreateCheckoutSessionApiResponseSchema } from '@idiomax/http-schemas/subscriptions/create-checkout-session';
 import { prisma } from '../../../lib/prisma';
 
 export async function CreateCheckoutSession(app: FastifyInstance) {
@@ -19,9 +19,9 @@ export async function CreateCheckoutSession(app: FastifyInstance) {
                     summary: 'Criar uma sessão de checkout para um plano de assinatura',
                     security: [{ bearerAuth: [] }],
                     response: {
-                        201: createCheckoutSessionResponse
+                        201: CreateCheckoutSessionApiResponseSchema
                     },
-                    body: createCheckoutSessionRequest
+                    body: CreateCheckoutSessionApiRequestSchema
                 },
             },
             async (request, reply) => {
@@ -33,15 +33,15 @@ export async function CreateCheckoutSession(app: FastifyInstance) {
                 // Pagamento recusado
                 // 4000 0000 0000 9995
 
-                const { productId, companyId } = request.body;
+                const { price_id, company_id } = request.body;
 
                 const data = await prisma.stripeCompanyCustomer.findFirst({
-                    where: { company_id: companyId },
+                    where: { company_id: company_id },
                     select: { stripe_customer_id: true }
                 })
 
                 const prices = await stripe.prices.list({
-                    product: productId,
+                    product: price_id,
                     expand: ['data.product'],
                 });
 
@@ -59,6 +59,9 @@ export async function CreateCheckoutSession(app: FastifyInstance) {
                     cancel_url: `${env.data.WEB_URL}?canceled=true`,
                 })
 
-                reply.status(201).send({ url: session.url });
+                reply.status(201).send({ 
+                    checkout_url: session.url!, 
+                    session_id: session.id 
+                });
             })
 }

@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { checkMemberAccess } from '../../../lib/permissions';
-import { deactivateUserBody, deactivateUserResponse } from '@idiomax/http-schemas/deactivate-user';
+import { DeactivateUserApiRequestSchema, DeactivateUserApiResponseSchema } from '@idiomax/http-schemas/users/deactivate-user';
 import { prisma } from '../../../lib/prisma';
 import { BadRequestError } from '../_errors/bad-request-error';
 
@@ -17,9 +17,9 @@ export async function deactivateUser(app: FastifyInstance) {
                     tags: ['Usuários'],
                     summary: 'Ativar ou desativar um usuário via body.',
                     security: [{ bearerAuth: [] }],
-                    body: deactivateUserBody,
+                    body: DeactivateUserApiRequestSchema,
                     response: {
-                        200: deactivateUserResponse,
+                        200: DeactivateUserApiResponseSchema,
                     },
                 },
             },
@@ -47,7 +47,7 @@ export async function deactivateUser(app: FastifyInstance) {
                 }
 
                 // Ativar ou desativar o usuário
-                await prisma.users.update({
+                const updatedUser = await prisma.users.update({
                     where: { id: targetUserId },
                     data: {
                         active: active,
@@ -58,6 +58,11 @@ export async function deactivateUser(app: FastifyInstance) {
 
                 return reply.status(200).send({
                     message: active ? 'Usuário ativado com sucesso.' : 'Usuário desativado com sucesso.',
+                    user: {
+                        id: updatedUser.id,
+                        name: updatedUser.name,
+                        active: updatedUser.active,
+                    },
                 });
             },
         );

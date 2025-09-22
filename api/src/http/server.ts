@@ -11,8 +11,8 @@ import {
 } from 'fastify-type-provider-zod'
 import z from 'zod'
 import * as dotenv from 'dotenv'
-import { SignInWithPassword } from './controllers/auth/sign-in-with-password'
-import { SignUpWithPassword } from './controllers/auth/sign-up-with-password'
+import { SignIn } from './controllers/auth/sign-in-with-password'
+import { SignUp } from './controllers/auth/sign-up-with-password'
 import { requestPasswordRecover } from './controllers/auth/request-password-recover'
 import { getUserProfile } from './controllers/users/get-user-profile'
 import { resetPassword } from './controllers/auth/reset-password'
@@ -99,8 +99,8 @@ app.register(fastifyCors, {
 
 
 //routes
-app.register(SignInWithPassword);
-app.register(SignUpWithPassword);
+app.register(SignIn);
+app.register(SignUp);
 app.register(requestPasswordRecover);
 app.register(getUserProfile);
 app.register(resetPassword);

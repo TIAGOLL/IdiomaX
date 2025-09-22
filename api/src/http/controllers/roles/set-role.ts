@@ -1,11 +1,10 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 
 import { UnauthorizedError } from '../_errors/unauthorized-error';
 import { auth } from '../../../middlewares/auth';
 import { prisma } from '../../../lib/prisma';
-import { setRoleRequest, setRoleResponse, } from '@idiomax/http-schemas/set-role'
+import { SetRoleApiRequestSchema, SetRoleApiResponseSchema } from '@idiomax/http-schemas/users/set-role'
 
 export async function setRole(app: FastifyInstance) {
     app
@@ -19,29 +18,21 @@ export async function setRole(app: FastifyInstance) {
                     summary: 'Atribuir roles a um usuário',
                     security: [{ bearerAuth: [] }],
                     response: {
-                        200: setRoleResponse,
+                        200: SetRoleApiResponseSchema,
                     },
-                    body: setRoleRequest
+                    body: SetRoleApiRequestSchema
                 },
             },
             async (request, reply) => {
-                const { role_id, user_id, } = request.body;
+                const { role, user_id, company_id } = request.body;
                 const userIdReq = await request.getCurrentUserId();
 
                 // verifica se o usuário requisitante está na msm empresa solicitada e se ele é ADMIN
-                const userIsAdmin = await prisma.users.findFirst({
+                const userIsAdmin = await prisma.members.findFirst({
                     where: {
-                        id: userIdReq,
-                        companies: {
-                            some: {
-                                members: {
-                                    some: {
-                                        user_id: userIdReq,
-                                        role: "ADMIN"
-                                    }
-                                }
-                            }
-                        }
+                        user_id: userIdReq,
+                        company_id: company_id,
+                        role: "ADMIN"
                     }
                 })
 
@@ -49,14 +40,15 @@ export async function setRole(app: FastifyInstance) {
                     throw new UnauthorizedError();
                 }
 
-                await prisma.users.update({
+                await prisma.members.update({
                     where: {
-                        id: user_id
+                        company_id_user_id: {
+                            company_id: company_id,
+                            user_id: user_id
+                        }
                     },
                     data: {
-                        role: {
-                            connect: { id: role_id }
-                        }
+                        role: role
                     }
                 });
 

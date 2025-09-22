@@ -12,7 +12,7 @@ import type {
     DeleteUserResponse,
     DeactivateUserResponse
 } from '../users';
-import type { AdminUpdateStudentPasswordBody } from '@idiomax/http-schemas/admin-update-student-password';
+import type { AdminUpdateStudentPasswordFormData } from '@idiomax/http-schemas/students/admin-update-student-password';
 import { getCurrentCompanyId } from '@/lib/company-utils';
 
 // Aliases para manter compatibilidade
@@ -54,7 +54,7 @@ export async function updateStudentPassword(
 
 export async function adminUpdateStudentPassword(
     studentId: string,
-    body: AdminUpdateStudentPasswordBody
+    body: AdminUpdateStudentPasswordFormData
 ): Promise<{ message: string }> {
     const companyId = getCurrentCompanyId();
     if (!companyId) {

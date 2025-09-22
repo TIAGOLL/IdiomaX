@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { checkMemberAccess } from '../../../lib/permissions';
-import { removeUserRoleBody, removeUserRoleResponse } from '@idiomax/http-schemas/remove-user-role';
+import { RemoveUserRoleApiRequestSchema, RemoveUserRoleApiResponseSchema } from '@idiomax/http-schemas/users/remove-user-role';
 import { prisma } from '../../../lib/prisma';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { UnauthorizedError } from '../_errors/unauthorized-error';
@@ -18,9 +18,9 @@ export async function removeUserRole(app: FastifyInstance) {
                     tags: ['Usuários'],
                     summary: 'Remover role de um usuário na empresa.',
                     security: [{ bearerAuth: [] }],
-                    body: removeUserRoleBody,
+                    body: RemoveUserRoleApiRequestSchema,
                     response: {
-                        200: removeUserRoleResponse,
+                        200: RemoveUserRoleApiResponseSchema,
                     },
                 },
             },

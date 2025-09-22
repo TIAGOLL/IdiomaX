@@ -1,10 +1,9 @@
 import { api } from "@/lib/api";
-import z from "zod";
-import { createCheckoutSessionRequest, createCheckoutSessionResponse } from "@idiomax/http-schemas/create-checkout-session";
+import type { CreateCheckoutSessionHttpRequest, CreateCheckoutSessionHttpResponse } from "@idiomax/http-schemas/subscriptions/create-checkout-session";
 
-type CreateCheckoutSessionResponse = z.infer<typeof createCheckoutSessionResponse>;
+type CreateCheckoutSessionResponse = CreateCheckoutSessionHttpResponse;
 
-type CreateCheckoutSessionRequest = z.infer<typeof createCheckoutSessionRequest>;
+type CreateCheckoutSessionRequest = CreateCheckoutSessionHttpRequest;
 
 export async function createCheckoutSession(data: CreateCheckoutSessionRequest) {
     const response = await api.post(

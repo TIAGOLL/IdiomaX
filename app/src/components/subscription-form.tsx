@@ -2,32 +2,28 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
 import { createCheckoutSession } from "@/services/stripe/create-checkou-service";
-import { createCheckoutSessionRequest } from '@idiomax/http-schemas/create-checkout-session';
+import { CreateCheckoutSessionFormSchema } from '@idiomax/http-schemas/subscriptions/create-checkout-session';
 import type z from "zod";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
-import { useNavigate } from "react-router";
 import { getProducts } from "@/services/stripe/get-products";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { LoaderIcon } from "lucide-react";
 import { useSessionContext } from "@/contexts/session-context";
 
-type CreateCheckoutSessionRequest = z.infer<typeof createCheckoutSessionRequest>;
+type CreateCheckoutSessionFormData = z.infer<typeof CreateCheckoutSessionFormSchema>;
 
 export function SubscriptionForm() {
-
-    const navigate = useNavigate();
-
-    const { getCompanyId } = useSessionContext();
+    const { getCompanyId, userProfile } = useSessionContext();
+    const [selectedPriceId, setSelectedPriceId] = useState<string>("");
 
     const {
         handleSubmit,
         setValue,
-        watch,
-    } = useForm<CreateCheckoutSessionRequest>({
-        resolver: zodResolver(createCheckoutSessionRequest),
+    } = useForm<CreateCheckoutSessionFormData>({
+        resolver: zodResolver(CreateCheckoutSessionFormSchema),
         mode: 'all',
         criteriaMode: 'all',
     });
@@ -39,100 +35,116 @@ export function SubscriptionForm() {
     });
 
     const { mutate, isPending: isMutating } = useMutation({
-        mutationFn: async ({ productId, companyId }: CreateCheckoutSessionRequest) => {
-            const response = await createCheckoutSession({ productId, companyId });
+        mutationFn: async ({ priceId }: CreateCheckoutSessionFormData) => {
+            const response = await createCheckoutSession({
+                price_id: priceId,
+                company_id: getCompanyId() || "",
+                user_id: userProfile?.id || "",
+                mode: "subscription"
+            });
             return response;
         },
         onSuccess: async (res) => {
-            window.location.href = res.url;
+            window.location.href = res.checkout_url;
         },
         onError: (err) => {
             toast.error(err.message);
-        }
+        },
     });
 
+    const onSubmit = (data: CreateCheckoutSessionFormData) => {
+        mutate(data);
+    };
+
     useEffect(() => {
-        setValue("productId", products?.[0]?.id || "");
-        setValue("companyId", getCompanyId() || "");
-    }, [navigate, products, getCompanyId, setValue]);
+        if (products && products.length > 0 && products[0].prices.length > 0) {
+            const firstPriceId = products[0].prices[0].id;
+            setValue("priceId", firstPriceId);
+            setSelectedPriceId(firstPriceId);
+        }
+    }, [products, setValue]);
+
+    if (isLoadingProducts) {
+        return (
+            <div className="flex justify-center items-center min-h-[400px]">
+                <LoaderIcon className="animate-spin" size={32} />
+            </div>
+        );
+    }
 
     return (
-        <div className="bg-card border border-slate-200/10 rounded-xl shadow-lg p-8 flex flex-col items-center w-">
-            <div className="mb-4 flex flex-col items-center">
-                <img src="/images/logo.png" className='size-14' alt="" />
-                <h2 className="text-2xl font-bold text-foreground mb-1">Assinatura necessária</h2>
-                <p className="text-muted-foreground text-center text-sm">
-                    Renove sua assinatura para continuar aproveitando todos os recursos.
-                </p>
-            </div>
-            <form className="w-full mt-6" onSubmit={handleSubmit((data) => mutate(data))}>
-                <div className="flex flex-wrap gap-4 items-center justify-center">
-                    {products?.map((product) => (
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {products?.map((product) => (
+                    product.prices.map((price) => (
                         <Card
-                            key={product.id}
-                            className={`w-80 cursor-pointer min-h-72 flex flex-col transition-all ${product.id === watch("productId") ? "ring-2 ring-primary" : "hover:ring-1"}`}
-                            onClick={() => setValue("productId", product.id)}
-                            tabIndex={0}
-                            role="button"
+                            key={price.id}
+                            className={`cursor-pointer transition-all ${price.id === selectedPriceId ? "ring-2 ring-primary" : "hover:ring-1"
+                                }`}
+                            onClick={() => {
+                                setValue("priceId", price.id);
+                                setSelectedPriceId(price.id);
+                            }}
                         >
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
+                                <CardTitle className="flex items-center justify-between">
                                     {product.name}
-                                    {product.description?.toLowerCase().includes("desconto") && (
-                                        <span className="ml-2 px-2 py-0.5 rounded bg-primary text-white text-xs font-semibold">Desconto</span>
+                                    {price.recurring?.interval === "year" && (
+                                        <Badge variant="secondary">Anual</Badge>
                                     )}
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="flex-1 flex flex-col">
-                                <div className="text-3xl font-bold mb-1">
-                                    {product.prices[0]?.unit_amount
-                                        ? `R$ ${(Number(product.prices[0].unit_amount) / 100).toFixed(2)}`
-                                        : "--"}
-                                    <span className="text-base font-normal text-muted-foreground">
-                                        {product.prices[0]?.interval === "year" ? " /ano" : " /mês"}
+                            <CardContent>
+                                <div className="text-3xl font-bold">
+                                    R$ {(price.unit_amount / 100).toFixed(2)}
+                                    <span className="text-sm font-normal text-muted-foreground">
+                                        {price.recurring?.interval === "year" ? " /ano" : " /mês"}
                                     </span>
                                 </div>
-                                <div className="text-muted-foreground">
-                                    {product.description?.toLowerCase().includes("10%") && (
-                                        <Badge>
-                                            10% de desconto
+                                <p className="text-sm text-muted-foreground mt-2">
+                                    {product.description}
+                                </p>
+                                {price.recurring?.interval === "year" && (
+                                    <div className="mt-4">
+                                        <Badge variant="outline" className="text-green-600">
+                                            Economize 20%
                                         </Badge>
-                                    )}
-                                </div>
-                                {product.prices[0]?.interval === "year" && (
-                                    <div className="mt-4 text-sm">
-                                        <span className="font-semibold">Parcelamento:</span>
-                                        <div className="mt-1">
-                                            {product.prices[0]?.unit_amount && (
-                                                <span className="text-xs">
-                                                    Até 12x de R$ {(Number(product.prices[0].unit_amount) / 100 / 12).toFixed(2)}
-                                                </span>
-                                            )}
-                                        </div>
                                     </div>
                                 )}
                             </CardContent>
-                            <CardFooter className="mt-auto">
+                            <CardFooter>
                                 <Button
                                     type="button"
-                                    variant={product.id === watch("productId") ? "default" : "outline"}
                                     className="w-full"
-                                    onClick={() => setValue("productId", product.id)}
+                                    variant={price.id === selectedPriceId ? "default" : "outline"}
+                                    onClick={() => {
+                                        setValue("priceId", price.id);
+                                        setSelectedPriceId(price.id);
+                                    }}
                                 >
-                                    Selecionar
+                                    {price.id === selectedPriceId ? "Selecionado" : "Selecionar"}
                                 </Button>
                             </CardFooter>
                         </Card>
-                    ))}
-                </div>
-                <Button className='w-full mt-6' type="submit" disabled={isMutating || isLoadingProducts || !watch("productId")}>
-                    {isMutating ? "Indo para o pagamento..." : "Assinar agora"}
-                    {isMutating && <LoaderIcon className="animate-spin" />}
-                </Button>
-                <p className="text-xs text-muted-foreground text-center mt-3">
-                    Precisa de ajuda? <a href="/contato" className="underline hover:text-primary">Fale conosco</a>
-                </p>
-            </form>
-        </div>
+                    ))
+                ))}
+            </div>
+
+            <Button
+                className='w-full mt-6'
+                type="submit"
+                disabled={isMutating || isLoadingProducts || !selectedPriceId}
+                size="lg"
+            >
+                {isMutating ? (
+                    <>
+                        <LoaderIcon className="animate-spin mr-2" size={16} />
+                        Processando...
+                    </>
+                ) : (
+                    "Assinar Plano"
+                )}
+            </Button>
+        </form>
     );
 }

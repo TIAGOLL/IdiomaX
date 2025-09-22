@@ -1,9 +1,8 @@
 import { api } from "@/lib/api";
-import z from "zod";
-import { unsubscribeResponse, unsubscribeRequest } from "@idiomax/http-schemas/unsubscribe";
+import type { UnsubscribeHttpResponse, UnsubscribeHttpRequest } from "@idiomax/http-schemas/subscriptions/unsubscribe";
 
-type UnsubscribeResponse = z.infer<typeof unsubscribeResponse>;
-type UnsubscribeRequest = z.infer<typeof unsubscribeRequest>;
+type UnsubscribeResponse = UnsubscribeHttpResponse;
+type UnsubscribeRequest = UnsubscribeHttpRequest;
 
 export async function Unsubscribe(data: UnsubscribeRequest) {
     const response = await api.post(

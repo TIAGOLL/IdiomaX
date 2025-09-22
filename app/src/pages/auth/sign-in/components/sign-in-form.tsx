@@ -20,15 +20,15 @@ import { toast } from 'sonner';
 import nookies from 'nookies';
 import { getUserProfile } from '@/services/users/get-user-profile';
 import { useNavigate } from 'react-router';
-import { signInWithPassword } from '@/services/auth/sign-in-with-password';
-import { signInWithPasswordRequest } from '@idiomax/http-schemas/sign-in-with-password';
+import { signIn } from '@/services/auth/sign-in';
+import { SignInFormSchema } from '@idiomax/http-schemas/auth/sign-in';
 
-type SignInWithPasswordRequest = z.infer<typeof signInWithPasswordRequest>;
+type SignInRequest = z.infer<typeof SignInFormSchema>;
 
 export function SignInForm() {
   const navigate = useNavigate();
   const { mutate, isPending } = useMutation({
-    mutationFn: async (data: SignInWithPasswordRequest) => await signInWithPassword(data),
+    mutationFn: async (data: SignInRequest) => await signIn(data),
     onSuccess: async (res) => {
       nookies.set(null, "token", res.token, {
         path: '/',
@@ -55,7 +55,7 @@ export function SignInForm() {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(signInWithPasswordRequest),
+    resolver: zodResolver(SignInFormSchema),
     mode: 'all',
     criteriaMode: 'all',
     defaultValues: {

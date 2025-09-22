@@ -4,7 +4,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { auth } from '../../../middlewares/auth';
 import { prisma } from '../../../lib/prisma';
-import { putCompanyRequest, putCompanyResponse } from '@idiomax/http-schemas/put-company';
+import { UpdateCompanyApiRequestSchema, UpdateCompanyApiResponseSchema } from '@idiomax/http-schemas/companies/update-company';
 import { ForbiddenError } from '../_errors/forbidden-error';
 
 export async function putCompany(app: FastifyInstance) {
@@ -19,30 +19,16 @@ export async function putCompany(app: FastifyInstance) {
                     summary: 'Atualizar uma instituição de ensino.',
                     security: [{ bearerAuth: [] }],
                     response: {
-                        200: putCompanyResponse,
+                        200: UpdateCompanyApiResponseSchema,
                     },
-                    body: putCompanyRequest,
+                    body: UpdateCompanyApiRequestSchema,
                 },
             },
             async (request, reply) => {
-                const { id, name, address, cnpj, phone, email, logo_16x16_url, logo_512x512_url, social_reason, state_registration, tax_regime, } = request.body;
+                const { id, name, phone, address } = request.body;
                 const userId = await request.getCurrentUserId()
 
-                if (email) {
-                    const companyAlreadyExistsByEmail = await prisma.companies.findFirst({
-                        where: {
-                            email: email,
-                            NOT: {
-                                id: id, 
-                            },
-                        },
-                    });
-
-                    if (companyAlreadyExistsByEmail) {
-                        throw new BadRequestError('Já existe uma instituição com esse e-mail.');
-                    }
-                }
-
+                // Verificar se o usuário é admin da empresa
                 const userAdminInCompany = await prisma.members.findFirst({
                     where: {
                         user_id: userId,
@@ -69,26 +55,29 @@ export async function putCompany(app: FastifyInstance) {
                 }
 
 
-                await prisma.companies.update({
+                const updatedCompany = await prisma.companies.update({
                     where: {
                         id: id,
                     },
                     data: {
                         name,
-                        address,
-                        cnpj,
                         phone,
-                        email,
-                        logo_16x16_url,
-                        logo_512x512_url,
-                        social_reason,
-                        state_registration,
-                        tax_regime,
+                        address,
                     },
                 });
 
                 return reply.status(200).send({
                     message: 'Instituição atualizada com sucesso.',
+                    company: {
+                        id: updatedCompany.id,
+                        name: updatedCompany.name,
+                        description: null,
+                        website: null,
+                        phone: updatedCompany.phone,
+                        address: updatedCompany.address,
+                        logo_url: null,
+                        updated_at: updatedCompany.updated_at,
+                    }
                 });
             },
         );

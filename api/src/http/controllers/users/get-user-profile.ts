@@ -3,7 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { prisma } from '../../../lib/prisma';
 import { auth } from '../../../middlewares/auth';
-import { getUserProfileResponse } from '@idiomax/http-schemas/get-user-profile'
+import { GetProfileApiResponse } from '@idiomax/http-schemas/auth/get-profile'
 import { UnauthorizedError } from '../_errors/unauthorized-error';
 
 export async function getUserProfile(app: FastifyInstance) {
@@ -18,7 +18,7 @@ export async function getUserProfile(app: FastifyInstance) {
                     summary: 'Resgatar perfil do usuário',
                     security: [{ bearerAuth: [] }],
                     response: {
-                        200: getUserProfileResponse
+                        200: GetProfileApiResponse
                     },
                 },
             },
@@ -40,7 +40,20 @@ export async function getUserProfile(app: FastifyInstance) {
                     throw new UnauthorizedError("Sessão expirada. Faça login novamente.");
                 }
 
-                reply.status(200).send(userProfile);
+                // Converter gender do Prisma (M/F) para o formato esperado pelo schema
+                const convertGender = (gender: 'M' | 'F' | null): 'MASCULINO' | 'FEMININO' | 'OUTRO' | null => {
+                    if (!gender) return null;
+                    switch (gender) {
+                        case 'M': return 'MASCULINO';
+                        case 'F': return 'FEMININO';
+                        default: return 'OUTRO';
+                    }
+                };
+
+                reply.status(200).send({
+                    ...userProfile,
+                    gender: convertGender(userProfile.gender),
+                });
             },
         );
 }

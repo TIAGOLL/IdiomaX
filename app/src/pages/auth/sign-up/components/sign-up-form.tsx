@@ -19,17 +19,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useNavigate } from 'react-router';
 import nookies from 'nookies';
-import { signUpWithPassword } from '@/services/auth/sign-up-with-password';
-import { signUpWithPasswordRequest } from '@idiomax/http-schemas/sign-up-with-password';
+import { signUp } from '@/services/auth/sign-up';
+import { SignUpFormSchema } from '@idiomax/http-schemas/auth/sign-up';
 import type z from 'zod';
 
-type SignUpWithPasswordRequest = z.infer<typeof signUpWithPasswordRequest>;
+type SignUpRequest = z.infer<typeof SignUpFormSchema>;
 
 export function SignUpForm() {
     const navigate = useNavigate();
     const { mutate, isPending } = useMutation({
-        mutationFn: async (data: SignUpWithPasswordRequest) => {
-            const response = await signUpWithPassword(data);
+        mutationFn: async (data: SignUpRequest) => {
+            const response = await signUp(data);
             return response;
         },
         onSuccess: (res) => {
@@ -53,7 +53,7 @@ export function SignUpForm() {
         watch,
         setValue
     } = useForm({
-        resolver: zodResolver(signUpWithPasswordRequest),
+        resolver: zodResolver(SignUpFormSchema),
         mode: 'all',
         criteriaMode: 'all',
         defaultValues: {

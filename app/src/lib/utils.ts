@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { getUsers } from "@/services/users/get-users"
 import { getUserByEmail } from "@/services/users/get-user-by-email"
-import type { UserRole } from "@idiomax/http-schemas/get-users"
+import type { UserRole } from "@idiomax/http-schemas/users/get-users"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
