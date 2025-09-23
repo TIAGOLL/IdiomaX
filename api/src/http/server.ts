@@ -11,8 +11,8 @@ import {
 } from 'fastify-type-provider-zod'
 import z from 'zod'
 import * as dotenv from 'dotenv'
-import { SignIn } from './controllers/auth/sign-in-with-password'
-import { SignUp } from './controllers/auth/sign-up-with-password'
+import { SignIn } from './controllers/auth/sign-in'
+import { SignUp } from './controllers/auth/sign-up'
 import { requestPasswordRecover } from './controllers/auth/request-password-recover'
 import { getUserProfile } from './controllers/users/get-user-profile'
 import { resetPassword } from './controllers/auth/reset-password'
@@ -44,6 +44,7 @@ import { deactivateUser } from './controllers/users/deactivate-user'
 import { addUserRole } from './controllers/users/add-user-role'
 import { removeUserRole } from './controllers/users/remove-user-role'
 import { updateUserRole } from './controllers/users/update-user-role'
+import { createUser } from './controllers/users/create-user'
 
 dotenv.config()
 
@@ -129,6 +130,7 @@ app.register(deactivateUser);
 app.register(addUserRole);
 app.register(removeUserRole);
 app.register(updateUserRole);
+app.register(createUser);
 
 
 if (process.env.VERCEL !== "1") {

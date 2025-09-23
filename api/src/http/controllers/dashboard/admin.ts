@@ -1,36 +1,32 @@
 import { FastifyInstance } from "fastify";
-import { z } from "zod";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { ForbiddenError } from "../_errors/forbidden-error";
 import { auth } from "../../../middlewares/auth";
 import { prisma } from "../../../lib/prisma";
-import { AdminDashboardApiRequestSchema, AdminDashboardApiResponseSchema } from "@idiomax/http-schemas/dashboard/admin-dashboard";
+import { AdminDashboardApiRequestSchema, AdminDashboardApiResponseSchema } from "@idiomax/http-schemas/dashboard";
+
 
 export async function AdminDashboard(app: FastifyInstance) {
     app
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .get(
-            "/admin-dashboard/:company",
+            "/admin-dashboard/:company_id",
             {
                 schema: {
                     tags: ["Dashboard"],
                     summary: "Dashboard administrativa filtrada por empresa",
                     security: [{ bearerAuth: [] }],
                     params: AdminDashboardApiRequestSchema,
-                    querystring: z.object({
-                        receivablesCurveYear: z.number().min(2000).max(2100).default(new Date().getFullYear()),
-                    }),
                     response: {
                         200: AdminDashboardApiResponseSchema,
                     },
                 },
             },
             async (request, reply) => {
-                const { receivablesCurveYear } = request.query
+                const receivablesCurveYear = new Date().getFullYear().toString();
                 const { company_id } = request.params;
                 const userId = await request.getCurrentUserId();
-                console.log("User ID:", userId, "Company ID:", company_id);
 
                 // Verifica se o usuário é ADMIN na empresa
                 const member = await prisma.members.findFirst({

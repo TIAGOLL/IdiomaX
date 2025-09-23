@@ -33,7 +33,7 @@ export async function CreateCheckoutSession(app: FastifyInstance) {
                 // Pagamento recusado
                 // 4000 0000 0000 9995
 
-                const { price_id, company_id } = request.body;
+                const { prod_id, company_id } = request.body;
 
                 const data = await prisma.stripeCompanyCustomer.findFirst({
                     where: { company_id: company_id },
@@ -41,7 +41,7 @@ export async function CreateCheckoutSession(app: FastifyInstance) {
                 })
 
                 const prices = await stripe.prices.list({
-                    product: price_id,
+                    product: prod_id,
                     expand: ['data.product'],
                 });
 

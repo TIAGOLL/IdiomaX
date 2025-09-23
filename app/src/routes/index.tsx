@@ -6,7 +6,7 @@ import { DashboardPage } from '@/pages/dashboard';
 import { SignUpPage } from '@/pages/auth/sign-up';
 import ProfilePage from '@/pages/profile';
 import { CreateCompanyPage } from '@/pages/subscription/create-company';
-import SelectPlanPage from '@/pages/subscription/select-plan';
+import { SelectPlanPage } from '@/pages/subscription/select-plan';
 import ResetPasswordPage from '@/pages/auth/reset-password';
 import { PaidRoute } from './paid-route';
 import CongratulationsPage from '@/pages/subscription/congratulations';

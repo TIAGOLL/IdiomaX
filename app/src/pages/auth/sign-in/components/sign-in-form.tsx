@@ -60,7 +60,7 @@ export function SignInForm() {
     criteriaMode: 'all',
     defaultValues: {
       username: 'tiago10',
-      password: 'admin1',
+      password: 'Admin1',
     }
   });
 

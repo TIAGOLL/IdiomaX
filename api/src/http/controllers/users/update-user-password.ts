@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { checkMemberAccess } from '../../../lib/permissions';
-import { updateUserPasswordBody, updateUserPasswordResponse } from '@idiomax/http-schemas/update-user-password';
+import { UpdateUserPasswordApiRequestSchema, UpdateUserPasswordApiResponseSchema } from '@idiomax/http-schemas/users/update-user-password';
 import { prisma } from '../../../lib/prisma';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { hash, compare } from 'bcryptjs';
@@ -18,17 +18,17 @@ export async function updateUserPassword(app: FastifyInstance) {
                     tags: ['Usuários'],
                     summary: 'Atualizar senha de um usuário.',
                     security: [{ bearerAuth: [] }],
-                    body: updateUserPasswordBody,
+                    body: UpdateUserPasswordApiRequestSchema,
                     response: {
-                        200: updateUserPasswordResponse,
+                        200: UpdateUserPasswordApiResponseSchema,
                     },
                 },
             },
             async (request, reply) => {
-                const { companyId, userId: targetUserId, role, currentPassword, newPassword } = request.body;
+                const { user_id: targetUserId, company_id, role, current_password, new_password } = request.body;
                 const userId = await request.getCurrentUserId();
 
-                const { company } = await checkMemberAccess(companyId, userId);
+                const { company } = await checkMemberAccess(company_id, userId);
 
                 // Verificar se o usuário existe e está associado à empresa com o role correto
                 const user = await prisma.users.findFirst({
@@ -52,21 +52,20 @@ export async function updateUserPassword(app: FastifyInstance) {
                 }
 
                 // Verificar senha atual
-                const isCurrentPasswordValid = await compare(currentPassword, user.password);
+                const isCurrentPasswordValid = await compare(current_password, user.password);
 
                 if (!isCurrentPasswordValid) {
                     throw new BadRequestError('Senha atual incorreta.');
                 }
 
                 // Hash da nova senha
-                const hashedNewPassword = await hash(newPassword, 6);
+                const hashedNewPassword = await hash(new_password, 6);
 
                 // Atualizar senha
                 await prisma.users.update({
                     where: { id: targetUserId },
                     data: {
                         password: hashedNewPassword,
-                        updated_by: userId,
                         updated_at: new Date(),
                     },
                 });

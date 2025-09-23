@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { PlusCircle, LoaderIcon } from 'lucide-react';
-import { PasswordGenerator, UserGenerator } from '@/lib/utils';
+import { PlusCircle, LoaderIcon, InfoIcon } from 'lucide-react';
+import { PasswordGenerator } from '@/lib/utils';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
@@ -15,6 +15,9 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { createUser } from '@/services/users/create-user';
+import { getCurrentCompanyId } from '@/lib/company-utils';
 
 type CreateUserRequest = z.infer<typeof CreateUserFormSchema>;
 
@@ -22,19 +25,17 @@ export function CreateUser() {
 
     const { mutate, isPending } = useMutation({
         mutationFn: async (data: CreateUserRequest) => {
-            // TODO: Implementar criação de usuário quando o endpoint estiver disponível
-            console.log("Dados para criação:", data);
-            // Simular sucesso por enquanto
-            return { message: `Usuário ${data.role.toLowerCase()} criado com sucesso!` };
+            const response = await createUser(data);
+            return response;
         },
         onSuccess: (res) => {
             toast.success(res.message);
             console.log(res);
-            // TODO: Adicionar redirect ou reset do form após sucesso
+            reset();
         },
         onError: (err) => {
             console.log(err);
-            toast.error("Erro ao criar usuário: " + err.message);
+            toast.error(err.message);
         }
     });
 
@@ -42,6 +43,7 @@ export function CreateUser() {
         register,
         handleSubmit,
         formState: { errors },
+        reset,
         watch,
         setValue,
         control
@@ -49,38 +51,28 @@ export function CreateUser() {
         resolver: zodResolver(CreateUserFormSchema) as Resolver<CreateUserRequest>,
         mode: "all",
         criteriaMode: "all",
+        defaultValues: {
+            company_id: getCurrentCompanyId(),
+            address: 'Rua teste, 123 - Bairro - Cidade - Estado - 00000-000',
+            date_of_birth: new Date(),
+            gender: 'M',
+            role: 'STUDENT',
+            cpf: '00000000000',
+            email: "teste@gmail.com",
+            username: "teste123",
+            name: "Teste Teste",
+            phone: "11999999999"
+        }
     });
 
-    const dateOfBirth = watch('dateOfBirth');
-    const selectedRole = watch('role');
+    const dateOfBirth = watch('date_of_birth');
     const userName = watch('name');
 
     useEffect(() => {
         if (dateOfBirth && userName) {
-            setValue("password", PasswordGenerator(dateOfBirth, userName.toLowerCase()))
-            setValue("username", UserGenerator(dateOfBirth, userName.toLowerCase()))
+            setValue("password", PasswordGenerator(watch("cpf")))
         }
-    }, [dateOfBirth, userName, setValue])
-
-    // Função para obter o título baseado na role
-    const getRoleTitle = (role: string | undefined) => {
-        switch (role) {
-            case 'STUDENT': return 'Novo Estudante';
-            case 'TEACHER': return 'Novo Professor';
-            case 'ADMIN': return 'Novo Administrador';
-            default: return 'Novo Usuário';
-        }
-    };
-
-    // Função para obter a descrição baseada na role
-    const getRoleDescription = (role: string | undefined) => {
-        switch (role) {
-            case 'STUDENT': return 'Preencha os dados para cadastrar um novo estudante';
-            case 'TEACHER': return 'Preencha os dados para cadastrar um novo professor';
-            case 'ADMIN': return 'Preencha os dados para cadastrar um novo administrador';
-            default: return 'Selecione o tipo de usuário e preencha os dados';
-        }
-    };
+    }, [dateOfBirth, userName, setValue, watch])
 
     return (
         <div className='flex justify-center items-center sm:w-full'>
@@ -89,9 +81,9 @@ export function CreateUser() {
                     <CardHeader className='flex space-x-4 flex-col'>
                         <div className='flex-col'>
                             <CardTitle>
-                                Criar {getRoleTitle(selectedRole)}
+                                Cadastrar usuário
                             </CardTitle>
-                            <CardDescription>{getRoleDescription(selectedRole)}</CardDescription>
+                            <CardDescription>Preencha os dados para cadastrar um novo usuário</CardDescription>
                         </div>
                         <Avatar className="rounded-xl justify-center items-center flex size-48">
                             <AvatarFallback>
@@ -173,7 +165,7 @@ export function CreateUser() {
                             <div className="col-span-1 space-y-1">
                                 <Label htmlFor='date_of_birth'>Data de nascimento</Label>
                                 <Controller
-                                    name="dateOfBirth"
+                                    name="date_of_birth"
                                     control={control}
                                     render={({ field }) => (
                                         <Input
@@ -187,7 +179,7 @@ export function CreateUser() {
                                         />
                                     )}
                                 />
-                                <FormMessageError error={errors.dateOfBirth?.message} />
+                                <FormMessageError error={errors.date_of_birth?.message} />
                             </div>
                             <div className="col-span-1 space-y-1">
                                 <Label htmlFor='address'>Endereço</Label>
@@ -200,20 +192,30 @@ export function CreateUser() {
                                     type='text'
                                     id='username'
                                     placeholder="Nome de usuário"
-                                    value={UserGenerator(dateOfBirth, userName?.toLowerCase())}
                                     {...register('username')}
                                 />
                                 <FormMessageError error={errors.username?.message} />
                             </div>
                             <div className="col-span-1 space-y-1">
-                                <Label htmlFor='password'>Senha</Label>
+                                <div className='flex items-center space-x-2'>
+                                    <Label htmlFor='password'>Senha</Label>
+                                    <Tooltip>
+                                        <TooltipTrigger>
+                                            <InfoIcon className='size-4' />
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>A senha gerada é bemvindo + 4 primeiros caracteres do CPF.</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </div>
                                 <Input
                                     type='text'
                                     id='password'
                                     placeholder="Senha gerada automaticamente"
-                                    value={PasswordGenerator(dateOfBirth, userName?.toLowerCase())}
+                                    value={PasswordGenerator(watch("cpf"))}
                                     {...register('password')}
                                 />
+
                             </div>
                         </div>
                     </CardContent>
@@ -221,9 +223,10 @@ export function CreateUser() {
                         <Button
                             variant='default'
                             type='submit'
+                            onClick={() => console.log(errors)}
                             disabled={isPending}
                         >
-                            Criar {selectedRole === 'STUDENT' ? 'Estudante' : selectedRole === 'TEACHER' ? 'Professor' : selectedRole === 'ADMIN' ? 'Administrador' : 'Usuário'}
+                            Cadastrar
                             {isPending ? (
                                 <LoaderIcon className='ml-2 h-4 w-4 animate-spin' />
                             ) : (

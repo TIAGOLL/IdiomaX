@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { auth } from '../../../middlewares/auth';
-import { unsubscribeRequest, unsubscribeResponse } from '@idiomax/http-schemas/unsubscribe';
+import { UnsubscribeApiRequestSchema, UnsubscribeApiResponseSchema } from '@idiomax/http-schemas/subscriptions/unsubscribe';
 import { stripe } from '../../../lib/stripe';
 
 export async function Unsubscribe(app: FastifyInstance) {
@@ -14,20 +14,29 @@ export async function Unsubscribe(app: FastifyInstance) {
             {
                 schema: {
                     tags: ['Subscriptions'],
-                    summary: 'Obter produtos disponíveis para assinatura',
+                    summary: 'Cancelar assinatura do Stripe',
                     security: [{ bearerAuth: [] }],
+                    body: UnsubscribeApiRequestSchema,
                     response: {
-                        200: unsubscribeResponse
+                        200: UnsubscribeApiResponseSchema
                     },
-                    body: unsubscribeRequest,
                 },
             },
             async (request, reply) => {
-                const { subscriptionId } = request.body;
+                const { subscription_id } = request.body;
 
-                await stripe.subscriptions.cancel(subscriptionId);
+                await stripe.subscriptions.cancel(subscription_id);
 
-                reply.status(200).send({ message: 'Assinatura cancelada.' });
+                reply.status(200).send({
+                    message: 'Assinatura cancelada.',
+                    subscription: {
+                        id: subscription_id,
+                        status: 'canceled',
+                        cancel_at_period_end: false,
+                        canceled_at: Math.floor(Date.now() / 1000),
+                        current_period_end: Math.floor(Date.now() / 1000),
+                    }
+                });
             })
 }
 

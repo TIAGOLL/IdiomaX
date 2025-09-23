@@ -6,18 +6,15 @@ import type {
     UserRole
 } from '@idiomax/http-schemas/users/get-users';
 
-export type GetUsersQuery = GetUsersHttpRequest;
-export type GetUsersResponse = GetUsersHttpResponse;
-
 export async function getUsers(
     role?: UserRole,
-    query?: Partial<Omit<GetUsersQuery, 'role'>>
-): Promise<GetUsersResponse> {
-    const companyId = getCurrentCompanyId();
+    query?: Partial<Omit<GetUsersHttpRequest, 'role'>>
+): Promise<GetUsersHttpResponse> {
+    const company_id = getCurrentCompanyId();
 
     const { data } = await api.get(`/users`, {
         params: {
-            companyId,
+            company_id,
             ...query,
             ...(role && { role })
         }

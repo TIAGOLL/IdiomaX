@@ -5,6 +5,7 @@ import type { GetCompanySubscriptionHttpResponse } from "@idiomax/http-schemas/s
 
 export async function getCompanySubscription() {
     const companyId = getCurrentCompanyId();
+    if (!companyId) return null;
 
     const response = await api.get(
         `/stripe/get-subscription/${companyId}`,

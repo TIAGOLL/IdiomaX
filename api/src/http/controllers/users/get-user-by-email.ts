@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { checkMemberAccess } from '../../../lib/permissions';
-import { getUserByEmailQuery, getUserByEmailResponse } from '@idiomax/http-schemas/get-user-by-email';
+import { GetUserByEmailApiRequestSchema, GetUserByEmailApiResponseSchema } from '@idiomax/http-schemas/users/get-user-by-email';
 import { prisma } from '../../../lib/prisma';
 
 export async function getUserByEmail(app: FastifyInstance) {
@@ -16,17 +16,17 @@ export async function getUserByEmail(app: FastifyInstance) {
                     tags: ['Usuários'],
                     summary: 'Buscar usuário por email e role.',
                     security: [{ bearerAuth: [] }],
-                    querystring: getUserByEmailQuery,
+                    querystring: GetUserByEmailApiRequestSchema,
                     response: {
-                        200: getUserByEmailResponse,
+                        200: GetUserByEmailApiResponseSchema,
                     },
                 },
             },
             async (request, reply) => {
-                const { companyId, email, role } = request.query;
+                const { company_id, email } = request.query;
                 const userId = await request.getCurrentUserId();
 
-                const { company } = await checkMemberAccess(companyId, userId);
+                const { company } = await checkMemberAccess(company_id, userId);
 
                 const user = await prisma.users.findFirst({
                     where: {
@@ -34,30 +34,37 @@ export async function getUserByEmail(app: FastifyInstance) {
                         member_on: {
                             some: {
                                 company_id: company.id,
-                                role: role,
                             }
                         }
                     },
-                    select: {
-                        id: true,
-                        name: true,
-                        email: true,
-                        cpf: true,
-                        phone: true,
-                        username: true,
-                        gender: true,
-                        date_of_birth: true,
-                        address: true,
-                        avatar_url: true,
-                        active: true,
-                        created_at: true,
-                        updated_at: true,
-                        created_by: true,
-                        updated_by: true,
+                    include: {
+                        member_on: {
+                            where: {
+                                company_id: company.id
+                            },
+                            select: {
+                                role: true
+                            }
+                        }
                     }
                 });
 
-                return reply.status(200).send(user);
+                if (!user) {
+                    return reply.status(200).send({ user: null });
+                }
+
+                const response = {
+                    user: {
+                        id: user.id,
+                        name: user.name,
+                        email: user.email,
+                        username: user.username,
+                        role: user.member_on[0]?.role || 'STUDENT' as 'STUDENT' | 'TEACHER' | 'ADMIN',
+                        active: user.active || false,
+                    }
+                };
+
+                return reply.status(200).send(response);
             },
         );
 }

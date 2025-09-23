@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { auth } from '../../../middlewares/auth';
-import { getCompanySubscriptionParams, getCompanySubscriptionResponse } from '@idiomax/http-schemas/get-company-subscription'
+import { GetCompanySubscriptionApiRequestSchema, GetCompanySubscriptionApiResponseSchema } from '@idiomax/http-schemas/subscriptions/get-company-subscription'
 import { prisma } from '../../../lib/prisma';
 import { NotFoundError } from '../_errors/not-found-error';
 
@@ -11,23 +11,23 @@ export async function GetCompanySubscription(app: FastifyInstance) {
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .get(
-            '/stripe/get-subscription/:companyId',
+            '/stripe/get-subscription/:company_id',
             {
                 schema: {
                     tags: ['Subscriptions'],
                     summary: 'Obter assinatura da empresa',
                     security: [{ bearerAuth: [] }],
                     response: {
-                        200: getCompanySubscriptionResponse,
+                        200: GetCompanySubscriptionApiResponseSchema,
                     },
-                    params: getCompanySubscriptionParams
+                    params: GetCompanySubscriptionApiRequestSchema
                 },
             },
             async (request, reply) => {
-                const { companyId } = request.params;
+                const { company_id } = request.params;
 
                 const subscription = await prisma.stripeCompanySubscription.findUnique({
-                    where: { company_customer_id: companyId },
+                    where: { company_customer_id: company_id },
                     include: {
                         company_customer: {
                             include: {

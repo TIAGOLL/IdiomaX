@@ -7,62 +7,6 @@ export const AdminDashboardApiRequestSchema = z.object({
 
 // API Schema para resposta da API
 export const AdminDashboardApiResponseSchema = z.object({
-    active_students: z.number(),
-    new_registrations: z.number(),
-    completed_registrations: z.number(),
-    avg_class_occupation: z.number(),
-    class_occupation: z.object({
-        low: z.number(),
-        ideal: z.number(),
-        high: z.number(),
-    }),
-    avg_attendance: z.number(),
-    top_attendance_classes: z.array(z.object({
-        id: z.string(),
-        nome: z.string(),
-        attendance: z.number()
-    })),
-    bottom_attendance_classes: z.array(z.object({
-        id: z.string(),
-        nome: z.string(),
-        attendance: z.number()
-    })),
-    teacher_workload: z.array(z.object({
-        name: z.string(),
-        hours: z.number()
-    })),
-    classes: z.array(z.object({
-        id: z.string(),
-        nome: z.string(),
-        vacancies: z.number(),
-        students: z.number(),
-        occupation: z.number(),
-        course_name: z.string(),
-    })),
-    class_days: z.array(z.object({
-        id: z.string(),
-        class_name: z.string(),
-        initial_date: z.date(),
-        final_date: z.date(),
-    })),
-    low_attendance_students: z.array(z.object({
-        id: z.string(),
-        name: z.string(),
-        attendanceRate: z.number(),
-        className: z.string(),
-    })),
-    monthly_revenue: z.array(z.object({
-        month: z.string(),
-        revenue: z.number(),
-    })),
-})
-
-// HTTP Schema para serviços do frontend
-export const AdminDashboardHttpRequestSchema = z.object({
-    companyId: z.string(),
-})
-
-export const AdminDashboardHttpResponseSchema = z.object({
     activeStudents: z.number(),
     newRegistrations: z.number(),
     completedRegistrations: z.number(),
@@ -73,20 +17,9 @@ export const AdminDashboardHttpResponseSchema = z.object({
         high: z.number(),
     }),
     avgAttendance: z.number(),
-    topAttendanceClasses: z.array(z.object({
-        id: z.string(),
-        nome: z.string(),
-        attendance: z.number()
-    })),
-    bottomAttendanceClasses: z.array(z.object({
-        id: z.string(),
-        nome: z.string(),
-        attendance: z.number()
-    })),
-    teacherWorkload: z.array(z.object({
-        name: z.string(),
-        hours: z.number()
-    })),
+    topAttendanceClasses: z.array(z.object({ id: z.string(), nome: z.string(), attendance: z.number() })),
+    bottomAttendanceClasses: z.array(z.object({ id: z.string(), nome: z.string(), attendance: z.number() })),
+    teacherWorkload: z.array(z.object({ name: z.string(), hours: z.number() })),
     classes: z.array(z.object({
         id: z.string(),
         nome: z.string(),
@@ -98,23 +31,64 @@ export const AdminDashboardHttpResponseSchema = z.object({
     classDays: z.array(z.object({
         id: z.string(),
         className: z.string(),
-        initialDate: z.string(),
-        finalDate: z.string(),
+        initial_date: z.date(),
+        final_date: z.date(),
+    })),
+    alertLowOccupation: z.array(z.object({
+        id: z.string(),
+        nome: z.string(),
+        occupation: z.number(),
+    })),
+    lockedRegistrations: z.number(),
+    alertHighOccupation: z.array(z.object({
+        id: z.string(),
+        nome: z.string(),
+        occupation: z.number(),
+    })),
+    mrrDue: z.number(),
+    mrrReceived: z.number(),
+    mrrOpen: z.number(),
+    aging: z.object({
+        "0-30": z.number(),
+        "31-60": z.number(),
+        "61-90": z.number(),
+        "90+": z.number(),
+    }),
+    dso: z.number(),
+    defaultRate: z.number(),
+    receivablesCurve: z.array(z.object({ month: z.string(), value: z.number() })),
+    receivedCurve: z.array(z.object({ month: z.string(), value: z.number() })),
+    earlyDiscount: z.number(),
+    paymentMix: z.array(z.object({ method: z.string(), percent: z.number() })),
+    avgTicket: z.number(),
+    registrations: z.array(z.object({
+        id: z.string(),
+        locked: z.boolean(),
+        completed: z.boolean(),
+        daysSinceStart: z.number(),
+        monthly_fee_amount: z.number().nullable(),
     })),
     lowAttendanceStudents: z.array(z.object({
         id: z.string(),
         name: z.string(),
-        attendanceRate: z.number(),
-        className: z.string(),
+        attendance: z.number(),
     })),
-    monthlyRevenue: z.array(z.object({
-        month: z.string(),
-        revenue: z.number(),
+    classMeetings: z.array(z.object({
+        classId: z.string(),
+        className: z.string(),
+        scheduled: z.number(),
+        done: z.number(),
+    })),
+    tasksByDiscipline: z.array(z.object({
+        disciplineId: z.string(),
+        disciplineName: z.string(),
+        deliveries: z.number(),
+    })),
+    pendingTasks: z.array(z.object({
+        period: z.string(),
+        count: z.number(),
     })),
 })
 
-// Types
-export type AdminDashboardApiRequestData = z.infer<typeof AdminDashboardApiRequestSchema>
-export type AdminDashboardApiResponseData = z.infer<typeof AdminDashboardApiResponseSchema>
-export type AdminDashboardHttpRequestData = z.infer<typeof AdminDashboardHttpRequestSchema>
-export type AdminDashboardHttpResponseData = z.infer<typeof AdminDashboardHttpResponseSchema>
+export type AdminDashboardApiRequest = z.infer<typeof AdminDashboardApiRequestSchema>
+export type AdminDashboardApiResponse = z.infer<typeof AdminDashboardApiResponseSchema>

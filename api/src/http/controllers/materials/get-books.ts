@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { checkMemberAccess } from '../../../lib/permissions';
-import { getBooksParams, getBooksQuery, getBooksResponse } from '@idiomax/http-schemas/get-books';
+import { GetBooksApiParamsSchema, GetBooksApiQuerySchema, GetBooksApiResponseSchema } from '@idiomax/http-schemas/materials/get-books';
 import { prisma } from '../../../lib/prisma';
 
 export async function getBooks(app: FastifyInstance) {
@@ -16,25 +16,25 @@ export async function getBooks(app: FastifyInstance) {
                     tags: ['Materiais'],
                     summary: 'Obter lista de materiais/livros de uma empresa.',
                     security: [{ bearerAuth: [] }],
-                    params: getBooksParams,
-                    querystring: getBooksQuery,
+                    params: GetBooksApiParamsSchema,
+                    querystring: GetBooksApiQuerySchema,
                     response: {
-                        200: getBooksResponse,
+                        200: GetBooksApiResponseSchema,
                     },
                 },
             },
             async (request, reply) => {
-                const { companyId } = request.params;
+                const { company_id } = request.params;
                 const userId = await request.getCurrentUserId();
 
-                const { company } = await checkMemberAccess(companyId, userId);
+                const { company } = await checkMemberAccess(company_id, userId);
 
                 const {
                     page = 1,
                     limit = 10,
                     search,
                     active,
-                    levelId
+                    level_id
                 } = request.query || {};
 
                 const offset = (page - 1) * limit;
@@ -52,8 +52,8 @@ export async function getBooks(app: FastifyInstance) {
                     whereClause.active = active;
                 }
 
-                if (levelId) {
-                    whereClause.levels_id = levelId;
+                if (level_id) {
+                    whereClause.levels_id = level_id;
                 }
 
                 if (search) {
@@ -94,18 +94,24 @@ export async function getBooks(app: FastifyInstance) {
 
                 const totalPages = Math.ceil(totalCount / limit);
 
-                // Converter bytes para base64
+                // Converter bytes para base64 e mapear campos
                 const booksWithBase64 = books.map(book => ({
-                    ...book,
-                    file: Buffer.from(book.file).toString('base64'),
+                    id: book.id,
+                    title: book.name,
+                    description: null, // materials não tem description, usar null
+                    level_id: book.levels_id,
+                    company_id: company.id,
+                    active: book.active,
+                    created_at: book.created_at,
+                    updated_at: book.updated_at,
                 }));
 
                 return reply.status(200).send({
                     books: booksWithBase64,
-                    totalCount,
+                    total_count: totalCount,
                     page,
                     limit,
-                    totalPages,
+                    total_pages: totalPages,
                 });
             },
         );

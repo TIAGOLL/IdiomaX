@@ -25,39 +25,17 @@ export function formatDate(date: string | Date): string {
 }
 
 
-export function PasswordGenerator(date: Date | string, firstName: string): string {
-  if (!date || !firstName) return "";
-  const dateObj = new Date(date);
-  firstName = firstName.replace(/\s/g, ""); // tira os espaços do nome
-  const day = dateObj.getDate().toString().length == 1 ? `0${dateObj.getDate()}` : dateObj.getDate(); // verifica se o dia tem 1 ou 2 digitos
-  const month = (dateObj.getMonth() + 1).toString().length == 1 ? `0${dateObj.getMonth() + 1}` : dateObj.getMonth() + 1; // verifica se o mês tem 1 ou 2 digitos
-  const password = `${firstName}${day}${month}`; // gera a senha
-  return password;
-}
-
-export function UserGenerator(date: Date | string, firstName: string): string {
-  if (!firstName || !date) return "";
-  const dateObj = new Date(date);
-  firstName = firstName.replace(/\s/g, ""); // tira os espaços do nome
-  const day = dateObj.getDate().toString().length == 1 ? `0${dateObj.getDate()}` : dateObj.getDate(); // verifica se o dia tem 1 ou 2 digitos
-  const month = (dateObj.getMonth() + 1).toString().length == 1 ? `0${dateObj.getMonth() + 1}` : dateObj.getMonth() + 1; // verifica se o mês tem 1 ou 2 digitos
-  const user = `${firstName?.toLowerCase()}${day}${month}`; // gera o usuário
-  return user;
+export function PasswordGenerator(cpf: string) {
+  if (!cpf) return "";
+  cpf = cpf.replace(/\D/g, ""); // Remove caracteres não numéricos
+  return 'bemvindo' + cpf.slice(0, 4); // Retorna 'bemvindo' + primeiros 4 dígitos do CPF
 }
 
 export async function VerifyUserExists(username: string): Promise<boolean> {
   try {
-    const studentsResponse = await getUsers('STUDENT');
-    const teachersResponse = await getUsers('TEACHER');
-    const adminsResponse = await getUsers('ADMIN');
+    const { users } = await getUsers();
 
-    const allUsers = [
-      ...studentsResponse.users,
-      ...teachersResponse.users,
-      ...adminsResponse.users
-    ];
-
-    const userExists = allUsers.some(user => user.username === username);
+    const userExists = users.some(user => user.username === username);
     return !userExists; // Retorna true se o usuário NÃO existe (disponível)
   } catch {
     return true; // Se houve erro na busca, considera que o username está disponível

@@ -1,14 +1,14 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
-import { createCheckoutSession } from "@/services/stripe/create-checkou-service";
+import { createCheckoutSession } from "@/services/stripe/create-checkout-service";
 import { CreateCheckoutSessionFormSchema } from '@idiomax/http-schemas/subscriptions/create-checkout-session';
 import type z from "zod";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { getProducts } from "@/services/stripe/get-products";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { LoaderIcon } from "lucide-react";
 import { useSessionContext } from "@/contexts/session-context";
@@ -17,11 +17,12 @@ type CreateCheckoutSessionFormData = z.infer<typeof CreateCheckoutSessionFormSch
 
 export function SubscriptionForm() {
     const { getCompanyId, userProfile } = useSessionContext();
-    const [selectedPriceId, setSelectedPriceId] = useState<string>("");
 
     const {
         handleSubmit,
         setValue,
+        formState: { errors },
+        watch
     } = useForm<CreateCheckoutSessionFormData>({
         resolver: zodResolver(CreateCheckoutSessionFormSchema),
         mode: 'all',
@@ -35,9 +36,9 @@ export function SubscriptionForm() {
     });
 
     const { mutate, isPending: isMutating } = useMutation({
-        mutationFn: async ({ priceId }: CreateCheckoutSessionFormData) => {
+        mutationFn: async ({ prodId }: CreateCheckoutSessionFormData) => {
             const response = await createCheckoutSession({
-                price_id: priceId,
+                prod_id: prodId,
                 company_id: getCompanyId() || "",
                 user_id: userProfile?.id || "",
                 mode: "subscription"
@@ -58,9 +59,8 @@ export function SubscriptionForm() {
 
     useEffect(() => {
         if (products && products.length > 0 && products[0].prices.length > 0) {
-            const firstPriceId = products[0].prices[0].id;
-            setValue("priceId", firstPriceId);
-            setSelectedPriceId(firstPriceId);
+            const firstProdId = products[0].prices[0].id;
+            setValue("prodId", firstProdId);
         }
     }, [products, setValue]);
 
@@ -78,12 +78,11 @@ export function SubscriptionForm() {
                 {products?.map((product) => (
                     product.prices.map((price) => (
                         <Card
-                            key={price.id}
-                            className={`cursor-pointer transition-all ${price.id === selectedPriceId ? "ring-2 ring-primary" : "hover:ring-1"
+                            key={product.id}
+                            className={`cursor-pointer transition-all ${product.id === watch("prodId") ? "ring-2 ring-primary" : "hover:ring-1"
                                 }`}
                             onClick={() => {
-                                setValue("priceId", price.id);
-                                setSelectedPriceId(price.id);
+                                setValue("prodId", product.id);
                             }}
                         >
                             <CardHeader>
@@ -116,13 +115,12 @@ export function SubscriptionForm() {
                                 <Button
                                     type="button"
                                     className="w-full"
-                                    variant={price.id === selectedPriceId ? "default" : "outline"}
+                                    variant={product.id === watch("prodId") ? "default" : "outline"}
                                     onClick={() => {
-                                        setValue("priceId", price.id);
-                                        setSelectedPriceId(price.id);
+                                        setValue("prodId", product.id);
                                     }}
                                 >
-                                    {price.id === selectedPriceId ? "Selecionado" : "Selecionar"}
+                                    {product.id === watch("prodId") ? "Selecionado" : "Selecionar"}
                                 </Button>
                             </CardFooter>
                         </Card>
@@ -133,8 +131,9 @@ export function SubscriptionForm() {
             <Button
                 className='w-full mt-6'
                 type="submit"
-                disabled={isMutating || isLoadingProducts || !selectedPriceId}
+                disabled={isMutating || isLoadingProducts || !watch("prodId")}
                 size="lg"
+                onClick={() => {console.log(errors)}}
             >
                 {isMutating ? (
                     <>

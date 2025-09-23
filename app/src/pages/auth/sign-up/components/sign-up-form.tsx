@@ -62,10 +62,11 @@ export function SignUpForm() {
             username: 'tiago10',
             cpf: '12345458901',
             phone: '11999999999',
-            gender: 'M',
+            gender: 'M' as const,
             date_of_birth: '2000-01-01',
             address: 'Rua das Flores, 123',
-            password: 'admin1',
+            password: 'Admin1',
+            confirmPassword: 'Admin1',
         }
     });
 
@@ -78,7 +79,7 @@ export function SignUpForm() {
                     </div>
                     <div className='flex-col'>
                         <CardTitle>
-                            Cadastro do usuário ADMIN
+                            Cadastro do SUPER usuário
                         </CardTitle>
                         <CardDescription>Depois você poderá cadastrar mais usuários admin em sua empresa.</CardDescription>
                     </div>
@@ -104,7 +105,7 @@ export function SignUpForm() {
                             <Label htmlFor='gender'>Gênero</Label>
                             <Select
                                 onValueChange={value => {
-                                    setValue('gender', value as 'M' | 'F');
+                                    setValue('gender', value as "M" | "F");
                                 }}
                                 defaultValue={watch('gender')}
                             >
@@ -151,12 +152,17 @@ export function SignUpForm() {
                             <Input type='password' id='password' {...register('password')} />
                             <FormMessageError error={errors.password?.message} />
                         </div>
+                        <div className="col-span-1 space-y-1">
+                            <Label htmlFor='confirmPassword'>Confirmação da senha</Label>
+                            <Input type='password' id='confirmPassword' {...register('confirmPassword')} />
+                            <FormMessageError error={errors.confirmPassword?.message} />
+                        </div>
                     </div>
                 </CardContent>
                 <CardFooter className='flex justify-between flex-row-reverse'>
                     <Button
                         variant='default'
-                        onClick={() => console.log(watch('date_of_birth'))}
+                        onClick={() => console.log(errors)}
                         type='submit'
                         disabled={isPending}
                         data-test='signUpSubmitButton'>

@@ -25,7 +25,6 @@ export async function getUsers(app: FastifyInstance) {
             async (request, reply) => {
                 const userId = await request.getCurrentUserId();
                 const { company_id } = request.query;
-
                 const { company } = await checkMemberAccess(company_id, userId);
 
                 const {
@@ -68,26 +67,10 @@ export async function getUsers(app: FastifyInstance) {
                         skip: offset,
                         take: limit,
                         orderBy: { name: 'asc' },
-                        select: {
-                            id: true,
-                            name: true,
-                            email: true,
-                            cpf: true,
-                            phone: true,
-                            username: true,
-                            gender: true,
-                            date_of_birth: true,
-                            address: true,
-                            avatar_url: true,
-                            active: true,
-                            created_at: true,
-                            updated_at: true,
-                            created_by: true,
-                            updated_by: true,
+                        include: {
                             member_on: {
-                                select: {
-                                    company_id: true,
-                                    role: true,
+                                include: {
+                                    company: true,
                                 }
                             }
                         }
@@ -97,26 +80,8 @@ export async function getUsers(app: FastifyInstance) {
 
                 const totalPages = Math.ceil(totalCount / limit);
 
-                // Formatar dados dos usuários para incluir o role
-                const formattedUsers = users.map(user => ({
-                    id: user.id,
-                    name: user.name,
-                    email: user.email,
-                    cpf: user.cpf,
-                    phone: user.phone,
-                    username: user.username,
-                    gender: user.gender,
-                    date_of_birth: user.date_of_birth,
-                    address: user.address,
-                    avatar_url: user.avatar_url,
-                    active: user.active,
-                    role: user.member_on.find(member => member.company_id === company.id)?.role || 'STUDENT',
-                    created_at: user.created_at,
-                    updated_at: user.updated_at,
-                }));
-
                 return reply.status(200).send({
-                    users: formattedUsers,
+                    users,
                     pagination: {
                         total: totalCount,
                         page,

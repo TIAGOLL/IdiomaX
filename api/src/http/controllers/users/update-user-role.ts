@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 
 import { prisma } from '../../../lib/prisma'
-import { updateUserRoleRequestSchema, updateUserRoleResponseSchema } from '@idiomax/http-schemas/update-user-role'
+import { UpdateUserRoleApiRequestSchema, UpdateUserRoleApiResponseSchema } from '@idiomax/http-schemas/users/update-user-role'
 import { UnauthorizedError } from '../_errors/unauthorized-error'
 import { BadRequestError } from '../_errors/bad-request-error'
 import { auth } from '../../../middlewares/auth'
@@ -13,9 +13,9 @@ export async function updateUserRole(app: FastifyInstance) {
         .put('/users/role', {
             schema: {
                 tags: ['Users'],
-                body: updateUserRoleRequestSchema,
+                body: UpdateUserRoleApiRequestSchema,
                 response: {
-                    200: updateUserRoleResponseSchema,
+                    200: UpdateUserRoleApiResponseSchema,
                 },
             },
         }, async (request) => {

@@ -1,12 +1,10 @@
 import { api } from "@/lib/api";
 import { getCurrentCompanyId } from "@/lib/company-utils";
-import type { AdminDashboardHttpResponseData } from "@idiomax/http-schemas/dashboard/admin-dashboard";
-
-type DashboardAdminResponse = AdminDashboardHttpResponseData;
+import { type AdminDashboardApiResponse } from '@idiomax/http-schemas/dashboard/admin-dashboard';
 
 export async function getAdminDashboard() {
     const companyId = getCurrentCompanyId();
-
+    console.log("Company ID:", companyId);
     const response = await api.get(`/admin-dashboard/${companyId}`);
-    return response.data as DashboardAdminResponse;
+    return response.data as AdminDashboardApiResponse;
 }

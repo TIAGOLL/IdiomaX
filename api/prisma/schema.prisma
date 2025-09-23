@@ -11,9 +11,9 @@ datasource db {
 // Todos os modelos devem incluir estes campos base:
 // id          String   @id @default(uuid()) @db.VarChar(256)
 // created_at  DateTime @default(now())
-// created_by  String?  @db.VarChar(256)  // UUID do usuário que criou
+// created_by  String   @db.VarChar(256)  // UUID do usuário que criou
 // updated_at  DateTime @updatedAt
-// updated_by  String?  @db.VarChar(256)  // UUID do usuário que atualizou
+// updated_by  String   @db.VarChar(256)  // UUID do usuário que atualizou
 // active      Boolean  @default(true)
 //
 // Relacionamentos opcionais para auditoria:
@@ -35,9 +35,9 @@ model Renamedclass {
 
   // Campos base de auditoria
   created_at DateTime @default(now())
-  created_by String?  @db.VarChar(256)
+  created_by String   @db.VarChar(256)
   updated_at DateTime @updatedAt
-  updated_by String?  @db.VarChar(256)
+  updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
   class_days     class_days[]
@@ -70,9 +70,9 @@ model class_days {
 
   // Campos base de auditoria
   created_at DateTime @default(now())
-  created_by String?  @db.VarChar(256)
+  created_by String   @db.VarChar(256)
   updated_at DateTime @updatedAt
-  updated_by String?  @db.VarChar(256)
+  updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
   class Renamedclass @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "class_fk")
@@ -91,9 +91,9 @@ model classes {
 
   // Campos base de auditoria
   created_at DateTime @default(now())
-  created_by String?  @db.VarChar(256)
+  created_by String   @db.VarChar(256)
   updated_at DateTime @updatedAt
-  updated_by String?  @db.VarChar(256)
+  updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
   class         Renamedclass    @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "class_fk")
@@ -112,9 +112,9 @@ model classrooms {
 
   // Campos base de auditoria
   created_at DateTime @default(now())
-  created_by String?  @db.VarChar(256)
+  created_by String   @db.VarChar(256)
   updated_at DateTime @updatedAt
-  updated_by String?  @db.VarChar(256)
+  updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
   companies   companies? @relation(fields: [companies_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "companies_fk")
@@ -132,9 +132,9 @@ model configs {
 
   // Campos base de auditoria
   created_at DateTime @default(now())
-  created_by String?  @db.VarChar(256)
+  created_by String   @db.VarChar(256)
   updated_at DateTime @updatedAt
-  updated_by String?  @db.VarChar(256)
+  updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
   companies   companies @relation(fields: [companies_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
@@ -160,9 +160,9 @@ model courses {
 
   // Campos base de auditoria
   created_at DateTime @default(now())
-  created_by String?  @db.VarChar(256)
+  created_by String   @db.VarChar(256)
   updated_at DateTime @updatedAt
-  updated_by String?  @db.VarChar(256)
+  updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
   // Relacionamentos existentes
@@ -183,9 +183,9 @@ model disciplines {
 
   // Campos base de auditoria
   created_at DateTime @default(now())
-  created_by String?  @db.VarChar(256)
+  created_by String   @db.VarChar(256)
   updated_at DateTime @updatedAt
-  updated_by String?  @db.VarChar(256)
+  updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
   tasks    tasks[]
@@ -205,9 +205,9 @@ model levels {
 
   // Campos base de auditoria
   created_at DateTime @default(now())
-  created_by String?  @db.VarChar(256)
+  created_by String   @db.VarChar(256)
   updated_at DateTime @updatedAt
-  updated_by String?  @db.VarChar(256)
+  updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
   disciplines disciplines[]
@@ -228,9 +228,9 @@ model materials {
 
   // Campos base de auditoria
   created_at DateTime @default(now())
-  created_by String?  @db.VarChar(256)
+  created_by String   @db.VarChar(256)
   updated_at DateTime @updatedAt
-  updated_by String?  @db.VarChar(256)
+  updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
   levels   levels? @relation(fields: [levels_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "levels_fk")
@@ -253,9 +253,9 @@ model monthly_fee {
 
   // Campos base de auditoria
   created_at DateTime @default(now())
-  created_by String?  @db.VarChar(256)
+  created_by String   @db.VarChar(256)
   updated_at DateTime @updatedAt
-  updated_by String?  @db.VarChar(256)
+  updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
   registrations   registrations @relation(fields: [registrations_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "registrations_fk")
@@ -274,9 +274,9 @@ model presence_list {
 
   // Campos base de auditoria
   created_at DateTime @default(now())
-  created_by String?  @db.VarChar(256)
+  created_by String   @db.VarChar(256)
   updated_at DateTime @updatedAt
-  updated_by String?  @db.VarChar(256)
+  updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
   classes classes @relation(fields: [classes_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "classes_fk")
@@ -297,9 +297,9 @@ model records_of_students {
 
   // Campos base de auditoria
   created_at DateTime @default(now())
-  created_by String?  @db.VarChar(256)
+  created_by String   @db.VarChar(256)
   updated_at DateTime @updatedAt
-  updated_by String?  @db.VarChar(256)
+  updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
   registrations   registrations @relation(fields: [registrations_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "registrations_fk")
@@ -322,9 +322,9 @@ model registrations {
 
   // Campos base de auditoria
   created_at DateTime @default(now())
-  created_by String?  @db.VarChar(256)
+  created_by String   @db.VarChar(256)
   updated_at DateTime @updatedAt
-  updated_by String?  @db.VarChar(256)
+  updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
   monthly_fee         monthly_fee[]
@@ -350,9 +350,9 @@ model tasks {
 
   // Campos base de auditoria
   created_at DateTime @default(now())
-  created_by String?  @db.VarChar(256)
+  created_by String   @db.VarChar(256)
   updated_at DateTime @updatedAt
-  updated_by String?  @db.VarChar(256)
+  updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
   disciplines    disciplines      @relation(fields: [disciplines_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "disciplines_fk")
@@ -373,9 +373,9 @@ model tasks_delivery {
 
   // Campos base de auditoria
   created_at DateTime @default(now())
-  created_by String?  @db.VarChar(256)
+  created_by String   @db.VarChar(256)
   updated_at DateTime @updatedAt
-  updated_by String?  @db.VarChar(256)
+  updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
   registrations registrations @relation(fields: [registrations_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -394,9 +394,9 @@ model tokens {
 
   // Campos base de auditoria
   created_at DateTime @default(now())
-  created_by String?  @db.VarChar(256)
+  created_by String   @db.VarChar(256)
   updated_at DateTime @updatedAt
-  updated_by String?  @db.VarChar(256)
+  updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
   users   users   @relation(fields: [users_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_fk")
@@ -423,9 +423,9 @@ model companies {
 
   // Campos base de auditoria
   created_at DateTime @default(now())
-  created_by String?  @db.VarChar(256)
+  created_by String   @db.VarChar(256)
   updated_at DateTime @updatedAt
-  updated_by String?  @db.VarChar(256)
+  updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
   // Relacionamentos existentes
@@ -462,9 +462,9 @@ model users {
 
   // Campos base de auditoria
   created_at DateTime @default(now())
-  created_by String?  @db.VarChar(256)
+  created_by String   @db.VarChar(256)
   updated_at DateTime @updatedAt
-  updated_by String?  @db.VarChar(256)
+  updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
   // Relacionamentos existentes
@@ -525,14 +525,14 @@ model users {
 model members {
   id         String @id @default(uuid())
   role       Role
-  company_id String @map("company_id")
-  user_id    String @map("user_id")
+  company_id String
+  user_id    String
 
   // Campos base de auditoria
   created_at DateTime @default(now())
-  created_by String?  @db.VarChar(256)
+  created_by String   @db.VarChar(256)
   updated_at DateTime @updatedAt
-  updated_by String?  @db.VarChar(256)
+  updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
   // Relacionamentos existentes
@@ -542,8 +542,6 @@ model members {
   // Relacionamentos de auditoria
   creator users? @relation("MembersCreatedBy", fields: [created_by], references: [id])
   updater users? @relation("MembersUpdatedBy", fields: [updated_by], references: [id])
-
-  @@unique([company_id, user_id])
 }
 
 model users_in_class {
@@ -554,9 +552,9 @@ model users_in_class {
 
   // Campos base de auditoria
   created_at DateTime @default(now())
-  created_by String?  @db.VarChar(256)
+  created_by String   @db.VarChar(256)
   updated_at DateTime @updatedAt
-  updated_by String?  @db.VarChar(256)
+  updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
   class Renamedclass @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "class_fk")

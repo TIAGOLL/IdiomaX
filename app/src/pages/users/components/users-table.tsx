@@ -12,7 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { getUsers } from '@/services/users';
 import { useSessionContext } from '@/contexts/session-context';
-import type { UserRole, UserWithRole } from '@idiomax/http-schemas/get-users';
+import type { UserRole, UserWithRole } from '@idiomax/http-schemas/users/get-users';
 import { EditUser } from './edit-user';
 import { getCurrentCompanyId } from '@/lib/company-utils';
 
@@ -31,34 +31,23 @@ export function UsersTable() {
         enabled: !!currentCompanyMember?.company.id,
     });
 
-    // Combinar todos os usuários e adicionar role do member_on
-    const allUsers = useMemo(() => {
-        return usersQuery.data?.users.map(user => {
-            // Buscar a role do usuário na empresa atual
-            const member = user.member_on?.find(m => m.company_id === currentCompanyMember?.company.id);
-            return {
-                ...user,
-                role: member?.role as UserRole || 'STUDENT' // fallback para STUDENT se não encontrar
-            };
-        }) || [];
-    }, [usersQuery.data, currentCompanyMember?.company.id]);
-
     const filteredUsers = useMemo(() => {
-        return allUsers.filter(user => {
+        if (!usersQuery.data?.users) return [];
+
+        return usersQuery.data.users.filter(user => {
             // Filtro de busca (nome, email, username)
             const matchesSearch = !searchFilter ||
                 user.name.toLowerCase().includes(searchFilter.toLowerCase()) ||
                 user.email.toLowerCase().includes(searchFilter.toLowerCase()) ||
                 user.username.toLowerCase().includes(searchFilter.toLowerCase());
 
-            // Filtro de role
-            const matchesRole = !roleFilter || user.role === roleFilter;
+            // Filtro de role - extrair da relação member_on
+            const userRole = user.member_on?.find(m => m.company_id === currentCompanyMember?.company.id)?.role;
+            const matchesRole = !roleFilter || userRole === roleFilter;
 
             return matchesSearch && matchesRole;
         });
-    }, [allUsers, searchFilter, roleFilter]);
-
-    const isLoading = usersQuery.isLoading;
+    }, [usersQuery.data?.users, searchFilter, roleFilter, currentCompanyMember?.company.id]); const isLoading = usersQuery.isLoading;
     const hasError = usersQuery.error;
 
     const clearFilters = () => {
@@ -198,18 +187,18 @@ export function UsersTable() {
                                             </TableRow>
                                         ) : (
                                             filteredUsers.map((user) => (
-                                                <TableRow key={user.id}>
+                                                <TableRow key={user.email}>
                                                     <TableCell className="font-medium">
                                                         {user.name}
                                                     </TableCell>
                                                     <TableCell>{user.email}</TableCell>
                                                     <TableCell>
-                                                        {getRoleBadge(user.role)}
+                                                        {getRoleBadge(user.member_on?.find(m => m.company_id === currentCompanyMember?.company.id)?.role || 'STUDENT')}
                                                     </TableCell>
                                                     <TableCell>{user.phone}</TableCell>
                                                     <TableCell>
-                                                        <Badge variant={user.active ? "default" : "secondary"}>
-                                                            {user.active ? "Ativo" : "Inativo"}
+                                                        <Badge variant="default">
+                                                            Ativo
                                                         </Badge>
                                                     </TableCell>
                                                     <TableCell>{formatDate(user.created_at)}</TableCell>

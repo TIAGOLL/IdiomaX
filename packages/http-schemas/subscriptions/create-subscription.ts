@@ -17,7 +17,6 @@ export const CreateSubscriptionFormSchema = z.object({
 export const CreateSubscriptionApiRequestSchema = z.object({
     price_id: z.string().min(1),
     company_id: z.string().uuid(),
-    user_id: z.string().uuid(),
 });
 
 export const CreateSubscriptionApiResponseSchema = z.object({

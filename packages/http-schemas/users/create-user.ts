@@ -22,11 +22,10 @@ export const CreateUserFormSchema = z.object({
     password: z.string()
         .min(6, 'Senha deve ter pelo menos 6 caracteres')
         .max(1024, 'Senha muito longa'),
-    confirmPassword: z.string(),
     gender: z.enum(['M', 'F'], {
         message: 'Selecione o gênero'
     }),
-    dateOfBirth: z.date({
+    date_of_birth: z.date({
         message: 'Data de nascimento é obrigatória'
     }),
     address: z.string()
@@ -35,10 +34,9 @@ export const CreateUserFormSchema = z.object({
     role: z.enum(['STUDENT', 'TEACHER', 'ADMIN'], {
         message: 'Selecione o tipo de usuário'
     }),
-}).refine(data => data.password === data.confirmPassword, {
-    message: 'Senhas não coincidem',
-    path: ['confirmPassword']
-});
+    company_id: z.string()
+        .uuid('ID da empresa inválido'),
+})
 
 // ===== API SCHEMAS (Backend Validation) =====
 export const CreateUserApiRequestSchema = z.object({
@@ -58,15 +56,6 @@ export const CreateUserApiRequestSchema = z.object({
 
 export const CreateUserApiResponseSchema = z.object({
     message: z.string(),
-    user: z.object({
-        id: z.string().uuid(),
-        name: z.string(),
-        email: z.string(),
-        username: z.string(),
-        role: z.enum(['STUDENT', 'TEACHER', 'ADMIN']),
-        active: z.boolean(),
-        created_at: z.date(),
-    }),
 });
 
 // ===== HTTP TYPES (Frontend Services) =====

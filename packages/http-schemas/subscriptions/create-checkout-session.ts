@@ -2,9 +2,9 @@ import { z } from 'zod';
 
 // ===== FORM SCHEMAS (Frontend Formulários) =====
 export const CreateCheckoutSessionFormSchema = z.object({
-    priceId: z.string()
+    prodId: z.string()
         .min(1, 'Selecione um plano')
-        .startsWith('price_', 'ID de preço inválido'),
+        .startsWith('prod_', 'ID de produto inválido'),
     url: z.string()
         .url('URL de sucesso inválida')
         .optional(),
@@ -12,7 +12,7 @@ export const CreateCheckoutSessionFormSchema = z.object({
 
 // ===== API SCHEMAS (Backend Validation) =====
 export const CreateCheckoutSessionApiRequestSchema = z.object({
-    price_id: z.string().min(1),
+    prod_id: z.string().min(1),
     company_id: z.string().uuid(),
     user_id: z.string().uuid(),
     success_url: z.string().url().optional(),

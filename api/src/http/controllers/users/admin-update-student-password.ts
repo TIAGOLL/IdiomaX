@@ -2,8 +2,8 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { checkMemberAccess } from '../../../lib/permissions';
-import { adminUpdateStudentPasswordBody } from '@idiomax/http-schemas/admin-update-student-password';
-import { updateUserPasswordResponse } from '@idiomax/http-schemas/update-user-password';
+import { ApiAdminUpdateStudentPasswordRequest } from '@idiomax/http-schemas/students/admin-update-student-password';
+import { UpdateUserPasswordApiResponseSchema } from '@idiomax/http-schemas/users/update-user-password';
 import { prisma } from '../../../lib/prisma';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { UnauthorizedError } from '../_errors/unauthorized-error';
@@ -20,17 +20,17 @@ export async function adminUpdateStudentPassword(app: FastifyInstance) {
                     tags: ['Usuários'],
                     summary: 'Admin redefinir senha de estudante/professor via body.',
                     security: [{ bearerAuth: [] }],
-                    body: adminUpdateStudentPasswordBody,
+                    body: ApiAdminUpdateStudentPasswordRequest,
                     response: {
-                        200: updateUserPasswordResponse,
+                        200: UpdateUserPasswordApiResponseSchema,
                     },
                 },
             },
             async (request, reply) => {
-                const { companyId, userId: targetUserId, role, newPassword } = request.body;
+                const { company_id, user_id: targetUserId, role, new_password } = request.body;
                 const userId = await request.getCurrentUserId();
 
-                const { company, member } = await checkMemberAccess(companyId, userId);
+                const { company, member } = await checkMemberAccess(company_id, userId);
 
                 // Verificar se o usuário logado é ADMIN
                 if (member.role !== 'ADMIN') {
@@ -64,7 +64,7 @@ export async function adminUpdateStudentPassword(app: FastifyInstance) {
                 }
 
                 // Hash da nova senha
-                const hashedNewPassword = await hash(newPassword, 6);
+                const hashedNewPassword = await hash(new_password, 6);
 
                 // Atualizar senha sem verificar a senha atual
                 await prisma.users.update({
