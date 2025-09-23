@@ -19,7 +19,6 @@ export * from './admin-reset-password';
 
 // User Role Management
 export * from './update-user-role';
-export * from './set-role';
 
 // User Status Management
 export * from './deactivate-user';

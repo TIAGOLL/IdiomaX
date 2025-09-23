@@ -18,8 +18,12 @@ export function getNavigationData() {
                 title: "Turmas",
                 icon: LayoutDashboardIcon,
                 links: [
-                    { name: "Ver todas", to: "/admin/classrooms?tab=all" },
-                    { name: "Cadastrar turma", to: "/admin/classrooms?tab=create" },
+                    { name: "Ver turmas", to: "/admin/classes?tab=all" },
+                    { name: "Cadastrar turma", to: "/admin/classes?tab=create" },
+                    { name: "Ver salas", to: "/admin/classrooms?tab=all" },
+                    { name: "Cadastrar sala", to: "/admin/classrooms?tab=create" },
+                    { name: "Ver aulas", to: "/admin/classes?tab=all" },
+                    { name: "Cadastrar aula", to: "/admin/classes?tab=create" },
                 ],
             },
             {

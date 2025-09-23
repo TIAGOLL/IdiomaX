@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { GenderApiEnum } from '../enums'
+import { GenderEnum } from '../enums'
 
 // Form Schema para formulário de registro
 export const SignUpFormSchema = z.object({
@@ -40,7 +40,7 @@ export const SignUpFormSchema = z.object({
         .max(15, { message: 'Telefone deve ter no máximo 15 dígitos.' })
         .regex(/^\d+$/, { message: 'Telefone deve conter apenas números.' }),
 
-    gender: GenderApiEnum,
+    gender: GenderEnum,
 
     date_of_birth: z.string(),
 
@@ -58,7 +58,7 @@ export const SignUpApiRequest = z.object({
     password: z.string().min(6).max(1024),
     cpf: z.string().length(11),
     phone: z.string().min(10).max(15),
-    gender: GenderApiEnum.optional(),
+    gender: GenderEnum.optional(),
     date_of_birth: z.string().optional(),
     address: z.string().optional(),
 })

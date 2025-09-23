@@ -31,6 +31,7 @@ export const GetUsersApiRequestSchema = z.object({
 
 export const GetUsersApiResponseSchema = z.object({
     users: z.array(z.object({
+        id: z.string().uuid(),
         name: z.string().min(3).max(256),
         email: z.email().min(3).max(256),
         username: z.string().min(3).max(256),

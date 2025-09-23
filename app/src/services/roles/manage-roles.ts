@@ -1,24 +1,14 @@
 import { api } from '../../lib/api';
 import { getCurrentCompanyId } from '../../lib/company-utils';
-import type { UserRole } from '@idiomax/http-schemas/users/get-users';
+import type { UpdateUserRoleHttpRequest } from '@idiomax/http-schemas/roles/update-user-role';
 
-export interface UpdateUserRoleData {
-    userId: string;
-    role: UserRole;
-}
 
-export async function addUserRole(data: UpdateUserRoleData): Promise<{ message: string }> {
-    const companyId = getCurrentCompanyId();
-
-    const response = await api.post('/users/roles/add', {
-        ...data,
-        companyId
-    });
-
+export async function addUserRole(data: UpdateUserRoleHttpRequest): Promise<{ message: string }> {
+    const response = await api.post('/users/roles/add', data);
     return response.data;
 }
 
-export async function updateUserRole(data: UpdateUserRoleData): Promise<{ message: string }> {
+export async function updateUserRole(data: UpdateUserRoleHttpRequest): Promise<{ message: string }> {
     const companyId = getCurrentCompanyId();
 
     const response = await api.put('/users/role', {
@@ -29,7 +19,7 @@ export async function updateUserRole(data: UpdateUserRoleData): Promise<{ messag
     return response.data;
 }
 
-export async function removeUserRole(data: UpdateUserRoleData): Promise<{ message: string }> {
+export async function removeUserRole(data: UpdateUserRoleHttpRequest): Promise<{ message: string }> {
     const companyId = getCurrentCompanyId();
 
     const response = await api.delete('/users/roles/remove', {

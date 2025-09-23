@@ -7,7 +7,7 @@ import { prisma } from '../../../lib/prisma';
 import { UpdateCompanyApiRequestSchema, UpdateCompanyApiResponseSchema } from '@idiomax/http-schemas/companies/update-company';
 import { ForbiddenError } from '../_errors/forbidden-error';
 
-export async function putCompany(app: FastifyInstance) {
+export async function updateCompany(app: FastifyInstance) {
     app
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
@@ -25,7 +25,7 @@ export async function putCompany(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { id, name, phone, address } = request.body;
+                const { id, name, phone, address, cnpj, email, logo_16x16_url, logo_512x512_url, social_reason, state_registration, tax_regime, } = request.body;
                 const userId = await request.getCurrentUserId()
 
                 // Verificar se o usuário é admin da empresa
@@ -55,7 +55,7 @@ export async function putCompany(app: FastifyInstance) {
                 }
 
 
-                const updatedCompany = await prisma.companies.update({
+                await prisma.companies.update({
                     where: {
                         id: id,
                     },
@@ -63,21 +63,18 @@ export async function putCompany(app: FastifyInstance) {
                         name,
                         phone,
                         address,
+                        cnpj,
+                        email,
+                        logo_16x16_url,
+                        logo_512x512_url,
+                        social_reason,
+                        state_registration,
+                        tax_regime,
                     },
                 });
 
                 return reply.status(200).send({
                     message: 'Instituição atualizada com sucesso.',
-                    company: {
-                        id: updatedCompany.id,
-                        name: updatedCompany.name,
-                        description: null,
-                        website: null,
-                        phone: updatedCompany.phone,
-                        address: updatedCompany.address,
-                        logo_url: null,
-                        updated_at: updatedCompany.updated_at,
-                    }
                 });
             },
         );

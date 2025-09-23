@@ -12,7 +12,7 @@ export default function UsersPage() {
         <div className="container mx-auto p-6">
             {activeTab === 'create' && <CreateUserPage />}
             {activeTab === 'list' && <UsersTablePage />}
-            {activeTab === 'edit' && userId && <EditUserPage userId={userId} />}
+            {activeTab === 'edit' && userId && <EditUserPage />}
         </div>
     );
 }

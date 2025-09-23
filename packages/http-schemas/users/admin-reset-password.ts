@@ -2,23 +2,20 @@ import { z } from 'zod';
 
 // ===== FORM SCHEMAS (Frontend Formulários) =====
 export const AdminResetPasswordFormSchema = z.object({
-    userId: z.string()
-        .uuid('ID do usuário é obrigatório'),
-    newPassword: z.string()
+    password: z.string()
         .min(6, 'Nova senha deve ter pelo menos 6 caracteres')
         .max(1024, 'Nova senha muito longa'),
-    confirmPassword: z.string(),
-}).refine(data => data.newPassword === data.confirmPassword, {
+    confirm_password: z.string(),
+}).refine(data => data.password === data.confirm_password, {
     message: 'Senhas não coincidem',
-    path: ['confirmPassword']
+    path: ['confirm_password']
 });
 
 // ===== API SCHEMAS (Backend Validation) =====
 export const AdminResetPasswordApiRequestSchema = z.object({
     user_id: z.string().uuid(),
     company_id: z.string().uuid(),
-    role: z.enum(['STUDENT', 'TEACHER', 'ADMIN']),
-    new_password: z.string().min(6).max(1024),
+    password: z.string().min(6).max(1024),
 });
 
 export const AdminResetPasswordApiResponseSchema = z.object({

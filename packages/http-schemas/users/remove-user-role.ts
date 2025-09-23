@@ -2,8 +2,8 @@ import { z } from 'zod';
 
 // ===== FORM SCHEMAS (Frontend Formulários) =====
 export const RemoveUserRoleFormSchema = z.object({
-    userId: z.string().uuid('ID do usuário inválido'),
-    companyId: z.string().uuid('ID da empresa inválido'),
+    user_id: z.string().uuid('ID do usuário inválido'),
+    company_id: z.string().uuid('ID da empresa inválido'),
     role: z.enum(['STUDENT', 'TEACHER', 'ADMIN'], {
         message: 'Selecione um papel válido'
     }),
@@ -11,8 +11,8 @@ export const RemoveUserRoleFormSchema = z.object({
 
 // ===== API SCHEMAS (Backend Validation) =====
 export const RemoveUserRoleApiRequestSchema = z.object({
-    userId: z.string().uuid(),
-    companyId: z.string().uuid(),
+    user_id: z.string().uuid(),
+    company_id: z.string().uuid(),
     role: z.enum(['STUDENT', 'TEACHER', 'ADMIN']),
 });
 

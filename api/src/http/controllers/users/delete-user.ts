@@ -24,10 +24,10 @@ export async function deleteUser(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { companyId, userId: targetUserId, role } = request.body;
+                const { company_id, user_id: targetUserId } = request.body;
                 const userId = await request.getCurrentUserId();
 
-                const { company } = await checkMemberAccess(companyId, userId);
+                const { company } = await checkMemberAccess(company_id, userId);
 
                 // Verificar se o usuário existe e está associado à empresa com o role correto
                 const user = await prisma.users.findFirst({
@@ -36,14 +36,13 @@ export async function deleteUser(app: FastifyInstance) {
                         member_on: {
                             some: {
                                 company_id: company.id,
-                                role: role,
                             }
                         }
                     },
                 });
 
                 if (!user) {
-                    throw new BadRequestError(`Usuário não encontrado ou não está associado a esta empresa com o role ${role}.`);
+                    throw new BadRequestError(`Usuário não encontrado ou não está associado a esta empresa.`);
                 }
 
                 // Deletar o relacionamento da empresa primeiro
@@ -51,43 +50,12 @@ export async function deleteUser(app: FastifyInstance) {
                     where: {
                         user_id: targetUserId,
                         company_id: company.id,
-                        role: role,
                     },
                 });
 
-                // Verificar se o usuário ainda é membro de outras empresas
-                const otherMemberships = await prisma.members.findFirst({
-                    where: {
-                        user_id: targetUserId,
-                    },
+                return reply.status(200).send({
+                    message: 'Usuário removido com sucesso.',
                 });
-
-                // Se não for membro de nenhuma outra empresa, deletar o usuário
-                if (!otherMemberships) {
-                    const deletedUser = await prisma.users.delete({
-                        where: { id: targetUserId },
-                        select: {
-                            id: true,
-                            name: true,
-                            email: true,
-                        },
-                    });
-
-                    return reply.status(200).send({
-                        message: 'Usuário removido com sucesso.',
-                        deleted_user: deletedUser,
-                    });
-                } else {
-                    // Se ainda tiver memberships, apenas remover o membro
-                    return reply.status(200).send({
-                        message: 'Usuário removido da empresa com sucesso.',
-                        deleted_user: {
-                            id: user.id,
-                            name: user.name,
-                            email: user.email,
-                        },
-                    });
-                }
             },
         );
 }

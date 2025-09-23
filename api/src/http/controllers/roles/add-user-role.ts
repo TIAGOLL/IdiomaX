@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { checkMemberAccess } from '../../../lib/permissions';
-import { AddUserRoleApiRequestSchema, AddUserRoleApiResponseSchema } from '@idiomax/http-schemas/roles/add-user-role';
+import { UpdateUserRoleApiRequestSchema, UpdateUserRoleApiResponseSchema } from '@idiomax/http-schemas/roles/update-user-role';
 import { prisma } from '../../../lib/prisma';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { UnauthorizedError } from '../_errors/unauthorized-error';
@@ -18,17 +18,17 @@ export async function addUserRole(app: FastifyInstance) {
                     tags: ['Usuários'],
                     summary: 'Adicionar role a um usuário na empresa.',
                     security: [{ bearerAuth: [] }],
-                    body: AddUserRoleApiRequestSchema,
+                    body: UpdateUserRoleApiRequestSchema,
                     response: {
-                        200: AddUserRoleApiResponseSchema,
+                        200: UpdateUserRoleApiResponseSchema,
                     },
                 },
             },
             async (request, reply) => {
-                const { userId: targetUserId, role, companyId } = request.body;
+                const { user_id: targetUserId, role, company_id } = request.body;
                 const userId = await request.getCurrentUserId();
 
-                const { company, member } = await checkMemberAccess(companyId, userId);
+                const { company, member } = await checkMemberAccess(company_id, userId);
 
                 // Verificar se o usuário logado é ADMIN
                 if (member.role !== 'ADMIN') {
@@ -54,11 +54,11 @@ export async function addUserRole(app: FastifyInstance) {
                 });
 
                 if (existingMember) {
-                    throw new BadRequestError(`Usuário já possui a role ${role} nesta empresa.`);
+                    throw new BadRequestError(`Usuário já possui a função ${role} nesta empresa.`);
                 }
 
                 // Adicionar a role
-                const newMember = await prisma.members.create({
+                await prisma.members.create({
                     data: {
                         user_id: targetUserId,
                         company_id: company.id,
@@ -70,14 +70,7 @@ export async function addUserRole(app: FastifyInstance) {
                 });
 
                 return reply.status(200).send({
-                    message: `Role ${role} adicionada com sucesso.`,
-                    member: {
-                        id: newMember.id,
-                        role: newMember.role,
-                        company_id: newMember.company_id,
-                        user_id: newMember.user_id,
-                        created_at: newMember.created_at,
-                    },
+                    message: `Função ${role} adicionada com sucesso.`,
                 });
             },
         );

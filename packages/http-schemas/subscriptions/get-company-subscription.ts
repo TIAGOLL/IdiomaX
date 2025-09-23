@@ -52,8 +52,8 @@ export const GetCompanySubscriptionApiResponseSchema = z.object({
             updated_at: z.date().optional().nullable(),
             address: z.string(),
             owner_id: z.string()
-        }).optional()
-    }).optional(),
+        })
+    }),
     price: z.object({
         id: z.string(),
         product_id: z.string(),

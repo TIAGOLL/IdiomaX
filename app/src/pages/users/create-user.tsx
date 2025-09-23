@@ -65,14 +65,14 @@ export function CreateUserPage() {
         }
     });
 
-    const dateOfBirth = watch('date_of_birth');
+    const date_of_birth = watch('date_of_birth');
     const userName = watch('name');
 
     useEffect(() => {
-        if (dateOfBirth && userName) {
+        if (date_of_birth && userName) {
             setValue("password", PasswordGenerator(watch("cpf")))
         }
-    }, [dateOfBirth, userName, setValue, watch])
+    }, [date_of_birth, userName, setValue, watch])
 
     return (
         <div className='flex justify-center items-center sm:w-full'>

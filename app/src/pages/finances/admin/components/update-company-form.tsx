@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,17 +11,17 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { UpdateCompanyFormSchema } from '@idiomax/http-schemas/companies/update-company';
-import type { UpdateCompanyHttpRequest } from '@idiomax/http-schemas/companies/update-company';
 import type { GetCompanyByIdHttpResponse } from '@idiomax/http-schemas/companies/get-company-by-id';
-import { useSessionContext } from '@/contexts/session-context';
 
-type UpdateCompanyFormData = z.infer<typeof UpdateCompanyFormSchema>;
+type UpdateCompanyFormSchema = z.infer<typeof UpdateCompanyFormSchema>;
 
-export function UpdateCompanyForm({ company }: { company: GetCompanyByIdHttpResponse['company'] }) {
-    const { currentCompanyMember } = useSessionContext();
+export function UpdateCompanyForm({ company }: { company: GetCompanyByIdHttpResponse }) {
     const { mutate, isPending } = useMutation({
-        mutationFn: async (data: UpdateCompanyHttpRequest) => {
-            const response = await api.put('/companies', data);
+        mutationFn: async (data: UpdateCompanyFormSchema) => {
+            const response = await api.put('/companies', {
+                ...data,
+                id: company.id
+            });
             return response.data;
         },
         onSuccess: (res) => {
@@ -37,35 +36,30 @@ export function UpdateCompanyForm({ company }: { company: GetCompanyByIdHttpResp
         register,
         handleSubmit,
         formState: { errors },
-        reset,
-    } = useForm<UpdateCompanyFormData>({
+    } = useForm({
         resolver: zodResolver(UpdateCompanyFormSchema),
         mode: 'all',
         criteriaMode: 'all',
-    });
-
-    useEffect(() => {
-        if (company && currentCompanyMember) {
-            reset({
+        defaultValues: async () => {
+            return {
                 name: company.name,
-                description: company.description || '',
-                website: company.website || '',
                 phone: company.phone || '',
                 address: company.address || '',
-            });
+                email: company.email || '',
+                logo_16x16_url: company.logo_16x16_url || '',
+                logo_512x512_url: company.logo_512x512_url || '',
+                social_reason: company.social_reason || '',
+                state_registration: company.state_registration || '',
+                tax_regime: company.tax_regime || '',
+                cnpj: company.cnpj || '',
+            };
         }
-    }, [company, currentCompanyMember, reset]);
+    });
 
     if (!company) return
 
     return (
-        <form onSubmit={handleSubmit((data) => {
-            const updateData: UpdateCompanyHttpRequest = {
-                id: currentCompanyMember!.company.id,
-                ...data
-            };
-            mutate(updateData);
-        })} className='space-y-4'>
+        <form onSubmit={handleSubmit((data) => mutate(data))} className='space-y-4'>
             <CardContent>
                 <div className="sm:grid flex flex-col sm:grid-cols-3 gap-4">
                     <div className="col-span-1 space-y-1">
@@ -74,24 +68,49 @@ export function UpdateCompanyForm({ company }: { company: GetCompanyByIdHttpResp
                         <FormMessageError error={errors.name?.message} />
                     </div>
                     <div className="col-span-1 space-y-1">
+                        <Label htmlFor='cnpj'>CNPJ</Label>
+                        <Input type='text' id='cnpj' {...register('cnpj')} />
+                        <FormMessageError error={errors.cnpj?.message} />
+                    </div>
+                    <div className="col-span-1 space-y-1">
                         <Label htmlFor='phone'>Telefone</Label>
                         <Input type='text' id='phone' {...register('phone')} />
                         <FormMessageError error={errors.phone?.message} />
-                    </div>
-                    <div className="col-span-1 space-y-1">
-                        <Label htmlFor='website'>Website</Label>
-                        <Input type='url' id='website' {...register('website')} />
-                        <FormMessageError error={errors.website?.message} />
                     </div>
                     <div className="col-span-3 space-y-1">
                         <Label htmlFor='address'>Endereço</Label>
                         <Input type='text' id='address' {...register('address')} />
                         <FormMessageError error={errors.address?.message} />
                     </div>
-                    <div className="col-span-3 space-y-1">
-                        <Label htmlFor='description'>Descrição</Label>
-                        <Input type='text' id='description' {...register('description')} />
-                        <FormMessageError error={errors.description?.message} />
+                    <div className="col-span-1 space-y-1">
+                        <Label htmlFor='email'>Email</Label>
+                        <Input id='email' {...register('email')} />
+                        <FormMessageError error={errors.email?.message} />
+                    </div>
+                    <div className="col-span-1 space-y-1">
+                        <Label htmlFor='logo_16x16_url'>Logo 16x16 URL</Label>
+                        <Input type='url' id='logo_16x16_url' {...register('logo_16x16_url')} />
+                        <FormMessageError error={errors.logo_16x16_url?.message} />
+                    </div>
+                    <div className="col-span-1 space-y-1">
+                        <Label htmlFor='logo_512x512_url'>Logo 512x512 URL</Label>
+                        <Input type='url' id='logo_512x512_url' {...register('logo_512x512_url')} />
+                        <FormMessageError error={errors.logo_512x512_url?.message} />
+                    </div>
+                    <div className="col-span-1 space-y-1">
+                        <Label htmlFor='social_reason'>Razão Social</Label>
+                        <Input type='text' id='social_reason' {...register('social_reason')} />
+                        <FormMessageError error={errors.social_reason?.message} />
+                    </div>
+                    <div className="col-span-1 space-y-1">
+                        <Label htmlFor='state_registration'>Inscrição Estadual</Label>
+                        <Input type='text' id='state_registration' {...register('state_registration')} />
+                        <FormMessageError error={errors.state_registration?.message} />
+                    </div>
+                    <div className="col-span-1 space-y-1">
+                        <Label htmlFor='tax_regime'>Regime Tributário</Label>
+                        <Input type='text' id='tax_regime' {...register('tax_regime')} />
+                        <FormMessageError error={errors.tax_regime?.message} />
                     </div>
                 </div>
             </CardContent>

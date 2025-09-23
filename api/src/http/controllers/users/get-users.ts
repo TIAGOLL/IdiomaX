@@ -31,7 +31,6 @@ export async function getUsers(app: FastifyInstance) {
                     page = 1,
                     limit = 10,
                     search,
-                    active,
                     role
                 } = request.query;
 
@@ -45,10 +44,6 @@ export async function getUsers(app: FastifyInstance) {
                         }
                     }
                 };
-
-                if (active !== undefined) {
-                    whereClause.active = active;
-                }
 
                 if (search) {
                     whereClause.OR = [

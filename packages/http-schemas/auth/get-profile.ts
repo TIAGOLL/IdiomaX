@@ -26,12 +26,12 @@ export const GetProfileApiResponse = z.object({
     name: z.string(),
     username: z.string(),
     email: z.string().email(),
-    cpf: z.string().nullable(),
-    phone: z.string().nullable(),
-    gender: GenderEnum.nullable(),
-    date_of_birth: z.date().nullable(),
-    address: z.string().nullable(),
-    avatar_url: z.string().nullable(),
+    cpf: z.string(),
+    phone: z.string(),
+    gender: GenderEnum,
+    date_of_birth: z.date(),
+    address: z.string(),
+    avatar_url: z.string(),
     member_on: z.array(MemberSchema),
 })
 

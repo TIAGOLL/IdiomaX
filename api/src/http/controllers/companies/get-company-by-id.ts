@@ -25,17 +25,6 @@ export async function getCompanyById(app: FastifyInstance) {
                 const { company_id } = request.params;
                 const userId = await request.getCurrentUserId();
 
-                const userIsMember = await prisma.members.findFirst({
-                    where: {
-                        user_id: userId,
-                        company_id: company_id,
-                    }
-                });
-
-                if (!userIsMember) {
-                    throw new BadRequestError('Usuário não está associado a essa instituição.');
-                }
-
                 const company = await prisma.companies.findUnique({
                     where: {
                         id: company_id,
@@ -45,13 +34,13 @@ export async function getCompanyById(app: FastifyInstance) {
                             }
                         }
                     },
-                }).catch((err) => console.log(err));
+                })
 
                 if (!company) {
                     throw new BadRequestError('Instituição não encontrada ou você não tem acesso a ela.');
                 }
 
-                return reply.status(200).send({ company });
+                return reply.status(200).send(company);
             },
         );
 }

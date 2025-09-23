@@ -25,10 +25,10 @@ export async function removeUserRole(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { userId: targetUserId, role, companyId } = request.body;
+                const { user_id: targetUserId, role, company_id } = request.body;
                 const userId = await request.getCurrentUserId();
 
-                const { company, member } = await checkMemberAccess(companyId, userId);
+                const { company, member } = await checkMemberAccess(company_id, userId);
 
                 // Verificar se o usuário logado é ADMIN
                 if (member.role !== 'ADMIN') {

@@ -1,24 +1,10 @@
 import { api } from '../../lib/api';
-import { getCurrentCompanyId } from '../../lib/company-utils';
 import type {
+    DeleteUserHttpRequest,
     DeleteUserHttpResponse
 } from '@idiomax/http-schemas/users/delete-user';
-import type { UserRole } from '@idiomax/http-schemas/users/get-users';
 
-export type DeleteUserResponse = DeleteUserHttpResponse;
-
-export async function deleteUser(
-    role: UserRole,
-    userId: string
-): Promise<DeleteUserResponse> {
-    const companyId = getCurrentCompanyId();
-
-    const { data } = await api.delete(`/users/delete`, {
-        data: {
-            companyId,
-            role,
-            userId
-        }
-    });
-    return data;
+export async function deleteUser(data: DeleteUserHttpRequest): Promise<DeleteUserHttpResponse> {
+    const response = await api.delete(`/users/delete`, { data });
+    return response.data;
 }

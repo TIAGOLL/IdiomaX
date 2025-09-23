@@ -31,7 +31,6 @@ export async function getUserById(app: FastifyInstance) {
                             some: {
                                 user_id: user_id,
                                 company_id: company_id,
-                                active: true,
                             }
                         }
                     },

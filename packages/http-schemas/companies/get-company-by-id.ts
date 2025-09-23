@@ -12,19 +12,17 @@ export const GetCompanyByIdApiRequestSchema = z.object({
 });
 
 export const GetCompanyByIdApiResponseSchema = z.object({
-    company: z.object({
-        id: z.string().uuid(),
-        name: z.string(),
-        description: z.string().nullable(),
-        website: z.string().nullable(),
-        phone: z.string().nullable(),
-        address: z.string().nullable(),
-        logo_url: z.string().nullable(),
-        owner_id: z.string().uuid(),
-        active: z.boolean(),
-        created_at: z.date(),
-        updated_at: z.date(),
-    }),
+    id: z.string().uuid(),
+    name: z.string().min(2).max(256),
+    phone: z.string().min(10).max(15).regex(/^\d+$/).nullable().optional(),
+    address: z.string().max(512).nullable().optional(),
+    email: z.string().email().max(256).nullable().optional(),
+    logo_16x16_url: z.string().url().max(512).nullable().optional(),
+    logo_512x512_url: z.string().url().max(512).nullable().optional(),
+    social_reason: z.string().max(256).nullable().optional(),
+    state_registration: z.string().max(256).nullable().optional(),
+    tax_regime: z.string().max(256).nullable().optional(),
+    cnpj: z.string().min(14).max(14).nullable().optional(),
 });
 
 // ===== HTTP TYPES (Frontend Services) =====

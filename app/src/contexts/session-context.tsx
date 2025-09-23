@@ -9,14 +9,14 @@ import { type GetCompanySubscriptionHttpResponse } from '@idiomax/http-schemas/s
 
 
 type SessionContextType = {
-    userProfile?: GetProfileResponseType;
+    userProfile: GetProfileResponseType | null;
     logout: () => void;
     error: unknown;
     token?: string;
     currentCompanyMember?: GetProfileResponseType['member_on'][number];
     setCompany: (company: GetProfileResponseType['member_on'][number]) => void;
     currentRole?: string;
-    subscription?: GetCompanySubscriptionHttpResponse;
+    subscription: GetCompanySubscriptionHttpResponse | null;
     isLoadingSubscription: boolean;
     isLoadingUserProfile: boolean;
     subscriptionError: unknown;
@@ -114,7 +114,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     return (
         <SessionContext.Provider value={{
-            userProfile,
+            userProfile: userProfile || null,
             getCompanyId,
             isLoadingUserProfile,
             logout,
@@ -123,7 +123,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
             currentCompanyMember,
             setCompany,
             currentRole,
-            subscription,
+            subscription: subscription || null,
             isLoadingSubscription,
             subscriptionError,
             isInitializingCompany

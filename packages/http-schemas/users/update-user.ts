@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { GenderEnum } from '../enums';
 
 // ===== FORM SCHEMAS (Frontend Formulários) =====
 export const UpdateUserFormSchema = z.object({
@@ -19,15 +20,14 @@ export const UpdateUserFormSchema = z.object({
         .min(3, 'Nome de usuário deve ter pelo menos 3 caracteres')
         .max(256, 'Nome de usuário muito longo')
         .regex(/^[a-zA-Z0-9_]+$/, 'Nome de usuário deve conter apenas letras, números e underscore'),
-    gender: z.enum(['M', 'F'], {
-        message: 'Selecione o gênero'
-    }),
+    gender: GenderEnum,
     date_of_birth: z.date({
         message: 'Data de nascimento é obrigatória'
     }),
     address: z.string()
         .min(5, 'Endereço muito curto')
         .max(256, 'Endereço muito longo'),
+    avatar_url: z.string().optional().nullable()
 });
 
 // ===== API SCHEMAS (Backend Validation) =====
@@ -39,23 +39,14 @@ export const UpdateUserApiRequestSchema = z.object({
     phone: z.string().min(10).max(15).regex(/^\d+$/),
     username: z.string().min(3).max(256).regex(/^[a-zA-Z0-9_]+$/),
     gender: z.enum(['M', 'F']),
-    dateOfBirth: z.date(),
+    date_of_birth: z.string().transform((val) => new Date(val)),
     address: z.string().min(5).max(256),
-    role: z.enum(['STUDENT', 'TEACHER', 'ADMIN']),
     companyId: z.string().uuid(),
     avatar_url: z.string().url().nullable().optional(),
 });
 
 export const UpdateUserApiResponseSchema = z.object({
     message: z.string(),
-    user: z.object({
-        id: z.string().uuid(),
-        name: z.string(),
-        email: z.string(),
-        username: z.string(),
-        role: z.enum(['STUDENT', 'TEACHER', 'ADMIN']),
-        updated_at: z.date(),
-    }),
 });
 
 // ===== HTTP TYPES (Frontend Services) =====

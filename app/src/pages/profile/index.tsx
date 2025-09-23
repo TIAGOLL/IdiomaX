@@ -1,31 +1,35 @@
-import { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { api } from '@/lib/api';
 import { useMutation } from '@tanstack/react-query';
 import { Info, LoaderIcon, Save } from 'lucide-react';
 import { FormMessageError } from '@/components/ui/form-message-error';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
-import type { Resolver } from 'react-hook-form';
 import { z } from 'zod';
+import { useEffect } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { UpdateProfileFormSchema } from '@idiomax/http-schemas/auth/update-profile';
 import { useSessionContext } from '@/contexts/session-context';
+import { UpdateUserFormSchema } from '@idiomax/http-schemas/users/update-user';
+import { updateUser } from '@/services/users';
+import { getCurrentCompanyId } from '@/lib/company-utils';
 
-type UpdateUserProfileRequest = z.infer<typeof UpdateProfileFormSchema>;
+type UpdateUserFormSchema = z.infer<typeof UpdateUserFormSchema>;
 
 export default function ProfilePage() {
 
-    const { mutate, isPending, status } = useMutation({
-        mutationFn: async (data: UpdateUserProfileRequest) => {
-            const response = await api.put('/users', data);
-            return response.data;
+    const { mutate, isPending } = useMutation({
+        mutationFn: async (data: UpdateUserFormSchema) => {
+            const response = await updateUser({
+                ...data,
+                id: userProfile?.id || '',
+                companyId: getCurrentCompanyId()
+            });
+            return response;
         },
         onSuccess: (res) => {
             toast.success(res.message);
@@ -37,17 +41,17 @@ export default function ProfilePage() {
         }
     });
 
-    const { userProfile } = useSessionContext();
+    const { userProfile, isLoadingUserProfile } = useSessionContext();
 
     const {
         register,
         handleSubmit,
         formState: { errors },
         watch,
-        reset,
-        control
-    } = useForm<UpdateUserProfileRequest>({
-        resolver: zodResolver(UpdateProfileFormSchema) as Resolver<UpdateUserProfileRequest>,
+        control,
+        reset
+    } = useForm<UpdateUserFormSchema>({
+        resolver: zodResolver(UpdateUserFormSchema),
         mode: 'all',
         criteriaMode: 'all',
     });
@@ -57,20 +61,22 @@ export default function ProfilePage() {
             reset({
                 name: userProfile.name,
                 cpf: userProfile.cpf,
-                phone: userProfile.phone,
                 gender: userProfile.gender,
-                dateOfBirth: new Date(userProfile.date_of_birth),
                 address: userProfile.address,
-                avatarUrl: userProfile.avatar_url || undefined,
+                phone: userProfile.phone,
+                date_of_birth: userProfile.date_of_birth ? new Date(userProfile.date_of_birth) : new Date(),
+                username: userProfile.username,
+                email: userProfile.email,
+                avatar_url: userProfile.avatar_url,
             });
         }
     }, [userProfile, reset]);
 
-    if (status === 'pending' || !watch("gender")) return <LoaderIcon className='ml-2 h-4 w-4 animate-spin' />;
+    if (isLoadingUserProfile || !userProfile || !watch("gender")) return <LoaderIcon className='ml-2 h-4 w-4 animate-spin' />;
 
     return (
-        <div className='flex justify-center items-center sm:w-full'>
-            <Card className='sm:w-11/12 w-full'>
+        <div className='flex justify-center items-center w-full p-6'>
+            <Card className='w-full'>
                 <form onSubmit={handleSubmit((data) => mutate(data))} className='space-y-4'>
                     <CardHeader className='flex space-x-4 flex-col'>
                         <div className='flex-col'>
@@ -130,14 +136,14 @@ export default function ProfilePage() {
                                 <FormMessageError error={errors.phone?.message} />
                             </div>
                             <div className="col-span-1 space-y-1">
-                                <Label htmlFor='dateOfBirth'>Data de nascimento</Label>
+                                <Label htmlFor='date_of_birth'>Data de nascimento</Label>
                                 <Controller
-                                    name="dateOfBirth"
+                                    name="date_of_birth"
                                     control={control}
                                     render={({ field }) => (
                                         <Input
                                             type='date'
-                                            id='dateOfBirth'
+                                            id='date_of_birth'
                                             value={field.value ? field.value.toISOString().split('T')[0] : ''}
                                             onChange={(e) => {
                                                 // Converte string do input para Date object para enviar à API
@@ -147,7 +153,7 @@ export default function ProfilePage() {
                                         />
                                     )}
                                 />
-                                <FormMessageError error={errors.dateOfBirth?.message} />
+                                <FormMessageError error={errors.date_of_birth?.message} />
                             </div>
                             <div className="col-span-1 space-y-1">
                                 <Label htmlFor='address'>Endereço</Label>

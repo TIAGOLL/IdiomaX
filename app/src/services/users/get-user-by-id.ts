@@ -15,5 +15,3 @@ export async function getUserById(userId: string): Promise<UserWithRole> {
     });
     return data;
 }
-
-export type GetUserByIdResponse = UserWithRole;

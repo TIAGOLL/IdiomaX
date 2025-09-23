@@ -46,7 +46,7 @@ async function main() {
 
         // 1. Crie o usuário owner primeiro
         const uuid = generateUUID()
-        const hashedPassword = await bcrypt.hash("admin1", 10)
+        const hashedPassword = await bcrypt.hash("Admin1", 10)
         const ownerUsername = 'tiago10'
         const ownerId = generateUUID()
         const now = new Date()

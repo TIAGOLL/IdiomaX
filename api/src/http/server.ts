@@ -20,7 +20,6 @@ import { errorHandler } from '../lib/error-handler'
 import { createCompany } from './controllers/companies/create-company'
 import { getCompanyById } from './controllers/companies/get-company-by-id'
 import { getUserById } from './controllers/users/get-user-by-id'
-import { UpdateProfile } from './controllers/users/update-profile'
 import { AdminDashboard } from './controllers/dashboard/admin'
 import { CreateCheckoutSession } from './controllers/stripe/create-checkout-session'
 import { envSchema } from '@idiomax/http-schemas/env'
@@ -28,7 +27,7 @@ import { StripeWebHooks } from './controllers/stripe/stripe-web-hooks'
 import { CreateSubscription } from './controllers/stripe/create-subscription'
 import { GetProducts } from './controllers/stripe/get-products'
 import { GetCompanySubscription } from './controllers/stripe/get-company-subscription'
-import { putCompany } from './controllers/companies/put-company'
+import { updateCompany } from './controllers/companies/update-company'
 import { Unsubscribe } from './controllers/stripe/unsubscribe'
 import { getCourses } from './controllers/courses/get-courses'
 import { getBooks } from './controllers/materials/get-books'
@@ -108,13 +107,12 @@ app.register(createCompany);
 app.register(getCompanyById);
 app.register(CreateCheckoutSession);
 app.register(getUserById);
-app.register(UpdateProfile);
 app.register(AdminDashboard);
 app.register(StripeWebHooks);
 app.register(CreateSubscription);
 app.register(GetProducts);
 app.register(GetCompanySubscription);
-app.register(putCompany);
+app.register(updateCompany);
 app.register(Unsubscribe);
 app.register(getCourses);
 app.register(getBooks);

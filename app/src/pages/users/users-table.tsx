@@ -59,22 +59,6 @@ export function UsersTablePage() {
         navigate(`/admin/users?tab=edit&id=${userId}`);
     };
 
-    const getRoleBadge = (role: string) => {
-        const roleConfig = {
-            STUDENT: { label: 'Estudante', variant: 'default' as const },
-            TEACHER: { label: 'Professor', variant: 'secondary' as const },
-            ADMIN: { label: 'Administrador', variant: 'destructive' as const },
-        };
-
-        const config = roleConfig[role as keyof typeof roleConfig] || { label: role, variant: 'outline' as const };
-
-        return (
-            <Badge variant={config.variant}>
-                {config.label}
-            </Badge>
-        );
-    };
-
     const formatDate = (dateString: string | Date) => {
         return new Date(dateString).toLocaleDateString('pt-BR');
     };
@@ -164,7 +148,7 @@ export function UsersTablePage() {
                                 <TableRow>
                                     <TableHead>Nome</TableHead>
                                     <TableHead>Email</TableHead>
-                                    <TableHead>Tipo</TableHead>
+                                    <TableHead>Funções</TableHead>
                                     <TableHead>Telefone</TableHead>
                                     <TableHead>Status</TableHead>
                                     <TableHead>Criado em</TableHead>
@@ -189,13 +173,23 @@ export function UsersTablePage() {
                                             </TableCell>
                                             <TableCell>{user.email}</TableCell>
                                             <TableCell>
-                                                {getRoleBadge(user.member_on?.find(m => m.company_id === currentCompanyMember?.company.id)?.role || 'STUDENT')}
+                                                {user.member_on.map(item => (
+                                                    <Badge
+                                                        key={item.role}
+                                                        variant={item.role === 'ADMIN' ? 'destructive' : item.role === 'TEACHER' ? 'outline' : 'default'} className="mr-1">
+                                                        {item.role == 'ADMIN' && 'Administrador'}
+                                                        {item.role == 'TEACHER' && 'Professor'}
+                                                        {item.role == 'STUDENT' && 'Estudante'}
+                                                    </Badge>
+                                                ))}
                                             </TableCell>
                                             <TableCell>{user.phone}</TableCell>
                                             <TableCell>
-                                                <Badge variant="default">
-                                                    Ativo
-                                                </Badge>
+                                                {user.active ? (
+                                                    <Badge variant="default">Ativo</Badge>
+                                                ) : (
+                                                    <Badge variant="destructive">Inativo</Badge>
+                                                )}
                                             </TableCell>
                                             <TableCell>{formatDate(user.created_at)}</TableCell>
                                             <TableCell>

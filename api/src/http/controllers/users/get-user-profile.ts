@@ -40,19 +40,8 @@ export async function getUserProfile(app: FastifyInstance) {
                     throw new UnauthorizedError("Sessão expirada. Faça login novamente.");
                 }
 
-                // Converter gender do Prisma (M/F) para o formato esperado pelo schema
-                const convertGender = (gender: 'M' | 'F' | null): 'MASCULINO' | 'FEMININO' | 'OUTRO' | null => {
-                    if (!gender) return null;
-                    switch (gender) {
-                        case 'M': return 'MASCULINO';
-                        case 'F': return 'FEMININO';
-                        default: return 'OUTRO';
-                    }
-                };
-
                 reply.status(200).send({
                     ...userProfile,
-                    gender: convertGender(userProfile.gender),
                 });
             },
         );

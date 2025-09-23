@@ -1,1 +1,1 @@
-export * from './admin-dashboard.ts'
+export * from './admin-dashboard'
