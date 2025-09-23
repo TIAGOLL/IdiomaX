@@ -25,28 +25,28 @@ export async function getUserById(app: FastifyInstance) {
             async (request, reply) => {
                 const { user_id, company_id } = request.query;
 
-                const member = await prisma.members.findUnique({
+                const user = await prisma.users.findFirst({
                     where: {
-                        company_id_user_id: {
-                            company_id: company_id,
-                            user_id: user_id
+                        member_on: {
+                            some: {
+                                user_id: user_id,
+                                company_id: company_id,
+                                active: true,
+                            }
                         }
                     },
                     include: {
-                        user: true
+                        member_on: {
+                            include: { company: true }
+                        }
                     }
                 });
 
-                if (!member) {
+                if (!user) {
                     throw new BadRequestError('Usuário não encontrado nesta empresa.');
                 }
 
-                const userWithRole = {
-                    ...member.user,
-                    role: member.role
-                };
-
-                return reply.send({ user: userWithRole });
+                return reply.send(user);
             },
         );
 }

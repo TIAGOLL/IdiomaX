@@ -21,7 +21,7 @@ import { getCurrentCompanyId } from '@/lib/company-utils';
 
 type CreateUserRequest = z.infer<typeof CreateUserFormSchema>;
 
-export function CreateUser() {
+export function CreateUserPage() {
 
     const { mutate, isPending } = useMutation({
         mutationFn: async (data: CreateUserRequest) => {
@@ -54,7 +54,7 @@ export function CreateUser() {
         defaultValues: {
             company_id: getCurrentCompanyId(),
             address: 'Rua teste, 123 - Bairro - Cidade - Estado - 00000-000',
-            date_of_birth: new Date(),
+            date_of_birth: new Date('1995-01-01'),
             gender: 'M',
             role: 'STUDENT',
             cpf: '00000000000',
@@ -76,7 +76,7 @@ export function CreateUser() {
 
     return (
         <div className='flex justify-center items-center sm:w-full'>
-            <Card className='sm:w-11/12 w-full'>
+            <Card className='w-full'>
                 <form onSubmit={handleSubmit((data) => mutate(data))} className='space-y-4'>
                     <CardHeader className='flex space-x-4 flex-col'>
                         <div className='flex-col'>
@@ -116,12 +116,12 @@ export function CreateUser() {
                                 />
                                 <FormMessageError error={errors.role?.message} />
                             </div>
-                            <div className="col-span-2 space-y-1">
+                            <div className="col-span-1 space-y-1">
                                 <Label htmlFor='name'>Nome</Label>
                                 <Input type='text' id='name' placeholder="Nome completo" {...register('name')} />
                                 <FormMessageError error={errors.name?.message} />
                             </div>
-                            <div className="col-span-2 space-y-1">
+                            <div className="col-span-1 space-y-1">
                                 <Label htmlFor='email'>Email</Label>
                                 <Input
                                     id='email'

@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { checkMemberAccess } from '../../../lib/permissions';
-import { AddUserRoleApiRequestSchema, AddUserRoleApiResponseSchema } from '@idiomax/http-schemas/users/add-user-role';
+import { AddUserRoleApiRequestSchema, AddUserRoleApiResponseSchema } from '@idiomax/http-schemas/roles/add-user-role';
 import { prisma } from '../../../lib/prisma';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { UnauthorizedError } from '../_errors/unauthorized-error';
@@ -63,7 +63,9 @@ export async function addUserRole(app: FastifyInstance) {
                         user_id: targetUserId,
                         company_id: company.id,
                         role: role,
+                        active: true,
                         created_by: userId,
+                        updated_by: userId,
                     },
                 });
 

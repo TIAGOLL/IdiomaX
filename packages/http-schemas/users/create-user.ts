@@ -27,7 +27,18 @@ export const CreateUserFormSchema = z.object({
     }),
     date_of_birth: z.date({
         message: 'Data de nascimento é obrigatória'
-    }),
+    }).refine((dateStr) => {
+        const minAge = 5;
+        const today = new Date();
+        const birthDate = new Date(dateStr);
+        const ageDiffMs = today.getTime() - birthDate.getTime();
+        const ageDate = new Date(ageDiffMs);
+        const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+        if (age < minAge) {
+            return false
+        }
+        return true;
+    }, { message: 'O usuário deve ter pelo menos 5 anos' }),
     address: z.string()
         .min(5, 'Endereço muito curto')
         .max(256, 'Endereço muito longo'),
@@ -47,7 +58,7 @@ export const CreateUserApiRequestSchema = z.object({
     username: z.string().min(3).max(256).regex(/^[a-zA-Z0-9_]+$/),
     password: z.string().min(6).max(1024),
     gender: z.enum(['M', 'F']),
-    date_of_birth: z.date(),
+    date_of_birth: z.string().transform((str) => new Date(str)),
     address: z.string().min(5).max(256),
     role: z.enum(['STUDENT', 'TEACHER', 'ADMIN']),
     company_id: z.string().uuid(),
@@ -59,5 +70,20 @@ export const CreateUserApiResponseSchema = z.object({
 });
 
 // ===== HTTP TYPES (Frontend Services) =====
-export type CreateUserHttpRequest = z.infer<typeof CreateUserApiRequestSchema>;
+export const CreateUserHttpRequestSchema = z.object({
+    name: z.string().min(2).max(256),
+    email: z.string().email().max(256),
+    cpf: z.string().length(11).regex(/^\d{11}$/),
+    phone: z.string().min(10).max(15).regex(/^\d+$/),
+    username: z.string().min(3).max(256).regex(/^[a-zA-Z0-9_]+$/),
+    password: z.string().min(6).max(1024),
+    gender: z.enum(['M', 'F']),
+    date_of_birth: z.date(),
+    address: z.string().min(5).max(256),
+    role: z.enum(['STUDENT', 'TEACHER', 'ADMIN']),
+    company_id: z.string().uuid(),
+    avatar_url: z.string().url().nullable().optional(),
+});
+
+export type CreateUserHttpRequest = z.infer<typeof CreateUserHttpRequestSchema>;
 export type CreateUserHttpResponse = z.infer<typeof CreateUserApiResponseSchema>;

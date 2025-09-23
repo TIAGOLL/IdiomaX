@@ -27,27 +27,28 @@ export async function createUser(app: FastifyInstance) {
             async (request, reply) => {
                 const { name, address, phone, email, username, cpf, password, avatar_url, role, gender, date_of_birth, company_id } = request.body;
 
-                const userAlreadyExists = await prisma.users.findUnique({
+                // Verifica se já existe usuário com email, cpf ou username
+                const userAlreadyExists = await prisma.users.findFirst({
                     where: {
-                        username: username,
                         OR: [
                             { email: email },
                             { cpf: cpf },
+                            { username: username },
                         ]
                     },
                 });
 
-                if (userAlreadyExists.email === email) {
+                if (userAlreadyExists?.email === email) {
                     throw new BadRequestError('Já existe um usuário com esse email.');
-                } else if (userAlreadyExists.cpf === cpf) {
+                } else if (userAlreadyExists?.cpf === cpf) {
                     throw new BadRequestError('Já existe um usuário com esse CPF.');
-                } else if (userAlreadyExists.username === username) {
+                } else if (userAlreadyExists?.username === username) {
                     throw new BadRequestError('Já existe um usuário com esse username.');
                 }
 
                 const userId = await request.getCurrentUserId()
                 const passwordHash = await hash(password, 8);
-                
+
                 await prisma.users.create({
                     data: {
                         name,
@@ -62,6 +63,7 @@ export async function createUser(app: FastifyInstance) {
                         avatar_url,
                         gender,
                         date_of_birth,
+                        updated_by: userId,
                         member_on: {
                             create: {
                                 company_id,

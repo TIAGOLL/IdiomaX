@@ -22,15 +22,12 @@ export const UpdateUserFormSchema = z.object({
     gender: z.enum(['M', 'F'], {
         message: 'Selecione o gênero'
     }),
-    dateOfBirth: z.date({
+    date_of_birth: z.date({
         message: 'Data de nascimento é obrigatória'
     }),
     address: z.string()
         .min(5, 'Endereço muito curto')
         .max(256, 'Endereço muito longo'),
-    role: z.enum(['STUDENT', 'TEACHER', 'ADMIN'], {
-        message: 'Selecione o tipo de usuário'
-    }),
 });
 
 // ===== API SCHEMAS (Backend Validation) =====

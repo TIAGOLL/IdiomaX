@@ -18,7 +18,6 @@ import { getUserProfile } from './controllers/users/get-user-profile'
 import { resetPassword } from './controllers/auth/reset-password'
 import { errorHandler } from '../lib/error-handler'
 import { createCompany } from './controllers/companies/create-company'
-import { setRole } from './controllers/roles/set-role'
 import { getCompanyById } from './controllers/companies/get-company-by-id'
 import { getUserById } from './controllers/users/get-user-by-id'
 import { UpdateProfile } from './controllers/users/update-profile'
@@ -41,7 +40,7 @@ import { updateUserPassword } from './controllers/users/update-user-password'
 import { adminUpdateStudentPassword } from './controllers/users/admin-update-student-password'
 import { deleteUser } from './controllers/users/delete-user'
 import { deactivateUser } from './controllers/users/deactivate-user'
-import { addUserRole } from './controllers/users/add-user-role'
+import { addUserRole } from './controllers/roles/add-user-role'
 import { removeUserRole } from './controllers/users/remove-user-role'
 import { updateUserRole } from './controllers/users/update-user-role'
 import { createUser } from './controllers/users/create-user'
@@ -106,7 +105,6 @@ app.register(requestPasswordRecover);
 app.register(getUserProfile);
 app.register(resetPassword);
 app.register(createCompany);
-app.register(setRole);
 app.register(getCompanyById);
 app.register(CreateCheckoutSession);
 app.register(getUserById);

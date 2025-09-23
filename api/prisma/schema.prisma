@@ -542,6 +542,9 @@ model members {
   // Relacionamentos de auditoria
   creator users? @relation("MembersCreatedBy", fields: [created_by], references: [id])
   updater users? @relation("MembersUpdatedBy", fields: [updated_by], references: [id])
+
+  // Permitir múltiplas roles por usuário por empresa
+  @@unique([company_id, user_id, role])
 }
 
 model users_in_class {
