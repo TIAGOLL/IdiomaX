@@ -39,7 +39,7 @@ export async function CreateSubscription(app: FastifyInstance) {
                         phone,
                     });
 
-                    const { stripe_customer_id } = await prisma.stripeCompanyCustomer.upsert({
+                    const { stripe_customer_id } = await prisma.stripe_company_customers.upsert({
                         where: { company_id: company_id },
                         update: { stripe_customer_id: stripeCustomerId },
                         create: { company_id: company_id, stripe_customer_id: stripeCustomerId }
@@ -58,7 +58,7 @@ export async function CreateSubscription(app: FastifyInstance) {
                         trial_period_days: 14,
                     });
 
-                    await prisma.stripeCompanySubscription.upsert({
+                    await prisma.stripe_company_subscriptions.upsert({
                         where: { company_customer_id: company_id },
                         update: {
                             status: 'trialing',

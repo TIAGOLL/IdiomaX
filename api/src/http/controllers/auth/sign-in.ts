@@ -24,33 +24,29 @@ export async function SignIn(app: FastifyInstance) {
             async (request, reply) => {
                 const { username, password } = request.body;
 
-                try {
-                    const user = await prisma.users.findUnique({
-                        where: { username },
-                        include: {
-                            member_on: {
-                                include: {
-                                    company: true,
-                                }
+                const user = await prisma.users.findUnique({
+                    where: { username },
+                    include: {
+                        member_on: {
+                            include: {
+                                company: true,
                             }
                         }
-                    });
-
-                    if (!user || !(await bcrypt.compare(password, user.password))) {
-                        throw new BadRequestError('Credenciais inválidas');
                     }
+                });
 
-                    const token = app.jwt.sign({
-                        sub: user.id,
-                    });
-
-                    reply.status(200).send({
-                        token,
-                        message: 'Bem vindo!',
-                    });
-                } catch (e) {
-                    throw new BadRequestError(e);
+                if (!user || !(await bcrypt.compare(password, user.password))) {
+                    throw new BadRequestError('Credenciais inválidas');
                 }
+
+                const token = app.jwt.sign({
+                    sub: user.id,
+                });
+
+                reply.status(200).send({
+                    token,
+                    message: 'Bem vindo!',
+                });
             },
         );
 }

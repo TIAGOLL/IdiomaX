@@ -4,11 +4,16 @@ import { RoleEnum, GenderEnum } from '../enums'
 // Schema para dados de empresa
 const CompanySchema = z.object({
     id: z.string().uuid(),
-    name: z.string(),
-    cnpj: z.string(),
-    created_at: z.date(),
-    updated_at: z.date(),
-    owner_id: z.string(),
+    name: z.string().min(2).max(256),
+    phone: z.string().min(10).max(15).regex(/^\d+$/),
+    address: z.string().max(512),
+    email: z.string().email().max(256).nullable().optional(),
+    logo_16x16_url: z.string().max(512).nullable().optional(),
+    logo_512x512_url: z.string().max(512).nullable().optional(),
+    social_reason: z.string().max(256).nullable().optional(),
+    state_registration: z.string().max(256).nullable().optional(),
+    tax_regime: z.string().max(256).nullable().optional(),
+    cnpj: z.string().min(14).max(14),
 })
 
 // Schema para dados de membro

@@ -1,6 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
 import { AdminResetPasswordFormSchema } from '@idiomax/http-schemas/users/admin-reset-password';
-import { adminResetPassword } from "@/services/users";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -12,6 +11,7 @@ import { useForm } from "react-hook-form";
 import { getCurrentCompanyId } from "@/lib/company-utils";
 import type { UserWithRole } from "@idiomax/http-schemas/users/get-users";
 import type z from "zod";
+import { adminResetPassword } from "@/services/users/admin-reset-password";
 
 export type AdminResetPasswordFormData = z.infer<typeof AdminResetPasswordFormSchema>;
 

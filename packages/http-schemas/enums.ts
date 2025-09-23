@@ -4,7 +4,7 @@ import { z } from 'zod'
 export const GenderEnum = z.enum(['M', 'F']) // Para API (alinhado com Prisma)
 
 // ===== ROLE ENUMS =====
-export const RoleEnum = z.enum(['STUDENT', 'TEACHER', 'ADMIN'])
+export const RoleEnum = z.enum(['STUDENT', 'TEACHER', 'ADMIN', 'OWNER'])
 
 // ===== STRIPE ENUMS =====
 export const StripePricingTypeEnum = z.enum(['one_time', 'recurring'])

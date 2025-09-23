@@ -95,14 +95,14 @@ async function main() {
             }
         })
 
-        await prisma.stripeCompanyCustomer.create({
+        await prisma.stripe_company_customers.create({
             data: {
                 company_id: uuid,
                 stripe_customer_id: 'cus_T5NoBdYRlXRQg2',
             }
         })
 
-        await prisma.stripeCompanySubscription.create({
+        await prisma.stripe_company_subscriptions.create({
             data: {
                 id: 'sub_T5NoBdYRlXRQg2',
                 quantity: 1,
@@ -524,7 +524,7 @@ async function main() {
                 });
             }
 
-            await prisma.monthly_fee.createMany({
+            await prisma.monthly_fees.createMany({
                 data: mensalidades
             });
         }
@@ -551,7 +551,7 @@ async function main() {
             // Sorteia de 2 a 5 alunos para cada aula
             const alunosNaAula = [...studentUsers].sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 4) + 2);
             for (const aluno of alunosNaAula) {
-                await prisma.presence_list.create({
+                await prisma.presence_lists.create({
                     data: {
                         id: generateUUID(),
                         is_present: Math.random() > 0.2,
@@ -590,7 +590,7 @@ async function main() {
 
         // TASKS_DELIVERY (30)
         for (let i = 0; i < 30; i++) {
-            await prisma.tasks_delivery.create({
+            await prisma.tasks_deliveries.create({
                 data: {
                     id: generateUUID(),
                     tasks_id: randomFromArray(tasks),

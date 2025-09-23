@@ -1,6 +1,4 @@
 import {
-    BadgeCheck,
-    BriefcaseBusiness,
     ChevronsUpDown,
     LogOut,
 } from "lucide-react"
@@ -12,7 +10,6 @@ import {
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
@@ -24,14 +21,13 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from "@/components/ui/sidebar"
-import { useNavigate } from "react-router"
 import { useSessionContext } from "@/contexts/session-context"
+import { NavUserMenuItems } from "./nav-user-menu-items"
 
 export function NavUser() {
     const { isMobile } = useSidebar()
-    const navigate = useNavigate()
 
-    const { userProfile, logout } = useSessionContext();
+    const { userProfile, logout } = useSessionContext()
 
     return (
         <SidebarMenu>
@@ -70,17 +66,7 @@ export function NavUser() {
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuGroup>
-                            <DropdownMenuItem onClick={() => navigate('/profile')}>
-                                <BadgeCheck />
-                                Meu perfil
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => navigate('/finances')}>
-                                <BriefcaseBusiness />
-                                Minha empresa
-                            </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                        <DropdownMenuSeparator />
+                        <NavUserMenuItems />
                         <DropdownMenuItem onClick={logout}>
                             <LogOut />
                             Sair

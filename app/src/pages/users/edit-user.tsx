@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { X, Users, Loader2, } from 'lucide-react';
-import { getUserById } from '@/services/users';
 import { useSessionContext } from '@/contexts/session-context';
 import { AddRoleForm } from './components/add-role-form';
 import { DeactivateUserForm } from './components/deactivate-user-form';
@@ -14,6 +13,7 @@ import { DeleteRoleForm } from './components/delete-role-form';
 import { EditPasswordForm } from './components/edit-password-form';
 import { EditUserForm } from './components/edit-user-form';
 import { useSearchParams } from 'react-router';
+import { getUserById } from '@/services/users/get-user-by-id';
 import { Badge } from '@/components/ui/badge';
 
 export function EditUserPage() {
@@ -52,26 +52,25 @@ export function EditUserPage() {
             </div>
         );
     }
-
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <div className="flex items-center gap-2">
-                        <h2 className="text-2xl font-bold">Editar Usuário</h2>
+            <Card className='flex justify-between flex-row pr-6'>
+                <CardHeader className='w-full'>
+                    <CardTitle className="flex gap-2">
+                        Editar Usuário
                         <Badge variant={user.active ? 'default' : 'destructive'}>
                             {user.active ? 'Ativo' : 'Inativo'}
                         </Badge>
-                    </div>
-                    <p className="text-muted-foreground">
+                    </CardTitle>
+                    <CardDescription className="text-muted-foreground">
                         Edite as informações do usuário: {user.name}
-                    </p>
-                </div>
+                    </CardDescription>
+                </CardHeader>
                 <Button variant="outline" size="sm" onClick={() => setSearchParams({ tab: 'list' })}>
                     <X className="h-4 w-4" />
                 </Button>
-            </div>
+            </Card>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Formulário principal */}

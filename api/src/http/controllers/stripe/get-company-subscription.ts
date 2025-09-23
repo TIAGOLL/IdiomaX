@@ -26,7 +26,7 @@ export async function GetCompanySubscription(app: FastifyInstance) {
             async (request, reply) => {
                 const { company_id } = request.params;
 
-                const subscription = await prisma.stripeCompanySubscription.findUnique({
+                const subscription = await prisma.stripe_company_subscriptions.findUnique({
                     where: { company_customer_id: company_id },
                     include: {
                         company_customer: {
@@ -45,7 +45,6 @@ export async function GetCompanySubscription(app: FastifyInstance) {
                 if (!subscription) {
                     throw new NotFoundError("Assinatura não encontrada.");
                 }
-                console.log(subscription);
 
                 reply.status(200).send(subscription);
             })

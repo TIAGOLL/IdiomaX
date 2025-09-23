@@ -23,7 +23,7 @@ export async function GetProducts(app: FastifyInstance) {
             },
             async (request, reply) => {
 
-                const products = await prisma.stripeProduct.findMany({
+                const products = await prisma.stripe_products.findMany({
                     where: {
                         active: true,
                     },

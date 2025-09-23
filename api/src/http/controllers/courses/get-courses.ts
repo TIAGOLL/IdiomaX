@@ -10,7 +10,7 @@ export async function getCourses(app: FastifyInstance) {
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .get(
-            '/courses/:companyId',
+            '/courses/:company_id',
             {
                 schema: {
                     tags: ['Cursos'],

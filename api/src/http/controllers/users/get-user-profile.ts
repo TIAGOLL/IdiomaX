@@ -40,9 +40,7 @@ export async function getUserProfile(app: FastifyInstance) {
                     throw new UnauthorizedError("Sessão expirada. Faça login novamente.");
                 }
 
-                reply.status(200).send({
-                    ...userProfile,
-                });
+                reply.status(200).send(userProfile);
             },
         );
 }

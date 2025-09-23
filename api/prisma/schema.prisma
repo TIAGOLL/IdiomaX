@@ -96,8 +96,8 @@ model classes {
   updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
-  class         Renamedclass    @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "class_fk")
-  presence_list presence_list[]
+  class         Renamedclass     @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "class_fk")
+  presence_list presence_lists[]
 
   // Relacionamentos de auditoria
   creator users? @relation("ClassesCreatedBy", fields: [created_by], references: [id])
@@ -166,10 +166,9 @@ model courses {
   active     Boolean  @default(true)
 
   // Relacionamentos existentes
-  class       Renamedclass[]
-  levels      levels[]
-  companies   companies      @relation(fields: [companies_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
-  companiesId String?
+  class     Renamedclass[]
+  levels    levels[]
+  companies companies      @relation(fields: [companies_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
 
   // Relacionamentos de auditoria
   creator users? @relation("CoursesCreatedBy", fields: [created_by], references: [id])
@@ -241,7 +240,7 @@ model materials {
   updater users? @relation("MaterialsUpdatedBy", fields: [updated_by], references: [id])
 }
 
-model monthly_fee {
+model monthly_fees {
   id                               String    @id @default(uuid()) @db.VarChar(256)
   due_date                         DateTime
   value                            Decimal   @db.Decimal(10, 2)
@@ -266,7 +265,7 @@ model monthly_fee {
   updater users? @relation("MonthlyFeeUpdatedBy", fields: [updated_by], references: [id])
 }
 
-model presence_list {
+model presence_lists {
   id         String  @id @default(uuid())
   is_present Boolean
   users_id   String
@@ -327,11 +326,11 @@ model registrations {
   updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
-  monthly_fee         monthly_fee[]
+  monthly_fee         monthly_fees[]
   records_of_students records_of_students[]
   companies           companies?            @relation(fields: [companies_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
   users               users?                @relation(fields: [users_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
-  tasks_delivery      tasks_delivery[]
+  tasks_delivery      tasks_deliveries[]
   companiesId         String?
 
   // Relacionamentos de auditoria
@@ -355,15 +354,15 @@ model tasks {
   updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
-  disciplines    disciplines      @relation(fields: [disciplines_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "disciplines_fk")
-  tasks_delivery tasks_delivery[]
+  disciplines    disciplines        @relation(fields: [disciplines_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "disciplines_fk")
+  tasks_delivery tasks_deliveries[]
 
   // Relacionamentos de auditoria
   creator users? @relation("TasksCreatedBy", fields: [created_by], references: [id])
   updater users? @relation("TasksUpdatedBy", fields: [updated_by], references: [id])
 }
 
-model tasks_delivery {
+model tasks_deliveries {
   id               String   @id @default(uuid()) @db.VarChar(256)
   tasks_id         String   @db.VarChar(256)
   registrations_id String   @db.VarChar(256)
@@ -429,13 +428,13 @@ model companies {
   active     Boolean  @default(true)
 
   // Relacionamentos existentes
-  owner                 users                   @relation("OwnerCompanies", fields: [owner_id], references: [id])
-  members               members[]
-  classrooms            classrooms[]
-  configs               configs[]
-  registrations         registrations[]
-  courses               courses[]
-  StripeCompanyCustomer StripeCompanyCustomer[]
+  owner                   users                      @relation("OwnerCompanies", fields: [owner_id], references: [id])
+  members                 members[]
+  classrooms              classrooms[]
+  configs                 configs[]
+  registrations           registrations[]
+  courses                 courses[]
+  stripe_company_customer stripe_company_customers[]
 
   // Relacionamentos de auditoria
   creator users? @relation("CompaniesCreatedBy", fields: [created_by], references: [id])
@@ -470,7 +469,7 @@ model users {
   // Relacionamentos existentes
   companies      companies[]      @relation("OwnerCompanies")
   member_on      members[]
-  presence_list  presence_list[]
+  presence_list  presence_lists[]
   registrations  registrations[]
   tokens         tokens[]
   users_in_class users_in_class[]
@@ -504,18 +503,18 @@ model users {
   levels_updated              levels[]              @relation("LevelsUpdatedBy")
   materials_created           materials[]           @relation("MaterialsCreatedBy")
   materials_updated           materials[]           @relation("MaterialsUpdatedBy")
-  monthly_fee_created         monthly_fee[]         @relation("MonthlyFeeCreatedBy")
-  monthly_fee_updated         monthly_fee[]         @relation("MonthlyFeeUpdatedBy")
-  presence_list_created       presence_list[]       @relation("PresenceListCreatedBy")
-  presence_list_updated       presence_list[]       @relation("PresenceListUpdatedBy")
+  monthly_fee_created         monthly_fees[]        @relation("MonthlyFeeCreatedBy")
+  monthly_fee_updated         monthly_fees[]        @relation("MonthlyFeeUpdatedBy")
+  presence_list_created       presence_lists[]      @relation("PresenceListCreatedBy")
+  presence_list_updated       presence_lists[]      @relation("PresenceListUpdatedBy")
   records_of_students_created records_of_students[] @relation("RecordsOfStudentsCreatedBy")
   records_of_students_updated records_of_students[] @relation("RecordsOfStudentsUpdatedBy")
   registrations_created       registrations[]       @relation("RegistrationsCreatedBy")
   registrations_updated       registrations[]       @relation("RegistrationsUpdatedBy")
   tasks_created               tasks[]               @relation("TasksCreatedBy")
   tasks_updated               tasks[]               @relation("TasksUpdatedBy")
-  tasks_delivery_created      tasks_delivery[]      @relation("TasksDeliveryCreatedBy")
-  tasks_delivery_updated      tasks_delivery[]      @relation("TasksDeliveryUpdatedBy")
+  tasks_delivery_created      tasks_deliveries[]    @relation("TasksDeliveryCreatedBy")
+  tasks_delivery_updated      tasks_deliveries[]    @relation("TasksDeliveryUpdatedBy")
   tokens_created              tokens[]              @relation("TokensCreatedBy")
   tokens_updated              tokens[]              @relation("TokensUpdatedBy")
   users_in_class_created      users_in_class[]      @relation("UsersInClassCreatedBy")
@@ -570,7 +569,7 @@ model users_in_class {
 
 // --- INTEGRAÇÃO STRIPE ---
 
-model StripeProduct {
+model stripe_products {
   id          String  @id @db.VarChar(256) // ID do produto na Stripe
   active      Boolean
   name        String  @db.VarChar(256)
@@ -578,46 +577,46 @@ model StripeProduct {
   image       String? @db.VarChar(1024)
   metadata    Json?
 
-  prices StripePrice[]
+  prices stripe_prices[]
 }
 
-enum StripePricingType {
+enum stripe_pricing_type {
   one_time
   recurring
 }
 
-enum StripePricingPlanInterval {
+enum stripe_pricing_plan_interval {
   day
   week
   month
   year
 }
 
-model StripePrice {
-  id                String                     @id @db.VarChar(256) // ID do preço na Stripe
-  product_id        String                     @db.VarChar(256)
+model stripe_prices {
+  id                String                        @id @db.VarChar(256) // ID do preço na Stripe
+  product_id        String                        @db.VarChar(256)
   active            Boolean
-  description       String?                    @db.VarChar(256)
+  description       String?                       @db.VarChar(256)
   unit_amount       BigInt
-  currency          String                     @db.VarChar(3)
-  type              StripePricingType
-  interval          StripePricingPlanInterval?
+  currency          String                        @db.VarChar(3)
+  type              stripe_pricing_type
+  interval          stripe_pricing_plan_interval?
   interval_count    Int?
   trial_period_days Int?
   metadata          Json?
 
-  product       StripeProduct               @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  subscriptions StripeCompanySubscription[]
+  product       stripe_products                @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  subscriptions stripe_company_subscriptions[]
 }
 
-model StripeCompanyCustomer {
-  company_id         String                      @id @db.VarChar(256)
-  stripe_customer_id String                      @db.VarChar(256)
-  company            companies                   @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  subscriptions      StripeCompanySubscription[]
+model stripe_company_customers {
+  company_id         String                         @id @db.VarChar(256)
+  stripe_customer_id String                         @db.VarChar(256)
+  company            companies                      @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subscriptions      stripe_company_subscriptions[]
 }
 
-enum StripeSubscriptionStatus {
+enum stripe_subscription_status {
   trialing
   active
   canceled
@@ -627,23 +626,23 @@ enum StripeSubscriptionStatus {
   unpaid
 }
 
-model StripeCompanySubscription {
-  id                   String                   @id @db.VarChar(256) // ID da assinatura na Stripe
-  company_customer_id  String                   @unique @db.VarChar(256)
-  status               StripeSubscriptionStatus
+model stripe_company_subscriptions {
+  id                   String                     @id @db.VarChar(256) // ID da assinatura na Stripe
+  company_customer_id  String                     @unique @db.VarChar(256)
+  status               stripe_subscription_status
   metadata             Json?
-  price_id             String                   @db.VarChar(256)
+  price_id             String                     @db.VarChar(256)
   quantity             Int?
   cancel_at_period_end Boolean?
-  created              DateTime                 @default(now())
-  current_period_start DateTime?                @default(now())
-  current_period_end   DateTime?                @default(now())
+  created              DateTime                   @default(now())
+  current_period_start DateTime?                  @default(now())
+  current_period_end   DateTime?                  @default(now())
   ended_at             DateTime?
   cancel_at            DateTime?
   canceled_at          DateTime?
   trial_start          DateTime?
   trial_end            DateTime?
 
-  company_customer StripeCompanyCustomer @relation(fields: [company_customer_id], references: [company_id], onDelete: Cascade, onUpdate: NoAction)
-  price            StripePrice           @relation(fields: [price_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  company_customer stripe_company_customers @relation(fields: [company_customer_id], references: [company_id], onDelete: Cascade, onUpdate: NoAction)
+  price            stripe_prices            @relation(fields: [price_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }

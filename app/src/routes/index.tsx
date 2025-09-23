@@ -12,6 +12,7 @@ import { PaidRoute } from './paid-route';
 import CongratulationsPage from '@/pages/subscription/congratulations';
 import { FinanceDashboard } from '@/pages/finances';
 import UsersPage from '@/pages/users';
+import CoursesPage from '@/pages/courses';
 
 export function RoutesApp() {
 
@@ -40,6 +41,7 @@ export function RoutesApp() {
             <Route path='/profile' element={<ProfilePage />} />
             <Route path='/finances' element={<FinanceDashboard />} />
             <Route path='/admin/users' element={<UsersPage />} />
+            <Route path='/admin/courses' element={<CoursesPage />} />
           </Route>
         </Route>
       </Route>

@@ -4,12 +4,12 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import type { UserWithRole } from '@idiomax/http-schemas/users/get-users';
 import z from 'zod';
-import { deactivateUser } from '@/services/users';
 import { getCurrentCompanyId } from '@/lib/company-utils';
 import { DeactivateUserFormSchema } from '@idiomax/http-schemas/users/deactivate-user';
 import { UserCheck, UserX } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { deactivateUser } from '@/services/users/deactivate-user';
 
 type DeactivateUserFormSchema = z.infer<typeof DeactivateUserFormSchema>;
 

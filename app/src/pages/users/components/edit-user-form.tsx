@@ -14,12 +14,12 @@ import { format } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
 import { Textarea } from '@/components/ui/textarea';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateUser } from '@/services/users';
 import { toast } from 'sonner';
 import { useSearchParams } from 'react-router';
 import { useSessionContext } from '@/contexts/session-context';
 import { ptBR } from 'date-fns/locale';
 import type { UserWithRole } from '@idiomax/http-schemas/users/get-users';
+import { updateUser } from '@/services/users/update-user';
 
 type UpdateUserFormSchema = z.infer<typeof UpdateUserFormSchema>;
 

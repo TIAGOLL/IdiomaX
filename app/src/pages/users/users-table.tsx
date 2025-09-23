@@ -11,13 +11,11 @@ import { Search, Users, Edit, X } from 'lucide-react';
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { useNavigate } from 'react-router';
-import { getUsers } from '@/services/users';
-import { useSessionContext } from '@/contexts/session-context';
 import type { UserRole } from '@idiomax/http-schemas/users/get-users';
 import { getCurrentCompanyId } from '@/lib/company-utils';
+import { getUsers } from '@/services/users/get-users';
 
 export function UsersTablePage() {
-    const { currentCompanyMember } = useSessionContext();
     const navigate = useNavigate();
 
     // Estados locais para filtros (sem URL)
@@ -26,9 +24,9 @@ export function UsersTablePage() {
 
     // Query única para buscar todos os usuários
     const usersQuery = useQuery({
-        queryKey: ['users', 'ALL', currentCompanyMember?.company.id],
+        queryKey: ['users', 'ALL', getCurrentCompanyId()],
         queryFn: () => getUsers(undefined, { limit: 1000 }), // Buscar todos sem especificar role
-        enabled: !!currentCompanyMember?.company.id,
+        enabled: !!getCurrentCompanyId(),
     });
 
     const filteredUsers = useMemo(() => {
@@ -42,12 +40,12 @@ export function UsersTablePage() {
                 user.username.toLowerCase().includes(searchFilter.toLowerCase());
 
             // Filtro de role - extrair da relação member_on
-            const userRole = user.member_on?.find(m => m.company_id === currentCompanyMember?.company.id)?.role;
+            const userRole = user.member_on?.find(m => m.company_id === getCurrentCompanyId())?.role;
             const matchesRole = !roleFilter || userRole === roleFilter;
 
             return matchesSearch && matchesRole;
         });
-    }, [usersQuery.data?.users, searchFilter, roleFilter, currentCompanyMember?.company.id]); const isLoading = usersQuery.isLoading;
+    }, [usersQuery.data?.users, searchFilter, roleFilter]); const isLoading = usersQuery.isLoading;
     const hasError = usersQuery.error;
 
     const clearFilters = () => {
@@ -203,7 +201,7 @@ export function UsersTablePage() {
                                                         <DropdownMenuLabel>Ações</DropdownMenuLabel>
                                                         <DropdownMenuSeparator />
                                                         {user.member_on?.find(e => e.company_id === getCurrentCompanyId())?.role !== 'ADMIN' &&
-                                                            <DropdownMenuItem onClick={() => handleEditUser(user.member_on.find(m => m.company_id === currentCompanyMember?.company.id)?.user_id || '')}>
+                                                            <DropdownMenuItem onClick={() => handleEditUser(user.member_on.find(m => m.company_id === getCurrentCompanyId())?.user_id || '')}>
                                                                 <Edit className="h-4 w-4 mr-2" />
                                                                 Editar
                                                             </DropdownMenuItem>

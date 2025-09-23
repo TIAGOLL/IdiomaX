@@ -3,35 +3,39 @@ import { LayoutDashboardIcon } from "lucide-react"
 export function getNavigationData() {
     return {
         navMain: [
-            { title: "Dashboard", icon: LayoutDashboardIcon, links: [{ name: "Visão geral", to: "/" }] },
+            {
+                title: "Dashboard", icon: LayoutDashboardIcon, links: [{
+                    name: "Visão geral", to: "/", roles: ['admin']
+                }]
+            },
             {
                 title: "Cursos",
                 icon: LayoutDashboardIcon,
                 links: [
-                    { name: "Ver cursos", to: "/admin/courses?tab=all" },
-                    { name: "Cadastrar curso", to: "/admin/courses?tab=create" },
-                    { name: "Ver matrículas", to: "/admin/registrations?tab=all" },
-                    { name: "Matricular aluno", to: "/admin/registrations?tab=create" },
+                    { name: "Ver cursos", to: "/admin/courses?tab=list", roles: ['admin'] },
+                    { name: "Cadastrar curso", to: "/admin/courses?tab=create", roles: ['admin'] },
+                    { name: "Ver matrículas", to: "/admin/registrations?tab=list", roles: ['admin'] },
+                    { name: "Matricular aluno", to: "/admin/registrations?tab=create", roles: ['admin'] },
                 ],
             },
             {
                 title: "Turmas",
                 icon: LayoutDashboardIcon,
                 links: [
-                    { name: "Ver turmas", to: "/admin/classes?tab=all" },
-                    { name: "Cadastrar turma", to: "/admin/classes?tab=create" },
-                    { name: "Ver salas", to: "/admin/classrooms?tab=all" },
-                    { name: "Cadastrar sala", to: "/admin/classrooms?tab=create" },
-                    { name: "Ver aulas", to: "/admin/classes?tab=all" },
-                    { name: "Cadastrar aula", to: "/admin/classes?tab=create" },
+                    { name: "Ver turmas", to: "/admin/classes?tab=list", roles: ['admin'] },
+                    { name: "Cadastrar turma", to: "/admin/classes?tab=create", roles: ['admin'] },
+                    { name: "Ver salas", to: "/admin/classrooms?tab=list", roles: ['admin'] },
+                    { name: "Cadastrar sala", to: "/admin/classrooms?tab=create", roles: ['admin'] },
+                    { name: "Ver aulas", to: "/admin/classes?tab=list", roles: ['admin', 'teacher'] },
+                    { name: "Cadastrar aula", to: "/admin/classes?tab=create", roles: ['admin', 'teacher'] },
                 ],
             },
             {
                 title: "Usuários",
                 icon: LayoutDashboardIcon,
                 links: [
-                    { name: "Criar usuário", to: "/admin/users?tab=create" },
-                    { name: "Listar usuários", to: "/admin/users?tab=list" },
+                    { name: "Criar usuário", to: "/admin/users?tab=create", roles: ['admin'] },
+                    { name: "Listar usuários", to: "/admin/users?tab=list", roles: ['admin'] },
                 ],
             },
         ],
@@ -69,7 +73,7 @@ export function getBreadcrumbConfig() {
             { label: 'Dashboard', href: '/' },
             { label: 'Criar usuário', href: '/admin/users?tab=create' },
             { label: 'Listar usuários', href: '/admin/users?tab=list' },
-            { label: 'Ver cursos', href: '/admin/courses?tab=all' },
+            { label: 'Ver cursos', href: '/admin/courses?tab=list' },
         ]
     };
 

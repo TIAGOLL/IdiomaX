@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SubscriptionForm } from '@/components/subscription-form';
 import { ChevronDownIcon, SlashIcon } from "lucide-react";
-import { getBreadcrumbConfig } from '@/lib/navigation-data';
+import { getBreadcrumbConfig } from '@/components/side-bar/data/navigation-data';
 
 export function PaidRoute() {
   const { currentCompanyMember: company, isLoadingUserProfile } = useSessionContext();

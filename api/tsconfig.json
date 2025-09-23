@@ -7,4 +7,10 @@
     "prisma/seed.ts",
     "eslint.config.js"
   ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "scripts"
+  ],
 }

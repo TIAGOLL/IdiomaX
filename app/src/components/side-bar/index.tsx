@@ -10,7 +10,7 @@ import { NavUser } from "./components/nav-user"
 import { CompanySwitcher } from "./components/company-switcher"
 import { ModeToggle } from "../ui/mode-toggle"
 import { useSessionContext } from "@/contexts/session-context"
-import { getNavigationData } from "@/lib/navigation-data"
+import { getNavigationData } from "./data/navigation-data"
 
 
 export function Sidebar({ ...props }: React.ComponentProps<typeof SideBarComponent>) {

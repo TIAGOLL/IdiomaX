@@ -41,13 +41,13 @@ export async function StripeWebHooks(app: FastifyInstance) {
                         description: product.description,
                         metadata: product.metadata,
                     }
-                    await prisma.stripeProduct.upsert({ where: { id: product.id }, create: productData, update: productData }).catch((error) => {
+                    await prisma.stripe_products.upsert({ where: { id: product.id }, create: productData, update: productData }).catch((error) => {
                         console.error('Error upserting product:', error);
                     });
                 }
 
                 const upsertPriceRecord = async (price: Stripe.Price) => {
-                    const data = await prisma.stripePrice.findFirst({
+                    const data = await prisma.stripe_prices.findFirst({
                         where: {
                             unit_amount: price.unit_amount,
                             active: true,
@@ -71,7 +71,7 @@ export async function StripeWebHooks(app: FastifyInstance) {
                         metadata: price.metadata,
                     };
 
-                    await prisma.stripePrice.upsert({
+                    await prisma.stripe_prices.upsert({
                         where: { id: priceData.id },
                         create: priceData,
                         update: priceData,
@@ -103,7 +103,7 @@ export async function StripeWebHooks(app: FastifyInstance) {
                     const subscriptionResponse = await stripe.subscriptions.retrieve(subscriptionId);
                     const subscription = (subscriptionResponse as any).data ?? subscriptionResponse;
 
-                    const data = await prisma.stripeCompanyCustomer.findFirst({
+                    const data = await prisma.stripe_company_customers.findFirst({
                         where: { stripe_customer_id: customerId },
                     });
 
@@ -111,7 +111,7 @@ export async function StripeWebHooks(app: FastifyInstance) {
                         throw new NotFoundError('Customer not found');
                     }
 
-                    await prisma.stripeCompanySubscription.upsert({
+                    await prisma.stripe_company_subscriptions.upsert({
                         where: { company_customer_id: String(data.company_id) },
                         create: {
                             id: String(subscription.id),

@@ -1,6 +1,5 @@
 import type { UserWithRole } from "@idiomax/http-schemas/users/get-users";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteUser } from '@/services/users';
 import { getCurrentCompanyId } from "@/lib/company-utils";
 import { useSearchParams } from "react-router";
 import { toast } from "sonner";
@@ -8,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
+import { deleteUser } from "@/services/users/delete-user";
 
 export function DeleteUserForm({ user }: { user: UserWithRole }) {
 

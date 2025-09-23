@@ -18,16 +18,16 @@ export const GetCoursesApiResponseSchema = z.array(z.object({
 
 // HTTP Schema para serviços do frontend
 export const GetCoursesHttpParamsSchema = z.object({
-    companyId: z.string(),
+    company_id: z.string(),
 })
 
 export const GetCoursesHttpResponseSchema = z.array(z.object({
     id: z.string(),
     name: z.string(),
     description: z.string().nullable(),
-    companyId: z.string(),
-    createdAt: z.string(),
-    updatedAt: z.string(),
+    company_id: z.string(),
+    created_at: z.string(),
+    updated_at: z.string(),
     active: z.boolean(),
 }))
 

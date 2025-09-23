@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/sidebar"
 import { NavLink } from "react-router"
 import { Button } from "@/components/ui/button"
+import { useSessionContext } from "@/contexts/session-context"
 
 export function NavMain({
     items,
@@ -25,11 +26,29 @@ export function NavMain({
     items: {
         title: string
         icon?: LucideIcon
-        links: { name: string; to: string }[]
+        links: { name: string; to: string, roles: string[] }[]
         isActive?: boolean
     }[]
 }) {
     const [allOpen, setAllOpen] = useState(false)
+    const { currentRole } = useSessionContext()
+
+    // Função para verificar se o usuário tem permissão para ver o link
+    const hasPermission = (requiredRoles: string[]): boolean => {
+        if (!currentRole) return false
+
+        // Converter role para minúscula para comparação case-insensitive
+        const userRole = currentRole.toLowerCase()
+        const allowedRoles = requiredRoles.map(role => role.toLowerCase())
+
+        return allowedRoles.includes(userRole)
+    }
+
+    // Filtrar items que têm pelo menos um link visível
+    const filteredItems = items.map(item => ({
+        ...item,
+        links: item.links.filter(link => hasPermission(link.roles))
+    })).filter(item => item.links.length > 0)
 
     return (
         <SidebarGroup>
@@ -44,7 +63,7 @@ export function NavMain({
                 </Button>
             </SidebarGroupLabel>
             <SidebarMenu>
-                {items.map((item) => (
+                {filteredItems.map((item) => (
                     <Collapsible
                         key={item.title}
                         asChild

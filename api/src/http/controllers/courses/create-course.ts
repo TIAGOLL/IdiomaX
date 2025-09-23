@@ -1,0 +1,102 @@
+import type { FastifyInstance } from 'fastify'
+import type { ZodTypeProvider } from 'fastify-type-provider-zod'
+import { CreateCourseApiRequestSchema, CreateCourseApiResponseSchema } from '@idiomax/http-schemas/courses/create-course'
+import { prisma } from '../../../lib/prisma'
+import { auth } from '../../../middlewares/auth'
+import { z } from 'zod'
+
+const ErrorResponseSchema = z.object({
+    message: z.string()
+})
+
+export async function createCourse(app: FastifyInstance) {
+    app.withTypeProvider<ZodTypeProvider>()
+        .register(auth)
+        .post('/courses', {
+            schema: {
+                tags: ['Courses'],
+                summary: 'Create a new course',
+                security: [{ bearerAuth: [] }],
+                body: CreateCourseApiRequestSchema,
+                response: {
+                    201: CreateCourseApiResponseSchema,
+                    400: ErrorResponseSchema,
+                    403: ErrorResponseSchema,
+                },
+            },
+        }, async (request, reply) => {
+            const userId = await request.getCurrentUserId()
+            const {
+                company_id,
+                name,
+                description,
+                registration_value,
+                workload,
+                monthly_fee_value,
+                minimum_grade,
+                maximum_grade,
+                minimum_frequency,
+                syllabus
+            } = request.body
+
+            // Verificar se o usuário tem permissão na empresa
+            const member = await prisma.members.findFirst({
+                where: {
+                    user_id: userId,
+                    company_id,
+                    role: {
+                        in: ['ADMIN']
+                    }
+                }
+            })
+
+            if (!member) {
+                return reply.status(403).send({
+                    message: 'Acesso negado. Você não tem permissão para criar cursos nesta empresa.'
+                })
+            }
+
+            // Verificar se já existe um curso com o mesmo nome na empresa
+            const existingCourse = await prisma.courses.findFirst({
+                where: {
+                    name,
+                    companies_id: company_id,
+                    active: true
+                }
+            })
+
+            if (existingCourse) {
+                return reply.status(400).send({
+                    message: 'Já existe um curso com este nome nesta empresa.'
+                })
+            }
+
+            // Validar se nota mínima é menor que nota máxima
+            if (minimum_grade >= maximum_grade) {
+                return reply.status(400).send({
+                    message: 'A nota mínima deve ser menor que a nota máxima.'
+                })
+            }
+
+            await prisma.courses.create({
+                data: {
+                    name,
+                    description,
+                    registration_value,
+                    workload,
+                    monthly_fee_value,
+                    minimum_grade,
+                    maximum_grade,
+                    minimum_frequency,
+                    syllabus,
+                    companies_id: company_id,
+                    created_by: userId,
+                    updated_by: userId,
+                }
+            })
+
+            return reply.status(201).send({
+                message: 'Curso criado com sucesso!',
+            })
+        })
+}

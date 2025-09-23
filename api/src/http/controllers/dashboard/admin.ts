@@ -191,7 +191,7 @@ export async function AdminDashboard(app: FastifyInstance) {
                 const alertHighOccupation = classStats.filter(c => c.occupation > 95);
 
                 // Financeiro
-                const monthlyFees = await prisma.monthly_fee.findMany({
+                const monthlyFees = await prisma.monthly_fees.findMany({
                     where: {
                         registrations: {
                             companies_id: company_id

@@ -30,6 +30,11 @@ import { GetCompanySubscription } from './controllers/stripe/get-company-subscri
 import { updateCompany } from './controllers/companies/update-company'
 import { Unsubscribe } from './controllers/stripe/unsubscribe'
 import { getCourses } from './controllers/courses/get-courses'
+import { createCourse } from './controllers/courses/create-course'
+import { getCourseById } from './controllers/courses/get-course-by-id'
+import { updateCourse } from './controllers/courses/update-course'
+import { deactivateCourse } from './controllers/courses/deactivate-course'
+import { deleteCourse } from './controllers/courses/delete-course'
 import { getBooks } from './controllers/materials/get-books'
 // Importações dos novos controladores genéricos de users
 import { getUsers } from './controllers/users/get-users'
@@ -43,6 +48,14 @@ import { addUserRole } from './controllers/roles/add-user-role'
 import { removeUserRole } from './controllers/users/remove-user-role'
 import { updateUserRole } from './controllers/users/update-user-role'
 import { createUser } from './controllers/users/create-user'
+
+// Levels controllers
+import { createLevel } from './controllers/levels/create-level'
+import { getLevelsByCourse } from './controllers/levels/get-levels-by-course'
+import { getLevelById } from './controllers/levels/get-level-by-id'
+import { updateLevel } from './controllers/levels/update-level'
+import { deactivateLevel } from './controllers/levels/deactivate-level'
+import { deleteLevel } from './controllers/levels/delete-level'
 
 dotenv.config()
 
@@ -115,6 +128,11 @@ app.register(GetCompanySubscription);
 app.register(updateCompany);
 app.register(Unsubscribe);
 app.register(getCourses);
+app.register(createCourse);
+app.register(getCourseById);
+app.register(updateCourse);
+app.register(deactivateCourse);
+app.register(deleteCourse);
 app.register(getBooks);
 app.register(getUsers);
 app.register(getUserByEmail);
@@ -127,6 +145,14 @@ app.register(addUserRole);
 app.register(removeUserRole);
 app.register(updateUserRole);
 app.register(createUser);
+
+// Levels routes
+app.register(createLevel);
+app.register(getLevelsByCourse);
+app.register(getLevelById);
+app.register(updateLevel);
+app.register(deactivateLevel);
+app.register(deleteLevel);
 
 
 if (process.env.VERCEL !== "1") {
