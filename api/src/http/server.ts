@@ -57,6 +57,12 @@ import { updateLevel } from './controllers/levels/update-level'
 import { deactivateLevel } from './controllers/levels/deactivate-level'
 import { deleteLevel } from './controllers/levels/delete-level'
 
+// Disciplines controllers
+import { createDiscipline } from './controllers/disciplines/create-discipline'
+import { updateDiscipline } from './controllers/disciplines/update-discipline'
+import { toggleDisciplineStatus } from './controllers/disciplines/toggle-discipline-status'
+import { deleteDiscipline } from './controllers/disciplines/delete-discipline'
+
 dotenv.config()
 
 export const env = envSchema.safeParse(process.env)
@@ -153,6 +159,12 @@ app.register(getLevelById);
 app.register(updateLevel);
 app.register(deactivateLevel);
 app.register(deleteLevel);
+
+// Disciplines routes
+app.register(createDiscipline);
+app.register(updateDiscipline);
+app.register(toggleDisciplineStatus);
+app.register(deleteDiscipline);
 
 
 if (process.env.VERCEL !== "1") {

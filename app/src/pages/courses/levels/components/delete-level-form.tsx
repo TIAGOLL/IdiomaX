@@ -7,6 +7,7 @@ import type { GetCourseByIdResponse } from '@idiomax/http-schemas/courses/get-co
 import type { Level } from '@idiomax/http-schemas/levels/get-levels';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 export function DeleteLevelForm({ course, level }: { course: GetCourseByIdResponse; level: Level }) {
     const [open, setOpen] = useState(false);
@@ -34,15 +35,22 @@ export function DeleteLevelForm({ course, level }: { course: GetCourseByIdRespon
 
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
-            <AlertDialogTrigger asChild>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-red-600 hover:text-red-700"
-                >
-                    <Trash2 className="size-4" />
-                </Button>
-            </AlertDialogTrigger>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <AlertDialogTrigger asChild>
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className="text-red-600 hover:text-red-700"
+                        >
+                            <Trash2 className="size-4" />
+                        </Button>
+                    </AlertDialogTrigger>
+                </TooltipTrigger>
+                <TooltipContent className="mb-3">
+                    Excluir nível "{level.name}"
+                </TooltipContent>
+            </Tooltip>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
@@ -51,7 +59,7 @@ export function DeleteLevelForm({ course, level }: { course: GetCourseByIdRespon
                         Esta ação não pode ser desfeita e todas as disciplinas associadas também serão removidas.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
-                <AlertDialogFooter>
+                <AlertDialogFooter className='!justify-between'>
                     <AlertDialogCancel>
                         Cancelar
                     </AlertDialogCancel>

@@ -10,7 +10,8 @@ import { NavUser } from "./components/nav-user"
 import { CompanySwitcher } from "./components/company-switcher"
 import { ModeToggle } from "../ui/mode-toggle"
 import { useSessionContext } from "@/contexts/session-context"
-import { getNavigationData } from "./data/navigation-data"
+import { getNavigationData } from "./navigation-data"
+import { NavSecondary } from "./components/nav-secondary"
 
 
 export function Sidebar({ ...props }: React.ComponentProps<typeof SideBarComponent>) {
@@ -29,6 +30,7 @@ export function Sidebar({ ...props }: React.ComponentProps<typeof SideBarCompone
             </SidebarContent>
             <SidebarFooter>
                 <ModeToggle />
+                <NavSecondary items={getNavigationData().navSecondary} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>
             <SidebarRail />

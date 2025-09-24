@@ -1,5 +1,5 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LoaderIcon, Edit2 } from 'lucide-react';
@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import type { Level } from '@idiomax/http-schemas/levels/get-levels';
 import type { GetCourseByIdResponse } from '@idiomax/http-schemas/courses/get-course-by-id';
 import { getCurrentCompanyId } from '@/lib/company-utils';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 export function EditLevelForm(
     { course, level }: { course: GetCourseByIdResponse; level: Level }
@@ -71,16 +72,26 @@ export function EditLevelForm(
     };
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                    <Edit2 className="size-4" />
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-                <DialogHeader>
-                    <DialogTitle>Editar Nível</DialogTitle>
-                </DialogHeader>
+        <AlertDialog open={open} onOpenChange={setOpen}>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <AlertDialogTrigger
+                        asChild
+                        disabled={isPending}
+                    >
+                        <Button variant="outline" size="icon">
+                            <Edit2 className="size-4" />
+                        </Button>
+                    </AlertDialogTrigger>
+                </TooltipTrigger>
+                <TooltipContent className="mb-3">
+                    Editar nível "{level.name}"
+                </TooltipContent>
+            </Tooltip>
+            <AlertDialogContent className="max-w-2xl">
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Editar Nível</AlertDialogTitle>
+                </AlertDialogHeader>
                 <form onSubmit={handleSubmit((data) => mutate(data))} className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
@@ -104,15 +115,15 @@ export function EditLevelForm(
                             <FormMessageError error={errors.level?.message} />
                         </div>
                     </div>
-                    <div className="flex justify-end gap-2 pt-4">
-                        <Button
+                    <AlertDialogFooter className="flex !justify-between gap-2 pt-4">
+                        <AlertDialogCancel
                             type="button"
-                            variant="outline"
+                            className={buttonVariants({ variant: 'outline' })}
                             onClick={handleCancel}
                         >
                             Cancelar
-                        </Button>
-                        <Button type="submit" disabled={isPending}>
+                        </AlertDialogCancel>
+                        <AlertDialogAction type="submit" disabled={isPending}>
                             {isPending ? (
                                 <>
                                     <LoaderIcon className="size-4 mr-2 animate-spin" />
@@ -124,10 +135,10 @@ export function EditLevelForm(
                                     Atualizar Nível
                                 </>
                             )}
-                        </Button>
-                    </div>
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
                 </form>
-            </DialogContent>
-        </Dialog>
+            </AlertDialogContent>
+        </AlertDialog>
     );
 }

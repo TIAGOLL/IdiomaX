@@ -59,13 +59,13 @@ export function CreateLevelForm({ course, trigger }: { course: GetCourseByIdResp
         <AlertDialog open={open}>
             <AlertDialogTrigger asChild onClick={() => { setOpen(true) }}>
                 {trigger || (
-                    <Button>
+                    <Button variant="default" size="sm">
                         <PlusCircle className="size-4 mr-2" />
                         Novo Nível
                     </Button>
                 )}
             </AlertDialogTrigger>
-            <AlertDialogContent className="max-w-[100vw] min-w-[50vw] min-h-[50vh]">
+            <AlertDialogContent className="max-w-[100vw] min-w-[30vw] min-h-[30vh]">
                 <AlertDialogHeader>
                     <AlertDialogTitle>Criar Novo Nível</AlertDialogTitle>
                 </AlertDialogHeader>

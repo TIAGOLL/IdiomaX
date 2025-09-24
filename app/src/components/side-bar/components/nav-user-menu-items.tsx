@@ -5,7 +5,7 @@ import {
     DropdownMenuItem,
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
-import { getUserMenuData } from "../data/user-menu-data"
+import { getNavigationData } from "../navigation-data"
 
 export function NavUserMenuItems() {
     const navigate = useNavigate()
@@ -23,7 +23,7 @@ export function NavUserMenuItems() {
     }
 
     // Obter dados do menu e filtrar itens que o usuário pode ver
-    const userMenuItems = getUserMenuData()
+    const userMenuItems = getNavigationData().userMenu
     const visibleMenuItems = userMenuItems.filter(item => hasPermission(item.roles))
 
     if (visibleMenuItems.length === 0) {

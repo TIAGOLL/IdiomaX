@@ -6,10 +6,11 @@ import { useMutation } from "@tanstack/react-query";
 import { LoaderIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
-import { unsubscribeRequest } from '@idiomax/http-schemas/unsubscribe';
 import type z from "zod";
+import type { UnsubscribeApiRequestSchema } from "@idiomax/http-schemas/subscriptions/unsubscribe";
+import { getCurrentCompanyId } from "@/lib/company-utils";
 
-type UnsubscribeRequest = z.infer<typeof unsubscribeRequest>;
+type UnsubscribeRequest = z.infer<typeof UnsubscribeApiRequestSchema>;
 
 export function UnsubscribeButton({ subscriptionId }: { subscriptionId: string }) {
     const [confirmText, setConfirmText] = useState("");
@@ -58,7 +59,7 @@ export function UnsubscribeButton({ subscriptionId }: { subscriptionId: string }
                     </AlertDialogCancel>
                     <AlertDialogAction asChild>
                         <Button
-                            onClick={() => mutate({ subscriptionId: subscriptionId })}
+                            onClick={() => mutate({ subscription_id: subscriptionId, company_id: getCurrentCompanyId() })}
                             disabled={isPending || confirmText.trim().toLowerCase() !== "cancelar assinatura"}
                             variant={"destructive"}
                             className="text-white"

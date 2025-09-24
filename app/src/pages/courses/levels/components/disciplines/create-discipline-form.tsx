@@ -12,9 +12,11 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { Plus, Loader2 } from 'lucide-react';
-import { createDiscipline, type CreateDisciplineRequest } from '@/services/disciplines';
+import { BookmarkPlus, Loader2 } from 'lucide-react';
+import { createDiscipline } from '@/services/disciplines';
+import type { CreateDisciplineRequest } from '@idiomax/http-schemas/disciplines/create-discipline';
 import { toast } from 'sonner';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface CreateDisciplineFormProps {
     levelId: string;
@@ -30,14 +32,14 @@ export function CreateDisciplineForm({ levelId, levelName, courseId }: CreateDis
 
     const { mutate: handleCreateDiscipline, isPending } = useMutation({
         mutationFn: (data: CreateDisciplineRequest) => createDiscipline(data),
-        onSuccess: () => {
-            toast.success('Disciplina criada com sucesso!');
+        onSuccess: (res) => {
+            toast.success(res.message);
             queryClient.invalidateQueries({ queryKey: ['levels', courseId] });
             setDisciplineName('');
             setIsOpen(false);
         },
-        onError: () => {
-            toast.error('Erro ao criar disciplina');
+        onError: (res) => {
+            toast.error(res.message);
         },
     });
 
@@ -50,18 +52,24 @@ export function CreateDisciplineForm({ levelId, levelName, courseId }: CreateDis
 
         handleCreateDiscipline({
             name: disciplineName.trim(),
-            level_id: levelId,
+            levels_id: levelId,
         });
     };
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger asChild>
-                <Button size="sm" className="h-7 text-xs">
-                    <Plus className="size-3 mr-1" />
-                    Adicionar Disciplina
-                </Button>
-            </DialogTrigger>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <DialogTrigger asChild>
+                        <Button size="icon" className='flex items-center justify-center' variant="outline">
+                            <BookmarkPlus className="size-5" />
+                        </Button>
+                    </DialogTrigger>
+                </TooltipTrigger>
+                <TooltipContent className=' mb-3'>
+                    Criar nova disciplina
+                </TooltipContent>
+            </Tooltip>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>Nova Disciplina</DialogTitle>

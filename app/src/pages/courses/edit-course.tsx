@@ -3,14 +3,15 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { X, BookOpen, Loader2 } from 'lucide-react';
+import { X, BookOpen, Loader2, GraduationCap } from 'lucide-react';
 import { useSearchParams } from 'react-router';
 import { getCourseById } from '@/services/courses';
 import { Badge } from '@/components/ui/badge';
 import { EditCourseForm } from './components/edit-course-form';
 import { DeactivateCourseForm } from './components/deactivate-course-form';
 import { DeleteCourseForm } from './components/delete-course-form';
-import { UpsertLevels } from './levels';
+import { CreateLevelForm } from './levels/components/create-level-form';
+import { LevelsList } from './levels/components/levels-list';
 
 export function EditCoursePage() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -133,14 +134,27 @@ export function EditCoursePage() {
                 <div className="col-span-3">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Níveis e Disciplinas</CardTitle>
+                            <div className='flex justify-between items-center'>
+                                <div className='flex flex-col items-start gap-2'>
+                                    <CardTitle className='flex flex-row items-center gap-2'>
+                                        <GraduationCap className="size-5" />
+                                        Níveis e Disciplinas
+                                    </CardTitle>
+                                    <CardDescription>
+                                        Gerencie os níveis e disciplinas do curso: {course.name}
+                                    </CardDescription>
+                                </div>
+                                <div>
+                                    <CreateLevelForm course={course} />
+                                </div>
+                            </div>
                         </CardHeader>
                         <CardContent>
-                            <UpsertLevels course={course} />
+                            <LevelsList course={course} />
                         </CardContent>
                     </Card>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

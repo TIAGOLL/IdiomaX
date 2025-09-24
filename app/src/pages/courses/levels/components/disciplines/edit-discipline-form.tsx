@@ -3,8 +3,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Save, X, Edit } from 'lucide-react';
-import { updateDiscipline, type UpdateDisciplineRequest } from '@/services/disciplines';
+import { updateDiscipline } from '@/services/disciplines';
 import { toast } from 'sonner';
+import type { UpdateDisciplineFormData } from '@idiomax/http-schemas/disciplines/update-discipline';
 
 interface EditDisciplineFormProps {
     disciplineId: string;
@@ -27,7 +28,10 @@ export function EditDisciplineForm({
     const queryClient = useQueryClient();
 
     const { mutate: handleUpdateDiscipline, isPending } = useMutation({
-        mutationFn: (data: UpdateDisciplineRequest) => updateDiscipline(data),
+        mutationFn: (data: UpdateDisciplineFormData) => updateDiscipline({
+            id: disciplineId,
+            ...data
+        }),
         onSuccess: () => {
             toast.success('Disciplina atualizada com sucesso!');
             queryClient.invalidateQueries({ queryKey: ['levels', courseId] });
@@ -65,7 +69,6 @@ export function EditDisciplineForm({
         }
 
         handleUpdateDiscipline({
-            id: disciplineId,
             name: disciplineName.trim(),
         });
     };

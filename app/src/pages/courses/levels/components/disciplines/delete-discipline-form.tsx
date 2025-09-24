@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -12,9 +12,10 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Trash2, Loader2 } from 'lucide-react';
-import { deleteDiscipline, type DeleteDisciplineRequest } from '@/services/disciplines';
+import { Loader2, Trash2 } from 'lucide-react';
+import { deleteDiscipline, } from '@/services/disciplines';
 import { toast } from 'sonner';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface DeleteDisciplineFormProps {
     disciplineId: string;
@@ -27,34 +28,32 @@ export function DeleteDisciplineForm({ disciplineId, disciplineName, courseId }:
 
     const queryClient = useQueryClient();
 
-    const { mutate: handleDeleteDiscipline, isPending } = useMutation({
-        mutationFn: (data: DeleteDisciplineRequest) => deleteDiscipline(data),
-        onSuccess: () => {
-            toast.success('Disciplina excluída com sucesso!');
+    const { mutate, isPending } = useMutation({
+        mutationFn: () => deleteDiscipline(disciplineId),
+        onSuccess: (res) => {
+            toast.success(res.message);
             queryClient.invalidateQueries({ queryKey: ['levels', courseId] });
             setIsOpen(false);
         },
-        onError: () => {
-            toast.error('Erro ao excluir disciplina');
+        onError: (res) => {
+            toast.error(res.message);
         },
     });
 
-    const handleConfirmDelete = () => {
-        handleDeleteDiscipline({ id: disciplineId });
-    };
-
     return (
         <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-            <AlertDialogTrigger asChild>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-red-600 hover:text-red-700 h-8 text-xs"
-                >
-                    <Trash2 className="size-3 mr-1" />
-                    Deletar
-                </Button>
-            </AlertDialogTrigger>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <AlertDialogTrigger asChild>
+                        <Button size="icon" variant="destructive" className='flex items-center justify-center'>
+                            <Trash2 className="size-5" />
+                        </Button>
+                    </AlertDialogTrigger>
+                </TooltipTrigger>
+                <TooltipContent className=' mb-3'>
+                    Deletar disciplina
+                </TooltipContent>
+            </Tooltip>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
@@ -64,14 +63,14 @@ export function DeleteDisciplineForm({ disciplineId, disciplineName, courseId }:
                         <strong>Esta ação não pode ser desfeita.</strong>
                     </AlertDialogDescription>
                 </AlertDialogHeader>
-                <AlertDialogFooter>
+                <AlertDialogFooter className='!justify-between'>
                     <AlertDialogCancel disabled={isPending}>
                         Cancelar
                     </AlertDialogCancel>
                     <AlertDialogAction
-                        onClick={handleConfirmDelete}
+                        onClick={() => mutate()}
                         disabled={isPending}
-                        className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+                        className={buttonVariants({ variant: 'destructive' })}
                     >
                         {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Excluir Disciplina

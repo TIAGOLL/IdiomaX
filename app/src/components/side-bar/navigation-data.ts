@@ -1,4 +1,4 @@
-import { LayoutDashboardIcon } from "lucide-react"
+import { BadgeCheck, BriefcaseBusiness, Cog, LayoutDashboardIcon, LifeBuoyIcon, MessageCircleMore } from "lucide-react"
 
 export function getNavigationData() {
     return {
@@ -24,8 +24,6 @@ export function getNavigationData() {
                 links: [
                     { name: "Ver turmas", to: "/admin/classes?tab=list", roles: ['admin'] },
                     { name: "Cadastrar turma", to: "/admin/classes?tab=create", roles: ['admin'] },
-                    { name: "Ver salas", to: "/admin/classrooms?tab=list", roles: ['admin'] },
-                    { name: "Cadastrar sala", to: "/admin/classrooms?tab=create", roles: ['admin'] },
                     { name: "Ver aulas", to: "/admin/classes?tab=list", roles: ['admin', 'teacher'] },
                     { name: "Cadastrar aula", to: "/admin/classes?tab=create", roles: ['admin', 'teacher'] },
                 ],
@@ -39,6 +37,30 @@ export function getNavigationData() {
                 ],
             },
         ],
+        navSecondary: [
+            { title: "Suporte", url: "https://wa.me/+5542984066420", icon: LifeBuoyIcon },
+            { title: "Feedback", url: "https://wa.me/+5542984066420", icon: MessageCircleMore },
+        ],
+        userMenu: [
+            {
+                label: "Meu perfil",
+                href: '/profile',
+                icon: BadgeCheck,
+                roles: ['STUDENT', 'TEACHER', 'ADMIN'] // Todos podem ver o perfil
+            },
+            {
+                label: "Minha empresa",
+                href: '/finances',
+                icon: BriefcaseBusiness,
+                roles: ['ADMIN'] // Apenas ADMINs podem ver finanças
+            },
+            {
+                label: "Configurar instituição",
+                href: '/config/company',
+                icon: Cog,
+                roles: ['ADMIN'] // Apenas ADMINs podem ver configurações
+            },
+        ]
     }
 }
 

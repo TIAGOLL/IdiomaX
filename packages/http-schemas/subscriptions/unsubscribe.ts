@@ -2,21 +2,17 @@ import { z } from 'zod';
 
 // ===== FORM SCHEMAS (Frontend Formulários) =====
 export const UnsubscribeFormSchema = z.object({
-    subscriptionId: z.string()
-        .min(1, 'ID da assinatura é obrigatório')
-        .startsWith('sub_', 'ID de assinatura inválido'),
-    reason: z.string()
-        .max(500, 'Motivo muito longo')
-        .optional(),
-    cancelImmediately: z.boolean()
-        .default(false),
+    subscription_id: z.string().min(1),
+    company_id: z.string().uuid(),
+    cancel_immediately: z.boolean().default(true),
+    cancellation_reason: z.string().max(500).optional(),
 });
 
 // ===== API SCHEMAS (Backend Validation) =====
 export const UnsubscribeApiRequestSchema = z.object({
     subscription_id: z.string().min(1),
     company_id: z.string().uuid(),
-    cancel_immediately: z.boolean().default(false),
+    cancel_immediately: z.boolean().default(true).optional(),
     cancellation_reason: z.string().max(500).optional(),
 });
 

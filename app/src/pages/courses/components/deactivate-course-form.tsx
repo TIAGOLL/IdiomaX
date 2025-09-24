@@ -6,7 +6,7 @@ import type { GetCourseByIdResponse } from '@idiomax/http-schemas/courses/get-co
 import z from 'zod';
 import { getCurrentCompanyId } from '@/lib/company-utils';
 import { DeactivateCourseFormSchema } from '@idiomax/http-schemas/courses/deactivate-course';
-import { BookCheck, BookX } from 'lucide-react';
+import { Power, PowerOff } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { deactivateCourse } from '@/services/courses/deactivate-course';
@@ -45,12 +45,12 @@ export function DeactivateCourseForm({ course }: { course: GetCourseByIdResponse
             <Button variant="outline" className="w-full" onClick={handleSubmit((data) => mutate(data))} disabled={isPending}>
                 {course.active ? (
                     <>
-                        <BookX className="size-4 mr-2" />
+                        <PowerOff className="size-4 mr-2" />
                         {isPending ? 'Desativando...' : 'Desativar Curso'}
                     </>
                 ) : (
                     <>
-                        <BookCheck className="size-4 mr-2" />
+                        <Power className="size-4 mr-2" />
                         {isPending ? 'Ativando...' : 'Ativar Curso'}
                     </>
                 )}
