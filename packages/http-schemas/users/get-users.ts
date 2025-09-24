@@ -37,7 +37,7 @@ export const GetUsersApiResponseSchema = z.object({
         username: z.string().min(3).max(256),
         password: z.string().min(6, { message: 'Senha deve ter pelo menos 6 caracteres' }).optional(),
         cpf: z.string().min(11).max(11),
-        phone: z.string().min(10).max(11),
+        phone: z.string().min(10).max(17),
         gender: z.enum(['M', 'F']),
         date_of_birth: z.date(),
         address: z.string().min(1).max(255),

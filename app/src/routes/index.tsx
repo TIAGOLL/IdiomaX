@@ -10,7 +10,7 @@ import { SelectPlanPage } from '@/pages/subscription/select-plan';
 import ResetPasswordPage from '@/pages/auth/reset-password';
 import { PaidRoute } from './paid-route';
 import CongratulationsPage from '@/pages/subscription/congratulations';
-import { FinanceDashboard } from '@/pages/finances';
+import { FinanceDashboard } from '@/pages/company';
 import UsersPage from '@/pages/users';
 import CoursesPage from '@/pages/courses';
 
@@ -39,7 +39,7 @@ export function RoutesApp() {
             </div>}>
             <Route index element={<DashboardPage />} />
             <Route path='/profile' element={<ProfilePage />} />
-            <Route path='/finances' element={<FinanceDashboard />} />
+            <Route path='/my-company' element={<FinanceDashboard />} />
             <Route path='/admin/users' element={<UsersPage />} />
             <Route path='/admin/courses' element={<CoursesPage />} />
           </Route>

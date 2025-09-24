@@ -6,7 +6,7 @@ import { UpdateCompanyForm } from "./components/update-company-form";
 import { buttonVariants } from "@/components/ui/button";
 import { Link } from "react-router";
 
-export default function AdminFinances() {
+export function MyCompanyProfilePage() {
     const { currentCompanyMember, subscription, isLoadingSubscription, isInitializingCompany } = useSessionContext();
 
     if (isLoadingSubscription || !currentCompanyMember || !subscription || isInitializingCompany) {

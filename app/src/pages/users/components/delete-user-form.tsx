@@ -51,7 +51,7 @@ export function DeleteUserForm({ user }: { user: UserWithRole }) {
                         Esta ação não pode ser desfeita e todos os dados do usuário serão permanentemente removidos.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
-                <AlertDialogFooter>
+                <AlertDialogFooter className="!justify-between">
                     <AlertDialogCancel disabled={isPending}>
                         Cancelar
                     </AlertDialogCancel>

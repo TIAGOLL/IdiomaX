@@ -4,13 +4,19 @@ export function getNavigationData() {
     return {
         navMain: [
             {
-                title: "Dashboard", icon: LayoutDashboardIcon, links: [{
-                    name: "Visão geral", to: "/", roles: ['admin']
+                title: "Dashboard",
+                icon: LayoutDashboardIcon,
+                breadcrumbKey: "admin",
+                links: [{
+                    name: "Visão geral",
+                    to: "/",
+                    roles: ['admin']
                 }]
             },
             {
                 title: "Cursos",
                 icon: LayoutDashboardIcon,
+                breadcrumbKey: "courses",
                 links: [
                     { name: "Ver cursos", to: "/admin/courses?tab=list", roles: ['admin'] },
                     { name: "Cadastrar curso", to: "/admin/courses?tab=create", roles: ['admin'] },
@@ -21,6 +27,7 @@ export function getNavigationData() {
             {
                 title: "Turmas",
                 icon: LayoutDashboardIcon,
+                breadcrumbKey: "classes",
                 links: [
                     { name: "Ver turmas", to: "/admin/classes?tab=list", roles: ['admin'] },
                     { name: "Cadastrar turma", to: "/admin/classes?tab=create", roles: ['admin'] },
@@ -31,6 +38,7 @@ export function getNavigationData() {
             {
                 title: "Usuários",
                 icon: LayoutDashboardIcon,
+                breadcrumbKey: "users",
                 links: [
                     { name: "Criar usuário", to: "/admin/users?tab=create", roles: ['admin'] },
                     { name: "Listar usuários", to: "/admin/users?tab=list", roles: ['admin'] },
@@ -46,40 +54,34 @@ export function getNavigationData() {
                 label: "Meu perfil",
                 href: '/profile',
                 icon: BadgeCheck,
-                roles: ['STUDENT', 'TEACHER', 'ADMIN'] // Todos podem ver o perfil
+                roles: ['STUDENT', 'TEACHER', 'ADMIN']
             },
             {
-                label: "Minha empresa",
-                href: '/finances',
+                label: "Perfil da empresa",
+                href: '/my-company?tab=profile',
                 icon: BriefcaseBusiness,
-                roles: ['ADMIN'] // Apenas ADMINs podem ver finanças
+                roles: ['ADMIN']
             },
             {
                 label: "Configurar instituição",
-                href: '/config/company',
+                href: '/my-company?tab=settings',
                 icon: Cog,
-                roles: ['ADMIN'] // Apenas ADMINs podem ver configurações
+                roles: ['ADMIN']
             },
         ]
     }
 }
 
-// Função para converter dados da navegação para formato do breadcrumb
+// Função para gerar configuração do breadcrumb baseada nos dados de navegação
 export function getBreadcrumbConfig() {
     const navData = getNavigationData();
 
     const breadcrumbConfig: Record<string, { label: string; items: { label: string; href: string }[] }> = {};
 
-    // Processar cada item da navegação
+    // Processar navMain
     navData.navMain.forEach(section => {
-        const sectionKey = section.title.toLowerCase();
-
-        // Mapear nomes de seções para chaves de URL
-        let urlKey = sectionKey;
-        if (sectionKey === 'usuários') urlKey = 'users';
-        else if (sectionKey === 'dashboard') urlKey = 'admin';
-
-        breadcrumbConfig[urlKey] = {
+        const key = section.breadcrumbKey || section.title.toLowerCase();
+        breadcrumbConfig[key] = {
             label: section.title,
             items: section.links.map(link => ({
                 label: link.name,
@@ -88,29 +90,37 @@ export function getBreadcrumbConfig() {
         };
     });
 
-    // Adicionar mapeamentos adicionais para sub-rotas
-    breadcrumbConfig.admin = {
-        label: 'Admin',
-        items: [
-            { label: 'Dashboard', href: '/' },
-            { label: 'Criar usuário', href: '/admin/users?tab=create' },
-            { label: 'Listar usuários', href: '/admin/users?tab=list' },
-            { label: 'Ver cursos', href: '/admin/courses?tab=list' },
-        ]
-    };
+    // Processar userMenu
+    navData.userMenu.forEach(menuItem => {
+        const urlPath = menuItem.href.split('?')[0];
+        const pathSegments = urlPath.split('/').filter(segment => segment);
 
-    // Usuários - usar dados da seção "Usuários" se existir
-    const usuariosSection = navData.navMain.find(section => section.title === 'Usuários');
-    breadcrumbConfig.users = {
-        label: 'Usuários',
-        items: usuariosSection?.links.map(link => ({
-            label: link.name,
-            href: link.to
-        })) || [
-                { label: 'Criar usuário', href: '/admin/users?tab=create' },
-                { label: 'Listar usuários', href: '/admin/users?tab=list' },
+        if (pathSegments.length > 0) {
+            const mainKey = pathSegments[0];
+
+            if (!breadcrumbConfig[mainKey]) {
+                breadcrumbConfig[mainKey] = {
+                    label: mainKey === 'my-company' ? 'Minha Empresa' : 'Perfil',
+                    items: []
+                };
+            }
+
+            breadcrumbConfig[mainKey].items.push({
+                label: menuItem.label,
+                href: menuItem.href
+            });
+        }
+    });
+
+    // Adicionar Dashboard se não existir
+    if (!breadcrumbConfig.admin) {
+        breadcrumbConfig.admin = {
+            label: 'Administração',
+            items: [
+                { label: 'Dashboard', href: '/' },
             ]
-    };
+        };
+    }
 
     return breadcrumbConfig;
 }

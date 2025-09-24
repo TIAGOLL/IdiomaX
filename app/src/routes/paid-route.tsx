@@ -43,6 +43,9 @@ export function PaidRoute() {
     ];
 
     pathnames.forEach((value, index) => {
+      // Pular o segmento 'admin' pois 'Home' já representa o dashboard
+      if (value === 'admin') return;
+
       const to = '/' + pathnames.slice(0, index + 1).join('/');
       const isLast = index === pathnames.length - 1;
       const config = breadcrumbConfig[value as keyof typeof breadcrumbConfig];

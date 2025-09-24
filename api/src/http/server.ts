@@ -63,6 +63,16 @@ import { updateDiscipline } from './controllers/disciplines/update-discipline'
 import { toggleDisciplineStatus } from './controllers/disciplines/toggle-discipline-status'
 import { deleteDiscipline } from './controllers/disciplines/delete-discipline'
 
+// Settings controllers
+import { updateRegistrationTime } from './controllers/settings/update-registration-time'
+import { getCompanySettings } from './controllers/settings/get-company-settings'
+
+// Classrooms controllers
+import { createClassroom } from './controllers/classrooms/create-classroom'
+import { getClassrooms } from './controllers/classrooms/get-classrooms'
+import { updateClassroom } from './controllers/classrooms/update-classroom'
+import { deleteClassroom } from './controllers/classrooms/delete-classroom'
+
 dotenv.config()
 
 export const env = envSchema.safeParse(process.env)
@@ -165,6 +175,16 @@ app.register(createDiscipline);
 app.register(updateDiscipline);
 app.register(toggleDisciplineStatus);
 app.register(deleteDiscipline);
+
+// Settings routes
+app.register(updateRegistrationTime);
+app.register(getCompanySettings);
+
+// Classrooms routes
+app.register(createClassroom);
+app.register(getClassrooms);
+app.register(updateClassroom);
+app.register(deleteClassroom);
 
 
 if (process.env.VERCEL !== "1") {

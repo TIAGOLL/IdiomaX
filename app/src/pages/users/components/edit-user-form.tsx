@@ -30,7 +30,7 @@ export function EditUserForm({ user }: { user: UserWithRole }) {
     const { currentCompanyMember } = useSessionContext();
     const userId = searchParams.get('id') || '';
 
-    const { handleSubmit, control, reset, formState: { errors }, register } =
+    const { handleSubmit, control, formState: { errors }, register } =
         useForm<UpdateUserFormSchema>({
             resolver: zodResolver(UpdateUserFormSchema),
             defaultValues: {
@@ -54,8 +54,7 @@ export function EditUserForm({ user }: { user: UserWithRole }) {
         }),
         onSuccess: (res) => {
             toast.success(res.message);
-            reset();
-            queryClient.invalidateQueries({ queryKey: ['user', userId] });
+            queryClient.invalidateQueries({ queryKey: ['user', user.id] });
         },
         onError: (error: Error) => {
             toast.error(error.message);
