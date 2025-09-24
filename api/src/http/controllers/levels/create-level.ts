@@ -33,7 +33,6 @@ export async function createLevel(app: FastifyInstance) {
                 course_id,
                 name,
                 level,
-                disciplines
             } = request.body
 
             const { company } = await checkMemberAccess(company_id, userId)
@@ -78,32 +77,18 @@ export async function createLevel(app: FastifyInstance) {
             }
 
             // Criar o level com suas disciplinas em uma transação
-            await prisma.$transaction(async (prisma) => {
-                const createdLevel = await prisma.levels.create({
-                    data: {
-                        name,
-                        level,
-                        courses_id: course_id,
-                        created_by: userId,
-                        updated_by: userId,
-                    }
-                })
-
-                // Criar as disciplinas
-                for (const discipline of disciplines) {
-                    await prisma.disciplines.create({
-                        data: {
-                            name: discipline.name,
-                            levels_id: createdLevel.id,
-                            created_by: userId,
-                            updated_by: userId,
-                        }
-                    })
+            await prisma.levels.create({
+                data: {
+                    name,
+                    level,
+                    courses_id: course_id,
+                    created_by: userId,
+                    updated_by: userId,
                 }
             })
 
             return reply.status(201).send({
-                message: 'Level e disciplinas criados com sucesso!',
+                message: 'Level criado com sucesso!',
             })
         })
 }

@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { EditCourseForm } from './components/edit-course-form';
 import { DeactivateCourseForm } from './components/deactivate-course-form';
 import { DeleteCourseForm } from './components/delete-course-form';
-import { UpsertLevels } from './components/upsert-levels-form';
+import { UpsertLevels } from './levels';
 
 export function EditCoursePage() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -130,7 +130,7 @@ export function EditCoursePage() {
                         </CardContent>
                     </Card>
                 </div>
-                <div className="lg:col-span-2">
+                <div className="col-span-3">
                     <Card>
                         <CardHeader>
                             <CardTitle>Níveis e Disciplinas</CardTitle>

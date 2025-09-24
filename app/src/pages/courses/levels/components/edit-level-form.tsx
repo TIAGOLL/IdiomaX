@@ -1,0 +1,133 @@
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { LoaderIcon, Edit2 } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import type { Resolver } from 'react-hook-form';
+import { CreateLevelFormSchema, type CreateLevelFormData } from '@idiomax/http-schemas/levels/create-level';
+import { FormMessageError } from '@/components/ui/form-message-error';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { updateLevel } from '@/services/levels';
+import { useEffect, useState } from 'react';
+import type { Level } from '@idiomax/http-schemas/levels/get-levels';
+import type { GetCourseByIdResponse } from '@idiomax/http-schemas/courses/get-course-by-id';
+import { getCurrentCompanyId } from '@/lib/company-utils';
+
+export function EditLevelForm(
+    { course, level }: { course: GetCourseByIdResponse; level: Level }
+) {
+    const [open, setOpen] = useState(false);
+    const queryClient = useQueryClient();
+
+    // Mutation para atualizar level
+    const { mutate, isPending } = useMutation({
+        mutationFn: async (data: CreateLevelFormData) => {
+            const response = await updateLevel({
+                ...data,
+                company_id: getCurrentCompanyId(),
+                course_id: course.id,
+            });
+            return response;
+        },
+        onSuccess: (res) => {
+            toast.success(res.message);
+            queryClient.invalidateQueries({ queryKey: ['levels', course.id] });
+            setOpen(false);
+            reset();
+        },
+        onError: (err: Error) => {
+            toast.error(err.message || 'Erro ao atualizar level');
+        }
+    });
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset,
+        setValue
+    } = useForm<CreateLevelFormData>({
+        resolver: zodResolver(CreateLevelFormSchema) as Resolver<CreateLevelFormData>,
+        mode: "all",
+        criteriaMode: "all",
+        defaultValues: {
+            name: '',
+            level: 1,
+        }
+    });
+
+    // Preencher formulário quando level mudar
+    useEffect(() => {
+        setValue('name', level.name);
+        setValue('level', level.level);
+    }, [level, setValue]);
+
+    const handleCancel = () => {
+        setOpen(false);
+        reset();
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                    <Edit2 className="size-4" />
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                    <DialogTitle>Editar Nível</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleSubmit((data) => mutate(data))} className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="edit-name">Nome do Nível *</Label>
+                            <Input
+                                id="edit-name"
+                                placeholder="Ex: Básico I, Intermediário II"
+                                {...register('name')}
+                            />
+                            <FormMessageError error={errors.name?.message} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="edit-level">Ordem do Nível *</Label>
+                            <Input
+                                id="edit-level"
+                                type="number"
+                                min="1"
+                                placeholder="1"
+                                {...register('level', { valueAsNumber: true })}
+                            />
+                            <FormMessageError error={errors.level?.message} />
+                        </div>
+                    </div>
+                    <div className="flex justify-end gap-2 pt-4">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={handleCancel}
+                        >
+                            Cancelar
+                        </Button>
+                        <Button type="submit" disabled={isPending}>
+                            {isPending ? (
+                                <>
+                                    <LoaderIcon className="size-4 mr-2 animate-spin" />
+                                    Atualizando...
+                                </>
+                            ) : (
+                                <>
+                                    <Edit2 className="size-4 mr-2" />
+                                    Atualizar Nível
+                                </>
+                            )}
+                        </Button>
+                    </div>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
+}

@@ -1,4 +1,4 @@
-export { getLevels } from './get-levels';
+export { getLevelsByCourse } from './get-levels';
 export { createLevel } from './create-level';
 export { getLevelById } from './get-level-by-id';
 export { updateLevel } from './update-level';

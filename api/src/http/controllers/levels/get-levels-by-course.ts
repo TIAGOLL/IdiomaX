@@ -14,12 +14,12 @@ const ErrorResponseSchema = z.object({
 export async function getLevelsByCourse(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
         .register(auth)
-        .get('/levels/:course_id', {
+        .get('/levels-by-course', {
             schema: {
                 tags: ['Níveis'],
                 summary: 'Obter níveis por curso',
                 security: [{ bearerAuth: [] }],
-                params: GetLevelsApiParamsSchema,
+                querystring: GetLevelsApiParamsSchema,
                 response: {
                     200: GetLevelsApiResponseSchema,
                     400: ErrorResponseSchema,
@@ -28,17 +28,17 @@ export async function getLevelsByCourse(app: FastifyInstance) {
             },
         }, async (request, reply) => {
             const userId = await request.getCurrentUserId()
-            const { course_id } = request.params
+            const { course_id } = request.query
 
             // Verificar se o curso existe e obter company_id
             const course = await prisma.courses.findFirst({
                 where: {
                     id: course_id,
-                    active: true
                 }
             })
 
             if (!course) {
+                console.log('Course not found:', course_id);
                 throw new BadRequestError('Curso não encontrado.')
             }
 
@@ -47,13 +47,9 @@ export async function getLevelsByCourse(app: FastifyInstance) {
             const levels = await prisma.levels.findMany({
                 where: {
                     courses_id: course_id,
-                    active: true
                 },
                 include: {
                     disciplines: {
-                        where: {
-                            active: true
-                        },
                         orderBy: {
                             created_at: 'asc'
                         }

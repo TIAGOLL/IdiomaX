@@ -1,12 +1,8 @@
 import { z } from 'zod'
 
 export const CreateLevelFormSchema = z.object({
-    courses_id: z.string().uuid(),
     name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
     level: z.number().min(1, 'Level deve ser maior que 0'),
-    disciplines: z.array(z.object({
-        name: z.string().min(2, 'Nome da disciplina deve ter pelo menos 2 caracteres')
-    })).optional().default([])
 })
 
 export const CreateLevelApiRequestSchema = z.object({
@@ -14,9 +10,6 @@ export const CreateLevelApiRequestSchema = z.object({
     course_id: z.string().uuid(),
     name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
     level: z.number().min(1, 'Level deve ser maior que 0'),
-    disciplines: z.array(z.object({
-        name: z.string().min(2, 'Nome da disciplina deve ter pelo menos 2 caracteres')
-    })).optional().default([])
 })
 
 export const CreateLevelApiResponseSchema = z.object({

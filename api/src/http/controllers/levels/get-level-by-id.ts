@@ -14,12 +14,12 @@ const ErrorResponseSchema = z.object({
 export async function getLevelById(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
         .register(auth)
-        .get('/level/:level_id', {
+        .get('/level-by-id/:level_id', {
             schema: {
                 tags: ['Levels'],
                 summary: 'Get level by id',
                 security: [{ bearerAuth: [] }],
-                params: GetLevelByIdApiParamsSchema,
+                querystring: GetLevelByIdApiParamsSchema,
                 response: {
                     200: GetLevelByIdApiResponseSchema,
                     400: ErrorResponseSchema,
@@ -29,7 +29,7 @@ export async function getLevelById(app: FastifyInstance) {
             },
         }, async (request, reply) => {
             const userId = await request.getCurrentUserId()
-            const { level_id } = request.params
+            const { level_id } = request.query
 
             const level = await prisma.levels.findFirst({
                 where: {
