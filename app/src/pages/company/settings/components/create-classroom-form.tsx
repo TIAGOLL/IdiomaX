@@ -52,7 +52,7 @@ export function CreateClassroomForm() {
 
     return (
         <form onSubmit={handleSubmit((data) => mutate(data))} className='space-y-4'>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Número da Sala */}
                 <div className="space-y-1">
                     <Label htmlFor='number'>Número da Sala *</Label>
@@ -77,21 +77,20 @@ export function CreateClassroomForm() {
                     />
                     <FormMessageError error={errors.block?.message} />
                 </div>
-            </div>
-
-            <div className="flex justify-end">
-                <Button
-                    variant='default'
-                    type='submit'
-                    disabled={isPending}
-                >
-                    Cadastrar Sala
-                    {isPending ? (
-                        <LoaderIcon className='ml-2 h-4 w-4 animate-spin' />
-                    ) : (
-                        <PlusCircle className='ml-2 h-4 w-4' />
-                    )}
-                </Button>
+                <div className="space-y-1 items-end flex">
+                    <Button
+                        variant='default'
+                        type='submit'
+                        disabled={isPending}
+                    >
+                        Cadastrar Sala
+                        {isPending ? (
+                            <LoaderIcon className='ml-2 size-4 animate-spin' />
+                        ) : (
+                            <PlusCircle className='ml-2 size-4' />
+                        )}
+                    </Button>
+                </div>
             </div>
         </form>
     );

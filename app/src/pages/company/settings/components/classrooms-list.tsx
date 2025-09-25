@@ -5,7 +5,6 @@ import { Badge } from '@/components/ui/badge';
 import { LoaderIcon, School } from 'lucide-react';
 import { UpdateClassroomForm } from './update-classroom-form';
 import { DeleteClassroomForm } from './delete-classroom-form';
-import { Separator } from '@/components/ui/separator';
 
 export function ClassroomsList() {
     const { data, isLoading } = useQuery({
@@ -32,7 +31,7 @@ export function ClassroomsList() {
     }
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 space-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 space-y-3">
             {data.map((classroom) => (
                 <Card key={classroom.id} className="p-3">
                     <CardContent className="p-0">
