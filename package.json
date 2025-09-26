@@ -20,6 +20,7 @@
     "zod": "^4.1.9"
   },
   "devDependencies": {
-    "concurrently": "^9.2.0"
+    "concurrently": "^9.2.0",
+    "typescript": "^5.9.2"
   }
 }

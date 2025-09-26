@@ -1,7 +1,8 @@
 import { z } from 'zod'
 
 export const GetCourseByIdApiParamsSchema = z.object({
-    course_id: z.string().uuid('ID do curso inválido')
+    course_id: z.string().uuid('ID do curso inválido'),
+    companies_id: z.string().uuid('ID da empresa inválido')
 })
 
 export const GetCourseByIdApiResponseSchema = z.object({

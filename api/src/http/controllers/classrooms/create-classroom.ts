@@ -4,11 +4,8 @@ import { CreateClassroomApiRequestSchema, CreateClassroomResponseSchema } from '
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { BadRequestError } from '../_errors/bad-request-error'
-import { z } from 'zod'
-
-const ErrorResponseSchema = z.object({
-    message: z.string()
-})
+import { getUserPermissions } from '../../../lib/get-user-permission'
+import { ForbiddenError } from '../_errors/forbidden-error'
 
 export async function createClassroom(app: FastifyInstance) {
     app
@@ -23,20 +20,27 @@ export async function createClassroom(app: FastifyInstance) {
                     body: CreateClassroomApiRequestSchema,
                     response: {
                         201: CreateClassroomResponseSchema,
-                        400: ErrorResponseSchema,
+                        400: CreateClassroomResponseSchema,
                     },
                 },
             },
             async (request, reply) => {
-                const userId = await request.getCurrentUserId()
                 const { companies_id, number, block } = request.body
+                const userId = await request.getCurrentUserId()
+                const { member } = await request.getUserMember(companies_id)
+
+                const { cannot } = getUserPermissions(userId, member.role)
+
+                // Verifica permissão explícita de criação de sala de aula
+                if (cannot('create', 'Classroom')) {
+                    throw new ForbiddenError()
+                }
 
                 // Verificar se já existe uma sala com esse número na mesma empresa
                 const existingClassroom = await prisma.classrooms.findFirst({
                     where: {
                         companies_id,
                         number,
-                        active: true
                     }
                 })
 

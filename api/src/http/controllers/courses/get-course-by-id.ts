@@ -4,6 +4,8 @@ import { GetCourseByIdApiParamsSchema, GetCourseByIdApiResponseSchema } from '@i
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { z } from 'zod'
+import { getUserPermissions } from '../../../lib/get-user-permission'
+import { ForbiddenError } from '../_errors/forbidden-error'
 
 const ErrorResponseSchema = z.object({
     message: z.string()
@@ -25,8 +27,16 @@ export async function getCourseById(app: FastifyInstance) {
                 },
             },
         }, async (request, reply) => {
+            const { course_id, companies_id } = request.params
+
             const userId = await request.getCurrentUserId()
-            const { course_id } = request.params
+            const { member } = await request.getUserMember(companies_id)
+
+            const { cannot } = getUserPermissions(userId, member.role)
+
+            if (cannot('get', 'Course')) {
+                throw new ForbiddenError()
+            }
 
             // Buscar o curso
             const course = await prisma.courses.findFirst({
@@ -38,23 +48,6 @@ export async function getCourseById(app: FastifyInstance) {
             if (!course) {
                 return reply.status(404).send({
                     message: 'Curso não encontrado.'
-                })
-            }
-
-            // Verificar se o usuário tem permissão na empresa do curso
-            const member = await prisma.members.findFirst({
-                where: {
-                    user_id: userId,
-                    company_id: course.companies_id,
-                    role: {
-                        in: ['ADMIN', 'TEACHER']
-                    }
-                }
-            })
-
-            if (!member) {
-                return reply.status(403).send({
-                    message: 'Acesso negado. Você não tem permissão para visualizar este curso.'
                 })
             }
 

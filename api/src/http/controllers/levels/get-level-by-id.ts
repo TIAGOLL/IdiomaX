@@ -3,7 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { GetLevelByIdApiParamsSchema, GetLevelByIdApiResponseSchema } from '@idiomax/http-schemas/levels/get-level-by-id'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
-import { checkMemberAccess } from '../../../lib/permissions'
+import { checkMemberAccess } from '../../../lib/get-user-permission'
 import { BadRequestError } from '../_errors/bad-request-error'
 import { z } from 'zod'
 

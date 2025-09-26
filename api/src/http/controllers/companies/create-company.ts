@@ -81,6 +81,8 @@ export async function createCompany(app: FastifyInstance) {
                             create: {
                                 user_id: userId,
                                 role: 'ADMIN',
+                                created_by: userId,
+                                updated_by: userId,
                             }
                         }
                     },

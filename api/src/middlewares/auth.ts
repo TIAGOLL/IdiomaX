@@ -1,6 +1,8 @@
 import type { FastifyInstance } from 'fastify'
 import { fastifyPlugin } from 'fastify-plugin'
 import { UnauthorizedError } from '../http/controllers/_errors/unauthorized-error'
+import { prisma } from '../lib/prisma'
+import { ForbiddenError } from '../http/controllers/_errors/forbidden-error'
 
 export const auth = fastifyPlugin(async (app: FastifyInstance) => {
   app.addHook('preHandler', async (request) => {
@@ -14,6 +16,33 @@ export const auth = fastifyPlugin(async (app: FastifyInstance) => {
         return sub
       } catch {
         throw new UnauthorizedError()
+      }
+    }
+
+    request.getUserMember = async (companyId: string) => {
+      const userId = await request.getCurrentUserId()
+
+      const result = await prisma.members.findFirst({
+        where: {
+          id: userId,
+          company: {
+            id: companyId,
+          },
+        },
+        include: {
+          company: true,
+        },
+      })
+
+      if (!result) {
+        throw new ForbiddenError(`Você não é membro desta empresa.`)
+      }
+
+      const { company, ...member } = result
+
+      return {
+        company,
+        member,
       }
     }
   })

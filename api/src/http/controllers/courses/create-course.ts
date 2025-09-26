@@ -4,6 +4,8 @@ import { CreateCourseApiRequestSchema, CreateCourseApiResponseSchema } from '@id
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { z } from 'zod'
+import { getUserPermissions } from '../../../lib/get-user-permission'
+import { ForbiddenError } from '../_errors/forbidden-error'
 
 const ErrorResponseSchema = z.object({
     message: z.string()
@@ -25,9 +27,8 @@ export async function createCourse(app: FastifyInstance) {
                 },
             },
         }, async (request, reply) => {
-            const userId = await request.getCurrentUserId()
             const {
-                company_id,
+                companies_id,
                 name,
                 description,
                 registration_value,
@@ -39,28 +40,20 @@ export async function createCourse(app: FastifyInstance) {
                 syllabus
             } = request.body
 
-            // Verificar se o usuário tem permissão na empresa
-            const member = await prisma.members.findFirst({
-                where: {
-                    user_id: userId,
-                    company_id,
-                    role: {
-                        in: ['ADMIN']
-                    }
-                }
-            })
+            const userId = await request.getCurrentUserId()
+            const { member } = await request.getUserMember(companies_id)
 
-            if (!member) {
-                return reply.status(403).send({
-                    message: 'Acesso negado. Você não tem permissão para criar cursos nesta empresa.'
-                })
+            const { cannot } = getUserPermissions(userId, member.role)
+
+            if (cannot('create', 'Course')) {
+                throw new ForbiddenError()
             }
 
             // Verificar se já existe um curso com o mesmo nome na empresa
             const existingCourse = await prisma.courses.findFirst({
                 where: {
                     name,
-                    companies_id: company_id,
+                    companies_id,
                     active: true
                 }
             })
@@ -89,7 +82,7 @@ export async function createCourse(app: FastifyInstance) {
                     maximum_grade,
                     minimum_frequency,
                     syllabus,
-                    companies_id: company_id,
+                    companies_id,
                     created_by: userId,
                     updated_by: userId,
                 }

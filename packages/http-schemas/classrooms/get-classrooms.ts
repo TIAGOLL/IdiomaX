@@ -11,5 +11,5 @@ export const GetClassroomsResponseSchema = z.array(z.object({
 }))
 
 export const GetClassroomsQuerySchema = z.object({
-    companies_id: z.string().optional()
+    companies_id: z.string()
 })

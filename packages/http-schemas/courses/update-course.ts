@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const UpdateCourseFormSchema = z.object({
     id: z.string().uuid(),
-    company_id: z.string().uuid(),
+    companies_id: z.string().uuid(),
     name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
     description: z.string().optional(),
     registration_value: z.number().min(0, 'Valor da matrícula deve ser positivo'),

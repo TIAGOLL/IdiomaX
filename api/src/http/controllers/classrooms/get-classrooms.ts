@@ -4,6 +4,8 @@ import { GetClassroomsResponseSchema, GetClassroomsQuerySchema } from '@idiomax/
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { z } from 'zod'
+import { getUserPermissions } from '../../../lib/get-user-permission'
+import { ForbiddenError } from '../_errors/forbidden-error'
 
 const ErrorResponseSchema = z.object({
     message: z.string()
@@ -28,6 +30,15 @@ export async function getClassrooms(app: FastifyInstance) {
             },
             async (request, reply) => {
                 const { companies_id } = request.query
+
+                const userId = await request.getCurrentUserId()
+                const { member } = await request.getUserMember(companies_id)
+
+                const { cannot } = getUserPermissions(userId, member.role)
+
+                if (cannot('get', 'Classroom')) {
+                    throw new ForbiddenError()
+                }
 
                 const classrooms = await prisma.classrooms.findMany({
                     where: {

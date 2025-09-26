@@ -5,6 +5,8 @@ import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { BadRequestError } from '../_errors/bad-request-error'
 import { z } from 'zod'
+import { getUserPermissions } from '../../../lib/get-user-permission'
+import { ForbiddenError } from '../_errors/forbidden-error'
 
 const ErrorResponseSchema = z.object({
     message: z.string()
@@ -29,8 +31,16 @@ export async function updateClassroom(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const userId = await request.getCurrentUserId()
                 const { id, number, block, companies_id } = request.body
+
+                const userId = await request.getCurrentUserId()
+                const { member } = await request.getUserMember(companies_id)
+
+                const { cannot } = getUserPermissions(userId, member.role)
+
+                if (cannot('get', 'Classroom')) {
+                    throw new ForbiddenError()
+                }
 
                 // Verificar se já existe outra sala com esse número na mesma empresa
                 const duplicateClassroom = await prisma.classrooms.findFirst({

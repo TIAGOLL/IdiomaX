@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
-import { checkAdminAccess } from '../../../lib/permissions';
+import { checkAdminAccess } from '../../../lib/get-user-permission';
 import {
     UpdateRegistrationTimeApiRequestSchema,
     UpdateRegistrationTimeApiResponseSchema

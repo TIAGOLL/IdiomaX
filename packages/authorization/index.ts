@@ -29,33 +29,12 @@ import { taskSubject } from './subjects/task'
 import { materialSubject } from './subjects/material'
 import { presenceSubject } from './subjects/presence'
 import { billingSubject } from './subjects/billing'
-import { calendarSubject } from './subjects/calendar'
 import { reportSubject } from './subjects/report'
 import { notificationSubject } from './subjects/notification'
-import { eventSubject } from './subjects/event'
 
-// Exporta todos os subjects para uso externo
-export * from './subjects/user'
-export * from './subjects/company'
-export * from './subjects/member'
-export * from './subjects/course'
-export * from './subjects/level'
-export * from './subjects/discipline'
-export * from './subjects/classroom'
-export * from './subjects/class'
-export * from './subjects/registration'
-export * from './subjects/monthly-fee'
-export * from './subjects/task'
-export * from './subjects/material'
-export * from './subjects/presence'
-export * from './subjects/billing'
-export * from './subjects/calendar'
-export * from './subjects/report'
-export * from './subjects/notification'
-export * from './subjects/event'
-export * from './subjects/all'
 // Exporta modelos e roles
 export * from './models/user'
+export * from './models/company'
 export * from './roles'
 
 /**
@@ -78,10 +57,8 @@ const appAbilitiesSchema = z.union([
     materialSubject,
     presenceSubject,
     billingSubject,
-    calendarSubject,
     reportSubject,
     notificationSubject,
-    eventSubject,
     z.tuple([z.literal('manage'), z.literal('all')]),
 ])
 
@@ -91,30 +68,31 @@ type AppAbilities = z.infer<typeof appAbilitiesSchema>
 // Tipos exportados para uso em outras partes da aplicação
 export type AppAbility = MongoAbility<AppAbilities>
 export const createAppAbility = createMongoAbility as CreateAbility<AppAbility>
-
 /**
  * Função principal que define as habilidades de um usuário baseadas em sua role
  * @param user - Usuário para o qual as permissões serão definidas
  * @returns Objeto de habilidades (ability) configurado para o usuário
  */
+
 export function defineAbilityFor(user: User) {
-    // Builder para construir as habilidades do usuário
     const builder = new AbilityBuilder(createAppAbility)
 
-    // Verifica se existem permissões definidas para a role do usuário
     if (typeof permissions[user.role] !== 'function') {
-        throw new Error(`Permissões para a role ${user.role} não encontradas.`)
+        throw new Error(`Permissions for role ${user.role} not found.`)
     }
 
-    // Aplica as permissões específicas da role do usuário
     permissions[user.role](user, builder)
 
-    // Constrói o objeto de habilidades final
-    const ability = builder.build()
+    const ability = builder.build({
+        detectSubjectType(subject) {
+            return subject.__typename
+        },
+    })
 
-    // Vincula os métodos can/cannot ao contexto correto
     ability.can = ability.can.bind(ability)
     ability.cannot = ability.cannot.bind(ability)
 
     return ability
 }
+
+

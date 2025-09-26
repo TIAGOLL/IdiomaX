@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const DeleteCourseApiRequest = z.object({
     course_id: z.string().uuid(),
-    company_id: z.string().uuid()
+    companies_id: z.string().uuid()
 })
 
 export const DeleteCourseApiResponse = z.object({

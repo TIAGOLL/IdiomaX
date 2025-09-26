@@ -107,8 +107,8 @@ model classes {
 model classrooms {
   id           String  @id @default(uuid()) @db.VarChar(256)
   number       Decimal @db.Decimal(5, 0)
-  block        String @db.VarChar(256)
-  companies_id String @db.VarChar(256)
+  block        String  @db.VarChar(256)
+  companies_id String  @db.VarChar(256)
 
   // Campos base de auditoria
   created_at DateTime @default(now())
@@ -536,8 +536,7 @@ model members {
   creator users? @relation("MembersCreatedBy", fields: [created_by], references: [id])
   updater users? @relation("MembersUpdatedBy", fields: [updated_by], references: [id])
 
-  // Permitir múltiplas roles por usuário por empresa
-  @@unique([company_id, user_id, role])
+  @@unique([company_id, user_id])
 }
 
 model users_in_class {

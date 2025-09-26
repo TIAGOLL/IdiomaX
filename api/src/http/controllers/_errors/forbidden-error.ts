@@ -1,5 +1,5 @@
 export class ForbiddenError extends Error {
     constructor(message?: string) {
-        super(message ?? 'Acesso negado!');
+        super(message ?? 'Você não tem permissão.');
     }
 }

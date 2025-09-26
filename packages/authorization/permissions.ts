@@ -59,14 +59,8 @@ export const permissions: Record<Role, PermissionsByRole> = {
         // === RELATÓRIOS ===
         can(['get', 'generate', 'export'], 'Report') // Gerar relatórios
 
-        // === CALENDÁRIO ===
-        can(['get', 'view', 'schedule'], 'Calendar') // Gerenciar calendário
-
         // === NOTIFICAÇÕES ===
         can(['get', 'send', 'receive'], 'Notification') // Gerenciar notificações
-
-        // === EVENTOS ===
-        can(['get', 'create', 'update', 'delete', 'attend', 'schedule'], 'Event') // Gerenciar eventos
     },
 
     /**
@@ -108,13 +102,7 @@ export const permissions: Record<Role, PermissionsByRole> = {
         // === RELATÓRIOS ===
         can('get', 'Report') // Ver seus relatórios de notas/frequência
 
-        // === CALENDÁRIO ===
-        can(['get', 'view'], 'Calendar') // Ver calendário de aulas
-
         // === NOTIFICAÇÕES ===
         can(['get', 'receive'], 'Notification') // Receber notificações
-
-        // === EVENTOS ===
-        can(['get', 'attend'], 'Event') // Ver e participar de eventos
     },
 }

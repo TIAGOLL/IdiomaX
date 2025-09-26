@@ -4,6 +4,7 @@ import { ForbiddenError } from "../_errors/forbidden-error";
 import { auth } from "../../../middlewares/auth";
 import { prisma } from "../../../lib/prisma";
 import { AdminDashboardApiRequestSchema, AdminDashboardApiResponseSchema } from "@idiomax/http-schemas/dashboard";
+import { getUserPermissions } from "../../../lib/get-user-permission";
 
 
 export async function AdminDashboard(app: FastifyInstance) {
@@ -26,18 +27,13 @@ export async function AdminDashboard(app: FastifyInstance) {
             async (request, reply) => {
                 const receivablesCurveYear = new Date().getFullYear().toString();
                 const { company_id } = request.params;
-                const userId = await request.getCurrentUserId();
+                const userId = await request.getCurrentUserId()
+                const { member } = await request.getUserMember(userId)
 
-                // Verifica se o usuário é ADMIN na empresa
-                const member = await prisma.members.findFirst({
-                    where: {
-                        user_id: userId,
-                        company_id: company_id,
-                        role: "ADMIN",
-                    },
-                });
-                if (!member) {
-                    throw new ForbiddenError();
+                const { cannot } = getUserPermissions(userId, member.role)
+
+                if (cannot('manage', 'all')) {
+                    throw new ForbiddenError()
                 }
 
                 // Visão executiva

@@ -1,16 +1,17 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
-import { checkMemberAccess } from '../../../lib/permissions';
 import { GetCoursesApiParamsSchema, GetCoursesApiResponseSchema } from "@idiomax/http-schemas/courses/get-courses"
 import { prisma } from '../../../lib/prisma';
+import { getUserPermissions } from '../../../lib/get-user-permission';
+import { ForbiddenError } from '../_errors/forbidden-error';
 
 export async function getCourses(app: FastifyInstance) {
     app
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .get(
-            '/courses/:company_id',
+            '/courses/:companies_id',
             {
                 schema: {
                     tags: ['Cursos'],
@@ -23,14 +24,19 @@ export async function getCourses(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { company_id } = request.params;
-                const userId = await request.getCurrentUserId();
+                const { companies_id } = request.params;
+                const userId = await request.getCurrentUserId()
+                const { member } = await request.getUserMember(companies_id)
 
-                const { company } = await checkMemberAccess(company_id, userId);
+                const { cannot } = getUserPermissions(userId, member.role)
+
+                if (cannot('get', 'Course')) {
+                    throw new ForbiddenError()
+                }
 
                 const courses = await prisma.courses.findMany({
                     where: {
-                        companies_id: company.id,
+                        companies_id: companies_id,
                     },
                 });
 
@@ -38,7 +44,7 @@ export async function getCourses(app: FastifyInstance) {
                     id: course.id,
                     name: course.name,
                     description: course.description,
-                    company_id: course.companies_id,
+                    companies_id: course.companies_id,
                     created_at: course.created_at,
                     updated_at: course.updated_at,
                     active: course.active,

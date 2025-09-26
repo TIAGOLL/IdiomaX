@@ -3,6 +3,8 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { DeleteClassroomApiRequestSchema, DeleteClassroomApiResponseSchema, } from '@idiomax/http-schemas/classrooms/delete-classroom'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
+import { getUserPermissions } from '../../../lib/get-user-permission'
+import { ForbiddenError } from '../_errors/forbidden-error'
 
 export async function deleteClassroom(app: FastifyInstance) {
     app
@@ -23,7 +25,15 @@ export async function deleteClassroom(app: FastifyInstance) {
             },
             async (request, reply) => {
                 const { id, companies_id } = request.body
+                const userId = await request.getCurrentUserId()
+                const { member } = await request.getUserMember(companies_id)
 
+                const { cannot } = getUserPermissions(userId, member.role)
+
+                if (cannot('delete', 'Classroom')) {
+                    throw new ForbiddenError()
+                }
+                
                 await prisma.classrooms.delete({
                     where: { id, companies_id },
                 })

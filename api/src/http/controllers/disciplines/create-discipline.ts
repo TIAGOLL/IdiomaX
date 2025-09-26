@@ -3,9 +3,10 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { CreateDisciplineApiRequestSchema, CreateDisciplineApiResponseSchema } from '@idiomax/http-schemas/disciplines/create-discipline'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
-import { checkMemberAccess } from '../../../lib/permissions'
 import { BadRequestError } from '../_errors/bad-request-error'
 import { z } from 'zod'
+import { getUserPermissions } from '../../../lib/get-user-permission'
+import { ForbiddenError } from '../_errors/forbidden-error'
 
 const ErrorResponseSchema = z.object({
     message: z.string()
@@ -27,8 +28,16 @@ export async function createDiscipline(app: FastifyInstance) {
                 },
             },
         }, async (request, reply) => {
-            const userId = await request.getCurrentUserId()
             const { name, levels_id } = request.body
+
+            const userId = await request.getCurrentUserId()
+            const { member } = await request.getUserMember(userId)
+
+            const { cannot } = getUserPermissions(userId, member.role)
+
+            if (cannot('create', 'Discipline')) {
+                throw new ForbiddenError()
+            }
 
             // Verificar se o level existe e obter company_id
             const level = await prisma.levels.findFirst({
@@ -52,8 +61,6 @@ export async function createDiscipline(app: FastifyInstance) {
             if (!level.courses?.companies_id) {
                 throw new BadRequestError('Curso do nível não encontrado.')
             }
-
-            await checkMemberAccess(level.courses.companies_id, userId)
 
             // Verificar se já existe disciplina com o mesmo nome no nível
             const existingDiscipline = await prisma.disciplines.findFirst({

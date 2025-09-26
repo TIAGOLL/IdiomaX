@@ -37,7 +37,7 @@ export const CreateCompanyApiRequestSchema = z.object({
     cnpj: z.string().length(14),
     phone: z.string().min(10).max(15),
     email: z.string().email().max(256).optional(),
-    address: z.string().max(512).optional(),
+    address: z.string().max(512),
     logo_16x16_url: z.string().url().max(1024).optional(),
     logo_512x512_url: z.string().url().max(1024).optional(),
     social_reason: z.string().min(2).max(256).optional(),

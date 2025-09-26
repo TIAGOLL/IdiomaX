@@ -1,10 +1,11 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
-import { checkMemberAccess } from '../../../lib/permissions';
 import { DeactivateCourseApiRequest, DeactivateCourseApiResponse } from '@idiomax/http-schemas/courses/deactivate-course';
 import { prisma } from '../../../lib/prisma';
 import { BadRequestError } from '../_errors/bad-request-error';
+import { getUserPermissions } from '../../../lib/get-user-permission';
+import { ForbiddenError } from '../_errors/forbidden-error';
 
 export async function deactivateCourse(app: FastifyInstance) {
     app
@@ -24,16 +25,22 @@ export async function deactivateCourse(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { course_id: targetCourseId, company_id, active } = request.body;
-                const userId = await request.getCurrentUserId();
+                const { course_id: targetCourseId, companies_id, active } = request.body;
 
-                const { company } = await checkMemberAccess(company_id, userId);
+                const userId = await request.getCurrentUserId()
+                const { member } = await request.getUserMember(companies_id)
+
+                const { cannot } = getUserPermissions(userId, member.role)
+
+                if (cannot('delete', 'Course')) {
+                    throw new ForbiddenError()
+                }
 
                 // Verificar se o curso existe e está associado à empresa
                 const course = await prisma.courses.findFirst({
                     where: {
                         id: targetCourseId,
-                        companies_id: company.id,
+                        companies_id,
                     }
                 });
 

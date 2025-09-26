@@ -6,7 +6,7 @@ export const DeactivateCourseFormSchema = z.object({
 
 export const DeactivateCourseApiRequest = z.object({
     course_id: z.string().uuid(),
-    company_id: z.string().uuid(),
+    companies_id: z.string().uuid(),
     active: z.boolean()
 })
 

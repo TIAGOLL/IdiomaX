@@ -6,6 +6,7 @@ import { auth } from '../../../middlewares/auth';
 import { prisma } from '../../../lib/prisma';
 import { UpdateCompanyApiRequestSchema, UpdateCompanyApiResponseSchema } from '@idiomax/http-schemas/companies/update-company';
 import { ForbiddenError } from '../_errors/forbidden-error';
+import { getUserPermissions } from '../../../lib/get-user-permission';
 
 export async function updateCompany(app: FastifyInstance) {
     app
@@ -26,34 +27,30 @@ export async function updateCompany(app: FastifyInstance) {
             },
             async (request, reply) => {
                 const { id, name, phone, address, cnpj, email, logo_16x16_url, logo_512x512_url, social_reason, state_registration, tax_regime, } = request.body;
+                
                 const userId = await request.getCurrentUserId()
+                const { member } = await request.getUserMember(id)
 
-                // Verificar se o usuário é admin da empresa
-                const userAdminInCompany = await prisma.members.findFirst({
-                    where: {
-                        user_id: userId,
-                        company_id: id,
-                        role: 'ADMIN',
-                    },
-                });
+                const { cannot } = getUserPermissions(userId, member.role)
 
-                const companyAlreadyExistsByPhone = await prisma.companies.findFirst({
-                    where: {
-                        phone: phone,
-                        NOT: {
-                            id: id,
+                if (cannot('update', 'Company')) {
+                    throw new ForbiddenError()
+                }
+
+                if (phone) {
+                    const companyAlreadyExistsByPhone = await prisma.companies.findFirst({
+                        where: {
+                            phone: phone,
+                            NOT: {
+                                id: id,
+                            },
                         },
-                    },
-                });
+                    });
 
-                if (!userAdminInCompany) {
-                    throw new ForbiddenError('Você não tem permissão para atualizar essa instituição.');
+                    if (companyAlreadyExistsByPhone) {
+                        throw new BadRequestError('Já existe uma instituição com esse telefone.');
+                    }
                 }
-
-                if (companyAlreadyExistsByPhone) {
-                    throw new BadRequestError('Já existe uma instituição com esse telefone.');
-                }
-
 
                 await prisma.companies.update({
                     where: {

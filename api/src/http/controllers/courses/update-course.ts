@@ -3,11 +3,8 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { UpdateCourseApiRequestSchema, UpdateCourseApiResponseSchema } from '@idiomax/http-schemas/courses/update-course'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
-import { z } from 'zod'
-
-const ErrorResponseSchema = z.object({
-    message: z.string()
-})
+import { getUserPermissions } from '../../../lib/get-user-permission'
+import { ForbiddenError } from '../_errors/forbidden-error'
 
 export async function updateCourse(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
@@ -20,16 +17,15 @@ export async function updateCourse(app: FastifyInstance) {
                 body: UpdateCourseApiRequestSchema,
                 response: {
                     200: UpdateCourseApiResponseSchema,
-                    400: ErrorResponseSchema,
-                    403: ErrorResponseSchema,
-                    404: ErrorResponseSchema
+                    400: UpdateCourseApiResponseSchema,
+                    403: UpdateCourseApiResponseSchema,
+                    404: UpdateCourseApiResponseSchema
                 },
             },
         }, async (request, reply) => {
-            const userId = await request.getCurrentUserId()
-            const { id } = request.params as { id: string }
             const {
-                company_id,
+                id,
+                companies_id,
                 name,
                 description,
                 registration_value,
@@ -41,6 +37,15 @@ export async function updateCourse(app: FastifyInstance) {
                 syllabus,
                 active
             } = request.body
+
+            const userId = await request.getCurrentUserId()
+            const { member } = await request.getUserMember(userId)
+
+            const { cannot } = getUserPermissions(userId, member.role)
+
+            if (cannot('update', 'Course')) {
+                throw new ForbiddenError()
+            }
 
             // Verificar se o curso existe
             const existingCourse = await prisma.courses.findFirst({
@@ -56,28 +61,11 @@ export async function updateCourse(app: FastifyInstance) {
                 })
             }
 
-            // Verificar se o usuário tem permissão na empresa
-            const member = await prisma.members.findFirst({
-                where: {
-                    user_id: userId,
-                    company_id: existingCourse.companies_id,
-                    role: {
-                        in: ['ADMIN']
-                    }
-                }
-            })
-
-            if (!member) {
-                return reply.status(403).send({
-                    message: 'Acesso negado. Você não tem permissão para editar cursos nesta empresa.'
-                })
-            }
-
             // Verificar se já existe outro curso com o mesmo nome na empresa (exceto o atual)
             const conflictingCourse = await prisma.courses.findFirst({
                 where: {
                     name,
-                    companies_id: company_id,
+                    companies_id: companies_id,
                     active: true,
                     id: {
                         not: id
