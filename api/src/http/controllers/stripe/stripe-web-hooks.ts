@@ -1,7 +1,7 @@
 import { type FastifyInstance } from 'fastify';
 import { stripe } from '../../../lib/stripe';
 import Stripe from 'stripe';
-import { env } from '../../server';
+import { ENV } from '../../server';
 import { prisma } from '../../../lib/prisma';
 import { NotFoundError } from '../_errors/not-found-error';
 
@@ -152,7 +152,7 @@ export async function StripeWebHooks(app: FastifyInstance) {
                 }
 
                 const signature = request.headers['stripe-signature'];
-                const webhookSecret = env.data.STRIPE_WEBHOOK_SECRET;
+                const webhookSecret = ENV.STRIPE_WEBHOOK_SECRET;
                 let receivedEvent: Stripe.Event;
                 try {
                     receivedEvent = stripe.webhooks.constructEvent(
@@ -162,7 +162,7 @@ export async function StripeWebHooks(app: FastifyInstance) {
                     );
                 } catch (error) {
                     console.error('Error verifying webhook signature:', error);
-                    return reply.status(400).send({ error: error.message });
+                    return reply.status(400).send({ message: error.message });
                 }
 
                 if (relevantEvents.has(receivedEvent.type)) {

@@ -27,8 +27,8 @@ interface EditCourseFormProps {
         minimum_grade: number;
         maximum_grade: number;
         minimum_frequency: number;
-        syllabus: string | null;
-        companies_id: string;
+        syllabus_url: string | null;
+        company_id: string;
         active: boolean;
     };
 }
@@ -63,7 +63,7 @@ export function EditCourseForm({ course }: EditCourseFormProps) {
         criteriaMode: "all",
         defaultValues: {
             id: course.id,
-            company_id: course.companies_id,
+            company_id: course.company_id,
             name: course.name,
             description: course.description || '',
             registration_value: course.registration_value,
@@ -72,7 +72,7 @@ export function EditCourseForm({ course }: EditCourseFormProps) {
             minimum_grade: course.minimum_grade,
             maximum_grade: course.maximum_grade,
             minimum_frequency: course.minimum_frequency,
-            syllabus: course.syllabus || '',
+            syllabus_url: course.syllabus_url || '',
             active: course.active
         }
     });
@@ -186,14 +186,14 @@ export function EditCourseForm({ course }: EditCourseFormProps) {
 
                 {/* Ementa */}
                 <div className="col-span-3 space-y-1">
-                    <Label htmlFor='syllabus'>Ementa do Curso</Label>
+                    <Label htmlFor=' syllabus_url'>Ementa do Curso</Label>
                     <Textarea
-                        id='syllabus'
+                        id=' syllabus_url'
                         placeholder="Conteúdo programático detalhado, tópicos abordados por módulo..."
                         rows={4}
-                        {...register('syllabus')}
+                        {...register(' syllabus_url')}
                     />
-                    <FormMessageError error={errors.syllabus?.message} />
+                    <FormMessageError error={errors.syllabus_url?.message} />
                 </div>
             </div>
 

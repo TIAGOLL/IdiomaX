@@ -84,7 +84,7 @@ export function MinhaPagina() {
 - Workspace schemas em `packages/http-schemas/` são importados como `@idiomax/http-schemas/[file]`
 - Migrações Prisma sempre com nomes descritivos via `pnpm db:migrate:dev`
 - Roles: `STUDENT`, `TEACHER`, `ADMIN` (enum no Prisma)
-- Multi-tenancy por `companies_id` em quase todas as entidades
+- Multi-tenancy por `company_id` em quase todas as entidades
 - Autenticação por `username` (não email) no login
 
 ## Desenvolvimento

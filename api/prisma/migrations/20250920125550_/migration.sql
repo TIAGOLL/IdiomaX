@@ -56,7 +56,7 @@ ADD COLUMN     "updated_at" TIMESTAMP(3) NOT NULL,
 ADD COLUMN     "updated_by" VARCHAR(256);
 
 -- AlterTable
-ALTER TABLE "public"."courses" ALTER COLUMN "syllabus" SET DATA TYPE TEXT;
+ALTER TABLE "public"."courses" ALTER COLUMN " syllabus_url" SET DATA TYPE TEXT;
 
 -- AlterTable
 ALTER TABLE "public"."disciplines" ADD COLUMN     "active" BOOLEAN NOT NULL DEFAULT true,

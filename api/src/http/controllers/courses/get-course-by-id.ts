@@ -27,10 +27,10 @@ export async function getCourseById(app: FastifyInstance) {
                 },
             },
         }, async (request, reply) => {
-            const { course_id, companies_id } = request.params
+            const { course_id, company_id } = request.params
 
             const userId = await request.getCurrentUserId()
-            const { member } = await request.getUserMember(companies_id)
+            const { member } = await request.getUserMember(company_id)
 
             const { cannot } = getUserPermissions(userId, member.role)
 
@@ -61,8 +61,8 @@ export async function getCourseById(app: FastifyInstance) {
                 minimum_grade: course.minimum_grade.toNumber(),
                 maximum_grade: course.maximum_grade.toNumber(),
                 minimum_frequency: course.minimum_frequency.toNumber(),
-                syllabus: course.syllabus,
-                companies_id: course.companies_id,
+                syllabus_url: course.syllabus_url,
+                company_id: course.company_id,
                 active: course.active,
                 created_at: course.created_at.toISOString(),
                 updated_at: course.updated_at.toISOString()

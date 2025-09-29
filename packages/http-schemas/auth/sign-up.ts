@@ -58,9 +58,9 @@ export const SignUpApiRequest = z.object({
     password: z.string().min(6).max(1024),
     cpf: z.string().length(11),
     phone: z.string().min(10).max(15),
-    gender: GenderEnum.optional(),
-    date_of_birth: z.string().optional(),
-    address: z.string().optional(),
+    gender: GenderEnum,
+    date_of_birth: z.string(),
+    address: z.string(),
 })
 
 // API Schema para resposta da API

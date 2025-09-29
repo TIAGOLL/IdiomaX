@@ -1,9 +1,10 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
-import { checkMemberAccess } from '../../../lib/get-user-permission';
 import { GetUsersApiRequestSchema, GetUsersApiResponseSchema } from '@idiomax/http-schemas/users/get-users';
 import { prisma } from '../../../lib/prisma';
+import { ForbiddenError } from '../_errors/forbidden-error';
+import { getUserPermissions } from '../../../lib/get-user-permission';
 
 export async function getUsers(app: FastifyInstance) {
     app
@@ -23,9 +24,16 @@ export async function getUsers(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const userId = await request.getCurrentUserId();
                 const { company_id } = request.query;
-                const { company } = await checkMemberAccess(company_id, userId);
+
+                const userId = await request.getCurrentUserId()
+                const { member } = await request.getUserMember(company_id)
+
+                const { cannot } = getUserPermissions(userId, member.role)
+
+                if (cannot('get', 'User')) {
+                    throw new ForbiddenError()
+                }
 
                 const {
                     page = 1,
@@ -39,7 +47,7 @@ export async function getUsers(app: FastifyInstance) {
                 const whereClause: Record<string, unknown> = {
                     member_on: {
                         some: {
-                            company_id: company.id,
+                            company_id,
                             ...(role && { role: role }),
                         }
                     }
@@ -51,7 +59,7 @@ export async function getUsers(app: FastifyInstance) {
                         { email: { contains: search, mode: 'insensitive' } },
                         { username: { contains: search, mode: 'insensitive' } },
                         { cpf: { contains: search } },
-                        { company_id: { equals: company.id } }
+                        { company_id: { equals: company_id } }
                     ];
                 }
 

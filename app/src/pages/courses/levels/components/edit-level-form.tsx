@@ -40,7 +40,7 @@ export function EditLevelForm(
             reset();
         },
         onError: (err: Error) => {
-            toast.error(err.message || 'Erro ao atualizar level');
+            toast.error(err.message);
         }
     });
 

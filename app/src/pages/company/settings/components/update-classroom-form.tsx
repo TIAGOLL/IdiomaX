@@ -26,7 +26,7 @@ export function UpdateClassroomForm({ classroom }: { classroom: GetClassroomsRes
     const { mutate, isPending } = useMutation({
         mutationFn: async (data: UpdateClassroomForm) => await updateClassroom({
             id: classroom.id,
-            companies_id: classroom.companies_id,
+            company_id: classroom.company_id,
             ...data
         }),
         onSuccess: (res) => {
@@ -36,7 +36,7 @@ export function UpdateClassroomForm({ classroom }: { classroom: GetClassroomsRes
             reset();
         },
         onError: (err: Error) => {
-            toast.error(err.message || 'Erro ao atualizar sala de aula');
+            toast.error(err.message);
         }
     });
 

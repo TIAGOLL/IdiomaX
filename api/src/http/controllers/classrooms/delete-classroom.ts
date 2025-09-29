@@ -24,9 +24,9 @@ export async function deleteClassroom(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { id, companies_id } = request.body
+                const { id, company_id } = request.body
                 const userId = await request.getCurrentUserId()
-                const { member } = await request.getUserMember(companies_id)
+                const { member } = await request.getUserMember(company_id)
 
                 const { cannot } = getUserPermissions(userId, member.role)
 
@@ -35,7 +35,7 @@ export async function deleteClassroom(app: FastifyInstance) {
                 }
                 
                 await prisma.classrooms.delete({
-                    where: { id, companies_id },
+                    where: { id, company_id },
                 })
 
                 return reply.status(200).send({ message: 'Sala de aula removida com sucesso!', })

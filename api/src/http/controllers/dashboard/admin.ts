@@ -28,7 +28,7 @@ export async function AdminDashboard(app: FastifyInstance) {
                 const receivablesCurveYear = new Date().getFullYear().toString();
                 const { company_id } = request.params;
                 const userId = await request.getCurrentUserId()
-                const { member } = await request.getUserMember(userId)
+                const { member } = await request.getUserMember(company_id)
 
                 const { cannot } = getUserPermissions(userId, member.role)
 
@@ -41,27 +41,27 @@ export async function AdminDashboard(app: FastifyInstance) {
                     where: {
                         active: true,
                         member_on: { some: { company_id: company_id, role: "STUDENT" } },
-                        registrations: { some: { companies_id: company_id, completed: false } },
+                        registrations: { some: { company_id: company_id, completed: false } },
                     },
                 });
                 const newRegistrations = await prisma.registrations.count({
                     where: {
                         start_date: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
-                        companies_id: company_id,
+                        company_id: company_id,
                     },
                 });
                 const completedRegistrations = await prisma.registrations.count({
-                    where: { completed: true, companies_id: company_id },
+                    where: { completed: true, company_id: company_id },
                 });
 
                 //locked registrations
                 const lockedRegistrations = await prisma.registrations.count({
-                    where: { locked: true, companies_id: company_id },
+                    where: { locked: true, company_id: company_id },
                 });
 
                 // Ocupação média das turmas
                 const classes = await prisma.renamedclass.findMany({
-                    where: { courses: { companies_id: company_id } },
+                    where: { courses: { company_id: company_id } },
                     include: { users_in_class: true, courses: true },
                 });
                 const classStats = classes.map(c => {
@@ -81,7 +81,7 @@ export async function AdminDashboard(app: FastifyInstance) {
 
                 // Assiduidade média por turma
                 const attendanceByClass = await prisma.renamedclass.findMany({
-                    where: { courses: { companies_id: company_id } },
+                    where: { courses: { company_id: company_id } },
                     include: {
                         users_in_class: {
                             include: {
@@ -96,15 +96,15 @@ export async function AdminDashboard(app: FastifyInstance) {
                 });
                 const attendanceStats = attendanceByClass.map(c => {
                     const totalStudents = c.users_in_class.length;
-                    // Encontros únicos da turma (cada classes_id representa uma aula)
+                    // Encontros únicos da turma (cada  classe_id representa uma aula)
                     const allPresences = c.users_in_class.flatMap(uic => uic.users.presence_list);
-                    const uniqueMeetings = Array.from(new Set(allPresences.map(p => p.classes_id)));
+                    const uniqueMeetings = Array.from(new Set(allPresences.map(p => p.classe_id)));
                     const totalMeetings = uniqueMeetings.length;
 
                     // Para cada aluno, conta em quantas aulas ele esteve presente (1 presença por aula)
                     let totalAttendancePercent = 0;
                     for (const uic of c.users_in_class) {
-                        const uniqueStudentMeetings = new Set(uic.users.presence_list.map(p => p.classes_id));
+                        const uniqueStudentMeetings = new Set(uic.users.presence_list.map(p => p.classe_id));
                         const studentAttendance = totalMeetings
                             ? (uniqueStudentMeetings.size / totalMeetings) * 100
                             : 0;
@@ -166,7 +166,7 @@ export async function AdminDashboard(app: FastifyInstance) {
 
                 // Calendário de encontros (classes)
                 const classDays = await prisma.classes.findMany({
-                    where: { class: { courses: { companies_id: company_id } } },
+                    where: { class: { courses: { company_id: company_id } } },
                     include: { class: true },
                 });
                 const classDaysList = classDays.map(cd => ({
@@ -190,7 +190,7 @@ export async function AdminDashboard(app: FastifyInstance) {
                 const monthlyFees = await prisma.monthly_fees.findMany({
                     where: {
                         registrations: {
-                            companies_id: company_id
+                            company_id: company_id
                         }
                     },
                 });
@@ -275,7 +275,7 @@ export async function AdminDashboard(app: FastifyInstance) {
 
                 // Ticket médio por matrícula
                 const registrations = await prisma.registrations.findMany({
-                    where: { companies_id: company_id },
+                    where: { company_id: company_id },
                 });
                 const avgTicket =
                     registrations.length
@@ -287,8 +287,8 @@ export async function AdminDashboard(app: FastifyInstance) {
                 // Matrículas administrativas
                 const registrationsList = registrations.map(r => ({
                     id: r.id,
-                    locked: r.locked,
-                    completed: r.completed,
+                    locked: r.locked ?? false,
+                    completed: r.completed ?? false,
                     daysSinceStart: Math.round((now.getTime() - new Date(r.start_date).getTime()) / (1000 * 60 * 60 * 24)),
                     monthly_fee_amount: r.monthly_fee_amount ? Number(r.monthly_fee_amount) : null,
                 }));

@@ -25,10 +25,10 @@ export async function deleteCourse(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { companies_id, course_id: targetCourseId } = request.body;
+                const { company_id, course_id: targetCourseId } = request.body;
 
                 const userId = await request.getCurrentUserId()
-                const { member } = await request.getUserMember(companies_id)
+                const { member } = await request.getUserMember(company_id)
 
                 const { cannot } = getUserPermissions(userId, member.role)
 
@@ -38,7 +38,7 @@ export async function deleteCourse(app: FastifyInstance) {
 
                 const activeClasses = await prisma.renamedclass.findFirst({
                     where: {
-                        courses_id: targetCourseId,
+                        course_id: targetCourseId,
                         active: true
                     }
                 });

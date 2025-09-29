@@ -52,7 +52,7 @@ export function CreateDisciplineForm({ levelId, levelName, courseId }: CreateDis
 
         handleCreateDiscipline({
             name: disciplineName.trim(),
-            levels_id: levelId,
+            level_id: levelId,
         });
     };
 

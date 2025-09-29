@@ -28,38 +28,15 @@ export async function createDiscipline(app: FastifyInstance) {
                 },
             },
         }, async (request, reply) => {
-            const { name, levels_id } = request.body
+            const { name, level_id, company_id } = request.body
 
             const userId = await request.getCurrentUserId()
-            const { member } = await request.getUserMember(userId)
+            const { member } = await request.getUserMember(company_id)
 
             const { cannot } = getUserPermissions(userId, member.role)
 
             if (cannot('create', 'Discipline')) {
                 throw new ForbiddenError()
-            }
-
-            // Verificar se o level existe e obter company_id
-            const level = await prisma.levels.findFirst({
-                where: {
-                    id: levels_id,
-                    active: true
-                },
-                include: {
-                    courses: {
-                        select: {
-                            companies_id: true
-                        }
-                    }
-                }
-            })
-
-            if (!level) {
-                throw new BadRequestError('Nível não encontrado.')
-            }
-
-            if (!level.courses?.companies_id) {
-                throw new BadRequestError('Curso do nível não encontrado.')
             }
 
             // Verificar se já existe disciplina com o mesmo nome no nível
@@ -69,7 +46,7 @@ export async function createDiscipline(app: FastifyInstance) {
                         equals: name,
                         mode: 'insensitive'
                     },
-                    levels_id: levels_id,
+                    level_id: level_id,
                     active: true
                 }
             })
@@ -81,7 +58,7 @@ export async function createDiscipline(app: FastifyInstance) {
             await prisma.disciplines.create({
                 data: {
                     name,
-                    levels_id,
+                    level_id,
                     created_by: userId,
                     updated_by: userId,
                 }

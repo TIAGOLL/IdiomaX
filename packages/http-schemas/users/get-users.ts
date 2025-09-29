@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { RoleEnum } from '../enums';
 
 // ===== FORM SCHEMAS (Frontend Formulários) =====
 export const GetUsersFormSchema = z.object({
@@ -7,9 +8,7 @@ export const GetUsersFormSchema = z.object({
         .optional(),
     active: z.boolean()
         .optional(),
-    role: z.enum(['STUDENT', 'TEACHER', 'ADMIN'], {
-        message: 'Tipo de usuário inválido'
-    }).optional(),
+    role: RoleEnum.optional(),
     page: z.number()
         .min(1, 'Página deve ser maior que 0')
         .default(1),
@@ -26,7 +25,7 @@ export const GetUsersApiRequestSchema = z.object({
     limit: z.coerce.number().min(1).max(10000).default(10),
     search: z.string().optional(),
     active: z.coerce.boolean().optional(),
-    role: z.enum(['STUDENT', 'TEACHER', 'ADMIN']).optional(),
+    role: RoleEnum.optional(),
 });
 
 export const GetUsersApiResponseSchema = z.object({
@@ -50,7 +49,7 @@ export const GetUsersApiResponseSchema = z.object({
         member_on: z.array(
             z.object({
                 id: z.uuid(),
-                role: z.enum(['STUDENT', 'TEACHER', 'ADMIN']),
+                role: RoleEnum,
                 company_id: z.uuid(),
                 user_id: z.uuid(),
                 company: z.object({

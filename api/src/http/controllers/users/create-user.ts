@@ -6,6 +6,8 @@ import { auth } from '../../../middlewares/auth';
 import { prisma } from '../../../lib/prisma';
 import { CreateUserApiRequestSchema, CreateUserApiResponseSchema } from '@idiomax/http-schemas/users';
 import { hash } from 'bcryptjs';
+import { getUserPermissions } from '../../../lib/get-user-permission';
+import { ForbiddenError } from '../_errors/forbidden-error';
 
 export async function createUser(app: FastifyInstance) {
     app
@@ -27,6 +29,15 @@ export async function createUser(app: FastifyInstance) {
             async (request, reply) => {
                 const { name, address, phone, email, username, cpf, password, avatar_url, role, gender, date_of_birth, company_id } = request.body;
 
+                const userId = await request.getCurrentUserId()
+                const { member } = await request.getUserMember(company_id)
+
+                const { cannot } = getUserPermissions(userId, member.role)
+
+                if (cannot('create', 'User')) {
+                    throw new ForbiddenError()
+                }
+
                 // Verifica se já existe usuário com email, cpf ou username
                 const userAlreadyExists = await prisma.users.findFirst({
                     where: {
@@ -46,7 +57,6 @@ export async function createUser(app: FastifyInstance) {
                     throw new BadRequestError('Já existe um usuário com esse username.');
                 }
 
-                const userId = await request.getCurrentUserId()
                 const passwordHash = await hash(password, 8);
 
                 await prisma.users.create({

@@ -23,10 +23,9 @@ export async function getUserProfile(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const userId = await request.getCurrentUserId();
 
                 const userProfile = await prisma.users.findUnique({
-                    where: { id: userId },
+                    where: { id: await request.getCurrentUserId() },
                     include: {
                         member_on: {
                             include: {

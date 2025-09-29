@@ -6,7 +6,8 @@ export const UpdateDisciplineFormSchema = z.object({
 
 export const UpdateDisciplineApiRequestSchema = z.object({
     id: z.string().uuid('ID da disciplina inválido'),
-    name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres')
+    name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
+    company_id: z.string().uuid('ID da empresa inválido'),
 })
 
 export const UpdateDisciplineApiResponseSchema = z.object({

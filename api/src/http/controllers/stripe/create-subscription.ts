@@ -28,10 +28,17 @@ export async function CreateSubscription(app: FastifyInstance) {
                 const { price_id, company_id } = request.body;
                 const userId = await request.getCurrentUserId();
 
-                const { email, name, phone } = await prisma.users.findUnique({
+                const userData = await prisma.users.findUnique({
                     where: { id: userId },
                     select: { email: true, name: true, phone: true }
                 });
+
+                if (!userData) {
+                    throw new Error('Usuário não encontrado');
+                }
+
+                const { email, name, phone } = userData;
+
                 await prisma.$transaction(async (prisma) => {
                     const { id: stripeCustomerId } = await stripe.customers.create({
                         email,

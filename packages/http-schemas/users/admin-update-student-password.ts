@@ -24,7 +24,6 @@ export const ApiAdminUpdateStudentPasswordRequest = z.object({
     company_id: z.string().uuid(),
     user_id: z.string().uuid(),
     new_password: z.string().min(6).max(1024),
-    role: z.enum(['STUDENT', 'TEACHER', 'ADMIN']),
 })
 
 // API Schema para resposta da API

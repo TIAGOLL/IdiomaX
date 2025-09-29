@@ -5,6 +5,7 @@ import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { getUserPermissions } from '../../../lib/get-user-permission'
 import { ForbiddenError } from '../_errors/forbidden-error'
+import { BadRequestError } from '../_errors/bad-request-error'
 
 export async function updateCourse(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
@@ -25,7 +26,7 @@ export async function updateCourse(app: FastifyInstance) {
         }, async (request, reply) => {
             const {
                 id,
-                companies_id,
+                company_id,
                 name,
                 description,
                 registration_value,
@@ -34,12 +35,12 @@ export async function updateCourse(app: FastifyInstance) {
                 minimum_grade,
                 maximum_grade,
                 minimum_frequency,
-                syllabus,
+                syllabus_url,
                 active
             } = request.body
 
             const userId = await request.getCurrentUserId()
-            const { member } = await request.getUserMember(userId)
+            const { member } = await request.getUserMember(company_id)
 
             const { cannot } = getUserPermissions(userId, member.role)
 
@@ -65,7 +66,7 @@ export async function updateCourse(app: FastifyInstance) {
             const conflictingCourse = await prisma.courses.findFirst({
                 where: {
                     name,
-                    companies_id: companies_id,
+                    company_id: company_id,
                     active: true,
                     id: {
                         not: id
@@ -86,7 +87,7 @@ export async function updateCourse(app: FastifyInstance) {
                 })
             }
 
-            await prisma.courses.update({
+            const res = await prisma.courses.update({
                 where: { id },
                 data: {
                     name,
@@ -97,14 +98,15 @@ export async function updateCourse(app: FastifyInstance) {
                     minimum_grade,
                     maximum_grade,
                     minimum_frequency,
-                    syllabus,
+                    syllabus_url,
                     active,
                     updated_by: userId
                 }
             })
 
-            return reply.status(200).send({
-                message: 'Curso atualizado com sucesso!',
-            })
+            if (!res) {
+                throw new BadRequestError('Erro ao atualizar o curso.')
+            }
+
         })
 }

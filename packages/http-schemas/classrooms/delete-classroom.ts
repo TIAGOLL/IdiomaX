@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const DeleteClassroomApiRequestSchema = z.object({
     id: z.string().min(1, { message: 'ID da sala é obrigatório' }),
-    companies_id: z.string().uuid()
+    company_id: z.string().uuid()
 })
 
 export const DeleteClassroomApiResponseSchema = z.object({

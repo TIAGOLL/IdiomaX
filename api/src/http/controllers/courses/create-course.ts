@@ -28,7 +28,7 @@ export async function createCourse(app: FastifyInstance) {
             },
         }, async (request, reply) => {
             const {
-                companies_id,
+                company_id,
                 name,
                 description,
                 registration_value,
@@ -37,11 +37,11 @@ export async function createCourse(app: FastifyInstance) {
                 minimum_grade,
                 maximum_grade,
                 minimum_frequency,
-                syllabus
+                syllabus_url
             } = request.body
 
             const userId = await request.getCurrentUserId()
-            const { member } = await request.getUserMember(companies_id)
+            const { member } = await request.getUserMember(company_id)
 
             const { cannot } = getUserPermissions(userId, member.role)
 
@@ -53,7 +53,7 @@ export async function createCourse(app: FastifyInstance) {
             const existingCourse = await prisma.courses.findFirst({
                 where: {
                     name,
-                    companies_id,
+                    company_id,
                     active: true
                 }
             })
@@ -81,8 +81,8 @@ export async function createCourse(app: FastifyInstance) {
                     minimum_grade,
                     maximum_grade,
                     minimum_frequency,
-                    syllabus,
-                    companies_id,
+                    syllabus_url,
+                    company_id,
                     created_by: userId,
                     updated_by: userId,
                 }

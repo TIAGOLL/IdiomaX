@@ -35,7 +35,7 @@ import { getCourseById } from './controllers/courses/get-course-by-id'
 import { updateCourse } from './controllers/courses/update-course'
 import { deactivateCourse } from './controllers/courses/deactivate-course'
 import { deleteCourse } from './controllers/courses/delete-course'
-import { getBooks } from './controllers/materials/get-books'
+import { getMaterialsByLevel } from './controllers/materials/get-materials-by-level'
 // Importações dos novos controladores genéricos de users
 import { getUsers } from './controllers/users/get-users'
 import { getUserByEmail } from './controllers/users/get-user-by-email'
@@ -44,9 +44,7 @@ import { updateUserPassword } from './controllers/users/update-user-password'
 import { adminUpdateStudentPassword } from './controllers/users/admin-update-student-password'
 import { deleteUser } from './controllers/users/delete-user'
 import { deactivateUser } from './controllers/users/deactivate-user'
-import { addUserRole } from './controllers/roles/add-user-role'
-import { removeUserRole } from './controllers/users/remove-user-role'
-import { updateUserRole } from './controllers/users/update-user-role'
+import { alterUserRole } from './controllers/roles/alter-user-role'
 import { createUser } from './controllers/users/create-user'
 
 // Levels controllers
@@ -60,7 +58,7 @@ import { deleteLevel } from './controllers/levels/delete-level'
 // Disciplines controllers
 import { createDiscipline } from './controllers/disciplines/create-discipline'
 import { updateDiscipline } from './controllers/disciplines/update-discipline'
-import { toggleDisciplineStatus } from './controllers/disciplines/toggle-discipline-status'
+import { alterDisciplineStatus } from './controllers/disciplines/alter-discipline-status'
 import { deleteDiscipline } from './controllers/disciplines/delete-discipline'
 
 // Settings controllers
@@ -81,6 +79,9 @@ if (!env.success) {
   console.error('Variáveis de ambiente inválidas:', z.treeifyError(env.error))
   process.exit(1)
 }
+
+// Export validated env data with correct typing
+export const ENV = env.data
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -114,7 +115,7 @@ app.register(fastifySwaggerUI, {
 })
 
 app.register(fastifyJwt, {
-  secret: env.data.JWT_SECRET,
+  secret: ENV.JWT_SECRET,
   sign: {
     expiresIn: '7d',
   }
@@ -149,7 +150,7 @@ app.register(getCourseById);
 app.register(updateCourse);
 app.register(deactivateCourse);
 app.register(deleteCourse);
-app.register(getBooks);
+app.register(getMaterialsByLevel);
 app.register(getUsers);
 app.register(getUserByEmail);
 app.register(updateUser);
@@ -157,9 +158,7 @@ app.register(updateUserPassword);
 app.register(adminUpdateStudentPassword);
 app.register(deleteUser);
 app.register(deactivateUser);
-app.register(addUserRole);
-app.register(removeUserRole);
-app.register(updateUserRole);
+app.register(alterUserRole);
 app.register(createUser);
 
 // Levels routes
@@ -173,7 +172,7 @@ app.register(deleteLevel);
 // Disciplines routes
 app.register(createDiscipline);
 app.register(updateDiscipline);
-app.register(toggleDisciplineStatus);
+app.register(alterDisciplineStatus);
 app.register(deleteDiscipline);
 
 // Settings routes
@@ -188,12 +187,10 @@ app.register(deleteClassroom);
 
 
 if (process.env.VERCEL !== "1") {
-  app.listen({ port: Number(env.data.PORT) }).then(() => {
-    console.log(`HTTP server running in http://localhost:${env.data.PORT}`);
+  app.listen({ port: Number(ENV.PORT) }).then(() => {
+    console.log(`HTTP server running in http://localhost:${ENV.PORT}`);
   });
 }
-
-export const ENV = env.data
 
 export default async function handler(req: unknown, res: unknown) {
   await app.ready()

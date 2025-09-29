@@ -1,19 +1,16 @@
 import { z } from 'zod';
+import { RoleEnum } from '../enums';
 
 // ===== FORM SCHEMAS (Frontend Formulários) =====
 export const UpdateUserRoleFormSchema = z.object({
-    userId: z.string()
-        .uuid('ID do usuário é obrigatório'),
-    role: z.enum(['STUDENT', 'TEACHER', 'ADMIN'], {
-        message: 'Selecione um tipo de usuário válido'
-    }),
+    role: RoleEnum,
 });
 
 // ===== API SCHEMAS (Backend Validation) =====
 export const UpdateUserRoleApiRequestSchema = z.object({
-    userId: z.string().uuid(),
-    role: z.enum(['STUDENT', 'TEACHER', 'ADMIN']),
-    companyId: z.string().uuid(),
+    user_id: z.string().uuid(),
+    role: RoleEnum,
+    company_id: z.string().uuid(),
 });
 
 export const UpdateUserRoleApiResponseSchema = z.object({

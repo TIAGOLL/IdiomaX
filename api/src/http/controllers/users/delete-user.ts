@@ -1,10 +1,10 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
-import { checkMemberAccess } from '../../../lib/get-user-permission';
 import { DeleteUserApiRequestSchema, DeleteUserApiResponseSchema } from '@idiomax/http-schemas/users/delete-user';
 import { prisma } from '../../../lib/prisma';
-import { BadRequestError } from '../_errors/bad-request-error';
+import { getUserPermissions } from '../../../lib/get-user-permission';
+import { ForbiddenError } from '../_errors/forbidden-error';
 
 export async function deleteUser(app: FastifyInstance) {
     app
@@ -25,31 +25,20 @@ export async function deleteUser(app: FastifyInstance) {
             },
             async (request, reply) => {
                 const { company_id, user_id: targetUserId } = request.body;
-                const userId = await request.getCurrentUserId();
+                const userId = await request.getCurrentUserId()
+                const { member } = await request.getUserMember(company_id)
 
-                const { company } = await checkMemberAccess(company_id, userId);
+                const { cannot } = getUserPermissions(userId, member.role)
 
-                // Verificar se o usuário existe e está associado à empresa com o role correto
-                const user = await prisma.users.findFirst({
-                    where: {
-                        id: targetUserId,
-                        member_on: {
-                            some: {
-                                company_id: company.id,
-                            }
-                        }
-                    },
-                });
-
-                if (!user) {
-                    throw new BadRequestError(`Usuário não encontrado ou não está associado a esta empresa.`);
+                if (cannot('delete', 'User')) {
+                    throw new ForbiddenError()
                 }
 
                 // Deletar o relacionamento da empresa primeiro
                 await prisma.members.deleteMany({
                     where: {
                         user_id: targetUserId,
-                        company_id: company.id,
+                        company_id,
                     },
                 });
 

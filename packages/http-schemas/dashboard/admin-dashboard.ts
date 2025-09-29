@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 // API Schema para requisição na API
 export const AdminDashboardApiRequestSchema = z.object({
-    company_id: z.string().uuid(),
+    companies_id: z.string().uuid(),
 })
 
 // API Schema para resposta da API

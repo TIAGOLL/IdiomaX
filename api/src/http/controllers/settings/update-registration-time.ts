@@ -1,13 +1,14 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
-import { checkAdminAccess } from '../../../lib/get-user-permission';
 import {
     UpdateRegistrationTimeApiRequestSchema,
     UpdateRegistrationTimeApiResponseSchema
 } from '@idiomax/http-schemas/settings/update-registration-time';
 import { prisma } from '../../../lib/prisma';
 import { ForbiddenError } from '../_errors/forbidden-error';
+import { getUserPermissions } from '../../../lib/get-user-permission';
+import { BadRequestError } from '../_errors/bad-request-error';
 
 export async function updateRegistrationTime(app: FastifyInstance) {
     app
@@ -28,19 +29,20 @@ export async function updateRegistrationTime(app: FastifyInstance) {
             },
             async (request, reply) => {
                 const { company_id, registrations_time } = request.body;
-                const userId = await request.getCurrentUserId();
 
-                // Verificar se o usuário tem acesso à empresa (e permissions)
-                const { company } = await checkAdminAccess(company_id, userId);
+                const userId = await request.getCurrentUserId()
+                const { member } = await request.getUserMember(company_id)
 
-                if (!company) {
-                    throw new ForbiddenError();
+                const { cannot } = getUserPermissions(userId, member.role)
+
+                if (cannot('update', 'Company')) {
+                    throw new ForbiddenError()
                 }
 
                 // Atualizar o tempo de matrícula
-                await prisma.configs.update({
+                const res = await prisma.configs.update({
                     where: {
-                        companies_id: company.id,
+                        company_id,
                     },
                     data: {
                         registrations_time: registrations_time,
@@ -49,7 +51,11 @@ export async function updateRegistrationTime(app: FastifyInstance) {
                     },
                 });
 
-                reply.send({
+                if (!res) {
+                    throw new BadRequestError('Erro ao atualizar o tempo de matrícula.');
+                }
+
+                reply.status(200).send({
                     message: `Tempo de matrícula atualizado com sucesso.`,
                 });
             }

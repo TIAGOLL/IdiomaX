@@ -3,7 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { auth } from '../../../middlewares/auth';
 import { stripe } from '../../../lib/stripe';
-import { env } from '../../server';
+import { ENV } from '../../server';
 import { CreateCheckoutSessionApiRequestSchema, CreateCheckoutSessionApiResponseSchema } from '@idiomax/http-schemas/subscriptions/create-checkout-session';
 import { prisma } from '../../../lib/prisma';
 
@@ -55,13 +55,13 @@ export async function CreateCheckoutSession(app: FastifyInstance) {
                     ],
                     customer: data?.stripe_customer_id ? data.stripe_customer_id : undefined,
                     mode: 'subscription',
-                    success_url: `${env.data.WEB_URL}/?success=true&session_id={CHECKOUT_SESSION_ID}`,
-                    cancel_url: `${env.data.WEB_URL}?canceled=true`,
+                    success_url: `${ENV.WEB_URL}/?success=true&session_id={CHECKOUT_SESSION_ID}`,
+                    cancel_url: `${ENV.WEB_URL}?canceled=true`,
                 })
 
-                reply.status(201).send({ 
-                    checkout_url: session.url!, 
-                    session_id: session.id 
+                reply.status(201).send({
+                    checkout_url: session.url!,
+                    session_id: session.id
                 });
             })
 }

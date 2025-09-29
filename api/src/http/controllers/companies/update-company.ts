@@ -27,7 +27,7 @@ export async function updateCompany(app: FastifyInstance) {
             },
             async (request, reply) => {
                 const { id, name, phone, address, cnpj, email, logo_16x16_url, logo_512x512_url, social_reason, state_registration, tax_regime, } = request.body;
-                
+
                 const userId = await request.getCurrentUserId()
                 const { member } = await request.getUserMember(id)
 
@@ -52,7 +52,7 @@ export async function updateCompany(app: FastifyInstance) {
                     }
                 }
 
-                await prisma.companies.update({
+                const res = await prisma.companies.update({
                     where: {
                         id: id,
                     },
@@ -69,6 +69,10 @@ export async function updateCompany(app: FastifyInstance) {
                         tax_regime,
                     },
                 });
+
+                if (!res) {
+                    throw new BadRequestError('Erro ao atualizar a instituição.');
+                }
 
                 return reply.status(200).send({
                     message: 'Instituição atualizada com sucesso.',

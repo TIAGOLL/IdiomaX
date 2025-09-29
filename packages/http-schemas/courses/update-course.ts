@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const UpdateCourseFormSchema = z.object({
     id: z.string().uuid(),
-    companies_id: z.string().uuid(),
+    company_id: z.string().uuid(),
     name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
     description: z.string().optional(),
     registration_value: z.number().min(0, 'Valor da matrícula deve ser positivo'),
@@ -11,7 +11,7 @@ export const UpdateCourseFormSchema = z.object({
     minimum_grade: z.number().min(0, 'Nota mínima deve ser entre 0 e 100').max(100, 'Nota mínima deve ser entre 0 e 100'),
     maximum_grade: z.number().min(0, 'Nota máxima deve ser entre 0 e 100').max(100, 'Nota máxima deve ser entre 0 e 100'),
     minimum_frequency: z.number().min(0, 'Frequência mínima deve ser entre 0 e 100').max(100, 'Frequência mínima deve ser entre 0 e 100'),
-    syllabus: z.string().optional(),
+    syllabus_url: z.string().optional(),
     active: z.boolean().optional()
 })
 

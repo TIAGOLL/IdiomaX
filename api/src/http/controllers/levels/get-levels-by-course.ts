@@ -3,9 +3,10 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { GetLevelsApiParamsSchema, GetLevelsApiResponseSchema } from '@idiomax/http-schemas/levels/get-levels'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
-import { checkMemberAccess } from '../../../lib/get-user-permission'
 import { BadRequestError } from '../_errors/bad-request-error'
 import { z } from 'zod'
+import { getUserPermissions } from '../../../lib/get-user-permission'
+import { ForbiddenError } from '../_errors/forbidden-error'
 
 const ErrorResponseSchema = z.object({
     message: z.string()
@@ -27,8 +28,16 @@ export async function getLevelsByCourse(app: FastifyInstance) {
                 },
             },
         }, async (request, reply) => {
+            const { course_id, company_id } = request.query
+
             const userId = await request.getCurrentUserId()
-            const { course_id } = request.query
+            const { member } = await request.getUserMember(company_id)
+
+            const { cannot } = getUserPermissions(userId, member.role)
+
+            if (cannot('get', 'Level')) {
+                throw new ForbiddenError()
+            }
 
             // Verificar se o curso existe e obter company_id
             const course = await prisma.courses.findFirst({
@@ -38,15 +47,12 @@ export async function getLevelsByCourse(app: FastifyInstance) {
             })
 
             if (!course) {
-                console.log('Course not found:', course_id);
                 throw new BadRequestError('Curso não encontrado.')
             }
 
-            await checkMemberAccess(course.companies_id, userId)
-
             const levels = await prisma.levels.findMany({
                 where: {
-                    courses_id: course_id,
+                    course_id: course_id,
                 },
                 include: {
                     disciplines: {

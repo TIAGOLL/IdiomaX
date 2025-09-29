@@ -4,13 +4,8 @@ import { UpdateClassroomApiRequestSchema, UpdateClassroomApiResponseSchema, } fr
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { BadRequestError } from '../_errors/bad-request-error'
-import { z } from 'zod'
 import { getUserPermissions } from '../../../lib/get-user-permission'
 import { ForbiddenError } from '../_errors/forbidden-error'
-
-const ErrorResponseSchema = z.object({
-    message: z.string()
-})
 
 export async function updateClassroom(app: FastifyInstance) {
     app
@@ -25,27 +20,27 @@ export async function updateClassroom(app: FastifyInstance) {
                     body: UpdateClassroomApiRequestSchema,
                     response: {
                         200: UpdateClassroomApiResponseSchema,
-                        400: ErrorResponseSchema,
-                        404: ErrorResponseSchema,
+                        400: UpdateClassroomApiResponseSchema,
+                        404: UpdateClassroomApiResponseSchema,
                     },
                 },
             },
             async (request, reply) => {
-                const { id, number, block, companies_id } = request.body
+                const { id, number, block, company_id } = request.body
 
                 const userId = await request.getCurrentUserId()
-                const { member } = await request.getUserMember(companies_id)
+                const { member } = await request.getUserMember(company_id)
 
                 const { cannot } = getUserPermissions(userId, member.role)
 
-                if (cannot('get', 'Classroom')) {
+                if (cannot('update', 'Classroom')) {
                     throw new ForbiddenError()
                 }
 
                 // Verificar se já existe outra sala com esse número na mesma empresa
                 const duplicateClassroom = await prisma.classrooms.findFirst({
                     where: {
-                        companies_id,
+                        company_id,
                         number: number,
                         active: true,
                         id: { not: id }
@@ -56,7 +51,7 @@ export async function updateClassroom(app: FastifyInstance) {
                     throw new BadRequestError('Já existe outra sala com esse número nesta empresa')
                 }
 
-                await prisma.classrooms.update({
+                const res = await prisma.classrooms.update({
                     where: { id },
                     data: {
                         number: number,
@@ -64,6 +59,10 @@ export async function updateClassroom(app: FastifyInstance) {
                         updated_by: userId,
                     },
                 })
+
+                if (!res) {
+                    throw new BadRequestError('Erro ao atualizar sala de aula')
+                }
 
                 return reply.status(200).send({ message: 'Sala de aula atualizada com sucesso!', })
             },

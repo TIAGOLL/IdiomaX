@@ -1,10 +1,11 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
-import { checkMemberAccess } from '../../../lib/get-user-permission';
 import { UpdateUserApiRequestSchema, UpdateUserApiResponseSchema } from '@idiomax/http-schemas/users/update-user';
 import { prisma } from '../../../lib/prisma';
 import { BadRequestError } from '../_errors/bad-request-error';
+import { getUserPermissions } from '../../../lib/get-user-permission';
+import { ForbiddenError } from '../_errors/forbidden-error';
 
 export async function updateUser(app: FastifyInstance) {
     app
@@ -24,10 +25,16 @@ export async function updateUser(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { companyId, id: targetUserId, cpf, address, avatar_url, date_of_birth, username, name, phone, gender, email } = request.body;
-                const userId = await request.getCurrentUserId();
+                const { company_id, id: targetUserId, cpf, address, avatar_url, date_of_birth, username, name, phone, gender, email } = request.body;
+                const userId = await request.getCurrentUserId()
+                const { member } = await request.getUserMember(company_id)
 
-                const { company } = await checkMemberAccess(companyId, userId);
+                const { cannot } = getUserPermissions(userId, member.role)
+
+                if (cannot('update', 'User')) {
+                    throw new ForbiddenError()
+                }
+
 
                 // Verificar se email já existe (se fornecido)
                 const existingUser = await prisma.users.findFirst({
@@ -55,7 +62,7 @@ export async function updateUser(app: FastifyInstance) {
                         id: targetUserId,
                         member_on: {
                             some: {
-                                company_id: company.id,
+                                company_id,
                             },
                         },
                     },
@@ -75,7 +82,7 @@ export async function updateUser(app: FastifyInstance) {
                 });
 
                 if (!user) {
-                    throw new BadRequestError(`Usuário não encontrado ou não está associado a esta empresa.`);
+                    throw new BadRequestError("Erro ao atualizar o usuário.");
                 }
 
                 return reply.status(200).send({ message: 'Usuário atualizado com sucesso.' });

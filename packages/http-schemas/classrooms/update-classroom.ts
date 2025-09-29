@@ -7,7 +7,7 @@ export const UpdateClassroomFormSchema = z.object({
 
 export const UpdateClassroomApiRequestSchema = z.object({
     id: z.string().min(1, { message: 'ID da sala é obrigatório' }),
-    companies_id: z.string().uuid(),
+    company_id: z.string().uuid(),
     number: z.number().min(1, { message: 'Número da sala é obrigatório' }),
     block: z.string()
 })
