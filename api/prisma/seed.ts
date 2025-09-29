@@ -448,11 +448,7 @@ async function main() {
                     monthly_fee_amount: 350 + i * 10,
                     locked: i % 5 === 0,
                     completed: i % 4 === 0,
-<<<<<<< HEAD
-                    users_id: users[i + 1].id,
-=======
                     user_id: users[i + 1].id,
->>>>>>> 15d3efaa672561e1515dcce65277fd6bb9e88388
                     company_id: uuid,
                     created_at: now,
                     updated_at: now,
