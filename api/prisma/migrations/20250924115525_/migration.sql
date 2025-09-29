@@ -23,4 +23,4 @@ ALTER TABLE "public"."disciplines" DROP COLUMN "levelsId";
 ALTER TABLE "public"."levels" DROP COLUMN "coursesId";
 
 -- AddForeignKey
-ALTER TABLE "public"."disciplines" ADD CONSTRAINT "disciplines_levels_id_fkey" FOREIGN KEY ("levels_id") REFERENCES "public"."levels"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."disciplines" ADD CONSTRAINT "disciplines_level_id_fkey" FOREIGN KEY ("level_id") REFERENCES "public"."levels"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

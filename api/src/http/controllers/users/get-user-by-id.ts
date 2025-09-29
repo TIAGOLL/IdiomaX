@@ -3,7 +3,9 @@ import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { BadRequestError } from "../_errors/bad-request-error";
 import { auth } from "../../../middlewares/auth";
 import { prisma } from "../../../lib/prisma";
-import { GetUserByIdApiRequestSchema, GetUserByIdApiResponseSchema } from "@idiomax/validation-schemas/users/get-user-by-id";
+import { GetUserByIdApiRequestSchema, GetUserByIdApiResponseSchema } from "@idiomax/http-schemas/users/get-user-by-id";
+import { getUserPermissions } from "../../../lib/get-user-permission";
+import { ForbiddenError } from "../_errors/forbidden-error";
 
 export async function getUserById(app: FastifyInstance) {
     app
@@ -24,6 +26,15 @@ export async function getUserById(app: FastifyInstance) {
             },
             async (request, reply) => {
                 const { user_id, company_id } = request.query;
+
+                const userId = await request.getCurrentUserId()
+                const { member } = await request.getUserMember(company_id)
+
+                const { cannot } = getUserPermissions(userId, member.role)
+
+                if (cannot('get', 'User')) {
+                    throw new ForbiddenError()
+                }
 
                 const user = await prisma.users.findFirst({
                     where: {

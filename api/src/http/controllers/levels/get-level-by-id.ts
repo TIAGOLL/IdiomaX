@@ -3,9 +3,10 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { GetLevelByIdApiParamsSchema, GetLevelByIdApiResponseSchema } from '@idiomax/validation-schemas/levels/get-level-by-id'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
-import { checkMemberAccess } from '../../../lib/get-user-permission'
-import { BadRequestError } from '../_errors/bad-request-error'
 import { z } from 'zod'
+import { getUserPermissions } from '../../../lib/get-user-permission'
+import { ForbiddenError } from '../_errors/forbidden-error'
+import { NotFoundError } from '../_errors/not-found-error'
 
 const ErrorResponseSchema = z.object({
     message: z.string()
@@ -28,10 +29,18 @@ export async function getLevelById(app: FastifyInstance) {
                 },
             },
         }, async (request, reply) => {
-            const userId = await request.getCurrentUserId()
-            const { level_id } = request.query
+            const { level_id, company_id } = request.query
 
-            const level = await prisma.levels.findFirst({
+            const userId = await request.getCurrentUserId()
+            const { member } = await request.getUserMember(company_id)
+
+            const { cannot } = getUserPermissions(userId, member.role)
+
+            if (cannot('get', 'Level')) {
+                throw new ForbiddenError()
+            }
+
+            const level = await prisma.levels.findUnique({
                 where: {
                     id: level_id,
                     active: true
@@ -50,23 +59,21 @@ export async function getLevelById(app: FastifyInstance) {
             })
 
             if (!level) {
-                throw new BadRequestError('Level não encontrado.')
+                throw new NotFoundError('Level não encontrado.')
             }
-
-            await checkMemberAccess(level.courses?.company_id || '', userId)
 
             const mappedLevel = {
                 id: level.id,
                 name: level.name,
                 level: Number(level.level),
-                courses_id: level.courses_id || '',
+                course_id: level.course_id || '',
                 created_at: level.created_at.toISOString(),
                 updated_at: level.updated_at.toISOString(),
                 active: level.active,
                 disciplines: level.disciplines.map(discipline => ({
                     id: discipline.id,
                     name: discipline.name,
-                    levels_id: discipline.levels_id,
+                    level_id: discipline.level_id,
                     created_at: discipline.created_at.toISOString(),
                     updated_at: discipline.updated_at.toISOString(),
                     active: discipline.active

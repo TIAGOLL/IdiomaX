@@ -46,10 +46,10 @@ ALTER TABLE "public"."stripe_price" DROP CONSTRAINT "stripe_price_product_id_fke
 ALTER TABLE "public"."tasks_delivery" DROP CONSTRAINT "tasks_delivery_created_by_fkey";
 
 -- DropForeignKey
-ALTER TABLE "public"."tasks_delivery" DROP CONSTRAINT "tasks_delivery_registrations_id_fkey";
+ALTER TABLE "public"."tasks_delivery" DROP CONSTRAINT "tasks_delivery_ registration_id_fkey";
 
 -- DropForeignKey
-ALTER TABLE "public"."tasks_delivery" DROP CONSTRAINT "tasks_delivery_tasks_id_fkey";
+ALTER TABLE "public"."tasks_delivery" DROP CONSTRAINT "tasks_delivery_ task_id_fkey";
 
 -- DropForeignKey
 ALTER TABLE "public"."tasks_delivery" DROP CONSTRAINT "tasks_delivery_updated_by_fkey";
@@ -79,7 +79,7 @@ CREATE TABLE "public"."monthly_fees" (
     "value" DECIMAL(10,2) NOT NULL,
     "paid" BOOLEAN NOT NULL DEFAULT false,
     "discount_payment_before_due_date" DECIMAL(10,2) NOT NULL DEFAULT 0,
-    "registrations_id" VARCHAR(256) NOT NULL,
+    " registration_id" VARCHAR(256) NOT NULL,
     "payment_method" VARCHAR(256),
     "date_of_payment" TIMESTAMPTZ(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -96,8 +96,8 @@ CREATE TABLE "public"."monthly_fees" (
 CREATE TABLE "public"."presence_lists" (
     "id" TEXT NOT NULL,
     "is_present" BOOLEAN NOT NULL,
-    "users_id" TEXT NOT NULL,
-    "classes_id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    " classe_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "created_by" VARCHAR(256) NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -110,8 +110,8 @@ CREATE TABLE "public"."presence_lists" (
 -- CreateTable
 CREATE TABLE "public"."tasks_deliveries" (
     "id" VARCHAR(256) NOT NULL,
-    "tasks_id" VARCHAR(256) NOT NULL,
-    "registrations_id" VARCHAR(256) NOT NULL,
+    " task_id" VARCHAR(256) NOT NULL,
+    " registration_id" VARCHAR(256) NOT NULL,
     "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "file" BYTEA,
     "link" VARCHAR(512),
@@ -171,13 +171,13 @@ CREATE TABLE "public"."stripe_company_subscriptions" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "presence_lists_users_id_classes_id_key" ON "public"."presence_lists"("users_id", "classes_id");
+CREATE UNIQUE INDEX "presence_lists_user_id_ classe_id_key" ON "public"."presence_lists"("user_id", " classe_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "stripe_company_subscriptions_company_customer_id_key" ON "public"."stripe_company_subscriptions"("company_customer_id");
 
 -- AddForeignKey
-ALTER TABLE "public"."monthly_fees" ADD CONSTRAINT "registrations_fk" FOREIGN KEY ("registrations_id") REFERENCES "public"."registrations"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+ALTER TABLE "public"."monthly_fees" ADD CONSTRAINT "registrations_fk" FOREIGN KEY (" registration_id") REFERENCES "public"."registrations"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "public"."monthly_fees" ADD CONSTRAINT "monthly_fees_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -186,10 +186,10 @@ ALTER TABLE "public"."monthly_fees" ADD CONSTRAINT "monthly_fees_created_by_fkey
 ALTER TABLE "public"."monthly_fees" ADD CONSTRAINT "monthly_fees_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."presence_lists" ADD CONSTRAINT "classes_fk" FOREIGN KEY ("classes_id") REFERENCES "public"."classes"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+ALTER TABLE "public"."presence_lists" ADD CONSTRAINT "classes_fk" FOREIGN KEY (" classe_id") REFERENCES "public"."classes"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "public"."presence_lists" ADD CONSTRAINT "users_fk" FOREIGN KEY ("users_id") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+ALTER TABLE "public"."presence_lists" ADD CONSTRAINT "users_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "public"."presence_lists" ADD CONSTRAINT "presence_lists_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -198,10 +198,10 @@ ALTER TABLE "public"."presence_lists" ADD CONSTRAINT "presence_lists_created_by_
 ALTER TABLE "public"."presence_lists" ADD CONSTRAINT "presence_lists_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."tasks_deliveries" ADD CONSTRAINT "tasks_deliveries_registrations_id_fkey" FOREIGN KEY ("registrations_id") REFERENCES "public"."registrations"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "public"."tasks_deliveries" ADD CONSTRAINT "tasks_deliveries_ registration_id_fkey" FOREIGN KEY (" registration_id") REFERENCES "public"."registrations"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "public"."tasks_deliveries" ADD CONSTRAINT "tasks_deliveries_tasks_id_fkey" FOREIGN KEY ("tasks_id") REFERENCES "public"."tasks"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "public"."tasks_deliveries" ADD CONSTRAINT "tasks_deliveries_ task_id_fkey" FOREIGN KEY (" task_id") REFERENCES "public"."tasks"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "public"."tasks_deliveries" ADD CONSTRAINT "tasks_deliveries_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

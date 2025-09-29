@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { GenderEnum } from '../enums';
 
 // ===== FORM SCHEMAS (Frontend Formulários) =====
 export const GetUserByEmailFormSchema = z.object({
@@ -12,17 +13,24 @@ export const GetUserByEmailApiRequestSchema = z.object({
     email: z.string().email().max(256),
     company_id: z.string().uuid(),
 });
-
 export const GetUserByEmailApiResponseSchema = z.object({
-    user: z.object({
-        id: z.string().uuid(),
-        name: z.string(),
-        email: z.string().email(),
-        username: z.string(),
-        role: z.enum(['STUDENT', 'TEACHER', 'ADMIN']),
-        active: z.boolean(),
-    }).nullable(),
-});
+    id: z.string().uuid(),
+    name: z.string(),
+    phone: z.string(),
+    email: z.string().email(),
+    address: z.string(),
+    created_at: z.date(),
+    created_by: z.string(),
+    updated_at: z.date(),
+    updated_by: z.string(),
+    active: z.boolean(),
+    username: z.string(),
+    password: z.string(),
+    cpf: z.string(),
+    gender: GenderEnum,
+    date_of_birth: z.date(),
+    avatar_url: z.string().nullable(),
+}).nullable();
 
 // ===== HTTP TYPES (Frontend Services) =====
 // Types inferidos dos schemas da API para services HTTP

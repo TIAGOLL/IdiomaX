@@ -7,6 +7,7 @@
 // 3. HttpRequestType/HttpResponseType - Types inferidos para services HTTP frontend
 
 import { z } from 'zod';
+import { RoleEnum } from './enums';
 
 // ===== 1. FORM SCHEMAS (Frontend Formulários) =====
 // Schemas com mensagens de erro traduzidas para o usuário
@@ -24,9 +25,7 @@ export const CreateUserFormSchema = z.object({
     password: z.string()
         .min(6, 'Senha deve ter pelo menos 6 caracteres'),
     confirmPassword: z.string(),
-    role: z.enum(['STUDENT', 'TEACHER', 'ADMIN'], {
-        message: 'Selecione um tipo de usuário válido'
-    }),
+    role: RoleEnum,
 }).refine(data => data.password === data.confirmPassword, {
     message: 'Senhas não coincidem',
     path: ['confirmPassword']
@@ -40,18 +39,12 @@ export const CreateUserApiRequestSchema = z.object({
     email: z.string().email().max(256),
     cpf: z.string().length(11).regex(/^\d{11}$/),
     password: z.string().min(6).max(1024),
-    role: z.enum(['STUDENT', 'TEACHER', 'ADMIN']),
+    role: RoleEnum,
     company_id: z.string().uuid(),
 });
 
 export const CreateUserApiResponseSchema = z.object({
     message: z.string(),
-    user: z.object({
-        id: z.string().uuid(),
-        name: z.string(),
-        email: z.string(),
-        role: z.enum(['STUDENT', 'TEACHER', 'ADMIN']),
-    }),
 });
 
 // ===== 3. HTTP TYPES (Frontend Services) =====

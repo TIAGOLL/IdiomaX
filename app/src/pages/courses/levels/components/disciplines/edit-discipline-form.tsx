@@ -38,8 +38,8 @@ export function EditDisciplineForm({
             setIsEditing(false);
             onEditEnd?.();
         },
-        onError: () => {
-            toast.error('Erro ao atualizar disciplina');
+        onError: (error) => {
+            toast.error(error.message);
             setDisciplineName(currentName); // Reset to original value
         },
     });

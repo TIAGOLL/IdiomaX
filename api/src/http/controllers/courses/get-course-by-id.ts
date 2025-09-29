@@ -61,7 +61,7 @@ export async function getCourseById(app: FastifyInstance) {
                 minimum_grade: course.minimum_grade.toNumber(),
                 maximum_grade: course.maximum_grade.toNumber(),
                 minimum_frequency: course.minimum_frequency.toNumber(),
-                syllabus: course.syllabus,
+                syllabus_url: course.syllabus_url,
                 company_id: course.company_id,
                 active: course.active,
                 created_at: course.created_at.toISOString(),

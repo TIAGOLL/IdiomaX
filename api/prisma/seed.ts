@@ -268,7 +268,7 @@ async function main() {
                     id,
                     name: `Nível ${i}`,
                     level: i,
-                    courses_id: randomFromArray(courses),
+                    course_id: randomFromArray(courses),
                     created_at: now,
                     updated_at: now,
                     created_by: ownerId,
@@ -287,7 +287,7 @@ async function main() {
                 data: {
                     id,
                     name: `Disciplina ${i}`,
-                    levels_id: randomFromArray(levels),
+                    level_id: randomFromArray(levels),
                     created_at: now,
                     updated_at: now,
                     created_by: ownerId,
@@ -327,7 +327,7 @@ async function main() {
                     id,
                     nome: `Turma ${i}`,
                     vacancies: 5 + i,
-                    courses_id: randomFromArray(courses),
+                    course_id: randomFromArray(courses),
                     created_at: now,
                     updated_at: now,
                     created_by: ownerId,
@@ -402,7 +402,7 @@ async function main() {
                     data: {
                         id: generateUUID(),
                         class_id: turmaId,
-                        users_id: teacher.id,
+                        user_id: teacher.id,
                         teacher: true,
                         created_at: now,
                         updated_at: now,
@@ -423,7 +423,7 @@ async function main() {
                     data: {
                         id: generateUUID(),
                         class_id: classId,
-                        users_id: aluno.id,
+                        user_id: aluno.id,
                         teacher: false,
                         created_at: now,
                         updated_at: now,
@@ -448,7 +448,11 @@ async function main() {
                     monthly_fee_amount: 350 + i * 10,
                     locked: i % 5 === 0,
                     completed: i % 4 === 0,
+<<<<<<< HEAD
                     users_id: users[i + 1].id,
+=======
+                    user_id: users[i + 1].id,
+>>>>>>> 15d3efaa672561e1515dcce65277fd6bb9e88388
                     company_id: uuid,
                     created_at: now,
                     updated_at: now,
@@ -513,7 +517,7 @@ async function main() {
                     value: 350,
                     paid,
                     discount_payment_before_due_date,
-                    registrations_id: regId,
+                    registration_id: regId,
                     payment_method: randomFromArray(["PIX", "Cartão", "Boleto"]),
                     created_at: now,
                     updated_at: now,
@@ -534,7 +538,7 @@ async function main() {
             await prisma.records_of_students.create({
                 data: {
                     id: generateUUID(),
-                    registrations_id: registrations[i - 1], // Corrigido!
+                    registration_id: registrations[i - 1], // Corrigido!
                     description: `Registro do aluno ${i}`,
                     title: `Registro ${i}`,
                     created_at: randomDate(new Date("2025-09-01"), new Date("2025-12-01")),
@@ -555,8 +559,8 @@ async function main() {
                     data: {
                         id: generateUUID(),
                         is_present: Math.random() > 0.2,
-                        users_id: aluno.id,
-                        classes_id: classId,
+                        user_id: aluno.id,
+                        classe_id: classId,
                         created_at: now,
                         updated_at: now,
                         created_by: ownerId,
@@ -577,7 +581,7 @@ async function main() {
                     id,
                     title: `Tarefa ${i}`,
                     description: `Descrição da tarefa ${i}`,
-                    disciplines_id: randomFromArray(disciplines),
+                    discipline_id: randomFromArray(disciplines),
                     due_date: randomDate(new Date("2025-09-15"), new Date("2025-12-15")),
                     created_at: now,
                     updated_at: now,
@@ -593,8 +597,8 @@ async function main() {
             await prisma.tasks_deliveries.create({
                 data: {
                     id: generateUUID(),
-                    tasks_id: randomFromArray(tasks),
-                    registrations_id: randomFromArray(registrations),
+                    task_id: randomFromArray(tasks),
+                    registration_id: randomFromArray(registrations),
                     date: randomDate(new Date("2025-09-14"), new Date("2025-12-14")),
                     link: `https://drive.google.com/tarefa-${i}`,
                     created_at: now,
@@ -613,7 +617,7 @@ async function main() {
                     id: generateUUID(),
                     name: `Apostila ${levelId.slice(0, 6)}`,
                     file: Buffer.from("Conteúdo fictício da apostila"),
-                    levels_id: levelId,
+                    level_id: levelId,
                     created_at: now,
                     updated_at: now,
                     created_by: ownerId,

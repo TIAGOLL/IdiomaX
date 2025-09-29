@@ -2,10 +2,11 @@ import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 
-import { BadRequestError } from '../_errors/bad-request-error'
 import { prisma } from '../../../lib/prisma'
 import { DeactivateLevelFormSchema, DeactivateLevelApiResponse } from '@idiomax/validation-schemas/levels/deactivate-level'
 import { auth } from '../../../middlewares/auth'
+import { getUserPermissions } from '../../../lib/get-user-permission'
+import { ForbiddenError } from '../_errors/forbidden-error'
 
 export async function deactivateLevel(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
@@ -22,34 +23,16 @@ export async function deactivateLevel(app: FastifyInstance) {
                 }
             }
         }, async (request) => {
-            const userId = await request.getCurrentUserId()
             const { id } = request.params
             const { active } = request.body
 
-            // Verificar se o level existe e pertence à empresa do usuário
-            const level = await prisma.levels.findUnique({
-                where: { id },
-                include: {
-                    courses: {
-                        include: {
-                            companies: {
-                                include: {
-                                    members: {
-                                        where: { user_id: userId }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            })
+            const userId = await request.getCurrentUserId()
+            const { member } = await request.getUserMember(userId)
 
-            if (!level) {
-                throw new BadRequestError('Level não encontrado.')
-            }
+            const { cannot } = getUserPermissions(userId, member.role)
 
-            if (!level.courses || level.courses.companies.members.length === 0) {
-                throw new BadRequestError('Você não tem permissão para modificar este level.')
+            if (cannot('delete', 'Level')) {
+                throw new ForbiddenError()
             }
 
             // Atualizar o status do level
@@ -59,7 +42,9 @@ export async function deactivateLevel(app: FastifyInstance) {
             })
 
             return {
-                message: active ? 'Level ativado com sucesso.' : 'Level desativado com sucesso.'
+                message: active ?
+                    'Level ativado com sucesso.' :
+                    'Level desativado com sucesso.'
             }
         })
 }

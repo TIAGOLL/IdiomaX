@@ -11,7 +11,7 @@ export const UpdateCourseFormSchema = z.object({
     minimum_grade: z.number().min(0, 'Nota mínima deve ser entre 0 e 100').max(100, 'Nota mínima deve ser entre 0 e 100'),
     maximum_grade: z.number().min(0, 'Nota máxima deve ser entre 0 e 100').max(100, 'Nota máxima deve ser entre 0 e 100'),
     minimum_frequency: z.number().min(0, 'Frequência mínima deve ser entre 0 e 100').max(100, 'Frequência mínima deve ser entre 0 e 100'),
-    syllabus: z.string().optional(),
+    syllabus_url: z.string().optional(),
     active: z.boolean().optional()
 })
 

@@ -31,6 +31,7 @@ import { presenceSubject } from './subjects/presence'
 import { billingSubject } from './subjects/billing'
 import { reportSubject } from './subjects/report'
 import { notificationSubject } from './subjects/notification'
+import { roleSubject } from './subjects/role'
 
 // Exporta modelos e roles
 export * from './models/user'
@@ -50,6 +51,7 @@ const appAbilitiesSchema = z.union([
     levelSubject,
     disciplineSubject,
     classroomSubject,
+    roleSubject,
     classSubject,
     registrationSubject,
     monthlyFeeSubject,

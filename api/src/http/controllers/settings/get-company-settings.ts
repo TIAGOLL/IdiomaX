@@ -1,13 +1,14 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
-import { checkMemberAccess } from '../../../lib/get-user-permission';
 import {
     GetCompanySettingsApiRequestSchema,
     GetCompanySettingsApiResponseSchema
 } from '@idiomax/validation-schemas/settings/get-company-settings';
 import { prisma } from '../../../lib/prisma';
 import { NotFoundError } from '../_errors/not-found-error';
+import { getUserPermissions } from '../../../lib/get-user-permission';
+import { ForbiddenError } from '../_errors/forbidden-error';
 
 export async function getCompanySettings(app: FastifyInstance) {
     app
@@ -28,15 +29,20 @@ export async function getCompanySettings(app: FastifyInstance) {
             },
             async (request, reply) => {
                 const { company_id } = request.params;
-                const userId = await request.getCurrentUserId();
 
+                const userId = await request.getCurrentUserId()
+                const { member } = await request.getUserMember(company_id)
+
+                const { cannot } = getUserPermissions(userId, member.role)
+
+                if (cannot('get', 'Company')) {
+                    throw new ForbiddenError()
+                }
                 // Verificar se o usuário tem acesso à empresa
-                const { company } = await checkMemberAccess(company_id, userId);
-
                 // Buscar as configurações da empresa
                 const config = await prisma.configs.findFirst({
                     where: {
-                        company_id: company.id,
+                        company_id,
                     },
                     select: {
                         registrations_time: true,

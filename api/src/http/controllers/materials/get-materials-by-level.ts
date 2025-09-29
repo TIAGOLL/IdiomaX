@@ -1,56 +1,53 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
-import { GetUserByEmailApiRequestSchema, GetUserByEmailApiResponseSchema } from '@idiomax/http-schemas/users/get-user-by-email';
 import { prisma } from '../../../lib/prisma';
 import { getUserPermissions } from '../../../lib/get-user-permission';
 import { ForbiddenError } from '../_errors/forbidden-error';
-import { NotFoundError } from '../_errors/not-found-error';
+import { GetMaterialsByLevelApiParamsSchema, GetMaterialsByLevelApiQuerySchema, GetMaterialsByLevelApiResponseSchema } from '@idiomax/http-schemas/materials/get-materials-by-level';
 
-export async function getUserByEmail(app: FastifyInstance) {
+export async function getMaterialsByLevel(app: FastifyInstance) {
     app
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .get(
-            '/users/by-email',
+            '/materials/:company_id',
             {
                 schema: {
-                    tags: ['Usuários'],
-                    summary: 'Buscar usuário por email e role.',
+                    tags: ['Materiais'],
+                    summary: 'Obter lista de materiais de um level.',
                     security: [{ bearerAuth: [] }],
-                    querystring: GetUserByEmailApiRequestSchema,
+                    params: GetMaterialsByLevelApiParamsSchema,
+                    querystring: GetMaterialsByLevelApiQuerySchema,
                     response: {
-                        200: GetUserByEmailApiResponseSchema,
+                        200: GetMaterialsByLevelApiResponseSchema,
                     },
                 },
             },
             async (request, reply) => {
-                const { company_id, email } = request.query;
+                const { company_id } = request.params;
+
                 const userId = await request.getCurrentUserId()
                 const { member } = await request.getUserMember(company_id)
 
                 const { cannot } = getUserPermissions(userId, member.role)
 
-                if (cannot('get', 'User')) {
+                if (cannot('get', 'Material')) {
                     throw new ForbiddenError()
                 }
 
-                const user = await prisma.users.findFirst({
+                const materials = await prisma.materials.findMany({
                     where: {
-                        email,
-                        member_on: {
-                            some: {
-                                company_id,
+                        levels: {
+                            courses: {
+                                company_id: company_id,
                             }
                         }
                     },
-                });
+                    orderBy: { name: 'asc' },
+                })
 
-                if (!user) {
-                    throw new NotFoundError('Usuário não encontrado.');
-                }
-
-                return reply.status(200).send(user);
+                return reply.status(200).send(materials);
             },
         );
 }

@@ -15,7 +15,7 @@ export const GetCourseByIdApiResponseSchema = z.object({
     minimum_grade: z.number(),
     maximum_grade: z.number(),
     minimum_frequency: z.number(),
-    syllabus: z.string().nullable(),
+    syllabus_url: z.string().nullable(),
     company_id: z.string(),
     active: z.boolean(),
     created_at: z.string(),

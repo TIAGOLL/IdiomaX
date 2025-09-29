@@ -4,13 +4,8 @@ import { UpdateClassroomApiRequestSchema, UpdateClassroomApiResponseSchema, } fr
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { BadRequestError } from '../_errors/bad-request-error'
-import { z } from 'zod'
 import { getUserPermissions } from '../../../lib/get-user-permission'
 import { ForbiddenError } from '../_errors/forbidden-error'
-
-const ErrorResponseSchema = z.object({
-    message: z.string()
-})
 
 export async function updateClassroom(app: FastifyInstance) {
     app
@@ -25,8 +20,8 @@ export async function updateClassroom(app: FastifyInstance) {
                     body: UpdateClassroomApiRequestSchema,
                     response: {
                         200: UpdateClassroomApiResponseSchema,
-                        400: ErrorResponseSchema,
-                        404: ErrorResponseSchema,
+                        400: UpdateClassroomApiResponseSchema,
+                        404: UpdateClassroomApiResponseSchema,
                     },
                 },
             },
@@ -38,7 +33,7 @@ export async function updateClassroom(app: FastifyInstance) {
 
                 const { cannot } = getUserPermissions(userId, member.role)
 
-                if (cannot('get', 'Classroom')) {
+                if (cannot('update', 'Classroom')) {
                     throw new ForbiddenError()
                 }
 
@@ -56,7 +51,7 @@ export async function updateClassroom(app: FastifyInstance) {
                     throw new BadRequestError('Já existe outra sala com esse número nesta empresa')
                 }
 
-                await prisma.classrooms.update({
+                const res = await prisma.classrooms.update({
                     where: { id },
                     data: {
                         number: number,
@@ -64,6 +59,10 @@ export async function updateClassroom(app: FastifyInstance) {
                         updated_by: userId,
                     },
                 })
+
+                if (!res) {
+                    throw new BadRequestError('Erro ao atualizar sala de aula')
+                }
 
                 return reply.status(200).send({ message: 'Sala de aula atualizada com sucesso!', })
             },

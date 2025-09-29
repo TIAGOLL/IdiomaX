@@ -3,12 +3,14 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { DeleteDisciplineApiResponseSchema } from '@idiomax/validation-schemas/disciplines/delete-discipline'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
-import { checkMemberAccess } from '../../../lib/get-user-permission'
 import { BadRequestError } from '../_errors/bad-request-error'
 import { z } from 'zod'
+import { getUserPermissions } from '../../../lib/get-user-permission'
+import { ForbiddenError } from '../_errors/forbidden-error'
 
 const ParamsSchema = z.object({
-    id: z.string().uuid()
+    id: z.string().uuid(),
+    company_id: z.string().uuid()
 })
 
 const ErrorResponseSchema = z.object({
@@ -32,41 +34,21 @@ export async function deleteDiscipline(app: FastifyInstance) {
                 },
             },
         }, async (request, reply) => {
+            const { id, company_id } = request.params
+
             const userId = await request.getCurrentUserId()
-            const { id } = request.params
+            const { member } = await request.getUserMember(company_id)
 
-            // Verificar se a disciplina existe e obter company_id
-            const discipline = await prisma.disciplines.findFirst({
-                where: {
-                    id,
-                },
-                include: {
-                    levels: {
-                        include: {
-                            courses: {
-                                select: {
-                                    company_id: true
-                                }
-                            }
-                        }
-                    }
-                }
-            })
+            const { cannot } = getUserPermissions(userId, member.role)
 
-            if (!discipline) {
-                throw new BadRequestError('Disciplina não encontrada.')
+            if (cannot('delete', 'Discipline')) {
+                throw new ForbiddenError()
             }
-
-            if (!discipline.levels?.courses?.company_id) {
-                throw new BadRequestError('Curso da disciplina não encontrado.')
-            }
-
-            await checkMemberAccess(discipline.levels.courses.company_id, userId)
 
             // Verificar se a disciplina tem tasks associadas
             const tasksCount = await prisma.tasks.count({
                 where: {
-                    disciplines_id: id,
+                    discipline_id: id,
                     active: true
                 }
             })

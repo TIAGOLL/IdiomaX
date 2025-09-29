@@ -1,10 +1,11 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
-import { checkMemberAccess } from '../../../lib/get-user-permission';
-import { DeactivateUserApiRequestSchema, DeactivateUserApiResponseSchema } from '@idiomax/validation-schemas/users/deactivate-user';
+import { DeactivateUserApiRequestSchema, DeactivateUserApiResponseSchema } from '@idiomax/http-schemas/users/deactivate-user';
 import { prisma } from '../../../lib/prisma';
 import { BadRequestError } from '../_errors/bad-request-error';
+import { getUserPermissions } from '../../../lib/get-user-permission';
+import { ForbiddenError } from '../_errors/forbidden-error';
 
 export async function deactivateUser(app: FastifyInstance) {
     app
@@ -25,17 +26,21 @@ export async function deactivateUser(app: FastifyInstance) {
             },
             async (request, reply) => {
                 const { user_id: targetUserId, company_id, active } = request.body;
-                const userId = await request.getCurrentUserId();
+                const userId = await request.getCurrentUserId()
+                const { member } = await request.getUserMember(company_id)
 
-                const { company } = await checkMemberAccess(company_id, userId);
+                const { cannot } = getUserPermissions(userId, member.role)
 
+                if (cannot('delete', 'User')) {
+                    throw new ForbiddenError()
+                }
                 // Verificar se o usuário existe e está associado à empresa com o role correto
                 const user = await prisma.users.findFirst({
                     where: {
                         id: targetUserId,
                         member_on: {
                             some: {
-                                company_id: company.id,
+                                company_id,
                             }
                         }
                     },
@@ -55,7 +60,7 @@ export async function deactivateUser(app: FastifyInstance) {
                         member_on: {
                             updateMany: {
                                 where: {
-                                    company_id: company.id,
+                                    company_id,
                                     user_id: targetUserId,
                                 },
                                 data: {
@@ -69,7 +74,9 @@ export async function deactivateUser(app: FastifyInstance) {
                 });
 
                 return reply.status(200).send({
-                    message: active ? 'Usuário ativado com sucesso.' : 'Usuário desativado com sucesso.',
+                    message: active ?
+                        'Usuário ativado com sucesso.' :
+                        'Usuário desativado com sucesso.',
                 });
             },
         );

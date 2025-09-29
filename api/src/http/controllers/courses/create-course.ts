@@ -37,7 +37,7 @@ export async function createCourse(app: FastifyInstance) {
                 minimum_grade,
                 maximum_grade,
                 minimum_frequency,
-                syllabus
+                syllabus_url
             } = request.body
 
             const userId = await request.getCurrentUserId()
@@ -81,7 +81,7 @@ export async function createCourse(app: FastifyInstance) {
                     minimum_grade,
                     maximum_grade,
                     minimum_frequency,
-                    syllabus,
+                    syllabus_url,
                     company_id,
                     created_by: userId,
                     updated_by: userId,

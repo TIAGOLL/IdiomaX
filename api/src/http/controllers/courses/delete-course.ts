@@ -38,7 +38,7 @@ export async function deleteCourse(app: FastifyInstance) {
 
                 const activeClasses = await prisma.renamedclass.findFirst({
                     where: {
-                        courses_id: targetCourseId,
+                        course_id: targetCourseId,
                         active: true
                     }
                 });

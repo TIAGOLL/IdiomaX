@@ -41,7 +41,7 @@ export const UpdateUserApiRequestSchema = z.object({
     gender: z.enum(['M', 'F']),
     date_of_birth: z.string().transform((val) => new Date(val)),
     address: z.string().min(5).max(256),
-    companyId: z.string().uuid(),
+    company_id: z.string().uuid(),
     avatar_url: z.string().url().nullable().optional(),
 });
 

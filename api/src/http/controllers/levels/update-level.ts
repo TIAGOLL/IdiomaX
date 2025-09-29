@@ -3,9 +3,10 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { UpdateLevelApiRequestSchema, UpdateLevelApiResponseSchema } from '@idiomax/validation-schemas/levels/update-level'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
-import { checkMemberAccess } from '../../../lib/get-user-permission'
 import { BadRequestError } from '../_errors/bad-request-error'
 import { z } from 'zod'
+import { ForbiddenError } from '../_errors/forbidden-error'
+import { getUserPermissions } from '../../../lib/get-user-permission'
 
 const ErrorResponseSchema = z.object({
     message: z.string()
@@ -28,44 +29,36 @@ export async function updateLevel(app: FastifyInstance) {
                 },
             },
         }, async (request, reply) => {
-            const userId = await request.getCurrentUserId()
             const { id } = request.params as { id: string }
             const {
                 company_id,
                 name,
                 level,
                 active,
-                disciplines
             } = request.body
 
-            const { company } = await checkMemberAccess(company_id, userId)
+            const userId = await request.getCurrentUserId()
+            const { member } = await request.getUserMember(company_id)
 
-            // Verificar se o level existe
-            const existingLevel = await prisma.levels.findFirst({
+            const { cannot } = getUserPermissions(userId, member.role)
+
+            if (cannot('update', 'Level')) {
+                throw new ForbiddenError()
+            }
+
+            const course = await prisma.courses.findFirst({
                 where: {
-                    id,
+                    company_id,
                     active: true
-                },
-                include: {
-                    courses: true
                 }
             })
 
-            if (!existingLevel) {
-                throw new BadRequestError('Level não encontrado.')
-            }
-
-            // Verificar se o level pertence à empresa
-            if (existingLevel.courses?.company_id !== company.id) {
-                throw new BadRequestError('Level não pertence a esta empresa.')
-            }
-
             // Verificar se já existe outro level com o mesmo número no curso (exceto o atual)
-            if (level !== Number(existingLevel.level)) {
+            if (level !== Number(level) && course) {
                 const conflictingLevel = await prisma.levels.findFirst({
                     where: {
                         level,
-                        courses_id: existingLevel.courses_id,
+                        course_id: course.id,
                         active: true,
                         NOT: {
                             id: id
@@ -78,105 +71,21 @@ export async function updateLevel(app: FastifyInstance) {
                 }
             }
 
-            // Verificar se já existe outro level com o mesmo nome no curso (exceto o atual)
-            if (name !== existingLevel.name) {
-                const conflictingLevelName = await prisma.levels.findFirst({
-                    where: {
-                        name,
-                        courses_id: existingLevel.courses_id,
-                        active: true,
-                        NOT: {
-                            id: id
-                        }
-                    }
-                })
-
-                if (conflictingLevelName) {
-                    throw new BadRequestError('Já existe outro level com este nome neste curso.')
+            const res = await prisma.levels.update({
+                where: { id },
+                data: {
+                    name,
+                    level,
+                    active,
+                    updated_by: userId,
+                    updated_at: new Date(),
                 }
-            }
-
-            // Atualizar level e disciplinas em uma transação
-            const updatedLevel = await prisma.$transaction(async (prisma) => {
-                // Atualizar o level
-                await prisma.levels.update({
-                    where: { id },
-                    data: {
-                        name,
-                        level,
-                        active,
-                        updated_by: userId,
-                        updated_at: new Date(),
-                    }
-                })
-
-                // Gerenciar disciplinas
-                for (const discipline of disciplines) {
-                    if (discipline.id) {
-                        // Atualizar disciplina existente
-                        await prisma.disciplines.update({
-                            where: { id: discipline.id },
-                            data: {
-                                name: discipline.name,
-                                active: discipline.active ?? true,
-                                updated_by: userId,
-                                updated_at: new Date(),
-                            }
-                        })
-                    } else {
-                        // Criar nova disciplina
-                        await prisma.disciplines.create({
-                            data: {
-                                name: discipline.name,
-                                levels_id: id,
-                                created_by: userId,
-                                updated_by: userId,
-                            }
-                        })
-                    }
-                }
-
-                // Buscar o level atualizado com disciplinas
-                return await prisma.levels.findFirst({
-                    where: { id },
-                    include: {
-                        disciplines: {
-                            where: {
-                                active: true
-                            },
-                            orderBy: {
-                                created_at: 'asc'
-                            }
-                        }
-                    }
-                })
             })
 
-            if (!updatedLevel) {
-                throw new BadRequestError('Erro ao atualizar level.')
+            if (!res) {
+                throw new BadRequestError('Erro ao atualizar o level.')
             }
 
-            const mappedLevel = {
-                id: updatedLevel.id,
-                name: updatedLevel.name,
-                level: Number(updatedLevel.level),
-                courses_id: updatedLevel.courses_id || '',
-                created_at: updatedLevel.created_at.toISOString(),
-                updated_at: updatedLevel.updated_at.toISOString(),
-                active: updatedLevel.active,
-                disciplines: updatedLevel.disciplines.map(discipline => ({
-                    id: discipline.id,
-                    name: discipline.name,
-                    levels_id: discipline.levels_id,
-                    created_at: discipline.created_at.toISOString(),
-                    updated_at: discipline.updated_at.toISOString(),
-                    active: discipline.active
-                }))
-            }
-
-            return reply.status(200).send({
-                message: 'Level atualizado com sucesso!',
-                level: mappedLevel
-            })
+            return reply.status(200).send({ message: 'Level atualizado com sucesso!', })
         })
 }

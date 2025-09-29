@@ -6,7 +6,7 @@ export const CreateLevelFormSchema = z.object({
 })
 
 export const CreateLevelApiRequestSchema = z.object({
-    company_id: z.string().uuid(),
+    companies_id: z.string().uuid(),
     course_id: z.string().uuid(),
     name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
     level: z.number().min(1, 'Level deve ser maior que 0'),

@@ -6,6 +6,8 @@ import { BadRequestError } from '../_errors/bad-request-error'
 import { prisma } from '../../../lib/prisma'
 import { DeleteLevelApiResponse } from '@idiomax/validation-schemas/levels/delete-level'
 import { auth } from '../../../middlewares/auth'
+import { getUserPermissions } from '../../../lib/get-user-permission'
+import { ForbiddenError } from '../_errors/forbidden-error'
 
 export async function deleteLevel(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
@@ -14,46 +16,35 @@ export async function deleteLevel(app: FastifyInstance) {
             schema: {
                 tags: ['Levels'],
                 params: z.object({
-                    id: z.string().uuid()
+                    id: z.string().uuid(),
+                    company_id: z.string().uuid()
                 }),
                 response: {
                     200: DeleteLevelApiResponse
                 }
             }
         }, async (request) => {
-            const userId = await request.getCurrentUserId()
-            const { id } = request.params
+            const { id, company_id } = request.params
 
-            // Verificar se o level existe e pertence à empresa do usuário
-            const level = await prisma.levels.findUnique({
-                where: { id },
-                include: {
-                    courses: {
-                        include: {
-                            companies: {
-                                include: {
-                                    members: {
-                                        where: { user_id: userId }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    disciplines: true
+            const userId = await request.getCurrentUserId()
+            const { member } = await request.getUserMember(company_id)
+
+            const { cannot } = getUserPermissions(userId, member.role)
+
+            if (cannot('delete', 'Level')) {
+                throw new ForbiddenError()
+            }
+
+            // Verificar se o level tem cursos associados
+            const disciplinesCount = await prisma.disciplines.count({
+                where: {
+                    level_id: id,
+                    active: true
                 }
             })
 
-            if (!level) {
-                throw new BadRequestError('Level não encontrado.')
-            }
-
-            if (!level.courses || level.courses.companies.members.length === 0) {
-                throw new BadRequestError('Você não tem permissão para deletar este level.')
-            }
-
-            // Verificar se o level possui disciplinas associadas
-            if (level.disciplines && level.disciplines.length > 0) {
-                throw new BadRequestError('Não é possível deletar um level que possui disciplinas associadas.')
+            if (disciplinesCount > 0) {
+                throw new BadRequestError('Não é possível deletar um level que possui cursos associados.')
             }
 
             // Deletar o level
@@ -61,8 +52,6 @@ export async function deleteLevel(app: FastifyInstance) {
                 where: { id }
             })
 
-            return {
-                message: 'Level deletado com sucesso.'
-            }
+            return { message: 'Level deletado com sucesso.' }
         })
 }

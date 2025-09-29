@@ -54,7 +54,7 @@ export function CreateCoursePage() {
             minimum_grade: 70,
             maximum_grade: 100,
             minimum_frequency: 75,
-            syllabus: ''
+            syllabus_url: ''
         }
     });
 
@@ -179,14 +179,14 @@ export function CreateCoursePage() {
 
                             {/* Ementa */}
                             <div className="col-span-3 space-y-1">
-                                <Label htmlFor='syllabus'>Ementa do Curso</Label>
+                                <Label htmlFor=' syllabus_url'>Ementa do Curso</Label>
                                 <Textarea
-                                    id='syllabus'
+                                    id=' syllabus_url'
                                     placeholder="Conteúdo programático detalhado, tópicos abordados por módulo..."
                                     rows={4}
-                                    {...register('syllabus')}
+                                    {...register(' syllabus_url')}
                                 />
-                                <FormMessageError error={errors.syllabus?.message} />
+                                <FormMessageError error={errors.syllabus_url?.message} />
                             </div>
                         </div>
                     </CardContent>

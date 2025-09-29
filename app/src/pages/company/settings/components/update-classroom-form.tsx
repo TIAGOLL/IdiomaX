@@ -36,7 +36,7 @@ export function UpdateClassroomForm({ classroom }: { classroom: GetClassroomsRes
             reset();
         },
         onError: (err: Error) => {
-            toast.error(err.message || 'Erro ao atualizar sala de aula');
+            toast.error(err.message);
         }
     });
 

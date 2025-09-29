@@ -6,8 +6,10 @@ import { UpdateUserRoleApiRequestSchema, UpdateUserRoleApiResponseSchema } from 
 import { UnauthorizedError } from '../_errors/unauthorized-error'
 import { BadRequestError } from '../_errors/bad-request-error'
 import { auth } from '../../../middlewares/auth'
+import { getUserPermissions } from '../../../lib/get-user-permission'
+import { ForbiddenError } from '../_errors/forbidden-error'
 
-export async function updateUserRole(app: FastifyInstance) {
+export async function alterUserRole(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .put('/users/role', {
@@ -19,29 +21,26 @@ export async function updateUserRole(app: FastifyInstance) {
                 },
             },
         }, async (request) => {
+            const { user_id: targetUserId, role, company_id } = request.body
+
             const userId = await request.getCurrentUserId()
-            const { userId: targetUserId, role, companyId } = request.body
+            const { member } = await request.getUserMember(company_id)
 
-            // Buscar membro atual (quem está fazendo a alteração)
-            const currentMember = await prisma.members.findFirst({
-                where: {
-                    user_id: userId,
-                    company_id: companyId,
-                },
-            })
+            const { cannot } = getUserPermissions(userId, member.role)
 
-            if (!currentMember || currentMember.role !== 'ADMIN') {
-                throw new UnauthorizedError()
+            if (cannot('update', 'Role')) {
+                throw new ForbiddenError()
             }
 
             // Verificar se o usuário alvo existe na empresa
             const targetMember = await prisma.members.findFirst({
                 where: {
                     user_id: targetUserId,
-                    company_id: companyId,
+                    company_id,
                 },
                 include: {
                     user: true,
+                    company: true,
                 },
             })
 
@@ -49,9 +48,12 @@ export async function updateUserRole(app: FastifyInstance) {
                 throw new BadRequestError('Usuário não encontrado nesta empresa.')
             }
 
-            // Não permitir alterar role de outro ADMIN
+            // Não permitir alterar role de outro ADMIN, exceto se o usuário atual for o owner
             if (targetMember.role === 'ADMIN' && targetMember.user_id !== userId) {
-                throw new UnauthorizedError('Não é possível alterar a role de outro administrador.')
+                const isOwner = targetMember.company.owner_id === userId
+                if (!isOwner) {
+                    throw new UnauthorizedError('Apenas o proprietário da empresa pode alterar a role de outro administrador.')
+                }
             }
 
             // Atualizar a role
@@ -64,8 +66,6 @@ export async function updateUserRole(app: FastifyInstance) {
                 },
             })
 
-            return {
-                message: `Role do usuário ${targetMember.user.name} alterada para ${role === 'STUDENT' ? 'Estudante' : role === 'TEACHER' ? 'Professor' : 'Administrador'} com sucesso.`,
-            }
+            return { message: "Função alterada com sucesso.", }
         })
 }

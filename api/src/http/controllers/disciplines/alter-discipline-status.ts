@@ -3,9 +3,9 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { ToggleDisciplineStatusApiRequestSchema, ToggleDisciplineStatusApiResponseSchema } from '@idiomax/validation-schemas/disciplines/toggle-discipline-status'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
-import { checkMemberAccess } from '../../../lib/get-user-permission'
-import { BadRequestError } from '../_errors/bad-request-error'
 import { z } from 'zod'
+import { getUserPermissions } from '../../../lib/get-user-permission'
+import { ForbiddenError } from '../_errors/forbidden-error'
 
 const ParamsSchema = z.object({
     id: z.string().uuid()
@@ -15,10 +15,10 @@ const ErrorResponseSchema = z.object({
     message: z.string()
 })
 
-export async function toggleDisciplineStatus(app: FastifyInstance) {
+export async function alterDisciplineStatus(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
         .register(auth)
-        .patch('/disciplines/:id/toggle-status', {
+        .patch('/disciplines/:id/alter-status', {
             schema: {
                 tags: ['Disciplinas'],
                 summary: 'Ativar/desativar disciplina',
@@ -33,37 +33,17 @@ export async function toggleDisciplineStatus(app: FastifyInstance) {
                 },
             },
         }, async (request, reply) => {
-            const userId = await request.getCurrentUserId()
             const { id } = request.params
-            const { active } = request.body
+            const { active, company_id } = request.body
 
-            // Verificar se a disciplina existe e obter company_id
-            const discipline = await prisma.disciplines.findFirst({
-                where: {
-                    id
-                },
-                include: {
-                    levels: {
-                        include: {
-                            courses: {
-                                select: {
-                                    company_id: true
-                                }
-                            }
-                        }
-                    }
-                }
-            })
+            const userId = await request.getCurrentUserId()
+            const { member } = await request.getUserMember(company_id)
 
-            if (!discipline) {
-                throw new BadRequestError('Disciplina não encontrada.')
+            const { cannot } = getUserPermissions(userId, member.role)
+
+            if (cannot('delete', 'Discipline')) {
+                throw new ForbiddenError()
             }
-
-            if (!discipline.levels?.courses?.company_id) {
-                throw new BadRequestError('Curso da disciplina não encontrado.')
-            }
-
-            await checkMemberAccess(discipline.levels.courses.company_id, userId)
 
             await prisma.disciplines.update({
                 where: { id },

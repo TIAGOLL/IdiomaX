@@ -17,7 +17,6 @@ export const UpdateUserPasswordFormSchema = z.object({
 export const UpdateUserPasswordApiRequestSchema = z.object({
     user_id: z.string().uuid(),
     company_id: z.string().uuid(),
-    role: z.enum(['STUDENT', 'TEACHER', 'ADMIN']),
     current_password: z.string().min(1),
     new_password: z.string().min(6).max(1024),
 });

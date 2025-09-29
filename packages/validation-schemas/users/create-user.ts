@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { RoleEnum } from '../enums';
 
 // ===== FORM SCHEMAS (Frontend Formulários) =====
 export const CreateUserFormSchema = z.object({
@@ -42,9 +43,7 @@ export const CreateUserFormSchema = z.object({
     address: z.string()
         .min(5, 'Endereço muito curto')
         .max(256, 'Endereço muito longo'),
-    role: z.enum(['STUDENT', 'TEACHER', 'ADMIN'], {
-        message: 'Selecione o tipo de usuário'
-    }),
+    role: RoleEnum,
     company_id: z.string()
         .uuid('ID da empresa inválido'),
 })
@@ -60,7 +59,7 @@ export const CreateUserApiRequestSchema = z.object({
     gender: z.enum(['M', 'F']),
     date_of_birth: z.string().transform((str) => new Date(str)),
     address: z.string().min(5).max(256),
-    role: z.enum(['STUDENT', 'TEACHER', 'ADMIN']),
+    role: RoleEnum,
     company_id: z.string().uuid(),
     avatar_url: z.string().url().nullable().optional(),
 });
@@ -70,6 +69,20 @@ export const CreateUserApiResponseSchema = z.object({
 });
 
 // ===== HTTP TYPES (Frontend Services) =====
-// Types inferidos dos schemas da API para services HTTP
-export type CreateUserRequestType = z.infer<typeof CreateUserApiRequestSchema>;
-export type CreateUserResponseType = z.infer<typeof CreateUserApiResponseSchema>;
+export const CreateUserHttpRequestSchema = z.object({
+    name: z.string().min(2).max(256),
+    email: z.string().email().max(256),
+    cpf: z.string().length(11).regex(/^\d{11}$/),
+    phone: z.string().min(10).max(15).regex(/^\d+$/),
+    username: z.string().min(3).max(256).regex(/^[a-zA-Z0-9_]+$/),
+    password: z.string().min(6).max(1024),
+    gender: z.enum(['M', 'F']),
+    date_of_birth: z.date(),
+    address: z.string().min(5).max(256),
+    role: RoleEnum,
+    company_id: z.string().uuid(),
+    avatar_url: z.string().url().nullable().optional(),
+});
+
+export type CreateUserHttpRequest = z.infer<typeof CreateUserHttpRequestSchema>;
+export type CreateUserHttpResponse = z.infer<typeof CreateUserApiResponseSchema>;

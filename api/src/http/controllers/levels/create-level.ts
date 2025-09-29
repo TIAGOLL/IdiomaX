@@ -3,9 +3,10 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { CreateLevelApiRequestSchema, CreateLevelApiResponseSchema } from '@idiomax/validation-schemas/levels/create-level'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
-import { checkMemberAccess } from '../../../lib/get-user-permission'
 import { BadRequestError } from '../_errors/bad-request-error'
 import { z } from 'zod'
+import { getUserPermissions } from '../../../lib/get-user-permission'
+import { ForbiddenError } from '../_errors/forbidden-error'
 
 const ErrorResponseSchema = z.object({
     message: z.string()
@@ -27,34 +28,22 @@ export async function createLevel(app: FastifyInstance) {
                 },
             },
         }, async (request, reply) => {
+            const { company_id, course_id, name, level, } = request.body
+
             const userId = await request.getCurrentUserId()
-            const {
-                company_id,
-                course_id,
-                name,
-                level,
-            } = request.body
+            const { member } = await request.getUserMember(company_id)
 
-            const { company } = await checkMemberAccess(company_id, userId)
+            const { cannot } = getUserPermissions(userId, member.role)
 
-            // Verificar se o curso existe e pertence à empresa
-            const course = await prisma.courses.findFirst({
-                where: {
-                    id: course_id,
-                    company_id: company.id,
-                    active: true
-                }
-            })
-
-            if (!course) {
-                throw new BadRequestError('Curso não encontrado ou não pertence a esta empresa.')
+            if (cannot('create', 'Level')) {
+                throw new ForbiddenError()
             }
 
             // Verificar se já existe um level com o mesmo número no curso
             const existingLevel = await prisma.levels.findFirst({
                 where: {
                     level,
-                    courses_id: course_id,
+                    course_id: course_id,
                     active: true
                 }
             })
@@ -67,7 +56,7 @@ export async function createLevel(app: FastifyInstance) {
             const existingLevelName = await prisma.levels.findFirst({
                 where: {
                     name,
-                    courses_id: course_id,
+                    course_id: course_id,
                     active: true
                 }
             })
@@ -76,19 +65,16 @@ export async function createLevel(app: FastifyInstance) {
                 throw new BadRequestError('Já existe um level com este nome neste curso.')
             }
 
-            // Criar o level com suas disciplinas em uma transação
             await prisma.levels.create({
                 data: {
                     name,
                     level,
-                    courses_id: course_id,
+                    course_id: course_id,
                     created_by: userId,
                     updated_by: userId,
                 }
             })
 
-            return reply.status(201).send({
-                message: 'Level criado com sucesso!',
-            })
+            return reply.status(201).send({ message: 'Level criado com sucesso!', })
         })
 }

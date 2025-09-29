@@ -6,7 +6,8 @@ export const ToggleDisciplineStatusFormSchema = z.object({
 })
 
 export const ToggleDisciplineStatusApiRequestSchema = z.object({
-    active: z.boolean()
+    active: z.boolean(),
+    companies_id: z.string().uuid('ID da empresa inválido'),
 })
 
 export const ToggleDisciplineStatusApiResponseSchema = z.object({
