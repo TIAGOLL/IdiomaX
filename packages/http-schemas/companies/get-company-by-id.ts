@@ -2,13 +2,13 @@ import { z } from 'zod';
 
 // ===== FORM SCHEMAS (Frontend Formulários) =====
 export const GetCompanyByIdFormSchema = z.object({
-    companies_id: z.string()
+    company_id: z.string()
         .uuid('ID da empresa é obrigatório'),
 });
 
 // ===== API SCHEMAS (Backend Validation) =====
 export const GetCompanyByIdApiRequestSchema = z.object({
-    companies_id: z.string().uuid(),
+    company_id: z.string().uuid(),
 });
 
 export const GetCompanyByIdApiResponseSchema = z.object({

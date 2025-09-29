@@ -11,7 +11,7 @@ export async function getCourses(app: FastifyInstance) {
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .get(
-            '/courses/:companies_id',
+            '/courses/:company_id',
             {
                 schema: {
                     tags: ['Cursos'],
@@ -24,9 +24,9 @@ export async function getCourses(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { companies_id } = request.params;
+                const { company_id } = request.params;
                 const userId = await request.getCurrentUserId()
-                const { member } = await request.getUserMember(companies_id)
+                const { member } = await request.getUserMember(company_id)
 
                 const { cannot } = getUserPermissions(userId, member.role)
 
@@ -36,7 +36,7 @@ export async function getCourses(app: FastifyInstance) {
 
                 const courses = await prisma.courses.findMany({
                     where: {
-                        companies_id: companies_id,
+                        company_id: company_id,
                     },
                 });
 
@@ -44,7 +44,7 @@ export async function getCourses(app: FastifyInstance) {
                     id: course.id,
                     name: course.name,
                     description: course.description,
-                    companies_id: course.companies_id,
+                    company_id: course.company_id,
                     created_at: course.created_at,
                     updated_at: course.updated_at,
                     active: course.active,

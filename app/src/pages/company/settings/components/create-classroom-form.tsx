@@ -21,7 +21,7 @@ export function CreateClassroomForm() {
         mutationFn: async (data: CreateClassroomFormSchema) => {
             const response = await createClassroom({
                 ...data,
-                companies_id: getCurrentCompanyId()
+                company_id: getCurrentCompanyId()
             });
             return response;
         },

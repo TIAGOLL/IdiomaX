@@ -15,5 +15,5 @@ export const CreateClassroomApiResponseSchema = z.object({
 export const CreateClassroomApiRequestSchema = z.object({
     number: z.string().min(1).or(z.number().min(1)),
     block: z.string(),
-    companies_id: z.string().uuid()
+    company_id: z.string().uuid()
 })

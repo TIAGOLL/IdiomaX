@@ -19,7 +19,7 @@ export function DeleteClassroomForm({ classroom }: { classroom: GetClassroomsRes
     const { mutate, isPending } = useMutation({
         mutationFn: () => deleteClassroom({
             id: classroom.id,
-            companies_id: getCurrentCompanyId()
+            company_id: getCurrentCompanyId()
         }),
         onSuccess: (res) => {
             toast.success(res.message);

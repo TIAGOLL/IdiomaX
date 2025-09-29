@@ -25,10 +25,10 @@ export async function deactivateCourse(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { course_id: targetCourseId, companies_id, active } = request.body;
+                const { course_id: targetCourseId, company_id, active } = request.body;
 
                 const userId = await request.getCurrentUserId()
-                const { member } = await request.getUserMember(companies_id)
+                const { member } = await request.getUserMember(company_id)
 
                 const { cannot } = getUserPermissions(userId, member.role)
 
@@ -40,7 +40,7 @@ export async function deactivateCourse(app: FastifyInstance) {
                 const course = await prisma.courses.findFirst({
                     where: {
                         id: targetCourseId,
-                        companies_id,
+                        company_id,
                     }
                 });
 

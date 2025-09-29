@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const GetLevelsApiParamsSchema = z.object({
     course_id: z.string().uuid('ID do curso inválido'),
-    companies_id: z.string().uuid('ID da empresa inválido')
+    company_id: z.string().uuid('ID da empresa inválido')
 })
 
 export const GetLevelsApiResponseSchema = z.array(z.object({
