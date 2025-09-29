@@ -4,7 +4,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { auth } from '../../../middlewares/auth';
 import { prisma } from '../../../lib/prisma';
-import { CreateUserApiRequestSchema, CreateUserApiResponseSchema } from '@idiomax/http-schemas/users';
+import { CreateUserApiRequestSchema, CreateUserApiResponseSchema } from '@idiomax/validation-schemas/users';
 import { hash } from 'bcryptjs';
 
 export async function createUser(app: FastifyInstance) {

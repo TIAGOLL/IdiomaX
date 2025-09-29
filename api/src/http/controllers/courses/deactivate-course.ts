@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
-import { DeactivateCourseApiRequest, DeactivateCourseApiResponse } from '@idiomax/http-schemas/courses/deactivate-course';
+import { DeactivateCourseApiRequest, DeactivateCourseApiResponse } from '@idiomax/validation-schemas/courses/deactivate-course';
 import { prisma } from '../../../lib/prisma';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { getUserPermissions } from '../../../lib/get-user-permission';
@@ -25,10 +25,10 @@ export async function deactivateCourse(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { course_id: targetCourseId, companies_id, active } = request.body;
+                const { course_id: targetCourseId, company_id, active } = request.body;
 
                 const userId = await request.getCurrentUserId()
-                const { member } = await request.getUserMember(companies_id)
+                const { member } = await request.getUserMember(company_id)
 
                 const { cannot } = getUserPermissions(userId, member.role)
 
@@ -40,7 +40,7 @@ export async function deactivateCourse(app: FastifyInstance) {
                 const course = await prisma.courses.findFirst({
                     where: {
                         id: targetCourseId,
-                        companies_id,
+                        company_id,
                     }
                 });
 

@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { GetClassroomsResponseSchema, GetClassroomsQuerySchema } from '@idiomax/http-schemas/classrooms/get-classrooms'
+import { GetClassroomsResponseSchema, GetClassroomsQuerySchema } from '@idiomax/validation-schemas/classrooms/get-classrooms'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { z } from 'zod'
@@ -29,10 +29,10 @@ export async function getClassrooms(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { companies_id } = request.query
+                const { company_id } = request.query
 
                 const userId = await request.getCurrentUserId()
-                const { member } = await request.getUserMember(companies_id)
+                const { member } = await request.getUserMember(company_id)
 
                 const { cannot } = getUserPermissions(userId, member.role)
 
@@ -42,7 +42,7 @@ export async function getClassrooms(app: FastifyInstance) {
 
                 const classrooms = await prisma.classrooms.findMany({
                     where: {
-                        companies_id
+                        company_id
                     },
                     orderBy: [
                         { block: 'asc' },
@@ -55,7 +55,7 @@ export async function getClassrooms(app: FastifyInstance) {
                     id: classroom.id,
                     number: Number(classroom.number),
                     block: classroom.block,
-                    companies_id: classroom.companies_id,
+                    company_id: classroom.company_id,
                     created_at: classroom.created_at,
                     updated_at: classroom.updated_at,
                     active: classroom.active

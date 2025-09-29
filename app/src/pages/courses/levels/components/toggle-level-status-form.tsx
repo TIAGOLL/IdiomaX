@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { deactivateLevel } from '@/services/levels';
-import type { DeactivateLevelFormData } from '@idiomax/http-schemas/levels/deactivate-level';
-import type { GetCourseByIdResponse } from '@idiomax/http-schemas/courses/get-course-by-id';
+import type { DeactivateLevelFormData } from '@idiomax/validation-schemas/levels/deactivate-level';
+import type { GetCourseByIdResponse } from '@idiomax/validation-schemas/courses/get-course-by-id';
 import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogTrigger } from '@/components/ui/alert-dialog';

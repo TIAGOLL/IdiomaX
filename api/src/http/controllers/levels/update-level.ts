@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { UpdateLevelApiRequestSchema, UpdateLevelApiResponseSchema } from '@idiomax/http-schemas/levels/update-level'
+import { UpdateLevelApiRequestSchema, UpdateLevelApiResponseSchema } from '@idiomax/validation-schemas/levels/update-level'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { checkMemberAccess } from '../../../lib/get-user-permission'
@@ -56,7 +56,7 @@ export async function updateLevel(app: FastifyInstance) {
             }
 
             // Verificar se o level pertence à empresa
-            if (existingLevel.courses?.companies_id !== company.id) {
+            if (existingLevel.courses?.company_id !== company.id) {
                 throw new BadRequestError('Level não pertence a esta empresa.')
             }
 

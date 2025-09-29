@@ -20,7 +20,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { useNavigate } from 'react-router';
 import nookies from 'nookies';
 import { signUp } from '@/services/auth/sign-up';
-import { SignUpFormSchema } from '@idiomax/http-schemas/auth/sign-up';
+import { SignUpFormSchema } from '@idiomax/validation-schemas/auth/sign-up';
 import type z from 'zod';
 
 type SignUpRequest = z.infer<typeof SignUpFormSchema>;

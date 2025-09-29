@@ -248,7 +248,7 @@ async function main() {
                     minimum_grade: 60,
                     maximum_grade: 100,
                     minimum_frequency: 75,
-                    companies_id: uuid, // sempre a mesma empresa
+                    company_id: uuid, // sempre a mesma empresa
                     active: true,
                     created_at: now,
                     updated_at: now,
@@ -307,7 +307,7 @@ async function main() {
                     id,
                     number: 100 + i,
                     block: String.fromCharCode(65 + i),
-                    companies_id: uuid,
+                    company_id: uuid,
                     created_at: now,
                     updated_at: now,
                     created_by: ownerId,
@@ -449,7 +449,7 @@ async function main() {
                     locked: i % 5 === 0,
                     completed: i % 4 === 0,
                     users_id: users[i + 1].id,
-                    companies_id: uuid,
+                    company_id: uuid,
                     created_at: now,
                     updated_at: now,
                     created_by: ownerId,
@@ -628,7 +628,7 @@ async function main() {
             data: {
                 id: generateUUID(),
                 registrations_time: 6,
-                companies_id: uuid,
+                company_id: uuid,
                 created_at: now,
                 updated_at: now,
                 created_by: ownerId,

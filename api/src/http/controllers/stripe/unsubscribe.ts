@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { auth } from '../../../middlewares/auth';
-import { UnsubscribeApiRequestSchema, UnsubscribeApiResponseSchema } from '@idiomax/http-schemas/subscriptions/unsubscribe';
+import { UnsubscribeApiRequestSchema, UnsubscribeApiResponseSchema } from '@idiomax/validation-schemas/subscriptions/unsubscribe';
 import { stripe } from '../../../lib/stripe';
 
 export async function Unsubscribe(app: FastifyInstance) {

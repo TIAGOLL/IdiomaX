@@ -11,8 +11,8 @@ import {
 import { LoaderIcon } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { getLevelsByCourse } from '@/services/levels';
-import type { Level } from '@idiomax/http-schemas/levels/get-levels';
-import type { GetCourseByIdResponse } from '@idiomax/http-schemas/courses/get-course-by-id';
+import type { Level } from '@idiomax/validation-schemas/levels/get-levels';
+import type { GetCourseByIdResponse } from '@idiomax/validation-schemas/courses/get-course-by-id';
 import { EditLevelForm } from './edit-level-form';
 import { DeleteLevelForm } from './delete-level-form';
 import { ToggleLevelStatusForm } from './toggle-level-status-form';

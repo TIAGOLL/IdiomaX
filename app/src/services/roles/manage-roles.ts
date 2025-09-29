@@ -1,6 +1,6 @@
 import { api } from '../../lib/api';
 import { getCurrentCompanyId } from '../../lib/company-utils';
-import type { UpdateUserRoleHttpRequest } from '@idiomax/http-schemas/roles/update-user-role';
+import type { UpdateUserRoleHttpRequest } from '@idiomax/validation-schemas/roles/update-user-role';
 
 
 export async function addUserRole(data: UpdateUserRoleHttpRequest): Promise<{ message: string }> {

@@ -1,4 +1,4 @@
-import type { UserWithRole } from "@idiomax/http-schemas/users/get-users";
+import type { UserWithRole } from "@idiomax/validation-schemas/users/get-users";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCurrentCompanyId } from "@/lib/company-utils";
 import { useSearchParams } from "react-router";

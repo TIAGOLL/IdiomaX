@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { GetLevelByIdApiParamsSchema, GetLevelByIdApiResponseSchema } from '@idiomax/http-schemas/levels/get-level-by-id'
+import { GetLevelByIdApiParamsSchema, GetLevelByIdApiResponseSchema } from '@idiomax/validation-schemas/levels/get-level-by-id'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { checkMemberAccess } from '../../../lib/get-user-permission'
@@ -53,7 +53,7 @@ export async function getLevelById(app: FastifyInstance) {
                 throw new BadRequestError('Level não encontrado.')
             }
 
-            await checkMemberAccess(level.courses?.companies_id || '', userId)
+            await checkMemberAccess(level.courses?.company_id || '', userId)
 
             const mappedLevel = {
                 id: level.id,

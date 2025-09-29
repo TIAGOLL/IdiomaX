@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { auth } from '../../../middlewares/auth';
-import { GetProductsApiResponseSchema } from '@idiomax/http-schemas/subscriptions/get-products'
+import { GetProductsApiResponseSchema } from '@idiomax/validation-schemas/subscriptions/get-products'
 import { prisma } from '../../../lib/prisma';
 
 export async function GetProducts(app: FastifyInstance) {

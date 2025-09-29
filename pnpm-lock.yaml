@@ -42,9 +42,9 @@ importers:
       '@idiomax/authorization':
         specifier: workspace:^
         version: link:../packages/authorization
-      '@idiomax/http-schemas':
+      '@idiomax/validation-schemas':
         specifier: workspace:^
-        version: link:../packages/http-schemas
+        version: link:../packages/validation-schemas
       '@prisma/client':
         specifier: ^6.15.0
         version: 6.16.2(prisma@6.16.2(typescript@5.9.2))(typescript@5.9.2)
@@ -136,9 +136,9 @@ importers:
       '@idiomax/authorization':
         specifier: workspace:^
         version: link:../packages/authorization
-      '@idiomax/http-schemas':
+      '@idiomax/validation-schemas':
         specifier: workspace:^
-        version: link:../packages/http-schemas
+        version: link:../packages/validation-schemas
       '@radix-ui/react-accordion':
         specifier: ^1.2.12
         version: 1.2.12(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -321,7 +321,7 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0(@casl/ability@6.7.3)(react@19.1.1)
 
-  packages/http-schemas:
+  packages/validation-schemas:
     dependencies:
       api:
         specifier: workspace:^

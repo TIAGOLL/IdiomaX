@@ -4,7 +4,7 @@ import type {
     GetUsersHttpRequest,
     GetUsersHttpResponse,
     UserRole
-} from '@idiomax/http-schemas/users/get-users';
+} from '@idiomax/validation-schemas/users/get-users';
 
 export async function getUsers(
     role?: UserRole,

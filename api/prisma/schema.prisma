@@ -108,7 +108,7 @@ model classrooms {
   id           String  @id @default(uuid()) @db.VarChar(256)
   number       Decimal @db.Decimal(5, 0)
   block        String  @db.VarChar(256)
-  companies_id String  @db.VarChar(256)
+  company_id String  @db.VarChar(256)
 
   // Campos base de auditoria
   created_at DateTime @default(now())
@@ -117,7 +117,7 @@ model classrooms {
   updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
-  companies companies @relation(fields: [companies_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "companies_fk")
+  companies companies @relation(fields: [company_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "companies_fk")
 
   // Relacionamentos de auditoria
   creator users? @relation("ClassroomsCreatedBy", fields: [created_by], references: [id])
@@ -127,7 +127,7 @@ model classrooms {
 model configs {
   id                 String  @id @default(uuid()) @db.VarChar(256)
   registrations_time Decimal @default(6) @db.Decimal(256, 0)
-  companies_id       String  @unique @db.VarChar(256)
+  company_id       String  @unique @db.VarChar(256)
 
   // Campos base de auditoria
   created_at DateTime @default(now())
@@ -136,7 +136,7 @@ model configs {
   updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
-  companies companies @relation(fields: [companies_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
+  companies companies @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
 
   // Relacionamentos de auditoria
   creator users? @relation("ConfigsCreatedBy", fields: [created_by], references: [id])
@@ -154,7 +154,7 @@ model courses {
   maximum_grade      Decimal @db.Decimal(20, 0)
   minimum_frequency  Decimal @db.Decimal(20, 0)
   syllabus           String?
-  companies_id       String  @db.VarChar(256)
+  company_id       String  @db.VarChar(256)
 
   // Campos base de auditoria
   created_at DateTime @default(now())
@@ -166,7 +166,7 @@ model courses {
   // Relacionamentos existentes
   class     Renamedclass[]
   levels    levels[]
-  companies companies      @relation(fields: [companies_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
+  companies companies      @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
 
   // Relacionamentos de auditoria
   creator users? @relation("CoursesCreatedBy", fields: [created_by], references: [id])
@@ -312,7 +312,7 @@ model registrations {
   locked             Boolean? @default(false)
   completed          Boolean? @default(false)
   users_id           String?  @db.VarChar(256)
-  companies_id       String?  @db.VarChar(256)
+  company_id       String?  @db.VarChar(256)
 
   // Campos base de auditoria
   created_at DateTime @default(now())
@@ -323,7 +323,7 @@ model registrations {
 
   monthly_fee         monthly_fees[]
   records_of_students records_of_students[]
-  companies           companies?            @relation(fields: [companies_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
+  companies           companies?            @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
   users               users?                @relation(fields: [users_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
   tasks_delivery      tasks_deliveries[]
 

@@ -3,7 +3,7 @@ import { getCurrentCompanyId } from '../../lib/company-utils';
 import type {
     UpdateRegistrationTimeHttpRequest,
     UpdateRegistrationTimeHttpResponse
-} from '@idiomax/http-schemas/settings/update-registration-time';
+} from '@idiomax/validation-schemas/settings/update-registration-time';
 
 export type UpdateRegistrationTimeBody = Omit<UpdateRegistrationTimeHttpRequest, 'company_id'>;
 export type UpdateRegistrationTimeResponse = UpdateRegistrationTimeHttpResponse;

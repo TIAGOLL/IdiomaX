@@ -6,7 +6,7 @@ import { Save, LoaderIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
-import { UpdateCourseFormSchema } from '@idiomax/http-schemas/courses/update-course';
+import { UpdateCourseFormSchema } from '@idiomax/validation-schemas/courses/update-course';
 import { FormMessageError } from '@/components/ui/form-message-error';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -28,7 +28,7 @@ interface EditCourseFormProps {
         maximum_grade: number;
         minimum_frequency: number;
         syllabus: string | null;
-        companies_id: string;
+        company_id: string;
         active: boolean;
     };
 }
@@ -63,7 +63,7 @@ export function EditCourseForm({ course }: EditCourseFormProps) {
         criteriaMode: "all",
         defaultValues: {
             id: course.id,
-            company_id: course.companies_id,
+            company_id: course.company_id,
             name: course.name,
             description: course.description || '',
             registration_value: course.registration_value,

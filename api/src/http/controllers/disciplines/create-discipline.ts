@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { CreateDisciplineApiRequestSchema, CreateDisciplineApiResponseSchema } from '@idiomax/http-schemas/disciplines/create-discipline'
+import { CreateDisciplineApiRequestSchema, CreateDisciplineApiResponseSchema } from '@idiomax/validation-schemas/disciplines/create-discipline'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { BadRequestError } from '../_errors/bad-request-error'
@@ -48,7 +48,7 @@ export async function createDiscipline(app: FastifyInstance) {
                 include: {
                     courses: {
                         select: {
-                            companies_id: true
+                            company_id: true
                         }
                     }
                 }
@@ -58,7 +58,7 @@ export async function createDiscipline(app: FastifyInstance) {
                 throw new BadRequestError('Nível não encontrado.')
             }
 
-            if (!level.courses?.companies_id) {
+            if (!level.courses?.company_id) {
                 throw new BadRequestError('Curso do nível não encontrado.')
             }
 

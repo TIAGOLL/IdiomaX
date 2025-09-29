@@ -1,8 +1,8 @@
 import { api } from '@/lib/api'
-import type { CreateCourseApiRequest, CreateCourseApiResponse } from '@idiomax/http-schemas/courses/create-course'
+import type { CreateCourseApiRequestType, CreateCourseApiResponseType } from '@idiomax/validation-schemas/courses/create-course'
 
-export async function createCourse(data: CreateCourseApiRequest): Promise<CreateCourseApiResponse> {
+export async function createCourse(data: CreateCourseApiRequestType) {
     const response = await api.post('/courses', data)
 
-    return response.data as CreateCourseApiResponse
+    return response.data as CreateCourseApiResponseType
 }

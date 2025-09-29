@@ -26,7 +26,7 @@ cd app && pnpm dev      # Frontend em localhost:5173
 
 ### Backend (Fastify + Prisma)
 - **Controllers**: Um arquivo por endpoint em `/controllers/[area]/[acao].ts`
-- **Schemas**: Importados de `@idiomax/http-schemas/[endpoint]` 
+- **Schemas**: Importados de `@idiomax/validation-schemas/[endpoint]` 
 - **Autenticação**: Middleware `auth.ts` com hook `request.getCurrentUserId()`
 - **Validação**: Zod schemas com `fastify-type-provider-zod`
 - **Tratamento de erros**: Classes customizadas em `controllers/_errors/`
@@ -81,10 +81,10 @@ export function MinhaPagina() {
 - **Vercel**: Deploy configurado com `vercel.json` no backend e frontend
 
 ## Convenções Específicas
-- Workspace schemas em `packages/http-schemas/` são importados como `@idiomax/http-schemas/[file]`
+- Workspace schemas em `packages/http-schemas/` são importados como `@idiomax/validation-schemas/[file]`
 - Migrações Prisma sempre com nomes descritivos via `pnpm db:migrate:dev`
 - Roles: `STUDENT`, `TEACHER`, `ADMIN` (enum no Prisma)
-- Multi-tenancy por `companies_id` em quase todas as entidades
+- Multi-tenancy por `company_id` em quase todas as entidades
 - Autenticação por `username` (não email) no login
 
 ## Desenvolvimento

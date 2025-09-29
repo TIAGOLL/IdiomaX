@@ -5,7 +5,7 @@ import { checkAdminAccess } from '../../../lib/get-user-permission';
 import {
     UpdateRegistrationTimeApiRequestSchema,
     UpdateRegistrationTimeApiResponseSchema
-} from '@idiomax/http-schemas/settings/update-registration-time';
+} from '@idiomax/validation-schemas/settings/update-registration-time';
 import { prisma } from '../../../lib/prisma';
 import { ForbiddenError } from '../_errors/forbidden-error';
 
@@ -40,7 +40,7 @@ export async function updateRegistrationTime(app: FastifyInstance) {
                 // Atualizar o tempo de matrícula
                 await prisma.configs.update({
                     where: {
-                        companies_id: company.id,
+                        company_id: company.id,
                     },
                     data: {
                         registrations_time: registrations_time,

@@ -1,9 +1,9 @@
 import { api } from '@/lib/api'
-import { GetClassroomsResponseSchema, GetClassroomsQuerySchema } from '@idiomax/http-schemas/classrooms/get-classrooms'
-import { UpdateClassroomApiRequestSchema, type UpdateClassroomResponse, } from '@idiomax/http-schemas/classrooms/update-classroom'
+import { GetClassroomsResponseSchema, GetClassroomsQuerySchema } from '@idiomax/validation-schemas/classrooms/get-classrooms'
+import { UpdateClassroomApiRequestSchema, type UpdateClassroomResponse, } from '@idiomax/validation-schemas/classrooms/update-classroom'
 import { z } from 'zod'
-import type { CreateClassroomApiRequestSchema, CreateClassroomApiResponseSchema } from '@idiomax/http-schemas/classrooms/create-classroom'
-import { type DeleteClassroomApiRequest, type DeleteClassroomApiResponse } from '@idiomax/http-schemas/classrooms/delete-classroom';
+import type { CreateClassroomApiRequestSchema, CreateClassroomApiResponseSchema } from '@idiomax/validation-schemas/classrooms/create-classroom'
+import { type DeleteClassroomApiRequest, type DeleteClassroomApiResponse } from '@idiomax/validation-schemas/classrooms/delete-classroom';
 
 type CreateClassroomRequest = z.infer<typeof CreateClassroomApiRequestSchema>
 type CreateClassroomResponse = z.infer<typeof CreateClassroomApiResponseSchema>
@@ -36,3 +36,4 @@ export async function deleteClassroom({ id }: DeleteClassroomApiRequest): Promis
     const response = await api.delete(`/classroom/${id}`)
     return response.data
 }
+

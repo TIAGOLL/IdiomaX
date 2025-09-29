@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { GetLevelsApiParamsSchema, GetLevelsApiResponseSchema } from '@idiomax/http-schemas/levels/get-levels'
+import { GetLevelsApiParamsSchema, GetLevelsApiResponseSchema } from '@idiomax/validation-schemas/levels/get-levels'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { checkMemberAccess } from '../../../lib/get-user-permission'
@@ -42,7 +42,7 @@ export async function getLevelsByCourse(app: FastifyInstance) {
                 throw new BadRequestError('Curso não encontrado.')
             }
 
-            await checkMemberAccess(course.companies_id, userId)
+            await checkMemberAccess(course.company_id, userId)
 
             const levels = await prisma.levels.findMany({
                 where: {

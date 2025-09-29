@@ -4,7 +4,7 @@ import type {
     GetBooksHttpParamsData,
     GetBooksHttpQueryData,
     GetBooksHttpResponseData
-} from '@idiomax/http-schemas/materials/get-books';
+} from '@idiomax/validation-schemas/materials/get-books';
 
 export type GetBooksParams = GetBooksHttpParamsData;
 export type GetBooksQuery = GetBooksHttpQueryData;

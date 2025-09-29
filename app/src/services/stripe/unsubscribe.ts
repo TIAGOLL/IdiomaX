@@ -1,5 +1,5 @@
 import { api } from "@/lib/api";
-import type { UnsubscribeHttpResponse, UnsubscribeHttpRequest } from "@idiomax/http-schemas/subscriptions/unsubscribe";
+import type { UnsubscribeHttpResponse, UnsubscribeHttpRequest } from "@idiomax/validation-schemas/subscriptions/unsubscribe";
 
 type UnsubscribeResponse = UnsubscribeHttpResponse;
 type UnsubscribeRequest = UnsubscribeHttpRequest;

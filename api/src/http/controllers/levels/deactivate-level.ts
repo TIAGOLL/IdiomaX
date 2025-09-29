@@ -4,7 +4,7 @@ import { z } from 'zod'
 
 import { BadRequestError } from '../_errors/bad-request-error'
 import { prisma } from '../../../lib/prisma'
-import { DeactivateLevelFormSchema, DeactivateLevelApiResponse } from '@idiomax/http-schemas/levels/deactivate-level'
+import { DeactivateLevelFormSchema, DeactivateLevelApiResponse } from '@idiomax/validation-schemas/levels/deactivate-level'
 import { auth } from '../../../middlewares/auth'
 
 export async function deactivateLevel(app: FastifyInstance) {

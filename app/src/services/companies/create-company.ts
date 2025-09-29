@@ -1,7 +1,7 @@
 import { api } from "@/lib/api";
-import type { CreateCompanyHttpRequest, CreateCompanyHttpResponse } from "@idiomax/http-schemas/companies/create-company";
+import type { CreateCompanyRequestType, CreateCompanyResponseType } from "@idiomax/validation-schemas/companies/create-company";
 
-export async function createCompany(data: CreateCompanyHttpRequest) {
+export async function createCompany(data: CreateCompanyRequestType) {
     const response = await api.post(`/companies`, data);
-    return response.data as CreateCompanyHttpResponse;
+    return response.data as CreateCompanyResponseType;
 }

@@ -3,7 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { prisma } from '../../../lib/prisma';
 import { auth } from '../../../middlewares/auth';
-import { GetCompanyByIdApiRequestSchema, GetCompanyByIdApiResponseSchema } from '@idiomax/http-schemas/companies/get-company-by-id'
+import { GetCompanyByIdApiRequestSchema, GetCompanyByIdApiResponseSchema } from '@idiomax/validation-schemas/companies/get-company-by-id'
 import { getUserPermissions } from '../../../lib/get-user-permission';
 import { ForbiddenError } from '../_errors/forbidden-error';
 export async function getCompanyById(app: FastifyInstance) {
@@ -11,7 +11,7 @@ export async function getCompanyById(app: FastifyInstance) {
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .get(
-            '/companies/:companies_id',
+            '/companies/:company_id',
             {
                 schema: {
                     tags: ['Instituições'],
@@ -24,10 +24,10 @@ export async function getCompanyById(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { companies_id } = request.params;
+                const { company_id } = request.params;
 
                 const userId = await request.getCurrentUserId()
-                const { member } = await request.getUserMember(companies_id)
+                const { member } = await request.getUserMember(company_id)
 
                 const { cannot } = getUserPermissions(userId, member.role)
 
@@ -37,7 +37,7 @@ export async function getCompanyById(app: FastifyInstance) {
 
                 const company = await prisma.companies.findUnique({
                     where: {
-                        id: companies_id,
+                        id: company_id,
                         members: {
                             some: {
                                 user_id: userId,

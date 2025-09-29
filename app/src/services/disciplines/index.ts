@@ -1,8 +1,8 @@
 import { api } from '@/lib/api';
-import type { CreateDisciplineRequest, CreateDisciplineResponse } from '@idiomax/http-schemas/disciplines/create-discipline';
-import type { UpdateDisciplineRequest, UpdateDisciplineResponse } from '@idiomax/http-schemas/disciplines/update-discipline';
-import type { ToggleDisciplineStatusRequest, ToggleDisciplineStatusResponse } from '@idiomax/http-schemas/disciplines/toggle-discipline-status';
-import type { DeleteDisciplineResponse } from '@idiomax/http-schemas/disciplines/delete-discipline';
+import type { CreateDisciplineRequest, CreateDisciplineResponse } from '@idiomax/validation-schemas/disciplines/create-discipline';
+import type { UpdateDisciplineRequest, UpdateDisciplineResponse } from '@idiomax/validation-schemas/disciplines/update-discipline';
+import type { ToggleDisciplineStatusRequest, ToggleDisciplineStatusResponse } from '@idiomax/validation-schemas/disciplines/toggle-discipline-status';
+import type { DeleteDisciplineResponse } from '@idiomax/validation-schemas/disciplines/delete-discipline';
 
 export async function createDiscipline(data: CreateDisciplineRequest): Promise<CreateDisciplineResponse> {
     const response = await api.post('/disciplines', data);

@@ -7,7 +7,7 @@ import { LoaderIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 import type z from "zod";
-import type { UnsubscribeApiRequestSchema } from "@idiomax/http-schemas/subscriptions/unsubscribe";
+import type { UnsubscribeApiRequestSchema } from "@idiomax/validation-schemas/subscriptions/unsubscribe";
 import { getCurrentCompanyId } from "@/lib/company-utils";
 
 type UnsubscribeRequest = z.infer<typeof UnsubscribeApiRequestSchema>;

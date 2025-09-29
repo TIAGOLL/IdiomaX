@@ -1,10 +1,7 @@
 import { api } from "@/lib/api";
-import type { SignUpRequestType, SignUpResponseType } from "@idiomax/http-schemas/auth/sign-up";
+import type { SignUpRequestType, SignUpResponseType } from "@idiomax/validation-schemas/auth/sign-up";
 
-type SignUpRequest = SignUpRequestType;
-type SignUpResponse = SignUpResponseType;
-
-export async function signUp(data: SignUpRequest) {
+export async function signUp(data: SignUpRequestType) {
     const response = await api.post('/auth/sign-up', data);
-    return response.data as SignUpResponse;
+    return response.data as SignUpResponseType;
 }

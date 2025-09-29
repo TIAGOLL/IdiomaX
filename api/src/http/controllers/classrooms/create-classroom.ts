@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { CreateClassroomApiRequestSchema, CreateClassroomResponseSchema } from '@idiomax/http-schemas/classrooms/create-classroom'
+import { CreateClassroomApiRequestSchema, CreateClassroomResponseSchema } from '@idiomax/validation-schemas/classrooms/create-classroom'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { BadRequestError } from '../_errors/bad-request-error'
@@ -25,9 +25,9 @@ export async function createClassroom(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { companies_id, number, block } = request.body
+                const { company_id, number, block } = request.body
                 const userId = await request.getCurrentUserId()
-                const { member } = await request.getUserMember(companies_id)
+                const { member } = await request.getUserMember(company_id)
 
                 const { cannot } = getUserPermissions(userId, member.role)
 
@@ -39,7 +39,7 @@ export async function createClassroom(app: FastifyInstance) {
                 // Verificar se já existe uma sala com esse número na mesma empresa
                 const existingClassroom = await prisma.classrooms.findFirst({
                     where: {
-                        companies_id,
+                        company_id,
                         number,
                     }
                 })
@@ -52,7 +52,7 @@ export async function createClassroom(app: FastifyInstance) {
                     data: {
                         number,
                         block,
-                        companies_id,
+                        company_id,
                         created_by: userId,
                         updated_by: userId,
                     },

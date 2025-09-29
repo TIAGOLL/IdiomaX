@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { checkMemberAccess } from '../../../lib/get-user-permission';
-import { GetBooksApiParamsSchema, GetBooksApiQuerySchema, GetBooksApiResponseSchema } from '@idiomax/http-schemas/materials/get-books';
+import { GetBooksApiParamsSchema, GetBooksApiQuerySchema, GetBooksApiResponseSchema } from '@idiomax/validation-schemas/materials/get-books';
 import { prisma } from '../../../lib/prisma';
 
 export async function getBooks(app: FastifyInstance) {
@@ -43,7 +43,7 @@ export async function getBooks(app: FastifyInstance) {
                 const whereClause: Record<string, unknown> = {
                     levels: {
                         courses: {
-                            companies_id: company.id,
+                            company_id: company.id,
                         }
                     }
                 };

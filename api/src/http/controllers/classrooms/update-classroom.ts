@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { UpdateClassroomApiRequestSchema, UpdateClassroomApiResponseSchema, } from '@idiomax/http-schemas/classrooms/update-classroom'
+import { UpdateClassroomApiRequestSchema, UpdateClassroomApiResponseSchema, } from '@idiomax/validation-schemas/classrooms/update-classroom'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { BadRequestError } from '../_errors/bad-request-error'
@@ -31,10 +31,10 @@ export async function updateClassroom(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { id, number, block, companies_id } = request.body
+                const { id, number, block, company_id } = request.body
 
                 const userId = await request.getCurrentUserId()
-                const { member } = await request.getUserMember(companies_id)
+                const { member } = await request.getUserMember(company_id)
 
                 const { cannot } = getUserPermissions(userId, member.role)
 
@@ -45,7 +45,7 @@ export async function updateClassroom(app: FastifyInstance) {
                 // Verificar se já existe outra sala com esse número na mesma empresa
                 const duplicateClassroom = await prisma.classrooms.findFirst({
                     where: {
-                        companies_id,
+                        company_id,
                         number: number,
                         active: true,
                         id: { not: id }

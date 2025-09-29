@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { UpdateDisciplineApiRequestSchema, UpdateDisciplineApiResponseSchema } from '@idiomax/http-schemas/disciplines/update-discipline'
+import { UpdateDisciplineApiRequestSchema, UpdateDisciplineApiResponseSchema } from '@idiomax/validation-schemas/disciplines/update-discipline'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { checkMemberAccess } from '../../../lib/get-user-permission'
@@ -47,7 +47,7 @@ export async function updateDiscipline(app: FastifyInstance) {
                         include: {
                             courses: {
                                 select: {
-                                    companies_id: true
+                                    company_id: true
                                 }
                             }
                         }
@@ -59,11 +59,11 @@ export async function updateDiscipline(app: FastifyInstance) {
                 throw new BadRequestError('Disciplina não encontrada.')
             }
 
-            if (!discipline.levels?.courses?.companies_id) {
+            if (!discipline.levels?.courses?.company_id) {
                 throw new BadRequestError('Curso da disciplina não encontrado.')
             }
 
-            await checkMemberAccess(discipline.levels.courses.companies_id, userId)
+            await checkMemberAccess(discipline.levels.courses.company_id, userId)
 
             // Verificar se já existe outra disciplina com o mesmo nome no mesmo nível
             const existingDiscipline = await prisma.disciplines.findFirst({

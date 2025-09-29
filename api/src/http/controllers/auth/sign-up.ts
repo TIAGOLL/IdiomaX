@@ -3,7 +3,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { prisma } from '../../../lib/prisma';
-import { SignUpApiRequest, SignUpApiResponse } from '@idiomax/http-schemas/auth/sign-up';
+import { SignUpApiRequest, SignUpApiResponse } from '@idiomax/validation-schemas/auth/sign-up';
 
 
 export async function SignUp(app: FastifyInstance) {

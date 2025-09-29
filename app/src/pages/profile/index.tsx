@@ -14,7 +14,7 @@ import { useEffect } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useSessionContext } from '@/contexts/session-context';
-import { UpdateUserFormSchema } from '@idiomax/http-schemas/users/update-user';
+import { UpdateUserFormSchema } from '@idiomax/validation-schemas/users/update-user';
 import { getCurrentCompanyId } from '@/lib/company-utils';
 import { updateUser } from '@/services/users/update-user';
 

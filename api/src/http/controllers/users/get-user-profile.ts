@@ -3,7 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { prisma } from '../../../lib/prisma';
 import { auth } from '../../../middlewares/auth';
-import { GetProfileApiResponse } from '@idiomax/http-schemas/auth/get-profile'
+import { GetProfileApiResponse } from '@idiomax/validation-schemas/auth/get-profile'
 import { UnauthorizedError } from '../_errors/unauthorized-error';
 
 export async function getUserProfile(app: FastifyInstance) {

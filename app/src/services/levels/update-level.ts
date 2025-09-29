@@ -1,5 +1,5 @@
 import { api } from '@/lib/api'
-import type { UpdateLevelRequest, UpdateLevelResponse } from '@idiomax/http-schemas/levels/update-level'
+import type { UpdateLevelRequest, UpdateLevelResponse } from '@idiomax/validation-schemas/levels/update-level'
 
 export async function updateLevel(data: UpdateLevelRequest): Promise<UpdateLevelResponse> {
     const response = await api.put(`/levels/${data.course_id}`, data)

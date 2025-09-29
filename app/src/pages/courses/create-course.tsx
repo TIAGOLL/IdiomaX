@@ -7,7 +7,7 @@ import { PlusCircle, LoaderIcon, BookOpen } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
-import { CreateCourseFormSchema } from '@idiomax/http-schemas/courses/create-course';
+import { CreateCourseFormSchema } from '@idiomax/validation-schemas/courses/create-course';
 import { FormMessageError } from '@/components/ui/form-message-error';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';

@@ -18,7 +18,7 @@ import { z } from 'zod';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router';
 import { createCompany } from '@/services/companies/create-company';
-import { CreateCompanyFormSchema } from '@idiomax/http-schemas/companies/create-company';
+import { CreateCompanyFormSchema } from '@idiomax/validation-schemas/companies/create-company';
 
 type CreateCompanyRequest = z.infer<typeof CreateCompanyFormSchema>;
 

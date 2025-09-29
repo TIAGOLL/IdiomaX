@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { DeleteDisciplineApiResponseSchema } from '@idiomax/http-schemas/disciplines/delete-discipline'
+import { DeleteDisciplineApiResponseSchema } from '@idiomax/validation-schemas/disciplines/delete-discipline'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { checkMemberAccess } from '../../../lib/get-user-permission'
@@ -45,7 +45,7 @@ export async function deleteDiscipline(app: FastifyInstance) {
                         include: {
                             courses: {
                                 select: {
-                                    companies_id: true
+                                    company_id: true
                                 }
                             }
                         }
@@ -57,11 +57,11 @@ export async function deleteDiscipline(app: FastifyInstance) {
                 throw new BadRequestError('Disciplina não encontrada.')
             }
 
-            if (!discipline.levels?.courses?.companies_id) {
+            if (!discipline.levels?.courses?.company_id) {
                 throw new BadRequestError('Curso da disciplina não encontrado.')
             }
 
-            await checkMemberAccess(discipline.levels.courses.companies_id, userId)
+            await checkMemberAccess(discipline.levels.courses.company_id, userId)
 
             // Verificar se a disciplina tem tasks associadas
             const tasksCount = await prisma.tasks.count({

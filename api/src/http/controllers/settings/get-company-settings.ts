@@ -5,7 +5,7 @@ import { checkMemberAccess } from '../../../lib/get-user-permission';
 import {
     GetCompanySettingsApiRequestSchema,
     GetCompanySettingsApiResponseSchema
-} from '@idiomax/http-schemas/settings/get-company-settings';
+} from '@idiomax/validation-schemas/settings/get-company-settings';
 import { prisma } from '../../../lib/prisma';
 import { NotFoundError } from '../_errors/not-found-error';
 
@@ -36,7 +36,7 @@ export async function getCompanySettings(app: FastifyInstance) {
                 // Buscar as configurações da empresa
                 const config = await prisma.configs.findFirst({
                     where: {
-                        companies_id: company.id,
+                        company_id: company.id,
                     },
                     select: {
                         registrations_time: true,

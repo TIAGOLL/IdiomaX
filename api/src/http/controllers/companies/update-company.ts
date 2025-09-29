@@ -4,7 +4,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { auth } from '../../../middlewares/auth';
 import { prisma } from '../../../lib/prisma';
-import { UpdateCompanyApiRequestSchema, UpdateCompanyApiResponseSchema } from '@idiomax/http-schemas/companies/update-company';
+import { UpdateCompanyApiRequestSchema, UpdateCompanyApiResponseSchema } from '@idiomax/validation-schemas/companies/update-company';
 import { ForbiddenError } from '../_errors/forbidden-error';
 import { getUserPermissions } from '../../../lib/get-user-permission';
 
@@ -27,7 +27,7 @@ export async function updateCompany(app: FastifyInstance) {
             },
             async (request, reply) => {
                 const { id, name, phone, address, cnpj, email, logo_16x16_url, logo_512x512_url, social_reason, state_registration, tax_regime, } = request.body;
-                
+
                 const userId = await request.getCurrentUserId()
                 const { member } = await request.getUserMember(id)
 

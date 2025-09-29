@@ -1,5 +1,5 @@
 import { api } from '@/lib/api'
-import type { CreateLevelRequest, CreateLevelResponse } from '@idiomax/http-schemas/levels/create-level'
+import type { CreateLevelRequest, CreateLevelResponse } from '@idiomax/validation-schemas/levels/create-level'
 
 export async function createLevel(data: CreateLevelRequest): Promise<CreateLevelResponse> {
     const response = await api.post('/levels', data)

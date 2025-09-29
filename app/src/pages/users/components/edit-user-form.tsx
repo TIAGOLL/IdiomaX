@@ -1,6 +1,6 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Controller, useForm } from 'react-hook-form';
-import { UpdateUserFormSchema } from '@idiomax/http-schemas/users/update-user';
+import { UpdateUserFormSchema } from '@idiomax/validation-schemas/users/update-user';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type z from 'zod';
 import { Label } from '@/components/ui/label';
@@ -18,7 +18,7 @@ import { toast } from 'sonner';
 import { useSearchParams } from 'react-router';
 import { useSessionContext } from '@/contexts/session-context';
 import { ptBR } from 'date-fns/locale';
-import type { UserWithRole } from '@idiomax/http-schemas/users/get-users';
+import type { UserWithRole } from '@idiomax/validation-schemas/users/get-users';
 import { updateUser } from '@/services/users/update-user';
 
 type UpdateUserFormSchema = z.infer<typeof UpdateUserFormSchema>;

@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Save, X, Edit } from 'lucide-react';
 import { updateDiscipline } from '@/services/disciplines';
 import { toast } from 'sonner';
-import type { UpdateDisciplineFormData } from '@idiomax/http-schemas/disciplines/update-discipline';
+import type { UpdateDisciplineFormData } from '@idiomax/validation-schemas/disciplines/update-discipline';
 
 interface EditDisciplineFormProps {
     disciplineId: string;

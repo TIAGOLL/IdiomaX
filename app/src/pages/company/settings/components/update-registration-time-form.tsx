@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { UpdateRegistrationTimeFormSchema } from '@idiomax/http-schemas/settings/update-registration-time';
+import { UpdateRegistrationTimeFormSchema } from '@idiomax/validation-schemas/settings/update-registration-time';
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";

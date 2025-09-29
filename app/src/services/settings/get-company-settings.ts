@@ -2,7 +2,7 @@ import { api } from '../../lib/api';
 import { getCurrentCompanyId } from '../../lib/company-utils';
 import type {
     GetCompanySettingsHttpResponse
-} from '@idiomax/http-schemas/settings/get-company-settings';
+} from '@idiomax/validation-schemas/settings/get-company-settings';
 
 export type GetCompanySettingsResponse = GetCompanySettingsHttpResponse;
 

@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { AdminResetPasswordFormSchema } from '@idiomax/http-schemas/users/admin-reset-password';
+import { AdminResetPasswordFormSchema } from '@idiomax/validation-schemas/users/admin-reset-password';
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -9,7 +9,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { getCurrentCompanyId } from "@/lib/company-utils";
-import type { UserWithRole } from "@idiomax/http-schemas/users/get-users";
+import type { UserWithRole } from "@idiomax/validation-schemas/users/get-users";
 import type z from "zod";
 import { adminResetPassword } from "@/services/users/admin-reset-password";
 

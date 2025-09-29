@@ -3,7 +3,7 @@
 // import { useMutation } from "@tanstack/react-query";
 // import { toast } from "sonner";
 // import { createSubscription } from "@/services/stripe/create-subscription";
-// import { CreateSubscriptionFormSchema } from '@idiomax/http-schemas/subscriptions/create-subscription';
+// import { CreateSubscriptionFormSchema } from '@idiomax/validation-schemas/subscriptions/create-subscription';
 // import type z from "zod";
 // import { useNavigate } from "react-router";
 // import { zodResolver } from "@hookform/resolvers/zod";
@@ -114,7 +114,7 @@ import { useNavigate } from "react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getProducts } from "@/services/stripe/get-products";
 import { useForm } from "react-hook-form";
-import { CreateSubscriptionFormSchema } from "@idiomax/http-schemas/subscriptions/create-subscription";
+import { CreateSubscriptionFormSchema } from "@idiomax/validation-schemas/subscriptions/create-subscription";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createSubscription } from "@/services/stripe/create-subscription";
 import { toast } from "sonner";

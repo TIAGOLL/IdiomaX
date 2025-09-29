@@ -7,7 +7,7 @@ import { useState } from "react";
 import { deleteClassroom, } from "@/services/classrooms";
 import { getCurrentCompanyId } from "@/lib/company-utils";
 import z from "zod";
-import type { GetClassroomsResponseSchema } from "@idiomax/http-schemas/classrooms/get-classrooms";
+import type { GetClassroomsResponseSchema } from "@idiomax/validation-schemas/classrooms/get-classrooms";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 type GetClassroomsResponseSchema = z.infer<typeof GetClassroomsResponseSchema>;
@@ -19,7 +19,7 @@ export function DeleteClassroomForm({ classroom }: { classroom: GetClassroomsRes
     const { mutate, isPending } = useMutation({
         mutationFn: () => deleteClassroom({
             id: classroom.id,
-            companies_id: getCurrentCompanyId()
+            company_id: getCurrentCompanyId()
         }),
         onSuccess: (res) => {
             toast.success(res.message);

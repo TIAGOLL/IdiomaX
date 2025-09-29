@@ -11,7 +11,7 @@ import { Search, Users, Edit, X } from 'lucide-react';
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { useNavigate } from 'react-router';
-import type { UserRole } from '@idiomax/http-schemas/users/get-users';
+import type { UserRole } from '@idiomax/validation-schemas/users/get-users';
 import { getCurrentCompanyId } from '@/lib/company-utils';
 import { getUsers } from '@/services/users/get-users';
 

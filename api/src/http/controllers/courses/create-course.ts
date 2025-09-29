@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { CreateCourseApiRequestSchema, CreateCourseApiResponseSchema } from '@idiomax/http-schemas/courses/create-course'
+import { CreateCourseApiRequestSchema, CreateCourseApiResponseSchema } from '@idiomax/validation-schemas/courses/create-course'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { z } from 'zod'
@@ -28,7 +28,7 @@ export async function createCourse(app: FastifyInstance) {
             },
         }, async (request, reply) => {
             const {
-                companies_id,
+                company_id,
                 name,
                 description,
                 registration_value,
@@ -41,7 +41,7 @@ export async function createCourse(app: FastifyInstance) {
             } = request.body
 
             const userId = await request.getCurrentUserId()
-            const { member } = await request.getUserMember(companies_id)
+            const { member } = await request.getUserMember(company_id)
 
             const { cannot } = getUserPermissions(userId, member.role)
 
@@ -53,7 +53,7 @@ export async function createCourse(app: FastifyInstance) {
             const existingCourse = await prisma.courses.findFirst({
                 where: {
                     name,
-                    companies_id,
+                    company_id,
                     active: true
                 }
             })
@@ -82,7 +82,7 @@ export async function createCourse(app: FastifyInstance) {
                     maximum_grade,
                     minimum_frequency,
                     syllabus,
-                    companies_id,
+                    company_id,
                     created_by: userId,
                     updated_by: userId,
                 }

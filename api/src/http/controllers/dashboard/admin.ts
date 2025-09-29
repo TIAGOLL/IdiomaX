@@ -3,7 +3,7 @@ import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { ForbiddenError } from "../_errors/forbidden-error";
 import { auth } from "../../../middlewares/auth";
 import { prisma } from "../../../lib/prisma";
-import { AdminDashboardApiRequestSchema, AdminDashboardApiResponseSchema } from "@idiomax/http-schemas/dashboard";
+import { AdminDashboardApiRequestSchema, AdminDashboardApiResponseSchema } from "@idiomax/validation-schemas/dashboard";
 import { getUserPermissions } from "../../../lib/get-user-permission";
 
 
@@ -41,27 +41,27 @@ export async function AdminDashboard(app: FastifyInstance) {
                     where: {
                         active: true,
                         member_on: { some: { company_id: company_id, role: "STUDENT" } },
-                        registrations: { some: { companies_id: company_id, completed: false } },
+                        registrations: { some: { company_id: company_id, completed: false } },
                     },
                 });
                 const newRegistrations = await prisma.registrations.count({
                     where: {
                         start_date: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
-                        companies_id: company_id,
+                        company_id: company_id,
                     },
                 });
                 const completedRegistrations = await prisma.registrations.count({
-                    where: { completed: true, companies_id: company_id },
+                    where: { completed: true, company_id: company_id },
                 });
 
                 //locked registrations
                 const lockedRegistrations = await prisma.registrations.count({
-                    where: { locked: true, companies_id: company_id },
+                    where: { locked: true, company_id: company_id },
                 });
 
                 // Ocupação média das turmas
                 const classes = await prisma.renamedclass.findMany({
-                    where: { courses: { companies_id: company_id } },
+                    where: { courses: { company_id: company_id } },
                     include: { users_in_class: true, courses: true },
                 });
                 const classStats = classes.map(c => {
@@ -81,7 +81,7 @@ export async function AdminDashboard(app: FastifyInstance) {
 
                 // Assiduidade média por turma
                 const attendanceByClass = await prisma.renamedclass.findMany({
-                    where: { courses: { companies_id: company_id } },
+                    where: { courses: { company_id: company_id } },
                     include: {
                         users_in_class: {
                             include: {
@@ -166,7 +166,7 @@ export async function AdminDashboard(app: FastifyInstance) {
 
                 // Calendário de encontros (classes)
                 const classDays = await prisma.classes.findMany({
-                    where: { class: { courses: { companies_id: company_id } } },
+                    where: { class: { courses: { company_id: company_id } } },
                     include: { class: true },
                 });
                 const classDaysList = classDays.map(cd => ({
@@ -190,7 +190,7 @@ export async function AdminDashboard(app: FastifyInstance) {
                 const monthlyFees = await prisma.monthly_fees.findMany({
                     where: {
                         registrations: {
-                            companies_id: company_id
+                            company_id: company_id
                         }
                     },
                 });
@@ -275,7 +275,7 @@ export async function AdminDashboard(app: FastifyInstance) {
 
                 // Ticket médio por matrícula
                 const registrations = await prisma.registrations.findMany({
-                    where: { companies_id: company_id },
+                    where: { company_id: company_id },
                 });
                 const avgTicket =
                     registrations.length

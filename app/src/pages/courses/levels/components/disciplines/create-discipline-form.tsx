@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dialog';
 import { BookmarkPlus, Loader2 } from 'lucide-react';
 import { createDiscipline } from '@/services/disciplines';
-import type { CreateDisciplineRequest } from '@idiomax/http-schemas/disciplines/create-discipline';
+import type { CreateDisciplineRequest } from '@idiomax/validation-schemas/disciplines/create-discipline';
 import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 

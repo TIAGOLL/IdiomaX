@@ -40,7 +40,7 @@ CREATE TABLE "public"."classrooms" (
     "number" DECIMAL(5,0) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "block" VARCHAR(256),
-    "companies_id" VARCHAR(256),
+    "company_id" VARCHAR(256),
     "companiesId" TEXT,
 
     CONSTRAINT "classrooms_pkey" PRIMARY KEY ("id")
@@ -50,7 +50,7 @@ CREATE TABLE "public"."classrooms" (
 CREATE TABLE "public"."configs" (
     "id" VARCHAR(256) NOT NULL,
     "registrations_time" DECIMAL(256,0) NOT NULL DEFAULT 6,
-    "companies_id" VARCHAR(256) NOT NULL,
+    "company_id" VARCHAR(256) NOT NULL,
     "companiesId" TEXT,
 
     CONSTRAINT "configs_pkey" PRIMARY KEY ("id")
@@ -69,7 +69,7 @@ CREATE TABLE "public"."courses" (
     "maximum_grade" DECIMAL(20,0) NOT NULL,
     "minimum_frequency" DECIMAL(20,0) NOT NULL,
     "syllabus" BYTEA,
-    "companies_id" VARCHAR(256) NOT NULL,
+    "company_id" VARCHAR(256) NOT NULL,
     "companiesId" TEXT,
 
     CONSTRAINT "courses_pkey" PRIMARY KEY ("id")
@@ -153,7 +153,7 @@ CREATE TABLE "public"."registrations" (
     "locked" BOOLEAN DEFAULT false,
     "completed" BOOLEAN DEFAULT false,
     "users_id" VARCHAR(256),
-    "companies_id" VARCHAR(256),
+    "company_id" VARCHAR(256),
     "usersId" VARCHAR(256),
     "companiesId" TEXT,
 
@@ -286,13 +286,13 @@ ALTER TABLE "public"."class_days" ADD CONSTRAINT "class_fk" FOREIGN KEY ("class_
 ALTER TABLE "public"."classes" ADD CONSTRAINT "class_fk" FOREIGN KEY ("class_id") REFERENCES "public"."class"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "public"."classrooms" ADD CONSTRAINT "companies_fk" FOREIGN KEY ("companies_id") REFERENCES "public"."companies"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+ALTER TABLE "public"."classrooms" ADD CONSTRAINT "companies_fk" FOREIGN KEY ("company_id") REFERENCES "public"."companies"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "public"."configs" ADD CONSTRAINT "companies_fk" FOREIGN KEY ("companies_id") REFERENCES "public"."companies"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "public"."configs" ADD CONSTRAINT "companies_fk" FOREIGN KEY ("company_id") REFERENCES "public"."companies"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "public"."courses" ADD CONSTRAINT "companies_fk" FOREIGN KEY ("companies_id") REFERENCES "public"."companies"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "public"."courses" ADD CONSTRAINT "companies_fk" FOREIGN KEY ("company_id") REFERENCES "public"."companies"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "public"."disciplines" ADD CONSTRAINT "disciplines_levelsId_fkey" FOREIGN KEY ("levelsId") REFERENCES "public"."levels"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -316,7 +316,7 @@ ALTER TABLE "public"."presence_list" ADD CONSTRAINT "users_fk" FOREIGN KEY ("use
 ALTER TABLE "public"."records_of_students" ADD CONSTRAINT "registrations_fk" FOREIGN KEY ("registrations_id") REFERENCES "public"."registrations"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "public"."registrations" ADD CONSTRAINT "companies_fk" FOREIGN KEY ("companies_id") REFERENCES "public"."companies"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "public"."registrations" ADD CONSTRAINT "companies_fk" FOREIGN KEY ("company_id") REFERENCES "public"."companies"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "public"."registrations" ADD CONSTRAINT "users_fk" FOREIGN KEY ("users_id") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE NO ACTION;

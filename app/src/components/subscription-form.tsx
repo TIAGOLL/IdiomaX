@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
 import { createCheckoutSession } from "@/services/stripe/create-checkout-service";
-import { CreateCheckoutSessionFormSchema } from '@idiomax/http-schemas/subscriptions/create-checkout-session';
+import { CreateCheckoutSessionFormSchema } from '@idiomax/validation-schemas/subscriptions/create-checkout-session';
 import type z from "zod";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { getProducts } from "@/services/stripe/get-products";
@@ -133,7 +133,7 @@ export function SubscriptionForm() {
                 type="submit"
                 disabled={isMutating || isLoadingProducts || !watch("prodId")}
                 size="lg"
-                onClick={() => {console.log(errors)}}
+                onClick={() => { console.log(errors) }}
             >
                 {isMutating ? (
                     <>

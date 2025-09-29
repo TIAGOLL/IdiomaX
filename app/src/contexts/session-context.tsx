@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import nookies from 'nookies';
 import { useNavigate } from 'react-router';
 import { getCompanySubscription } from '@/services/stripe/get-company-subscription';
-import { type GetProfileResponseType } from '@idiomax/http-schemas/auth/get-profile';
-import { type GetCompanySubscriptionHttpResponse } from '@idiomax/http-schemas/subscriptions/get-company-subscription';
+import { type GetProfileResponseType } from '@idiomax/validation-schemas/auth/get-profile';
+import { type GetCompanySubscriptionHttpResponse } from '@idiomax/validation-schemas/subscriptions/get-company-subscription';
 
 
 type SessionContextType = {

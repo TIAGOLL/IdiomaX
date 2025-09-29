@@ -3,13 +3,13 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { addUserRole } from "@/services/roles/manage-roles";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { UserWithRole } from "@idiomax/http-schemas/users/get-users";
+import type { UserWithRole } from "@idiomax/validation-schemas/users/get-users";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader, Users } from "lucide-react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { UpdateUserRoleFormSchema } from "@idiomax/http-schemas/roles/update-user-role";
+import { UpdateUserRoleFormSchema } from "@idiomax/validation-schemas/roles/update-user-role";
 import type z from "zod";
 import { getCurrentCompanyId } from "@/lib/company-utils";
 

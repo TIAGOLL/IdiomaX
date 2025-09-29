@@ -3,8 +3,8 @@ import { getCurrentCompanyId } from '../../lib/company-utils';
 import type {
     UpdateUserPasswordHttpRequest,
     UpdateUserPasswordHttpResponse
-} from '@idiomax/http-schemas/users/update-user-password';
-import type { UserRole } from '@idiomax/http-schemas/users/get-users';
+} from '@idiomax/validation-schemas/users/update-user-password';
+import type { UserRole } from '@idiomax/validation-schemas/users/get-users';
 
 export type UpdateUserPasswordBody = UpdateUserPasswordHttpRequest;
 export type UpdateUserPasswordResponse = UpdateUserPasswordHttpResponse;

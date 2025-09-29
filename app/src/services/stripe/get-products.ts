@@ -1,5 +1,5 @@
 import { api } from "@/lib/api";
-import type { GetProductsHttpResponse } from "@idiomax/http-schemas/subscriptions/get-products";
+import type { GetProductsHttpResponse } from "@idiomax/validation-schemas/subscriptions/get-products";
 
 export async function getProducts() {
     const response = await api.get(

@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { UpdateCourseApiRequestSchema, UpdateCourseApiResponseSchema } from '@idiomax/http-schemas/courses/update-course'
+import { UpdateCourseApiRequestSchema, UpdateCourseApiResponseSchema } from '@idiomax/validation-schemas/courses/update-course'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { getUserPermissions } from '../../../lib/get-user-permission'
@@ -25,7 +25,7 @@ export async function updateCourse(app: FastifyInstance) {
         }, async (request, reply) => {
             const {
                 id,
-                companies_id,
+                company_id,
                 name,
                 description,
                 registration_value,
@@ -65,7 +65,7 @@ export async function updateCourse(app: FastifyInstance) {
             const conflictingCourse = await prisma.courses.findFirst({
                 where: {
                     name,
-                    companies_id: companies_id,
+                    company_id: company_id,
                     active: true,
                     id: {
                         not: id

@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LoaderIcon, Edit2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { UpdateClassroomFormSchema } from '@idiomax/http-schemas/classrooms/update-classroom';
+import { UpdateClassroomFormSchema } from '@idiomax/validation-schemas/classrooms/update-classroom';
 import { FormMessageError } from '@/components/ui/form-message-error';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -12,7 +12,7 @@ import { updateClassroom, } from '@/services/classrooms';
 import { useEffect, useState } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { z } from 'zod';
-import type { GetClassroomsResponseSchema } from '@idiomax/http-schemas/classrooms/get-classrooms';
+import type { GetClassroomsResponseSchema } from '@idiomax/validation-schemas/classrooms/get-classrooms';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 type GetClassroomsResponse = z.infer<typeof GetClassroomsResponseSchema>;
@@ -26,7 +26,7 @@ export function UpdateClassroomForm({ classroom }: { classroom: GetClassroomsRes
     const { mutate, isPending } = useMutation({
         mutationFn: async (data: UpdateClassroomForm) => await updateClassroom({
             id: classroom.id,
-            companies_id: classroom.companies_id,
+            company_id: classroom.company_id,
             ...data
         }),
         onSuccess: (res) => {

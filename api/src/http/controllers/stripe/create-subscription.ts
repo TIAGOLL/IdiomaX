@@ -3,7 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { auth } from '../../../middlewares/auth';
 import { stripe } from '../../../lib/stripe';
-import { CreateSubscriptionApiRequestSchema, CreateSubscriptionApiResponseSchema } from '@idiomax/http-schemas/subscriptions/create-subscription'
+import { CreateSubscriptionApiRequestSchema, CreateSubscriptionApiResponseSchema } from '@idiomax/validation-schemas/subscriptions/create-subscription'
 import { prisma } from '../../../lib/prisma';
 
 export async function CreateSubscription(app: FastifyInstance) {

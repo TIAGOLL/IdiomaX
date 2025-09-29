@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
-import { DeleteCourseApiRequest, DeleteCourseApiResponse } from '@idiomax/http-schemas/courses/delete-course';
+import { DeleteCourseApiRequest, DeleteCourseApiResponse } from '@idiomax/validation-schemas/courses/delete-course';
 import { prisma } from '../../../lib/prisma';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { ForbiddenError } from '../_errors/forbidden-error';
@@ -25,10 +25,10 @@ export async function deleteCourse(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { companies_id, course_id: targetCourseId } = request.body;
+                const { company_id, course_id: targetCourseId } = request.body;
 
                 const userId = await request.getCurrentUserId()
-                const { member } = await request.getUserMember(companies_id)
+                const { member } = await request.getUserMember(company_id)
 
                 const { cannot } = getUserPermissions(userId, member.role)
 

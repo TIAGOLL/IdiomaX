@@ -1,4 +1,4 @@
-import type { GetCourseByIdResponse } from '@idiomax/http-schemas/courses/get-course-by-id';
+import type { GetCourseByIdResponse } from '@idiomax/validation-schemas/courses/get-course-by-id';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCurrentCompanyId } from "@/lib/company-utils";
 import { useSearchParams } from "react-router";

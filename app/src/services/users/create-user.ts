@@ -1,4 +1,4 @@
-import type { CreateUserHttpRequest, CreateUserHttpResponse } from '@idiomax/http-schemas/users/create-user';
+import type { CreateUserHttpRequest, CreateUserHttpResponse } from '@idiomax/validation-schemas/users/create-user';
 import { api } from '../../lib/api';
 
 

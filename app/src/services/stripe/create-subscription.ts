@@ -1,5 +1,5 @@
 import { api } from "@/lib/api";
-import type { CreateSubscriptionHttpResponse } from "@idiomax/http-schemas/subscriptions/create-subscription";
+import type { CreateSubscriptionHttpResponse } from "@idiomax/validation-schemas/subscriptions/create-subscription";
 import { getCurrentCompanyId } from "@/lib/company-utils";
 
 interface CreateSubscriptionRequest {

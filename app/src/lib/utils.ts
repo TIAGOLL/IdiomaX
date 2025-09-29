@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import type { UserRole } from "@idiomax/http-schemas/users/get-users"
+import type { UserRole } from "@idiomax/validation-schemas/users/get-users"
 import { getUsers } from "@/services/users/get-users";
 import { getUserByEmail } from "@/services/users/get-user-by-email";
 

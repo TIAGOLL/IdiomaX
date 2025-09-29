@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { CreateLevelApiRequestSchema, CreateLevelApiResponseSchema } from '@idiomax/http-schemas/levels/create-level'
+import { CreateLevelApiRequestSchema, CreateLevelApiResponseSchema } from '@idiomax/validation-schemas/levels/create-level'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { checkMemberAccess } from '../../../lib/get-user-permission'
@@ -41,7 +41,7 @@ export async function createLevel(app: FastifyInstance) {
             const course = await prisma.courses.findFirst({
                 where: {
                     id: course_id,
-                    companies_id: company.id,
+                    company_id: company.id,
                     active: true
                 }
             })
