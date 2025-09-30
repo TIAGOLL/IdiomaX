@@ -29,7 +29,7 @@ export function EditLevelForm(
             const response = await updateLevel({
                 ...data,
                 company_id: getCurrentCompanyId(),
-                course_id: course.id,
+                level_id: level.id,
             });
             return response;
         },

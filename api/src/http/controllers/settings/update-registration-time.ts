@@ -28,7 +28,7 @@ export async function updateRegistrationTime(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { company_id, registrations_time } = request.body;
+                const { company_id, registration_time } = request.body;
 
                 const userId = await request.getCurrentUserId()
                 const { member } = await request.getUserMember(company_id)
@@ -45,7 +45,7 @@ export async function updateRegistrationTime(app: FastifyInstance) {
                         company_id,
                     },
                     data: {
-                        registrations_time: registrations_time,
+                        registration_time,
                         updated_at: new Date(),
                         updated_by: userId,
                     },

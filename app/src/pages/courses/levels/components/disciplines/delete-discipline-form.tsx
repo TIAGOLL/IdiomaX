@@ -16,6 +16,7 @@ import { Loader2, Trash2 } from 'lucide-react';
 import { deleteDiscipline, } from '@/services/disciplines';
 import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { getCurrentCompanyId } from '@/lib/company-utils';
 
 interface DeleteDisciplineFormProps {
     disciplineId: string;
@@ -31,6 +32,7 @@ export function DeleteDisciplineForm({ disciplineId, disciplineName, courseId }:
     const { mutate, isPending } = useMutation({
         mutationFn: () => deleteDiscipline({
             id: disciplineId,
+            company_id: getCurrentCompanyId()
         }),
         onSuccess: (res) => {
             toast.success(res.message);

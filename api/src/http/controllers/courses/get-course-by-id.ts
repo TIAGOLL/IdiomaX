@@ -10,12 +10,12 @@ import { ErrorResponseSchema } from '../../../types/error-response-schema'
 export async function getCourseById(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
         .register(auth)
-        .get('/course/:course_id', {
+        .get('/course', {
             schema: {
                 tags: ['Courses'],
                 summary: 'Obter curso por ID',
                 security: [{ bearerAuth: [] }],
-                params: GetCourseByIdApiRequestSchema,
+                querystring: GetCourseByIdApiRequestSchema,
                 response: {
                     200: GetCourseByIdApiResponseSchema,
                     404: ErrorResponseSchema,
@@ -23,7 +23,8 @@ export async function getCourseById(app: FastifyInstance) {
                 },
             },
         }, async (request, reply) => {
-            const { course_id, company_id } = request.params
+            const { course_id, company_id } = request.query
+            console.log(course_id, company_id)
 
             const userId = await request.getCurrentUserId()
             const { member } = await request.getUserMember(company_id)

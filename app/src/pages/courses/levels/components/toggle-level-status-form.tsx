@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { deactivateLevel } from '@/services/levels';
-import type { DeactivateLevelFormData } from '@idiomax/validation-schemas/levels/deactivate-level';
 import type { GetCourseByIdResponseType } from '@idiomax/validation-schemas/courses/get-course-by-id';
 import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Power, PowerOff, Loader } from 'lucide-react';
+import { getCurrentCompanyId } from '@/lib/company-utils';
 
 interface ToggleLevelStatusFormProps {
     levelId: string;
@@ -19,11 +19,11 @@ export function ToggleLevelStatusForm({ levelId, levelName, isActive, course }: 
     const queryClient = useQueryClient();
 
     const { mutate: toggleStatus, isPending } = useMutation({
-        mutationFn: async () => {
-            const levelData: DeactivateLevelFormData = { active: !isActive };
-            const response = await deactivateLevel(levelId, levelData);
-            return response;
-        },
+        mutationFn: async () => await deactivateLevel({
+            active: !isActive,
+            company_id: getCurrentCompanyId(),
+            level_id: levelId
+        }),
         onSuccess: (res) => {
             toast.success(res.message);
             queryClient.invalidateQueries({ queryKey: ['levels', course.id] });

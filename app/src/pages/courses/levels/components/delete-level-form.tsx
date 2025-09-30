@@ -8,15 +8,19 @@ import type { Level } from '@idiomax/validation-schemas/levels/get-levels';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { getCurrentCompanyId } from '@/lib/company-utils';
 
 export function DeleteLevelForm({ course, level }: { course: GetCourseByIdResponseType; level: Level }) {
     const [open, setOpen] = useState(false);
     const queryClient = useQueryClient();
 
     // Mutation para deletar level
-    const { mutate: deleteLevelMutation, isPending: isDeleting } = useMutation({
-        mutationFn: async (id: string) => {
-            const response = await deleteLevel(id);
+    const { mutate, isPending: isDeleting } = useMutation({
+        mutationFn: async () => {
+            const response = await deleteLevel({
+                company_id: getCurrentCompanyId(),
+                level_id: level.id
+            });
             return response;
         },
         onSuccess: (res) => {
@@ -28,10 +32,6 @@ export function DeleteLevelForm({ course, level }: { course: GetCourseByIdRespon
             toast.error(err.message || 'Erro ao deletar level');
         }
     });
-
-    const confirmDelete = () => {
-        deleteLevelMutation(level.id);
-    };
 
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
@@ -63,18 +63,19 @@ export function DeleteLevelForm({ course, level }: { course: GetCourseByIdRespon
                     <AlertDialogCancel>
                         Cancelar
                     </AlertDialogCancel>
-                    <AlertDialogAction onClick={confirmDelete} disabled={isDeleting}>
-                        {isDeleting ? (
-                            <>
-                                <LoaderIcon className="size-4 mr-2 animate-spin" />
-                                Excluindo...
-                            </>
-                        ) : (
-                            "Excluir"
-                        )}
+                    <AlertDialogAction onClick={() => mutate()}>
+                        {
+                            isDeleting ? (
+                                <>
+                                    <LoaderIcon className="size-4 mr-2 animate-spin" />
+                                    Excluindo...
+                                </>
+                            ) : (
+                                "Excluir"
+                            )}
                     </AlertDialogAction>
                 </AlertDialogFooter>
-            </AlertDialogContent>
-        </AlertDialog>
+            </AlertDialogContent >
+        </AlertDialog >
     );
 }

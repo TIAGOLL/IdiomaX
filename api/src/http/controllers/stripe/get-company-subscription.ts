@@ -13,7 +13,7 @@ export async function GetCompanySubscription(app: FastifyInstance) {
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .get(
-            '/stripe/get-subscription/:company_id',
+            '/stripe/get-subscription',
             {
                 schema: {
                     tags: ['Subscriptions'],
@@ -22,11 +22,11 @@ export async function GetCompanySubscription(app: FastifyInstance) {
                     response: {
                         200: GetCompanySubscriptionApiResponseSchema,
                     },
-                    params: GetCompanySubscriptionApiRequestSchema
+                    querystring: GetCompanySubscriptionApiRequestSchema
                 },
             },
             async (request, reply) => {
-                const { company_id } = request.params;
+                const { company_id } = request.query;
 
                 const userId = await request.getCurrentUserId()
                 const { member } = await request.getUserMember(company_id)

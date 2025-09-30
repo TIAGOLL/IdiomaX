@@ -1,9 +1,8 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { z } from 'zod'
 
 import { prisma } from '../../../lib/prisma'
-import { DeactivateLevelFormSchema, DeactivateLevelApiResponse } from '@idiomax/validation-schemas/levels/deactivate-level'
+import { DeactivateLevelApiResponse, DeactivateLevelApiRequest } from '@idiomax/validation-schemas/levels/deactivate-level'
 import { auth } from '../../../middlewares/auth'
 import { getUserPermissions } from '../../../lib/get-user-permission'
 import { ForbiddenError } from '../_errors/forbidden-error'
@@ -11,23 +10,19 @@ import { ForbiddenError } from '../_errors/forbidden-error'
 export async function deactivateLevel(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
         .register(auth)
-        .patch('/levels/:id/deactivate', {
+        .patch('/level/deactivate', {
             schema: {
                 tags: ['Levels'],
-                params: z.object({
-                    id: z.string().uuid()
-                }),
-                body: DeactivateLevelFormSchema,
+                body: DeactivateLevelApiRequest,
                 response: {
                     200: DeactivateLevelApiResponse
                 }
             }
         }, async (request) => {
-            const { id } = request.params
-            const { active } = request.body
+            const { company_id, active, level_id } = request.body
 
             const userId = await request.getCurrentUserId()
-            const { member } = await request.getUserMember(userId)
+            const { member } = await request.getUserMember(company_id)
 
             const { cannot } = getUserPermissions(userId, member.role)
 
@@ -37,7 +32,7 @@ export async function deactivateLevel(app: FastifyInstance) {
 
             // Atualizar o status do level
             await prisma.levels.update({
-                where: { id },
+                where: { id: level_id },
                 data: { active }
             })
 

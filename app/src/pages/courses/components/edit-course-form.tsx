@@ -13,27 +13,11 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import { updateCourse } from '@/services/courses';
 import { getCurrentCompanyId } from '@/lib/company-utils';
+import type { GetCourseByIdResponseType } from '@idiomax/validation-schemas/courses/get-course-by-id';
 
 type UpdateCourseRequest = z.infer<typeof UpdateCourseFormSchema>;
 
-interface EditCourseFormProps {
-    course: {
-        id: string;
-        name: string;
-        description: string | null;
-        registration_value: number;
-        workload: number;
-        monthly_fee_value: number;
-        minimum_grade: number;
-        maximum_grade: number;
-        minimum_frequency: number;
-        syllabus_url: string | null;
-        company_id: string;
-        active: boolean;
-    };
-}
-
-export function EditCourseForm({ course }: EditCourseFormProps) {
+export function EditCourseForm({ course }: { course: GetCourseByIdResponseType }) {
     const queryClient = useQueryClient();
 
     const { mutate, isPending } = useMutation({
@@ -43,7 +27,6 @@ export function EditCourseForm({ course }: EditCourseFormProps) {
         },
         onSuccess: (res) => {
             toast.success(res.message);
-            // Invalidar query para atualizar dados na tela
             queryClient.invalidateQueries({ queryKey: ['course', course.id] });
             queryClient.invalidateQueries({ queryKey: ['courses', getCurrentCompanyId()] });
         },

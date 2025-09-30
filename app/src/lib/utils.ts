@@ -31,7 +31,7 @@ export function PasswordGenerator(cpf: string) {
   return 'bemvindo' + cpf.slice(0, 4); // Retorna 'bemvindo' + primeiros 4 dígitos do CPF
 }
 
-export async function VerifyUserExists(username: string): Promise<boolean> {
+export async function VerifyUserExists(username: string) {
   try {
     const users = await getUsers({
       company_id: getCurrentCompanyId()
@@ -44,7 +44,7 @@ export async function VerifyUserExists(username: string): Promise<boolean> {
   }
 }
 
-export async function VerifyEmailExists(email: string): Promise<boolean> {
+export async function VerifyEmailExists(email: string) {
   try {
     await getUserByEmail({
       email,

@@ -39,7 +39,7 @@ export async function CreateCheckoutSession(app: FastifyInstance) {
 
                 const userId = await request.getCurrentUserId()
                 const { member } = await request.getUserMember(company_id)
-
+                console.log('member', member)
                 const { cannot } = getUserPermissions(userId, member.role)
 
                 if (cannot('create-subscription', 'Company')) {

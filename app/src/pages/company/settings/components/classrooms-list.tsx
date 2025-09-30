@@ -5,11 +5,14 @@ import { Badge } from '@/components/ui/badge';
 import { LoaderIcon, School } from 'lucide-react';
 import { UpdateClassroomForm } from './update-classroom-form';
 import { DeleteClassroomForm } from './delete-classroom-form';
+import { getCurrentCompanyId } from '@/lib/company-utils';
 
 export function ClassroomsList() {
     const { data, isLoading } = useQuery({
         queryKey: ['classrooms'],
-        queryFn: () => getClassrooms(),
+        queryFn: () => getClassrooms({
+            company_id: getCurrentCompanyId()
+        }),
     });
 
     if (isLoading) {

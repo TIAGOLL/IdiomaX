@@ -97,7 +97,7 @@ export function UsersTablePage() {
                             <Search className="absolute left-3 top-2 h-4 w-4 text-muted-foreground" />
                             <Input
                                 id="search"
-                                placeholder="Buscar pornome, email ou usuário"
+                                placeholder="Buscar por nome, email ou usuário"
                                 value={searchFilter}
                                 onChange={(e) => setSearchFilter(e.target.value)}
                                 className="pl-10"

@@ -14,9 +14,8 @@ import { CreateLevelForm } from './levels/components/create-level-form';
 import { LevelsList } from './levels/components/levels-list';
 import { getCurrentCompanyId } from '@/lib/company-utils';
 
-export function EditCoursePage() {
-    const [searchParams, setSearchParams] = useSearchParams();
-    const courseId = searchParams.get('id') || '';
+export function EditCoursePage({ courseId }: { courseId: string }) {
+    const [, setSearchParams] = useSearchParams();
 
     // Buscar dados do curso
     const { data: course, isLoading, error } = useQuery({

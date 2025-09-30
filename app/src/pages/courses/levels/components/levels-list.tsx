@@ -28,7 +28,7 @@ export function LevelsList({ course }: { course: GetCourseByIdResponseType }) {
         queryKey: ['levels', course.id],
         queryFn: () => getLevelsByCourse({
             course_id: course.id,
-            company_id: getCurrentCompanyId()
+            company_id: getCurrentCompanyId(),
         }),
         enabled: !!course.id,
     });

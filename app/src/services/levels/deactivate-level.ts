@@ -1,8 +1,8 @@
 import { api } from '@/lib/api'
-import type { DeactivateLevelFormData, DeactivateLevelResponse } from '@idiomax/validation-schemas/levels/deactivate-level'
+import type { DeactivateLevelRequestType, DeactivateLevelResponseType } from '@idiomax/validation-schemas/levels/deactivate-level'
 
-export async function deactivateLevel(id: string, data: DeactivateLevelFormData): Promise<DeactivateLevelResponse> {
-    const response = await api.patch(`/levels/${id}/deactivate`, data)
+export async function deactivateLevel(data: DeactivateLevelRequestType) {
+    const response = await api.patch(`/level/deactivate`, data)
 
-    return response.data as DeactivateLevelResponse
+    return response.data as DeactivateLevelResponseType
 }

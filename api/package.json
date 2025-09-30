@@ -11,7 +11,7 @@
     "type-check": "tsc --project tsconfig.json --noEmit",
     "db:migrate:dev": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
-    "db:seed": "ts-node prisma/seed.ts",
+  "db:seed": "tsx prisma/seed.ts",
     "db:push": "prisma db push",
     "db:pull": "prisma db pull",
     "db:generate": "prisma generate",

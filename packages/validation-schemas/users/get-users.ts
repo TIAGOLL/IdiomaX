@@ -37,7 +37,7 @@ export const GetUsersApiResponseSchema = z.array(z.object({
     gender: z.enum(['M', 'F']),
     date_of_birth: z.date(),
     address: z.string().min(1).max(255),
-    avatar_url: z.url().nullable().optional(),
+    avatar_url: z.string().nullable().optional(),
     active: z.boolean(),
     created_by: z.string().uuid().nullable().optional(),
     updated_by: z.string().uuid().nullable().optional(),

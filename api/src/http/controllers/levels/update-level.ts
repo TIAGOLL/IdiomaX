@@ -15,7 +15,7 @@ const ErrorResponseSchema = z.object({
 export async function updateLevel(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
         .register(auth)
-        .put('/level/:id', {
+        .put('/level', {
             schema: {
                 tags: ['Levels'],
                 summary: 'Update level',
@@ -29,12 +29,11 @@ export async function updateLevel(app: FastifyInstance) {
                 },
             },
         }, async (request, reply) => {
-            const { id } = request.params as { id: string }
             const {
+                level_id,
                 company_id,
                 name,
                 level,
-                active,
             } = request.body
 
             const userId = await request.getCurrentUserId()
@@ -61,7 +60,7 @@ export async function updateLevel(app: FastifyInstance) {
                         course_id: course.id,
                         active: true,
                         NOT: {
-                            id: id
+                            id: level_id
                         }
                     }
                 })
@@ -72,11 +71,10 @@ export async function updateLevel(app: FastifyInstance) {
             }
 
             const res = await prisma.levels.update({
-                where: { id },
+                where: { id: level_id },
                 data: {
                     name,
                     level,
-                    active,
                     updated_by: userId,
                     updated_at: new Date(),
                 }

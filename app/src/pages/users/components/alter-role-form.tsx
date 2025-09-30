@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { addUserRole } from "@/services/roles/alter-user-role";
+import { alterUserRole } from "@/services/roles/alter-user-role";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { UserWithRole } from "@idiomax/validation-schemas/users/get-users";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader, Users } from "lucide-react";
 import { useState } from "react";
@@ -12,15 +11,16 @@ import { toast } from "sonner";
 import { AlterUserRoleFormSchema } from "@idiomax/validation-schemas/roles/alter-user-role";
 import type z from "zod";
 import { getCurrentCompanyId } from "@/lib/company-utils";
+import type { GetUserByIdResponseType } from "@idiomax/validation-schemas/users/get-user-by-id";
 
 type AlterUserRoleFormSchema = z.infer<typeof AlterUserRoleFormSchema>;
 
-export function AddRoleForm({ user }: { user: UserWithRole }) {
+export function AlterRoleForm({ user }: { user: GetUserByIdResponseType }) {
     const [showRoleForm, setShowRoleForm] = useState(false);
     const queryClient = useQueryClient();
 
     const { isPending, mutate } = useMutation({
-        mutationFn: (data: AlterUserRoleFormSchema) => addUserRole({
+        mutationFn: (data: AlterUserRoleFormSchema) => alterUserRole({
             user_id: user.id,
             company_id: getCurrentCompanyId(),
             ...data
@@ -44,7 +44,7 @@ export function AddRoleForm({ user }: { user: UserWithRole }) {
             <div className="space-y-3">
                 <Button variant="outline" className="w-full" onClick={() => setShowRoleForm(true)}>
                     <Users className="h-4 w-4 mr-2" />
-                    Adicionar Role
+                    Alterar Role
                 </Button>
             </div>
         )
@@ -86,7 +86,7 @@ export function AddRoleForm({ user }: { user: UserWithRole }) {
                         size="sm"
                         disabled={isPending}
                     >
-                        {isPending ? 'Adicionando...' : 'Adicionar Role'}
+                        {isPending ? 'Alterando...' : 'Alterar Role'}
                         {isPending && <Loader className='ml-2 size-4 animate-spin' />}
                     </Button>
                 </div>

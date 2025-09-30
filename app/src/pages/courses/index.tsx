@@ -12,7 +12,7 @@ export default function CoursesPage() {
         <div className="container mx-auto p-6">
             {activeTab === 'create' && <CreateCoursePage />}
             {activeTab === 'list' && <CoursesTablePage />}
-            {activeTab === 'edit' && courseId && <EditCoursePage />}
+            {activeTab === 'edit' && courseId && <EditCoursePage courseId={courseId} />}
         </div>
     );
 }

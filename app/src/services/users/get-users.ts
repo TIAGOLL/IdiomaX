@@ -7,10 +7,8 @@ import type {
 export async function getUsers({ active = true, ...data }: GetUsersRequestType) {
     const response = await api.get(`/users`, {
         params: {
-            data: {
-                ...data,
-                active
-            },
+            ...data,
+            active
         }
     });
     return response.data as GetUsersResponseType;

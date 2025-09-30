@@ -1,31 +1,22 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { DeleteDisciplineApiResponseSchema } from '@idiomax/validation-schemas/disciplines/delete-discipline'
+import { DeleteDisciplineApiRequestSchema, DeleteDisciplineApiResponseSchema } from '@idiomax/validation-schemas/disciplines/delete-discipline'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { BadRequestError } from '../_errors/bad-request-error'
-import { z } from 'zod'
 import { getUserPermissions } from '../../../lib/get-user-permission'
 import { ForbiddenError } from '../_errors/forbidden-error'
-
-const ParamsSchema = z.object({
-    id: z.string().uuid(),
-    company_id: z.string().uuid()
-})
-
-const ErrorResponseSchema = z.object({
-    message: z.string()
-})
+import { ErrorResponseSchema } from '../../../types/error-response-schema'
 
 export async function deleteDiscipline(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
         .register(auth)
-        .delete('/disciplines/:id', {
+        .delete('/disciplines', {
             schema: {
                 tags: ['Disciplinas'],
                 summary: 'Deletar disciplina',
                 security: [{ bearerAuth: [] }],
-                params: ParamsSchema,
+                body: DeleteDisciplineApiRequestSchema,
                 response: {
                     200: DeleteDisciplineApiResponseSchema,
                     400: ErrorResponseSchema,
@@ -34,7 +25,7 @@ export async function deleteDiscipline(app: FastifyInstance) {
                 },
             },
         }, async (request, reply) => {
-            const { id, company_id } = request.params
+            const { id, company_id } = request.body
 
             const userId = await request.getCurrentUserId()
             const { member } = await request.getUserMember(company_id)

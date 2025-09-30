@@ -15,20 +15,20 @@ export async function getCompanySettings(app: FastifyInstance) {
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .get(
-            '/settings/company/:company_id',
+            '/settings/company',
             {
                 schema: {
                     tags: ['Configurações'],
                     summary: 'Obter configurações da empresa.',
                     security: [{ bearerAuth: [] }],
-                    params: GetCompanySettingsApiRequestSchema,
+                    querystring: GetCompanySettingsApiRequestSchema,
                     response: {
                         200: GetCompanySettingsApiResponseSchema,
                     },
                 },
             },
             async (request, reply) => {
-                const { company_id } = request.params;
+                const { company_id } = request.query;
 
                 const userId = await request.getCurrentUserId()
                 const { member } = await request.getUserMember(company_id)
@@ -45,7 +45,7 @@ export async function getCompanySettings(app: FastifyInstance) {
                         company_id,
                     },
                     select: {
-                        registrations_time: true,
+                        registration_time: true,
                     },
                 });
 
@@ -54,7 +54,7 @@ export async function getCompanySettings(app: FastifyInstance) {
                 }
 
                 reply.status(200).send({
-                    registration_time: Number(config.registrations_time),
+                    registration_time: Number(config.registration_time),
                 });
             }
         );

@@ -24,10 +24,8 @@ export const auth = fastifyPlugin(async (app: FastifyInstance) => {
 
       const result = await prisma.members.findFirst({
         where: {
-          id: userId,
-          company: {
-            id: companyId,
-          },
+          user_id: userId,
+          company_id: companyId,
         },
         include: {
           company: true,

@@ -1,12 +1,12 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
-import { UpdateUserPasswordApiRequestSchema, UpdateUserPasswordApiResponseSchema } from '@idiomax/validation-schemas/users/update-user-password';
 import { prisma } from '../../../lib/prisma';
 import { hash } from 'bcryptjs';
 import { getUserPermissions } from '../../../lib/get-user-permission';
 import { ForbiddenError } from '../_errors/forbidden-error';
 import { BadRequestError } from '../_errors/bad-request-error';
+import { ApiAdminUpdateStudentPasswordRequest, ApiAdminUpdateStudentPasswordResponse } from '@idiomax/validation-schemas/users/admin-update-student-password';
 
 export async function adminUpdateStudentPassword(app: FastifyInstance) {
     app
@@ -19,9 +19,9 @@ export async function adminUpdateStudentPassword(app: FastifyInstance) {
                     tags: ['Usuários'],
                     summary: 'Admin redefinir senha de estudante/professor via body.',
                     security: [{ bearerAuth: [] }],
-                    body: UpdateUserPasswordApiRequestSchema,
+                    body: ApiAdminUpdateStudentPasswordRequest,
                     response: {
-                        200: UpdateUserPasswordApiResponseSchema,
+                        200: ApiAdminUpdateStudentPasswordResponse,
                     },
                 },
             },
@@ -48,7 +48,7 @@ export async function adminUpdateStudentPassword(app: FastifyInstance) {
                 if (!targetMember) {
                     throw new ForbiddenError('Usuário não encontrado.');
                 }
-                else if (targetMember?.role) {
+                else if (targetMember?.role == 'ADMIN') {
                     throw new ForbiddenError('Não é possível alterar a senha de um administrador.');
                 }
 

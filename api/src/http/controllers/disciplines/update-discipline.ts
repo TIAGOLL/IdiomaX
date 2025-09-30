@@ -8,10 +8,6 @@ import { z } from 'zod'
 import { ForbiddenError } from '../_errors/forbidden-error'
 import { BadRequestError } from '../_errors/bad-request-error'
 
-const ParamsSchema = z.object({
-    id: z.string().uuid()
-})
-
 const ErrorResponseSchema = z.object({
     message: z.string()
 })
@@ -19,12 +15,11 @@ const ErrorResponseSchema = z.object({
 export async function updateDiscipline(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
         .register(auth)
-        .put('/disciplines/:id', {
+        .put('/disciplines', {
             schema: {
                 tags: ['Disciplinas'],
                 summary: 'Atualizar disciplina',
                 security: [{ bearerAuth: [] }],
-                params: ParamsSchema,
                 body: UpdateDisciplineApiRequestSchema,
                 response: {
                     200: UpdateDisciplineApiResponseSchema,
@@ -34,8 +29,8 @@ export async function updateDiscipline(app: FastifyInstance) {
                 },
             },
         }, async (request, reply) => {
-            const { id } = request.params
-            const { name, company_id } = request.body
+            const { id, name, company_id } = request.body
+            console.log(id, name, company_id)
 
             const userId = await request.getCurrentUserId()
             const { member } = await request.getUserMember(company_id)

@@ -11,8 +11,8 @@ export async function createClassroom(data: CreateClassroomRequestType) {
 }
 
 // Listar salas de aula
-export async function getClassrooms(params?: GetClassroomsRequestType) {
-    const response = await api.get('/classrooms', { params })
+export async function getClassrooms(data: GetClassroomsRequestType) {
+    const response = await api.get('/classrooms', { params: data })
     return response.data as GetClassroomsResponseType
 }
 

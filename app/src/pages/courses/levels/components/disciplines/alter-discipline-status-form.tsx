@@ -23,13 +23,12 @@ export function ToggleDisciplineStatusForm({ disciplineId, disciplineName, isAct
             id: disciplineId,
             company_id: getCurrentCompanyId()
         }),
-        onSuccess: () => {
-            const action = !isActive ? 'ativada' : 'desativada';
-            toast.success(`Disciplina "${disciplineName}" ${action} com sucesso!`);
+        onSuccess: (res) => {
+            toast.success(res.message);
             queryClient.invalidateQueries({ queryKey: ['levels', courseId] });
         },
-        onError: () => {
-            toast.error('Erro ao alterar status da disciplina');
+        onError: (error) => {
+            toast.error(error.message);
         },
     });
 

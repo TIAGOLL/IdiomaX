@@ -627,7 +627,7 @@ async function main() {
         await prisma.configs.create({
             data: {
                 id: generateUUID(),
-                registrations_time: 6,
+                registration_time: 6,
                 company_id: uuid,
                 created_at: now,
                 updated_at: now,

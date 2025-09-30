@@ -31,7 +31,7 @@ export function EditDisciplineForm({
 
     const queryClient = useQueryClient();
 
-    const { mutate: handleUpdateDiscipline, isPending } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: (data: UpdateDisciplineFormSchema) => updateDiscipline({
             id: disciplineId,
             company_id: getCurrentCompanyId(),
@@ -73,7 +73,7 @@ export function EditDisciplineForm({
             return;
         }
 
-        handleUpdateDiscipline({
+        mutate({
             name: disciplineName.trim(),
         });
     };

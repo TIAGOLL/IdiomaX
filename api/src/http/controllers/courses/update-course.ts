@@ -108,5 +108,9 @@ export async function updateCourse(app: FastifyInstance) {
                 throw new BadRequestError('Erro ao atualizar o curso.')
             }
 
+            return reply.status(200).send({
+                message: 'Curso atualizado com sucesso.'
+            })
+
         })
 }

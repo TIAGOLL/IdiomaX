@@ -6,10 +6,9 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { X, Users, Loader2, } from 'lucide-react';
 import { useSessionContext } from '@/contexts/session-context';
-import { AddRoleForm } from './components/add-role-form';
+import { AlterRoleForm } from './components/alter-role-form';
 import { DeactivateUserForm } from './components/deactivate-user-form';
 import { DeleteUserForm } from './components/delete-user-form';
-import { DeleteRoleForm } from './components/delete-role-form';
 import { EditPasswordForm } from './components/edit-password-form';
 import { EditUserForm } from './components/edit-user-form';
 import { useSearchParams } from 'react-router';
@@ -128,16 +127,13 @@ export function EditUserPage() {
                                                         {member.role === 'TEACHER' && '👨‍🏫 Professor'}
                                                         {member.role === 'STUDENT' && '🎓 Estudante'}
                                                     </span>
-                                                    {user.member_on.length > 1 && (
-                                                        <DeleteRoleForm user={user} role={member.role} />
-                                                    )}
                                                 </div>
                                             ))}
                                         </div>
                                     </div>
 
                                     {/* Adicionar nova role */}
-                                    <AddRoleForm user={user} />
+                                    <AlterRoleForm user={user} />
                                 </div>
                             </CardContent>
                         </Card>

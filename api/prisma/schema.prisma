@@ -117,9 +117,9 @@ model classrooms {
 }
 
 model configs {
-  id                 String  @id @default(uuid()) @db.VarChar(256)
-  registrations_time Decimal @default(6) @db.Decimal(256, 0)
-  company_id         String  @unique @db.VarChar(256)
+  id                String  @id @default(uuid()) @db.VarChar(256)
+  registration_time Decimal @default(6) @db.Decimal(256, 0)
+  company_id        String  @unique @db.VarChar(256)
 
   created_at DateTime @default(now())
   created_by String   @db.VarChar(256)

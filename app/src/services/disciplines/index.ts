@@ -9,17 +9,17 @@ export async function createDiscipline(data: CreateDisciplineRequestType) {
     return response.data as CreateDisciplineResponseType;
 }
 
-export async function updateDiscipline({ id, ...data }: UpdateDisciplineRequestType) {
-    const response = await api.put(`/disciplines/${id}`, data);
+export async function updateDiscipline(data: UpdateDisciplineRequestType) {
+    const response = await api.put(`/disciplines`, data);
     return response.data as UpdateDisciplineResponseType;
 }
 
-export async function alterDisciplineStatus({ id, ...data }: AlterDisciplineStatusRequestType) {
-    const response = await api.patch(`/disciplines/${id}/toggle-status`, data);
+export async function alterDisciplineStatus(data: AlterDisciplineStatusRequestType) {
+    const response = await api.patch(`/disciplines`, data);
     return response.data as AlterDisciplineStatusResponseType;
 }
 
-export async function deleteDiscipline({ id }: DeleteDisciplineRequestType) {
-    const response = await api.delete(`/disciplines/${id}`);
+export async function deleteDiscipline(data: DeleteDisciplineRequestType) {
+    const response = await api.delete(`/disciplines`, { data });
     return response.data as DeleteDisciplineResponseType;
 }

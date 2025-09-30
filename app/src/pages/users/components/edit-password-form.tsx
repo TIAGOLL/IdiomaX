@@ -1,5 +1,4 @@
 import { useMutation } from "@tanstack/react-query";
-import { AdminResetPasswordFormSchema } from '@idiomax/validation-schemas/users/admin-reset-password';
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -12,8 +11,9 @@ import { getCurrentCompanyId } from "@/lib/company-utils";
 import type z from "zod";
 import { adminResetPassword } from "@/services/users/admin-reset-password";
 import type { GetUserByIdResponseType } from "@idiomax/validation-schemas/users/get-user-by-id";
+import { AdminUpdateStudentPasswordFormSchema } from '@idiomax/validation-schemas/users/admin-update-student-password';
 
-export type AdminResetPasswordFormData = z.infer<typeof AdminResetPasswordFormSchema>;
+export type AdminUpdateStudentPasswordFormSchema = z.infer<typeof AdminUpdateStudentPasswordFormSchema>;
 
 export function EditPasswordForm({ user }: { user: GetUserByIdResponseType }) {
 
@@ -21,12 +21,12 @@ export function EditPasswordForm({ user }: { user: GetUserByIdResponseType }) {
 
     const { register, handleSubmit, formState: { errors }, reset } =
         useForm({
-            resolver: zodResolver(AdminResetPasswordFormSchema),
+            resolver: zodResolver(AdminUpdateStudentPasswordFormSchema),
         });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: (data: AdminResetPasswordFormData) => adminResetPassword({
-            password: data.password,
+        mutationFn: ({ new_password }: AdminUpdateStudentPasswordFormSchema) => adminResetPassword({
+            new_password,
             company_id: getCurrentCompanyId(),
             user_id: user.id,
         }),
@@ -57,10 +57,10 @@ export function EditPasswordForm({ user }: { user: GetUserByIdResponseType }) {
                         <Input
                             id="password"
                             type="password"
-                            {...register('password')}
+                            {...register('new_password')}
                             placeholder="Digite a nova senha"
                         />
-                        <FormMessageError error={errors?.password?.message} />
+                        <FormMessageError error={errors?.new_password?.message} />
                     </div>
 
                     <div className="space-y-2">

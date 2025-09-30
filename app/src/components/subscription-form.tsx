@@ -54,10 +54,6 @@ export function SubscriptionForm() {
         },
     });
 
-    const onSubmit = (data: CreateCheckoutSessionFormData) => {
-        mutate(data);
-    };
-
     useEffect(() => {
         if (products && products.length > 0 && products[0].prices.length > 0) {
             const firstProdId = products[0].prices[0].id;
@@ -74,7 +70,7 @@ export function SubscriptionForm() {
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit((data) => mutate(data))} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {products?.map((product: GetProductsResponseType[number]) => (
                     product.prices.map((price) => (

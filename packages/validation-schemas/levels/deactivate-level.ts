@@ -15,5 +15,5 @@ export const DeactivateLevelApiResponse = z.object({
 })
 
 export type DeactivateLevelFormData = z.infer<typeof DeactivateLevelFormSchema>
-export type DeactivateLevelRequest = z.infer<typeof DeactivateLevelApiRequest>
-export type DeactivateLevelResponse = z.infer<typeof DeactivateLevelApiResponse>
+export type DeactivateLevelRequestType = z.infer<typeof DeactivateLevelApiRequest>
+export type DeactivateLevelResponseType = z.infer<typeof DeactivateLevelApiResponse>

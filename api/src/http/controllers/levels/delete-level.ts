@@ -1,10 +1,9 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { z } from 'zod'
 
 import { BadRequestError } from '../_errors/bad-request-error'
 import { prisma } from '../../../lib/prisma'
-import { DeleteLevelApiResponse } from '@idiomax/validation-schemas/levels/delete-level'
+import { DeleteLevelApiRequest, DeleteLevelApiResponse } from '@idiomax/validation-schemas/levels/delete-level'
 import { auth } from '../../../middlewares/auth'
 import { getUserPermissions } from '../../../lib/get-user-permission'
 import { ForbiddenError } from '../_errors/forbidden-error'
@@ -12,19 +11,16 @@ import { ForbiddenError } from '../_errors/forbidden-error'
 export async function deleteLevel(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
         .register(auth)
-        .delete('/levels/:id/delete', {
+        .delete('/level', {
             schema: {
                 tags: ['Levels'],
-                params: z.object({
-                    id: z.string().uuid(),
-                    company_id: z.string().uuid()
-                }),
+                body: DeleteLevelApiRequest,
                 response: {
                     200: DeleteLevelApiResponse
                 }
             }
         }, async (request) => {
-            const { id, company_id } = request.params
+            const { level_id, company_id } = request.body
 
             const userId = await request.getCurrentUserId()
             const { member } = await request.getUserMember(company_id)
@@ -38,7 +34,7 @@ export async function deleteLevel(app: FastifyInstance) {
             // Verificar se o level tem cursos associados
             const disciplinesCount = await prisma.disciplines.count({
                 where: {
-                    level_id: id,
+                    level_id,
                     active: true
                 }
             })
@@ -49,7 +45,7 @@ export async function deleteLevel(app: FastifyInstance) {
 
             // Deletar o level
             await prisma.levels.delete({
-                where: { id }
+                where: { id: level_id }
             })
 
             return { message: 'Level deletado com sucesso.' }
