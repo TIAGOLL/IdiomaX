@@ -12,6 +12,7 @@ import { DeactivateCourseForm } from './components/deactivate-course-form';
 import { DeleteCourseForm } from './components/delete-course-form';
 import { CreateLevelForm } from './levels/components/create-level-form';
 import { LevelsList } from './levels/components/levels-list';
+import { getCurrentCompanyId } from '@/lib/company-utils';
 
 export function EditCoursePage() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -20,7 +21,10 @@ export function EditCoursePage() {
     // Buscar dados do curso
     const { data: course, isLoading, error } = useQuery({
         queryKey: ['course', courseId],
-        queryFn: () => getCourseById({ course_id: courseId }),
+        queryFn: () => getCourseById({
+            course_id: courseId,
+            company_id: getCurrentCompanyId()
+        }),
         enabled: !!courseId
     });
 

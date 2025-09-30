@@ -9,7 +9,7 @@ import { PasswordGenerator } from '@/lib/utils';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
-import { CreateUserFormSchema } from '@idiomax/http-schemas/users/create-user';
+import { CreateUserFormSchema } from '@idiomax/validation-schemas/users/create-user';
 import { FormMessageError } from '@/components/ui/form-message-error';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useMutation } from '@tanstack/react-query';

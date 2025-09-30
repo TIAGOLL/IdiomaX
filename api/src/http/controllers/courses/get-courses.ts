@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
-import { GetCoursesApiParamsSchema, GetCoursesApiResponseSchema } from "@idiomax/http-schemas/courses/get-courses"
+import { GetCoursesApiRequestSchema, GetCoursesApiResponseSchema } from "@idiomax/validation-schemas/courses/get-courses"
 import { prisma } from '../../../lib/prisma';
 import { getUserPermissions } from '../../../lib/get-user-permission';
 import { ForbiddenError } from '../_errors/forbidden-error';
@@ -17,7 +17,7 @@ export async function getCourses(app: FastifyInstance) {
                     tags: ['Cursos'],
                     summary: 'Obter cursos de uma empresa.',
                     security: [{ bearerAuth: [] }],
-                    params: GetCoursesApiParamsSchema,
+                    params: GetCoursesApiRequestSchema,
                     response: {
                         200: GetCoursesApiResponseSchema,
                     },

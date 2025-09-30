@@ -6,16 +6,16 @@ import { Separator } from '@/components/ui/separator';
 import { PlusCircle, LoaderIcon, Save } from 'lucide-react';
 import { useForm, } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CreateLevelFormSchema, type CreateLevelFormData } from '@idiomax/http-schemas/levels/create-level';
+import { CreateLevelFormSchema, type CreateLevelFormData } from '@idiomax/validation-schemas/levels/create-level';
 import { FormMessageError } from '@/components/ui/form-message-error';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { createLevel } from '@/services/levels';
-import type { GetCourseByIdResponse } from '@idiomax/http-schemas/courses/get-course-by-id';
+import type { GetCourseByIdResponseType } from '@idiomax/validation-schemas/courses/get-course-by-id';
 import { getCurrentCompanyId } from '@/lib/company-utils';
 import { useState } from 'react';
 
-export function CreateLevelForm({ course, trigger }: { course: GetCourseByIdResponse; trigger?: React.ReactNode }) {
+export function CreateLevelForm({ course, trigger }: { course: GetCourseByIdResponseType; trigger?: React.ReactNode }) {
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
 

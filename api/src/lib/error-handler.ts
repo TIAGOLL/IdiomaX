@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import z, { ZodError } from 'zod';
+import { ZodError } from 'zod';
 
 import { ServiceUnavailableException } from '../http/controllers/_errors/service-unavailable-exception';
 import { BadRequestError } from '../http/controllers/_errors/bad-request-error';

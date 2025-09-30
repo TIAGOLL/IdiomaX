@@ -4,7 +4,7 @@ import { auth } from '../../../middlewares/auth';
 import {
     GetCompanySettingsApiRequestSchema,
     GetCompanySettingsApiResponseSchema
-} from '@idiomax/http-schemas/settings/get-company-settings';
+} from '@idiomax/validation-schemas/settings/get-company-settings';
 import { prisma } from '../../../lib/prisma';
 import { NotFoundError } from '../_errors/not-found-error';
 import { getUserPermissions } from '../../../lib/get-user-permission';
@@ -53,7 +53,7 @@ export async function getCompanySettings(app: FastifyInstance) {
                     throw new NotFoundError('Configurações não encontradas para esta empresa.');
                 }
 
-                reply.send({
+                reply.status(200).send({
                     registration_time: Number(config.registrations_time),
                 });
             }

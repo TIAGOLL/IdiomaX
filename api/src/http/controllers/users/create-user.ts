@@ -4,10 +4,11 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { auth } from '../../../middlewares/auth';
 import { prisma } from '../../../lib/prisma';
-import { CreateUserApiRequestSchema, CreateUserApiResponseSchema } from '@idiomax/http-schemas/users';
+import { CreateUserApiRequestSchema, CreateUserApiResponseSchema } from '@idiomax/validation-schemas/users';
 import { hash } from 'bcryptjs';
 import { getUserPermissions } from '../../../lib/get-user-permission';
 import { ForbiddenError } from '../_errors/forbidden-error';
+import { RoleEnum } from '@idiomax/validation-schemas/enums';
 
 export async function createUser(app: FastifyInstance) {
     app
@@ -77,7 +78,7 @@ export async function createUser(app: FastifyInstance) {
                         member_on: {
                             create: {
                                 company_id,
-                                role,
+                                role: RoleEnum.parse(role),
                                 created_by: userId,
                                 updated_by: userId,
                             }
@@ -85,9 +86,7 @@ export async function createUser(app: FastifyInstance) {
                     },
                 });
 
-                return reply.status(201).send({
-                    message: 'Usuário criado com sucesso.',
-                });
+                return reply.status(201).send({ message: 'Usuário criado com sucesso.', });
             },
         );
 }

@@ -1,11 +1,11 @@
 import { api } from '../../lib/api';
 import type {
-    UpdateUserHttpRequest,
-    UpdateUserHttpResponse
-} from '@idiomax/http-schemas/users/update-user';
+    UpdateUserRequestType,
+    UpdateUserResponseType
+} from '@idiomax/validation-schemas/users/update-user';
 
 
-export async function updateUser(data: UpdateUserHttpRequest): Promise<UpdateUserHttpResponse> {
+export async function updateUser(data: UpdateUserRequestType) {
     const response = await api.put(`/users/update`, data);
-    return response.data;
+    return response.data as UpdateUserResponseType;
 }

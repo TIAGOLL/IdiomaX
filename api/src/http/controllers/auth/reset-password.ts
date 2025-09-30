@@ -4,11 +4,11 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { ForbiddenError } from '../_errors/forbidden-error';
 import { prisma } from '../../../lib/prisma';
-import { ResetPasswordApiRequest, ResetPasswordApiResponse } from '@idiomax/http-schemas/auth/reset-password'
+import { ResetPasswordApiRequest, ResetPasswordApiResponse } from '@idiomax/validation-schemas/auth/reset-password'
 
 export async function resetPassword(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
-    '/auth/reset-password',
+    '/auth/reset-password-request',
     {
       schema: {
         tags: ['Autenticação'],

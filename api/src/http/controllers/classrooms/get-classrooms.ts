@@ -1,15 +1,11 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { GetClassroomsResponseSchema, GetClassroomsQuerySchema } from '@idiomax/http-schemas/classrooms/get-classrooms'
+import { GetClassroomsApiResponseSchema, GetClassroomsApiRequestSchema } from '@idiomax/validation-schemas/classrooms/get-classrooms'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
-import { z } from 'zod'
 import { getUserPermissions } from '../../../lib/get-user-permission'
 import { ForbiddenError } from '../_errors/forbidden-error'
-
-const ErrorResponseSchema = z.object({
-    message: z.string()
-})
+import { ErrorResponseSchema } from './../../../types/error-response-schema';
 
 export async function getClassrooms(app: FastifyInstance) {
     app
@@ -21,9 +17,9 @@ export async function getClassrooms(app: FastifyInstance) {
                 schema: {
                     tags: ['Classrooms'],
                     summary: 'Listar salas de aula',
-                    querystring: GetClassroomsQuerySchema,
+                    querystring: GetClassroomsApiRequestSchema,
                     response: {
-                        200: GetClassroomsResponseSchema,
+                        200: GetClassroomsApiResponseSchema,
                         400: ErrorResponseSchema,
                     },
                 },

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { UpdateRegistrationTimeFormSchema } from '@idiomax/http-schemas/settings/update-registration-time';
+import { UpdateRegistrationTimeFormSchema } from '@idiomax/validation-schemas/settings/update-registration-time';
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -12,8 +12,9 @@ import { updateRegistrationTime } from "@/services/settings/update-registration-
 import { Loader, Save } from "lucide-react";
 import { useSessionContext } from "@/contexts/session-context";
 import { useEffect } from "react";
+import { getCurrentCompanyId } from "@/lib/company-utils";
 
-export type UpdateRegistrationTimeFormData = z.infer<typeof UpdateRegistrationTimeFormSchema>;
+export type UpdateRegistrationTimeFormSchema = z.infer<typeof UpdateRegistrationTimeFormSchema>;
 
 interface UpdateRegistrationTimeFormProps {
     currentValue?: number;
@@ -24,20 +25,21 @@ export function UpdateRegistrationTimeForm({ currentValue }: UpdateRegistrationT
     const { currentCompanyMember } = useSessionContext();
 
     const { register, handleSubmit, formState: { errors }, setValue } =
-        useForm<UpdateRegistrationTimeFormData>({
+        useForm({
             resolver: zodResolver(UpdateRegistrationTimeFormSchema),
         });
 
     // Define o valor inicial quando currentValue muda
     useEffect(() => {
         if (currentValue) {
-            setValue('registrationTime', currentValue);
+            setValue('registration_time', currentValue);
         }
     }, [currentValue, setValue]);
 
     const { mutate, isPending } = useMutation({
-        mutationFn: (data: UpdateRegistrationTimeFormData) => updateRegistrationTime({
-            registrations_time: data.registrationTime,
+        mutationFn: (data: UpdateRegistrationTimeFormSchema) => updateRegistrationTime({
+            registration_time: data.registration_time,
+            company_id: getCurrentCompanyId()
         }),
         onSuccess: (res) => {
             toast.success(res.message);
@@ -57,12 +59,12 @@ export function UpdateRegistrationTimeForm({ currentValue }: UpdateRegistrationT
                 <div className="space-y-2">
                     <Label htmlFor="registrationTime">Tempo (meses)</Label>
                     <Input
-                        id="registrationTime"
+                        id="registration_time"
                         type="number"
-                        {...register('registrationTime', { valueAsNumber: true })}
+                        {...register('registration_time', { valueAsNumber: true })}
                         placeholder="Digite o tempo em meses (ex: 6)"
                     />
-                    <FormMessageError error={errors?.registrationTime?.message} />
+                    <FormMessageError error={errors?.registration_time?.message} />
                     <p className="text-sm text-muted-foreground">
                         Define a duração padrão das matrículas (1 a 60 meses).
                     </p>

@@ -1,11 +1,10 @@
 import { api } from '../../lib/api';
-import { getCurrentCompanyId } from '../../lib/company-utils';
 import type {
-    GetCoursesHttpParamsData,
-    GetCoursesHttpResponseData
-} from '@idiomax/http-schemas/courses/get-courses';
+    GetCoursesRequestType,
+    GetCoursesResponseType
+} from '@idiomax/validation-schemas/courses/get-courses';
 
-export async function getCourses(data: GetCoursesHttpParamsData): Promise<GetCoursesHttpResponseData> {
-    const response = await api.get(`/courses/${getCurrentCompanyId()}`);
-    return response.data;
+export async function getCourses({ company_id }: GetCoursesRequestType) {
+    const response = await api.get(`/courses/${company_id}`);
+    return response.data as GetCoursesResponseType;
 }

@@ -3,7 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 
 import { prisma } from '../../../lib/prisma'
-import { DeactivateLevelFormSchema, DeactivateLevelApiResponse } from '@idiomax/http-schemas/levels/deactivate-level'
+import { DeactivateLevelFormSchema, DeactivateLevelApiResponse } from '@idiomax/validation-schemas/levels/deactivate-level'
 import { auth } from '../../../middlewares/auth'
 import { getUserPermissions } from '../../../lib/get-user-permission'
 import { ForbiddenError } from '../_errors/forbidden-error'

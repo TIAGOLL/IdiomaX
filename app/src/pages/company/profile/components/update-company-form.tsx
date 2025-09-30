@@ -10,12 +10,12 @@ import { FormMessageError } from '@/components/ui/form-message-error';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { UpdateCompanyFormSchema } from '@idiomax/http-schemas/companies/update-company';
-import type { GetCompanyByIdHttpResponse } from '@idiomax/http-schemas/companies/get-company-by-id';
+import { UpdateCompanyFormSchema } from '@idiomax/validation-schemas/companies/update-company';
+import type { GetCompanyByIdResponseType } from '@idiomax/validation-schemas/companies/get-company-by-id';
 
 type UpdateCompanyFormSchema = z.infer<typeof UpdateCompanyFormSchema>;
 
-export function UpdateCompanyForm({ company }: { company: GetCompanyByIdHttpResponse }) {
+export function UpdateCompanyForm({ company }: { company: GetCompanyByIdResponseType }) {
     const { mutate, isPending } = useMutation({
         mutationFn: async (data: UpdateCompanyFormSchema) => {
             const response = await api.put('/companies', {

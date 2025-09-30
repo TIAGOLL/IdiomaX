@@ -1,7 +1,7 @@
 import type { Address } from 'nodemailer/lib/mailer';
 import { Options } from 'nodemailer/lib/mailer';
 import { mailTransport } from '../lib/mail-transport';
-import { env } from '../http/server';
+import { ENV } from '../http/server';
 
 
 export type MailSenderSchema = {
@@ -18,8 +18,8 @@ export async function SendEmail({ from, recipients, subject, html }: MailSenderS
 
     const options: Options = {
         from: from ?? {
-            name: env.data.APP_NAME,
-            address: env.data.ADDRESS_MAIL_SENDER,
+            name: ENV.APP_NAME,
+            address: ENV.ADDRESS_MAIL_SENDER,
         },
         to: recipients,
         subject,

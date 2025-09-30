@@ -11,28 +11,31 @@ import { Search, Users, Edit, X } from 'lucide-react';
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { useNavigate } from 'react-router';
-import type { UserRole } from '@idiomax/http-schemas/users/get-users';
 import { getCurrentCompanyId } from '@/lib/company-utils';
 import { getUsers } from '@/services/users/get-users';
+import type { Role } from '@idiomax/validation-schemas/enums';
+import { formatDate } from '@/lib/utils';
 
 export function UsersTablePage() {
     const navigate = useNavigate();
 
     // Estados locais para filtros (sem URL)
     const [searchFilter, setSearchFilter] = useState('');
-    const [roleFilter, setRoleFilter] = useState<UserRole | ''>('');
+    const [roleFilter, setRoleFilter] = useState<Role | ''>('');
 
     // Query única para buscar todos os usuários
-    const usersQuery = useQuery({
+    const { data, error, isPending } = useQuery({
         queryKey: ['users', 'ALL', getCurrentCompanyId()],
-        queryFn: () => getUsers(undefined, { limit: 1000 }), // Buscar todos sem especificar role
+        queryFn: () => getUsers({
+            company_id: getCurrentCompanyId(),
+        }), // Buscar todos sem especificar role
         enabled: !!getCurrentCompanyId(),
     });
 
     const filteredUsers = useMemo(() => {
-        if (!usersQuery.data?.users) return [];
+        if (!data) return [];
 
-        return usersQuery.data.users.filter(user => {
+        return data.filter((user) => {
             // Filtro de busca (nome, email, username)
             const matchesSearch = !searchFilter ||
                 user.name.toLowerCase().includes(searchFilter.toLowerCase()) ||
@@ -45,8 +48,8 @@ export function UsersTablePage() {
 
             return matchesSearch && matchesRole;
         });
-    }, [usersQuery.data?.users, searchFilter, roleFilter]); const isLoading = usersQuery.isLoading;
-    const hasError = usersQuery.error;
+    }, [data, searchFilter, roleFilter]);;
+    const hasError = error;
 
     const clearFilters = () => {
         setSearchFilter('');
@@ -57,11 +60,7 @@ export function UsersTablePage() {
         navigate(`/admin/users?tab=edit&id=${userId}`);
     };
 
-    const formatDate = (dateString: string | Date) => {
-        return new Date(dateString).toLocaleDateString('pt-BR');
-    };
-
-    if (isLoading) {
+    if (isPending) {
         return (
             <div className="space-y-4">
                 <Skeleton className="h-32 w-full" />
@@ -108,7 +107,7 @@ export function UsersTablePage() {
                         <div className="space-y-2 justify-end flex flex-col">
                             <Select
                                 value={roleFilter || "ALL"}
-                                onValueChange={(value) => setRoleFilter(value === "ALL" ? "" : value as UserRole)}
+                                onValueChange={(value) => setRoleFilter(value === "ALL" ? "" : value as Role)}
                             >
                                 <SelectTrigger id="role" className='w-full'>
                                     <SelectValue placeholder="Todos" />

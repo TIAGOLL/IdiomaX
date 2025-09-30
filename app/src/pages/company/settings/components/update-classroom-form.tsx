@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LoaderIcon, Edit2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { UpdateClassroomFormSchema } from '@idiomax/http-schemas/classrooms/update-classroom';
+import { UpdateClassroomFormSchema } from '@idiomax/validation-schemas/classrooms/update-classroom';
 import { FormMessageError } from '@/components/ui/form-message-error';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -12,13 +12,12 @@ import { updateClassroom, } from '@/services/classrooms';
 import { useEffect, useState } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { z } from 'zod';
-import type { GetClassroomsResponseSchema } from '@idiomax/http-schemas/classrooms/get-classrooms';
+import { type GetClassroomsResponseType } from '@idiomax/validation-schemas/classrooms/get-classrooms';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-type GetClassroomsResponse = z.infer<typeof GetClassroomsResponseSchema>;
 type UpdateClassroomForm = z.infer<typeof UpdateClassroomFormSchema>;
 
-export function UpdateClassroomForm({ classroom }: { classroom: GetClassroomsResponse[number] }) {
+export function UpdateClassroomForm({ classroom }: { classroom: GetClassroomsResponseType[number] }) {
     const [open, setOpen] = useState(false);
     const queryClient = useQueryClient();
 

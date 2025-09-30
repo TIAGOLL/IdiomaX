@@ -4,7 +4,7 @@ import { Label } from '@/components/ui/label';
 import { PlusCircle, LoaderIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CreateClassroomFormSchema } from '@idiomax/http-schemas/classrooms/create-classroom';
+import { CreateClassroomFormSchema } from '@idiomax/validation-schemas/classrooms/create-classroom';
 import { FormMessageError } from '@/components/ui/form-message-error';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';

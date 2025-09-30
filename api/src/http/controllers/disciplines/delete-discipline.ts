@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { DeleteDisciplineApiResponseSchema } from '@idiomax/http-schemas/disciplines/delete-discipline'
+import { DeleteDisciplineApiResponseSchema } from '@idiomax/validation-schemas/disciplines/delete-discipline'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { BadRequestError } from '../_errors/bad-request-error'

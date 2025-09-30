@@ -2,9 +2,11 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { auth } from '../../../middlewares/auth';
-import { GetCompanySubscriptionApiRequestSchema, GetCompanySubscriptionApiResponseSchema } from '@idiomax/http-schemas/subscriptions/get-company-subscription'
+import { GetCompanySubscriptionApiRequestSchema, GetCompanySubscriptionApiResponseSchema } from '@idiomax/validation-schemas/subscriptions/get-company-subscription'
 import { prisma } from '../../../lib/prisma';
 import { NotFoundError } from '../_errors/not-found-error';
+import { getUserPermissions } from '../../../lib/get-user-permission';
+import { ForbiddenError } from '../_errors/forbidden-error';
 
 export async function GetCompanySubscription(app: FastifyInstance) {
     app
@@ -25,6 +27,15 @@ export async function GetCompanySubscription(app: FastifyInstance) {
             },
             async (request, reply) => {
                 const { company_id } = request.params;
+
+                const userId = await request.getCurrentUserId()
+                const { member } = await request.getUserMember(company_id)
+
+                const { cannot } = getUserPermissions(userId, member.role)
+
+                if (cannot('get-subscription', 'Company')) {
+                    throw new ForbiddenError()
+                }
 
                 const subscription = await prisma.stripe_company_subscriptions.findUnique({
                     where: { company_customer_id: company_id },

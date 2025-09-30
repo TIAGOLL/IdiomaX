@@ -1,4 +1,4 @@
-import type { GetCourseByIdResponse } from '@idiomax/http-schemas/courses/get-course-by-id';
+import type { GetCourseByIdResponseType } from '@idiomax/validation-schemas/courses/get-course-by-id';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCurrentCompanyId } from "@/lib/company-utils";
 import { useSearchParams } from "react-router";
@@ -9,7 +9,7 @@ import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { deleteCourse } from "@/services/courses/delete-course";
 
-export function DeleteCourseForm({ course }: { course: GetCourseByIdResponse }) {
+export function DeleteCourseForm({ course }: { course: GetCourseByIdResponseType }) {
 
     const queryClient = useQueryClient();
     const [, setSearchParams] = useSearchParams();

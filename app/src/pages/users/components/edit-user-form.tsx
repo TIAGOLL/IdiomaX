@@ -1,6 +1,6 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Controller, useForm } from 'react-hook-form';
-import { UpdateUserFormSchema } from '@idiomax/http-schemas/users/update-user';
+import { UpdateUserFormSchema } from '@idiomax/validation-schemas/users/update-user';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type z from 'zod';
 import { Label } from '@/components/ui/label';
@@ -16,18 +16,17 @@ import { Textarea } from '@/components/ui/textarea';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useSearchParams } from 'react-router';
-import { useSessionContext } from '@/contexts/session-context';
 import { ptBR } from 'date-fns/locale';
-import type { UserWithRole } from '@idiomax/http-schemas/users/get-users';
 import { updateUser } from '@/services/users/update-user';
+import type { GetUserByIdResponseType } from '@idiomax/validation-schemas/users/get-user-by-id';
+import { getCurrentCompanyId } from '@/lib/company-utils';
 
 type UpdateUserFormSchema = z.infer<typeof UpdateUserFormSchema>;
 
-export function EditUserForm({ user }: { user: UserWithRole }) {
+export function EditUserForm({ user }: { user: GetUserByIdResponseType }) {
 
     const queryClient = useQueryClient();
     const [searchParams] = useSearchParams();
-    const { currentCompanyMember } = useSessionContext();
     const userId = searchParams.get('id') || '';
 
     const { handleSubmit, control, formState: { errors }, register } =
@@ -49,7 +48,7 @@ export function EditUserForm({ user }: { user: UserWithRole }) {
     const { mutate, isPending } = useMutation({
         mutationFn: (data: UpdateUserFormSchema) => updateUser({
             ...data,
-            companyId: currentCompanyMember?.company.id || '',
+            company_id: getCurrentCompanyId(),
             id: userId
         }),
         onSuccess: (res) => {

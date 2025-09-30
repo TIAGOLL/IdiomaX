@@ -1,10 +1,8 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { ForbiddenError } from "../_errors/forbidden-error";
 import { auth } from "../../../middlewares/auth";
 import { prisma } from "../../../lib/prisma";
-import { AdminDashboardApiRequestSchema, AdminDashboardApiResponseSchema } from "@idiomax/http-schemas/dashboard";
-import { getUserPermissions } from "../../../lib/get-user-permission";
+import { AdminDashboardApiRequestSchema, AdminDashboardApiResponseSchema } from "@idiomax/validation-schemas/dashboard";
 
 
 export async function AdminDashboard(app: FastifyInstance) {
@@ -27,15 +25,6 @@ export async function AdminDashboard(app: FastifyInstance) {
             async (request, reply) => {
                 const receivablesCurveYear = new Date().getFullYear().toString();
                 const { company_id } = request.params;
-                const userId = await request.getCurrentUserId()
-                const { member } = await request.getUserMember(company_id)
-
-                const { cannot } = getUserPermissions(userId, member.role)
-
-                if (cannot('manage', 'all')) {
-                    throw new ForbiddenError()
-                }
-
                 // Visão executiva
                 const activeStudents = await prisma.users.count({
                     where: {
@@ -212,11 +201,15 @@ export async function AdminDashboard(app: FastifyInstance) {
                 });
 
                 // DSO
-                const paidFees = monthlyFees.filter(f => f.paid);
+                const paidFees = monthlyFees.filter(f => f.paid && f.date_of_payment);
                 const dso = paidFees.length
                     ? Math.round(
-                        paidFees.reduce((acc, f) => acc + ((new Date(f.date_of_payment).getTime() - new Date(f.due_date).getTime()) / (1000 * 60 * 60 * 24)), 0) /
-                        paidFees.length
+                        paidFees.reduce((acc, f) => {
+                            if (f.date_of_payment) {
+                                return acc + ((new Date(f.date_of_payment).getTime() - new Date(f.due_date).getTime()) / (1000 * 60 * 60 * 24));
+                            }
+                            return acc;
+                        }, 0) / paidFees.length
                     )
                     : 0;
 
@@ -264,13 +257,14 @@ export async function AdminDashboard(app: FastifyInstance) {
                 const earlyDiscount = monthlyFees.filter(f => f.discount_payment_before_due_date).reduce((acc, f) => acc + Number(f.discount_payment_before_due_date), 0);
 
                 // Mix de métodos de pagamento
-                const paymentMix: any = {};
+                const paymentMix: Record<string, number> = {};
                 monthlyFees.forEach(f => {
-                    paymentMix[f.payment_method] = (paymentMix[f.payment_method] || 0) + 1;
+                    const method = f.payment_method || 'Não informado';
+                    paymentMix[method] = (paymentMix[method] || 0) + 1;
                 });
                 const paymentMixArr = Object.entries(paymentMix).map(([method, count]) => ({
                     method,
-                    percent: Math.round((count as number / monthlyFees.length) * 100),
+                    percent: Math.round((count / monthlyFees.length) * 100),
                 }));
 
                 // Ticket médio por matrícula
@@ -294,17 +288,17 @@ export async function AdminDashboard(app: FastifyInstance) {
                 }));
 
                 // Presença e rotinas (exemplo: alunos <75% nas últimas 4 semanas)
-                const lowAttendanceStudents: any[] = [];
+                const lowAttendanceStudents: { id: string; name: string; attendance: number; }[] = [];
                 // Implemente conforme sua estrutura de presença
 
                 // Encontros programados vs realizados
-                const classMeetings: any[] = [];
+                const classMeetings: { classId: string; className: string; scheduled: number; done: number; }[] = [];
                 // Implemente conforme sua estrutura de classes/class_days
 
                 // Tarefas
-                const tasksByDiscipline: any[] = [];
+                const tasksByDiscipline: { disciplineId: string; disciplineName: string; deliveries: number; }[] = [];
                 // Implemente conforme sua estrutura de tasks/tasks_delivery
-                const pendingTasks: any[] = [];
+                const pendingTasks: { period: string; count: number; }[] = [];
                 // Implemente conforme sua estrutura de tasks
 
                 // Inicializa a curva de recebidos com todos os meses do ano

@@ -74,7 +74,6 @@ export function CompanySwitcher() {
                                 <div className="grid flex-1 leading-tight">
                                     <span className="font-semibold">{member.company.name}</span>
                                     <span className="text-muted-foreground">
-                                        {member.role == "OWNER" && "Proprietário"}
                                         {member.role == "ADMIN" && "Administrador"}
                                         {member.role == "STUDENT" && "Estudante"}
                                         {member.role == "TEACHER" && "Professor"}

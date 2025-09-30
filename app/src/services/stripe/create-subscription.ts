@@ -1,21 +1,10 @@
 import { api } from "@/lib/api";
-import type { CreateSubscriptionHttpResponse } from "@idiomax/http-schemas/subscriptions/create-subscription";
-import { getCurrentCompanyId } from "@/lib/company-utils";
+import type { CreateSubscriptionResponseType, CreateSubscriptionRequestType } from "@idiomax/validation-schemas/subscriptions/create-subscription";
 
-interface CreateSubscriptionRequest {
-    priceId: string;
-    companyId?: string;
-    userId?: string;
-}
-
-export async function createSubscription(data: CreateSubscriptionRequest) {
+export async function createSubscription(data: CreateSubscriptionRequestType) {
     const response = await api.post(
-        '/stripe/create-subscription',
-        {
-            company_id: getCurrentCompanyId(),
-            price_id: data.priceId,
-        }
+        '/stripe/create-subscription', data
     );
 
-    return response.data as CreateSubscriptionHttpResponse;
+    return response.data as CreateSubscriptionResponseType;
 }

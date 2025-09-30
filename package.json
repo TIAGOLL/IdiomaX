@@ -8,7 +8,8 @@
     "dev": "concurrently \"pnpm --filter api dev\" \"pnpm --filter app dev\"",
     "docker": "docker-compose -f docker-compose.yml up -d",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "generate": "pnpm --filter api prisma generate"
+    "generate": "pnpm --filter api prisma generate",
+    "type-check": "pnpm --filter api type-check && pnpm --filter app type-check && pnpm --filter packages/authorization type-check && pnpm --filter packages/validation-schemas type-check"
   },
   "keywords": [],
   "author": "",

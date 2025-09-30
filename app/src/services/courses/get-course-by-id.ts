@@ -1,9 +1,9 @@
 import { api } from '@/lib/api'
-import type { GetCourseByIdResponse, GetCourseByIdParams } from '@idiomax/http-schemas/courses/get-course-by-id'
+import type { GetCourseByIdRequestType, GetCourseByIdResponseType } from '@idiomax/validation-schemas/courses/get-course-by-id'
 
 
-export async function getCourseById({ course_id }: GetCourseByIdParams): Promise<GetCourseByIdResponse> {
+export async function getCourseById({ course_id }: GetCourseByIdRequestType) {
     const response = await api.get(`/course/${course_id}`)
 
-    return response.data as GetCourseByIdResponse
+    return response.data as GetCourseByIdResponseType
 }

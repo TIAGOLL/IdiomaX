@@ -1,11 +1,12 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { CreateClassroomApiRequestSchema, CreateClassroomResponseSchema } from '@idiomax/http-schemas/classrooms/create-classroom'
+import { CreateClassroomApiRequestSchema, CreateClassroomApiResponseSchema } from '@idiomax/validation-schemas/classrooms/create-classroom'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { BadRequestError } from '../_errors/bad-request-error'
 import { getUserPermissions } from '../../../lib/get-user-permission'
 import { ForbiddenError } from '../_errors/forbidden-error'
+import { ErrorResponseSchema } from '../../../types/error-response-schema'
 
 export async function createClassroom(app: FastifyInstance) {
     app
@@ -19,8 +20,8 @@ export async function createClassroom(app: FastifyInstance) {
                     summary: 'Criar uma nova sala de aula',
                     body: CreateClassroomApiRequestSchema,
                     response: {
-                        201: CreateClassroomResponseSchema,
-                        400: CreateClassroomResponseSchema,
+                        201: CreateClassroomApiResponseSchema,
+                        400: ErrorResponseSchema,
                     },
                 },
             },

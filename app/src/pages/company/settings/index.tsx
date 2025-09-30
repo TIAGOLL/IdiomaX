@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { GetCompanySettings } from '@/services/settings/get-company-settings';
 import { MapPinHouse } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { getCurrentCompanyId } from '@/lib/company-utils';
 
 export function MyCompanySettingsPage() {
 
@@ -15,7 +16,9 @@ export function MyCompanySettingsPage() {
 
     const { data } = useQuery({
         queryKey: ['company-settings', currentCompanyMember?.company.id],
-        queryFn: () => GetCompanySettings(),
+        queryFn: () => GetCompanySettings({
+            company_id: getCurrentCompanyId()
+        }),
         enabled: !!currentCompanyMember?.company.id,
     })
 

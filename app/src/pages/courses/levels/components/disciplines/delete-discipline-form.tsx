@@ -29,7 +29,9 @@ export function DeleteDisciplineForm({ disciplineId, disciplineName, courseId }:
     const queryClient = useQueryClient();
 
     const { mutate, isPending } = useMutation({
-        mutationFn: () => deleteDiscipline(disciplineId),
+        mutationFn: () => deleteDiscipline({
+            id: disciplineId,
+        }),
         onSuccess: (res) => {
             toast.success(res.message);
             queryClient.invalidateQueries({ queryKey: ['levels', courseId] });

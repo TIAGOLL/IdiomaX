@@ -2,10 +2,10 @@ import React, { useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import type { GetCourseByIdResponse } from '@idiomax/http-schemas/courses/get-course-by-id';
+import { type GetCourseByIdResponseType } from '@idiomax/validation-schemas/courses/get-course-by-id';
 import z from 'zod';
 import { getCurrentCompanyId } from '@/lib/company-utils';
-import { DeactivateCourseFormSchema } from '@idiomax/http-schemas/courses/deactivate-course';
+import { DeactivateCourseFormSchema } from '@idiomax/validation-schemas/courses/deactivate-course';
 import { Power, PowerOff } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,7 +13,7 @@ import { deactivateCourse } from '@/services/courses/deactivate-course';
 
 type DeactivateCourseFormSchema = z.infer<typeof DeactivateCourseFormSchema>;
 
-export function DeactivateCourseForm({ course }: { course: GetCourseByIdResponse }) {
+export function DeactivateCourseForm({ course }: { course: GetCourseByIdResponseType }) {
 
     const queryClient = useQueryClient();
 

@@ -4,7 +4,7 @@ import { auth } from '../../../middlewares/auth';
 import { prisma } from '../../../lib/prisma';
 import { getUserPermissions } from '../../../lib/get-user-permission';
 import { ForbiddenError } from '../_errors/forbidden-error';
-import { GetMaterialsByLevelApiParamsSchema, GetMaterialsByLevelApiQuerySchema, GetMaterialsByLevelApiResponseSchema } from '@idiomax/http-schemas/materials/get-materials-by-level';
+import { GetMaterialsByLevelApiRequestSchema, GetMaterialsByLevelApiResponseSchema } from '@idiomax/validation-schemas/materials/get-materials-by-level';
 
 export async function getMaterialsByLevel(app: FastifyInstance) {
     app
@@ -17,15 +17,14 @@ export async function getMaterialsByLevel(app: FastifyInstance) {
                     tags: ['Materiais'],
                     summary: 'Obter lista de materiais de um level.',
                     security: [{ bearerAuth: [] }],
-                    params: GetMaterialsByLevelApiParamsSchema,
-                    querystring: GetMaterialsByLevelApiQuerySchema,
+                    querystring: GetMaterialsByLevelApiRequestSchema,
                     response: {
                         200: GetMaterialsByLevelApiResponseSchema,
                     },
                 },
             },
             async (request, reply) => {
-                const { company_id } = request.params;
+                const { company_id, level_id } = request.query;
 
                 const userId = await request.getCurrentUserId()
                 const { member } = await request.getUserMember(company_id)
@@ -39,6 +38,7 @@ export async function getMaterialsByLevel(app: FastifyInstance) {
                 const materials = await prisma.materials.findMany({
                     where: {
                         levels: {
+                            id: level_id,
                             courses: {
                                 company_id: company_id,
                             }

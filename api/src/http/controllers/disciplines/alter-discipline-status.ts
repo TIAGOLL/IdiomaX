@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { ToggleDisciplineStatusApiRequestSchema, ToggleDisciplineStatusApiResponseSchema } from '@idiomax/http-schemas/disciplines/toggle-discipline-status'
+import { AlterDisciplineStatusApiRequestSchema, AlterDisciplineStatusApiResponseSchema } from '@idiomax/validation-schemas/disciplines/toggle-discipline-status'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { z } from 'zod'
@@ -24,9 +24,9 @@ export async function alterDisciplineStatus(app: FastifyInstance) {
                 summary: 'Ativar/desativar disciplina',
                 security: [{ bearerAuth: [] }],
                 params: ParamsSchema,
-                body: ToggleDisciplineStatusApiRequestSchema,
+                body: AlterDisciplineStatusApiRequestSchema,
                 response: {
-                    200: ToggleDisciplineStatusApiResponseSchema,
+                    200: AlterDisciplineStatusApiResponseSchema,
                     400: ErrorResponseSchema,
                     403: ErrorResponseSchema,
                     404: ErrorResponseSchema,

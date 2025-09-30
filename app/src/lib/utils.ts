@@ -1,8 +1,8 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import type { UserRole } from "@idiomax/http-schemas/users/get-users"
 import { getUsers } from "@/services/users/get-users";
 import { getUserByEmail } from "@/services/users/get-user-by-email";
+import { getCurrentCompanyId } from "./company-utils";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -33,18 +33,23 @@ export function PasswordGenerator(cpf: string) {
 
 export async function VerifyUserExists(username: string): Promise<boolean> {
   try {
-    const { users } = await getUsers();
+    const users = await getUsers({
+      company_id: getCurrentCompanyId()
+    });
 
-    const userExists = users.some(user => user.username === username);
+    const userExists = users.some((user: typeof users[number]) => user.username === username);
     return !userExists; // Retorna true se o usuário NÃO existe (disponível)
   } catch {
     return true; // Se houve erro na busca, considera que o username está disponível
   }
 }
 
-export async function VerifyEmailExists(email: string, role: UserRole = 'STUDENT'): Promise<boolean> {
+export async function VerifyEmailExists(email: string): Promise<boolean> {
   try {
-    await getUserByEmail(role, email);
+    await getUserByEmail({
+      email,
+      company_id: getCurrentCompanyId()
+    });
     return false; // Se encontrou o usuário, o email já existe
   } catch {
     return true; // Se não encontrou, o email está disponível

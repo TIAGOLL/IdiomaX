@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { UpdateCourseApiRequestSchema, UpdateCourseApiResponseSchema } from '@idiomax/http-schemas/courses/update-course'
+import { UpdateCourseApiRequestSchema, UpdateCourseApiResponseSchema } from '@idiomax/validation-schemas/courses/update-course'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { getUserPermissions } from '../../../lib/get-user-permission'

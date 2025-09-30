@@ -14,15 +14,19 @@ import {
 } from '@/components/ui/dialog';
 import { BookmarkPlus, Loader2 } from 'lucide-react';
 import { createDiscipline } from '@/services/disciplines';
-import type { CreateDisciplineRequest } from '@idiomax/http-schemas/disciplines/create-discipline';
+import type { CreateDisciplineFormSchema } from '@idiomax/validation-schemas/disciplines/create-discipline';
 import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { getCurrentCompanyId } from '@/lib/company-utils';
+import type z from 'zod';
 
 interface CreateDisciplineFormProps {
     levelId: string;
     levelName: string;
     courseId: string;
 }
+
+type CreateDisciplineFormSchema = z.infer<typeof CreateDisciplineFormSchema>;
 
 export function CreateDisciplineForm({ levelId, levelName, courseId }: CreateDisciplineFormProps) {
     const [isOpen, setIsOpen] = useState(false);
@@ -31,7 +35,10 @@ export function CreateDisciplineForm({ levelId, levelName, courseId }: CreateDis
     const queryClient = useQueryClient();
 
     const { mutate: handleCreateDiscipline, isPending } = useMutation({
-        mutationFn: (data: CreateDisciplineRequest) => createDiscipline(data),
+        mutationFn: (data: CreateDisciplineFormSchema) => createDiscipline({
+            ...data,
+            company_id: getCurrentCompanyId(),
+        }),
         onSuccess: (res) => {
             toast.success(res.message);
             queryClient.invalidateQueries({ queryKey: ['levels', courseId] });

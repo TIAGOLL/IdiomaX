@@ -5,7 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Save, X, Edit } from 'lucide-react';
 import { updateDiscipline } from '@/services/disciplines';
 import { toast } from 'sonner';
-import type { UpdateDisciplineFormData } from '@idiomax/http-schemas/disciplines/update-discipline';
+import { UpdateDisciplineFormSchema } from '@idiomax/validation-schemas/disciplines/update-discipline';
+import { getCurrentCompanyId } from '@/lib/company-utils';
+import type z from 'zod';
 
 interface EditDisciplineFormProps {
     disciplineId: string;
@@ -14,6 +16,8 @@ interface EditDisciplineFormProps {
     onEditStart?: () => void;
     onEditEnd?: () => void;
 }
+
+type UpdateDisciplineFormSchema = z.infer<typeof UpdateDisciplineFormSchema>;
 
 export function EditDisciplineForm({
     disciplineId,
@@ -28,8 +32,9 @@ export function EditDisciplineForm({
     const queryClient = useQueryClient();
 
     const { mutate: handleUpdateDiscipline, isPending } = useMutation({
-        mutationFn: (data: UpdateDisciplineFormData) => updateDiscipline({
+        mutationFn: (data: UpdateDisciplineFormSchema) => updateDiscipline({
             id: disciplineId,
+            company_id: getCurrentCompanyId(),
             ...data
         }),
         onSuccess: () => {

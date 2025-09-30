@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
 import { createCheckoutSession } from "@/services/stripe/create-checkout-service";
-import { CreateCheckoutSessionFormSchema } from '@idiomax/http-schemas/subscriptions/create-checkout-session';
+import { CreateCheckoutSessionFormSchema } from '@idiomax/validation-schemas/subscriptions/create-checkout-session';
 import type z from "zod";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { getProducts } from "@/services/stripe/get-products";
@@ -12,6 +12,7 @@ import { useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { LoaderIcon } from "lucide-react";
 import { useSessionContext } from "@/contexts/session-context";
+import type { GetProductsResponseType } from "@idiomax/validation-schemas/subscriptions/get-products";
 
 type CreateCheckoutSessionFormData = z.infer<typeof CreateCheckoutSessionFormSchema>;
 
@@ -31,7 +32,7 @@ export function SubscriptionForm() {
 
     const { data: products, isLoading: isLoadingProducts } = useQuery({
         queryKey: ['products'],
-        queryFn: async () => await getProducts(),
+        queryFn: async () => await getProducts({ active: true }),
         retry: false,
     });
 
@@ -75,7 +76,7 @@ export function SubscriptionForm() {
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {products?.map((product) => (
+                {products?.map((product: GetProductsResponseType[number]) => (
                     product.prices.map((price) => (
                         <Card
                             key={product.id}
@@ -133,7 +134,7 @@ export function SubscriptionForm() {
                 type="submit"
                 disabled={isMutating || isLoadingProducts || !watch("prodId")}
                 size="lg"
-                onClick={() => {console.log(errors)}}
+                onClick={() => { console.log(errors) }}
             >
                 {isMutating ? (
                     <>

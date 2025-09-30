@@ -3,7 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { prisma } from '../../../lib/prisma';
 import { auth } from '../../../middlewares/auth';
-import { GetProfileApiResponse } from '@idiomax/http-schemas/auth/get-profile'
+import { GetProfileApiResponse } from '@idiomax/validation-schemas/auth/get-profile'
 import { UnauthorizedError } from '../_errors/unauthorized-error';
 
 export async function getUserProfile(app: FastifyInstance) {
@@ -15,7 +15,7 @@ export async function getUserProfile(app: FastifyInstance) {
             {
                 schema: {
                     tags: ['Autenticação'],
-                    summary: 'Resgatar perfil do usuário',
+                    summary: 'Resgatar perfil do usuário autenticado.',
                     security: [{ bearerAuth: [] }],
                     response: {
                         200: GetProfileApiResponse
@@ -23,7 +23,6 @@ export async function getUserProfile(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-
                 const userProfile = await prisma.users.findUnique({
                     where: { id: await request.getCurrentUserId() },
                     include: {

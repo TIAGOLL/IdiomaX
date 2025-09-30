@@ -1,8 +1,8 @@
 import { api } from '@/lib/api'
-import type { DeactivateCourseRequest, DeactivateCourseResponse } from '@idiomax/http-schemas/courses/deactivate-course'
+import type { DeactivateCourseRequestType, DeactivateCourseResponseType } from '@idiomax/validation-schemas/courses/deactivate-course'
 
-export async function deactivateCourse(data: DeactivateCourseRequest): Promise<DeactivateCourseResponse> {
+export async function deactivateCourse(data: DeactivateCourseRequestType) {
     const response = await api.patch('/courses/deactivate', data)
 
-    return response.data
+    return response.data as DeactivateCourseResponseType
 }

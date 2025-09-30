@@ -1,10 +1,10 @@
 import { api } from '../../lib/api';
 import type {
-    DeleteUserHttpRequest,
-    DeleteUserHttpResponse
-} from '@idiomax/http-schemas/users/delete-user';
+    DeleteUserRequestType,
+    DeleteUserResponseType
+} from '@idiomax/validation-schemas/users/delete-user';
 
-export async function deleteUser(data: DeleteUserHttpRequest): Promise<DeleteUserHttpResponse> {
+export async function deleteUser(data: DeleteUserRequestType) {
     const response = await api.delete(`/users/delete`, { data });
-    return response.data;
+    return response.data as DeleteUserResponseType;
 }

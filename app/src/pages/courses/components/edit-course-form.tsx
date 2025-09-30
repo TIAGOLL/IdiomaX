@@ -6,7 +6,7 @@ import { Save, LoaderIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
-import { UpdateCourseFormSchema } from '@idiomax/http-schemas/courses/update-course';
+import { UpdateCourseFormSchema } from '@idiomax/validation-schemas/courses/update-course';
 import { FormMessageError } from '@/components/ui/form-message-error';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -191,7 +191,7 @@ export function EditCourseForm({ course }: EditCourseFormProps) {
                         id=' syllabus_url'
                         placeholder="Conteúdo programático detalhado, tópicos abordados por módulo..."
                         rows={4}
-                        {...register(' syllabus_url')}
+                        {...register('syllabus_url')}
                     />
                     <FormMessageError error={errors.syllabus_url?.message} />
                 </div>

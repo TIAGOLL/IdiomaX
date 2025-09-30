@@ -21,7 +21,7 @@ import nookies from 'nookies';
 import { getUserProfile } from '@/services/users/get-user-profile';
 import { useNavigate } from 'react-router';
 import { signIn } from '@/services/auth/sign-in';
-import { SignInFormSchema } from '@idiomax/http-schemas/auth/sign-in';
+import { SignInFormSchema } from '@idiomax/validation-schemas/auth/sign-in';
 
 type SignInRequest = z.infer<typeof SignInFormSchema>;
 

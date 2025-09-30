@@ -6,13 +6,10 @@ import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { deleteClassroom, } from "@/services/classrooms";
 import { getCurrentCompanyId } from "@/lib/company-utils";
-import z from "zod";
-import type { GetClassroomsResponseSchema } from "@idiomax/http-schemas/classrooms/get-classrooms";
+import type { GetClassroomsResponseType } from "@idiomax/validation-schemas/classrooms/get-classrooms";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
-type GetClassroomsResponseSchema = z.infer<typeof GetClassroomsResponseSchema>;
-
-export function DeleteClassroomForm({ classroom }: { classroom: GetClassroomsResponseSchema[number] }) {
+export function DeleteClassroomForm({ classroom }: { classroom: GetClassroomsResponseType[number] }) {
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
 

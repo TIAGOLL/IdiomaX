@@ -1,15 +1,11 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { GetCourseByIdApiParamsSchema, GetCourseByIdApiResponseSchema } from '@idiomax/http-schemas/courses/get-course-by-id'
+import { GetCourseByIdApiRequestSchema, GetCourseByIdApiResponseSchema } from '@idiomax/validation-schemas/courses/get-course-by-id'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
-import { z } from 'zod'
 import { getUserPermissions } from '../../../lib/get-user-permission'
 import { ForbiddenError } from '../_errors/forbidden-error'
-
-const ErrorResponseSchema = z.object({
-    message: z.string()
-})
+import { ErrorResponseSchema } from '../../../types/error-response-schema'
 
 export async function getCourseById(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
@@ -19,7 +15,7 @@ export async function getCourseById(app: FastifyInstance) {
                 tags: ['Courses'],
                 summary: 'Obter curso por ID',
                 security: [{ bearerAuth: [] }],
-                params: GetCourseByIdApiParamsSchema,
+                params: GetCourseByIdApiRequestSchema,
                 response: {
                     200: GetCourseByIdApiResponseSchema,
                     404: ErrorResponseSchema,

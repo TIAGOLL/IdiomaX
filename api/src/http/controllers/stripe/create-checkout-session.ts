@@ -4,8 +4,10 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { stripe } from '../../../lib/stripe';
 import { ENV } from '../../server';
-import { CreateCheckoutSessionApiRequestSchema, CreateCheckoutSessionApiResponseSchema } from '@idiomax/http-schemas/subscriptions/create-checkout-session';
+import { CreateCheckoutSessionApiRequestSchema, CreateCheckoutSessionApiResponseSchema } from '@idiomax/validation-schemas/subscriptions/create-checkout-session';
 import { prisma } from '../../../lib/prisma';
+import { getUserPermissions } from '../../../lib/get-user-permission';
+import { ForbiddenError } from '../_errors/forbidden-error';
 
 export async function CreateCheckoutSession(app: FastifyInstance) {
     app
@@ -34,6 +36,15 @@ export async function CreateCheckoutSession(app: FastifyInstance) {
                 // 4000 0000 0000 9995
 
                 const { prod_id, company_id } = request.body;
+
+                const userId = await request.getCurrentUserId()
+                const { member } = await request.getUserMember(company_id)
+
+                const { cannot } = getUserPermissions(userId, member.role)
+
+                if (cannot('create-subscription', 'Company')) {
+                    throw new ForbiddenError()
+                }
 
                 const data = await prisma.stripe_company_customers.findFirst({
                     where: { company_id: company_id },

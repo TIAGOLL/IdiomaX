@@ -4,7 +4,7 @@ import { z } from 'zod'
 
 import { BadRequestError } from '../_errors/bad-request-error'
 import { prisma } from '../../../lib/prisma'
-import { DeleteLevelApiResponse } from '@idiomax/http-schemas/levels/delete-level'
+import { DeleteLevelApiResponse } from '@idiomax/validation-schemas/levels/delete-level'
 import { auth } from '../../../middlewares/auth'
 import { getUserPermissions } from '../../../lib/get-user-permission'
 import { ForbiddenError } from '../_errors/forbidden-error'

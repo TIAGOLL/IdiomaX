@@ -4,8 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 import nookies from 'nookies';
 import { useNavigate } from 'react-router';
 import { getCompanySubscription } from '@/services/stripe/get-company-subscription';
-import { type GetProfileResponseType } from '@idiomax/http-schemas/auth/get-profile';
-import { type GetCompanySubscriptionHttpResponse } from '@idiomax/http-schemas/subscriptions/get-company-subscription';
+import { type GetProfileResponseType } from '@idiomax/validation-schemas/auth/get-profile';
+import { type GetCompanySubscriptionResponseType } from '@idiomax/validation-schemas/subscriptions/get-company-subscription';
+import { getCurrentCompanyId } from '@/lib/company-utils';
 
 
 type SessionContextType = {
@@ -16,7 +17,7 @@ type SessionContextType = {
     currentCompanyMember?: GetProfileResponseType['member_on'][number];
     setCompany: (company: GetProfileResponseType['member_on'][number]) => void;
     currentRole?: string;
-    subscription: GetCompanySubscriptionHttpResponse | null;
+    subscription: GetCompanySubscriptionResponseType | null;
     isLoadingSubscription: boolean;
     isLoadingUserProfile: boolean;
     subscriptionError: unknown;
@@ -46,7 +47,9 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
         queryKey: ['company-subscription', currentCompanyMember?.company.id, userProfile?.cpf],
         queryFn: async () => {
             if (!currentCompanyMember) return undefined;
-            return await getCompanySubscription();
+            return await getCompanySubscription({
+                company_id: getCurrentCompanyId()
+            });
         },
         enabled: !!currentCompanyMember && !!userProfile,
         retry: false,

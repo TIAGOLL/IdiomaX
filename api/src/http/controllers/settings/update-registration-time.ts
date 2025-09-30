@@ -4,7 +4,7 @@ import { auth } from '../../../middlewares/auth';
 import {
     UpdateRegistrationTimeApiRequestSchema,
     UpdateRegistrationTimeApiResponseSchema
-} from '@idiomax/http-schemas/settings/update-registration-time';
+} from '@idiomax/validation-schemas/settings/update-registration-time';
 import { prisma } from '../../../lib/prisma';
 import { ForbiddenError } from '../_errors/forbidden-error';
 import { getUserPermissions } from '../../../lib/get-user-permission';

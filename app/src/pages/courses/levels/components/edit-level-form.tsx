@@ -6,19 +6,19 @@ import { LoaderIcon, Edit2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
-import { CreateLevelFormSchema, type CreateLevelFormData } from '@idiomax/http-schemas/levels/create-level';
+import { CreateLevelFormSchema, type CreateLevelFormData } from '@idiomax/validation-schemas/levels/create-level';
 import { FormMessageError } from '@/components/ui/form-message-error';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { updateLevel } from '@/services/levels';
 import { useEffect, useState } from 'react';
-import type { Level } from '@idiomax/http-schemas/levels/get-levels';
-import type { GetCourseByIdResponse } from '@idiomax/http-schemas/courses/get-course-by-id';
+import type { Level } from '@idiomax/validation-schemas/levels/get-levels';
+import type { GetCourseByIdResponseType } from '@idiomax/validation-schemas/courses/get-course-by-id';
 import { getCurrentCompanyId } from '@/lib/company-utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 export function EditLevelForm(
-    { course, level }: { course: GetCourseByIdResponse; level: Level }
+    { course, level }: { course: GetCourseByIdResponseType; level: Level }
 ) {
     const [open, setOpen] = useState(false);
     const queryClient = useQueryClient();

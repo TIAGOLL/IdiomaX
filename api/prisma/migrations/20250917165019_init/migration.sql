@@ -68,7 +68,11 @@ CREATE TABLE "public"."courses" (
     "minimum_grade" DECIMAL(20,0) NOT NULL,
     "maximum_grade" DECIMAL(20,0) NOT NULL,
     "minimum_frequency" DECIMAL(20,0) NOT NULL,
+<<<<<<< HEAD
+    "syllabus" BYTEA,
+=======
     " syllabus_url" BYTEA,
+>>>>>>> 15d3efaa672561e1515dcce65277fd6bb9e88388
     "company_id" VARCHAR(256) NOT NULL,
     "companiesId" TEXT,
 
@@ -152,7 +156,11 @@ CREATE TABLE "public"."registrations" (
     "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "locked" BOOLEAN DEFAULT false,
     "completed" BOOLEAN DEFAULT false,
+<<<<<<< HEAD
+    "users_id" VARCHAR(256),
+=======
     "user_id" VARCHAR(256),
+>>>>>>> 15d3efaa672561e1515dcce65277fd6bb9e88388
     "company_id" VARCHAR(256),
     "usersId" VARCHAR(256),
     "companiesId" TEXT,

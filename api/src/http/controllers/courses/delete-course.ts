@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
-import { DeleteCourseApiRequest, DeleteCourseApiResponse } from '@idiomax/http-schemas/courses/delete-course';
+import { DeleteCourseApiRequest, DeleteCourseApiResponse } from '@idiomax/validation-schemas/courses/delete-course';
 import { prisma } from '../../../lib/prisma';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { ForbiddenError } from '../_errors/forbidden-error';

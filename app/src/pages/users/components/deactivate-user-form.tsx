@@ -2,18 +2,18 @@ import React, { useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import type { UserWithRole } from '@idiomax/http-schemas/users/get-users';
 import z from 'zod';
 import { getCurrentCompanyId } from '@/lib/company-utils';
-import { DeactivateUserFormSchema } from '@idiomax/http-schemas/users/deactivate-user';
+import { DeactivateUserFormSchema } from '@idiomax/validation-schemas/users/deactivate-user';
 import { UserCheck, UserX } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { deactivateUser } from '@/services/users/deactivate-user';
+import type { GetUserByIdResponseType } from '@idiomax/validation-schemas/users/get-user-by-id';
 
 type DeactivateUserFormSchema = z.infer<typeof DeactivateUserFormSchema>;
 
-export function DeactivateUserForm({ user }: { user: UserWithRole }) {
+export function DeactivateUserForm({ user }: { user: GetUserByIdResponseType }) {
 
     const queryClient = useQueryClient();
 

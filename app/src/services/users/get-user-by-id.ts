@@ -1,17 +1,10 @@
 import { api } from '../../lib/api';
-import { getCurrentCompanyId } from '../../lib/company-utils';
-import type {
-    UserWithRole
-} from '@idiomax/http-schemas/users/get-users';
+import type { GetUserByIdRequestType, GetUserByIdResponseType } from '@idiomax/validation-schemas/users/get-user-by-id';
 
-export async function getUserById(userId: string): Promise<UserWithRole> {
-    const company_id = getCurrentCompanyId();
 
-    const { data } = await api.get(`/users/by-id`, {
-        params: {
-            user_id: userId,
-            company_id
-        }
+export async function getUserById(data: GetUserByIdRequestType) {
+    const response = await api.get(`/users/by-id`, {
+        params: data
     });
-    return data;
+    return response.data as GetUserByIdResponseType;
 }

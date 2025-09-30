@@ -3,8 +3,10 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { auth } from '../../../middlewares/auth';
 import { stripe } from '../../../lib/stripe';
-import { CreateSubscriptionApiRequestSchema, CreateSubscriptionApiResponseSchema } from '@idiomax/http-schemas/subscriptions/create-subscription'
+import { CreateSubscriptionApiRequestSchema, CreateSubscriptionApiResponseSchema } from '@idiomax/validation-schemas/subscriptions/create-subscription'
 import { prisma } from '../../../lib/prisma';
+import { getUserPermissions } from '../../../lib/get-user-permission';
+import { ForbiddenError } from '../_errors/forbidden-error';
 
 export async function CreateSubscription(app: FastifyInstance) {
     app
@@ -27,6 +29,13 @@ export async function CreateSubscription(app: FastifyInstance) {
 
                 const { price_id, company_id } = request.body;
                 const userId = await request.getCurrentUserId();
+                const { member } = await request.getUserMember(company_id)
+
+                const { cannot } = getUserPermissions(userId, member.role)
+
+                if (cannot('create-subscription', 'Company')) {
+                    throw new ForbiddenError()
+                }
 
                 const userData = await prisma.users.findUnique({
                     where: { id: userId },

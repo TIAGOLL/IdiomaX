@@ -1,26 +1,26 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { addUserRole } from "@/services/roles/manage-roles";
+import { addUserRole } from "@/services/roles/alter-user-role";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { UserWithRole } from "@idiomax/http-schemas/users/get-users";
+import type { UserWithRole } from "@idiomax/validation-schemas/users/get-users";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader, Users } from "lucide-react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { UpdateUserRoleFormSchema } from "@idiomax/http-schemas/roles/update-user-role";
+import { AlterUserRoleFormSchema } from "@idiomax/validation-schemas/roles/alter-user-role";
 import type z from "zod";
 import { getCurrentCompanyId } from "@/lib/company-utils";
 
-type UpdateUserRoleFormSchema = z.infer<typeof UpdateUserRoleFormSchema>;
+type AlterUserRoleFormSchema = z.infer<typeof AlterUserRoleFormSchema>;
 
 export function AddRoleForm({ user }: { user: UserWithRole }) {
     const [showRoleForm, setShowRoleForm] = useState(false);
     const queryClient = useQueryClient();
 
     const { isPending, mutate } = useMutation({
-        mutationFn: (data: UpdateUserRoleFormSchema) => addUserRole({
+        mutationFn: (data: AlterUserRoleFormSchema) => addUserRole({
             user_id: user.id,
             company_id: getCurrentCompanyId(),
             ...data
@@ -36,7 +36,7 @@ export function AddRoleForm({ user }: { user: UserWithRole }) {
     });
 
     const { handleSubmit, reset, control } = useForm({
-        resolver: zodResolver(UpdateUserRoleFormSchema)
+        resolver: zodResolver(AlterUserRoleFormSchema)
     })
 
     if (!showRoleForm) {

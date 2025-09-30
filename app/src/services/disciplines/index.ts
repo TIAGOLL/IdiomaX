@@ -1,25 +1,25 @@
 import { api } from '@/lib/api';
-import type { CreateDisciplineRequest, CreateDisciplineResponse } from '@idiomax/http-schemas/disciplines/create-discipline';
-import type { UpdateDisciplineRequest, UpdateDisciplineResponse } from '@idiomax/http-schemas/disciplines/update-discipline';
-import type { ToggleDisciplineStatusRequest, ToggleDisciplineStatusResponse } from '@idiomax/http-schemas/disciplines/toggle-discipline-status';
-import type { DeleteDisciplineResponse } from '@idiomax/http-schemas/disciplines/delete-discipline';
+import type { CreateDisciplineRequestType, CreateDisciplineResponseType } from '@idiomax/validation-schemas/disciplines/create-discipline';
+import type { AlterDisciplineStatusRequestType, AlterDisciplineStatusResponseType } from '@idiomax/validation-schemas/disciplines/toggle-discipline-status';
+import type { DeleteDisciplineRequestType, DeleteDisciplineResponseType } from '@idiomax/validation-schemas/disciplines/delete-discipline';
+import type { UpdateDisciplineRequestType, UpdateDisciplineResponseType } from '@idiomax/validation-schemas/disciplines/update-discipline';
 
-export async function createDiscipline(data: CreateDisciplineRequest): Promise<CreateDisciplineResponse> {
+export async function createDiscipline(data: CreateDisciplineRequestType) {
     const response = await api.post('/disciplines', data);
-    return response.data as CreateDisciplineResponse;
+    return response.data as CreateDisciplineResponseType;
 }
 
-export async function updateDiscipline(data: UpdateDisciplineRequest): Promise<UpdateDisciplineResponse> {
-    const response = await api.put(`/disciplines/${data.id}`, data);
-    return response.data as UpdateDisciplineResponse;
+export async function updateDiscipline({ id, ...data }: UpdateDisciplineRequestType) {
+    const response = await api.put(`/disciplines/${id}`, data);
+    return response.data as UpdateDisciplineResponseType;
 }
 
-export async function toggleDisciplineStatus(id: string, data: ToggleDisciplineStatusRequest): Promise<ToggleDisciplineStatusResponse> {
+export async function alterDisciplineStatus({ id, ...data }: AlterDisciplineStatusRequestType) {
     const response = await api.patch(`/disciplines/${id}/toggle-status`, data);
-    return response.data as ToggleDisciplineStatusResponse;
+    return response.data as AlterDisciplineStatusResponseType;
 }
 
-export async function deleteDiscipline(id: string): Promise<DeleteDisciplineResponse> {
+export async function deleteDiscipline({ id }: DeleteDisciplineRequestType) {
     const response = await api.delete(`/disciplines/${id}`);
-    return response.data as DeleteDisciplineResponse;
+    return response.data as DeleteDisciplineResponseType;
 }

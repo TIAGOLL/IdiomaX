@@ -15,6 +15,7 @@ import { EditUserForm } from './components/edit-user-form';
 import { useSearchParams } from 'react-router';
 import { getUserById } from '@/services/users/get-user-by-id';
 import { Badge } from '@/components/ui/badge';
+import { getCurrentCompanyId } from '@/lib/company-utils';
 
 export function EditUserPage() {
     const { currentCompanyMember } = useSessionContext();
@@ -24,7 +25,10 @@ export function EditUserPage() {
     // Buscar dados do usuário
     const { data: user, isLoading, error } = useQuery({
         queryKey: ['user', userId],
-        queryFn: () => getUserById(userId),
+        queryFn: () => getUserById({
+            user_id: userId,
+            company_id: getCurrentCompanyId()
+        }),
         enabled: !!userId
     });
 
@@ -52,7 +56,7 @@ export function EditUserPage() {
             </div>
         );
     }
-    
+
     return (
         <div className="space-y-6">
             {/* Header */}

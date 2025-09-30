@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { GetLevelByIdApiParamsSchema, GetLevelByIdApiResponseSchema } from '@idiomax/http-schemas/levels/get-level-by-id'
+import { GetLevelByIdApiRequestSchema, GetLevelByIdApiResponseSchema } from '@idiomax/validation-schemas/levels/get-level-by-id'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { z } from 'zod'
@@ -20,7 +20,7 @@ export async function getLevelById(app: FastifyInstance) {
                 tags: ['Levels'],
                 summary: 'Get level by id',
                 security: [{ bearerAuth: [] }],
-                querystring: GetLevelByIdApiParamsSchema,
+                querystring: GetLevelByIdApiRequestSchema,
                 response: {
                     200: GetLevelByIdApiResponseSchema,
                     400: ErrorResponseSchema,

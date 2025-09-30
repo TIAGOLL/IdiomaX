@@ -1,14 +1,11 @@
 import { api } from "@/lib/api";
-import type { UnsubscribeHttpResponse, UnsubscribeHttpRequest } from "@idiomax/http-schemas/subscriptions/unsubscribe";
+import type { UnsubscribeRequestType, UnsubscribeResponseType } from "@idiomax/validation-schemas/subscriptions/unsubscribe";
 
-type UnsubscribeResponse = UnsubscribeHttpResponse;
-type UnsubscribeRequest = UnsubscribeHttpRequest;
-
-export async function Unsubscribe(data: UnsubscribeRequest) {
+export async function unsubscribe(data: UnsubscribeRequestType) {
     const response = await api.post(
         '/stripe/unsubscribe',
         data
     );
 
-    return response.data as UnsubscribeResponse;
+    return response.data as UnsubscribeResponseType;
 }

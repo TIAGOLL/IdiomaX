@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
-import { GetUserByEmailApiRequestSchema, GetUserByEmailApiResponseSchema } from '@idiomax/http-schemas/users/get-user-by-email';
+import { GetUserByEmailApiRequestSchema, GetUserByEmailApiResponseSchema } from '@idiomax/validation-schemas/users/get-user-by-email';
 import { prisma } from '../../../lib/prisma';
 import { getUserPermissions } from '../../../lib/get-user-permission';
 import { ForbiddenError } from '../_errors/forbidden-error';

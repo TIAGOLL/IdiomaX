@@ -11,21 +11,25 @@ import {
 import { LoaderIcon } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { getLevelsByCourse } from '@/services/levels';
-import type { Level } from '@idiomax/http-schemas/levels/get-levels';
-import type { GetCourseByIdResponse } from '@idiomax/http-schemas/courses/get-course-by-id';
+import type { Level } from '@idiomax/validation-schemas/levels/get-levels';
+import type { GetCourseByIdResponseType } from '@idiomax/validation-schemas/courses/get-course-by-id';
 import { EditLevelForm } from './edit-level-form';
 import { DeleteLevelForm } from './delete-level-form';
 import { ToggleLevelStatusForm } from './toggle-level-status-form';
 import { CreateDisciplineForm } from './disciplines/create-discipline-form';
 import { EditDisciplineForm } from './disciplines/edit-discipline-form';
 import { DeleteDisciplineForm } from './disciplines/delete-discipline-form';
-import { ToggleDisciplineStatusForm } from './disciplines/toggle-discipline-status-form';
+import { ToggleDisciplineStatusForm } from './disciplines/alter-discipline-status-form';
+import { getCurrentCompanyId } from '@/lib/company-utils';
 
-export function LevelsList({ course }: { course: GetCourseByIdResponse }) {
+export function LevelsList({ course }: { course: GetCourseByIdResponseType }) {
     // Query para buscar levels do curso
     const { data: levels = [], isLoading: isLoadingLevels } = useQuery({
         queryKey: ['levels', course.id],
-        queryFn: () => getLevelsByCourse({ course_id: course.id }),
+        queryFn: () => getLevelsByCourse({
+            course_id: course.id,
+            company_id: getCurrentCompanyId()
+        }),
         enabled: !!course.id,
     });
 

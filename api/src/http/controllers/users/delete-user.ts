@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
-import { DeleteUserApiRequestSchema, DeleteUserApiResponseSchema } from '@idiomax/http-schemas/users/delete-user';
+import { DeleteUserApiRequestSchema, DeleteUserApiResponseSchema } from '@idiomax/validation-schemas/users/delete-user';
 import { prisma } from '../../../lib/prisma';
 import { getUserPermissions } from '../../../lib/get-user-permission';
 import { ForbiddenError } from '../_errors/forbidden-error';

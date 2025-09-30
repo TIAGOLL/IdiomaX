@@ -3,13 +3,13 @@ import { LoaderIcon, Trash2 } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { deleteLevel } from '@/services/levels';
-import type { GetCourseByIdResponse } from '@idiomax/http-schemas/courses/get-course-by-id';
-import type { Level } from '@idiomax/http-schemas/levels/get-levels';
+import type { GetCourseByIdResponseType } from '@idiomax/validation-schemas/courses/get-course-by-id';
+import type { Level } from '@idiomax/validation-schemas/levels/get-levels';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
-export function DeleteLevelForm({ course, level }: { course: GetCourseByIdResponse; level: Level }) {
+export function DeleteLevelForm({ course, level }: { course: GetCourseByIdResponseType; level: Level }) {
     const [open, setOpen] = useState(false);
     const queryClient = useQueryClient();
 

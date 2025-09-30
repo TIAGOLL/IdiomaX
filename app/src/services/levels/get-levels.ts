@@ -1,8 +1,8 @@
 import { api } from '@/lib/api'
-import type { GetLevelsRequest, GetLevelsResponse } from '@idiomax/http-schemas/levels/get-levels'
+import type { GetLevelsRequestType, GetLevelsResponseType } from '@idiomax/validation-schemas/levels/get-levels'
 
-export async function getLevelsByCourse(params: GetLevelsRequest): Promise<GetLevelsResponse> {
-    const response = await api.get('/levels-by-course', { params })
+export async function getLevelsByCourse(data: GetLevelsRequestType) {
+    const response = await api.get('/levels-by-course', { data })
 
-    return response.data as GetLevelsResponse
+    return response.data as GetLevelsResponseType
 }

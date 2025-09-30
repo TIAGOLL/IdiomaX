@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { UpdateDisciplineApiRequestSchema, UpdateDisciplineApiResponseSchema } from '@idiomax/http-schemas/disciplines/update-discipline'
+import { UpdateDisciplineApiRequestSchema, UpdateDisciplineApiResponseSchema } from '@idiomax/validation-schemas/disciplines/update-discipline'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { getUserPermissions } from '../../../lib/get-user-permission'

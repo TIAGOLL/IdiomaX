@@ -18,14 +18,14 @@ import { z } from 'zod';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router';
 import { createCompany } from '@/services/companies/create-company';
-import { CreateCompanyFormSchema } from '@idiomax/http-schemas/companies/create-company';
+import { CreateCompanyFormSchema } from '@idiomax/validation-schemas/companies/create-company';
 
-type CreateCompanyRequest = z.infer<typeof CreateCompanyFormSchema>;
+type CreateCompanyFormSchema = z.infer<typeof CreateCompanyFormSchema>;
 
 export function CreateCompanyPage() {
     const navigate = useNavigate();
     const { mutate, isPending } = useMutation({
-        mutationFn: async (data: CreateCompanyRequest) => {
+        mutationFn: async (data: CreateCompanyFormSchema) => {
             const response = await createCompany(data);
             return response;
         },
@@ -43,7 +43,7 @@ export function CreateCompanyPage() {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<CreateCompanyRequest>({
+    } = useForm<CreateCompanyFormSchema>({
         resolver: zodResolver(CreateCompanyFormSchema),
         mode: 'all',
         criteriaMode: 'all',

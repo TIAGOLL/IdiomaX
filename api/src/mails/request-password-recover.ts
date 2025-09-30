@@ -1,7 +1,7 @@
-import { env } from "../http/server";
+import { ENV } from "../http/server";
 
 export const requestPasswordRecoverSubject = '📬 Solicitação de redefinição de senha do IdiomaX';
-export const requestPasswordRecoverBody = ({ token }) => `<!DOCTYPE html>
+export const requestPasswordRecoverBody = ({ token }: { token: string }) => `<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
@@ -77,7 +77,7 @@ export const requestPasswordRecoverBody = ({ token }) => `<!DOCTYPE html>
             <p>Olá,</p>
             <p>Recebemos uma solicitação para redefinir a senha da sua conta no IdiomaX.</p>
             <p>Se você não fez essa solicitação, ignore este e-mail. Caso contrário, clique no botão abaixo para continuar:</p>
-            <a href="${env.data.WEB_URL}/auth/reset-password/${token}" class="cta-button">Redefinir minha senha</a>
+            <a href="${ENV.WEB_URL}/auth/reset-password/${token}" class="cta-button">Redefinir minha senha</a>
             <p>Por motivos de segurança, o link expira em 24 horas.</p>
         </div>
         <div class="footer">

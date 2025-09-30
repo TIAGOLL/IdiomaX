@@ -1,38 +1,29 @@
 import { api } from '@/lib/api'
-import { GetClassroomsResponseSchema, GetClassroomsQuerySchema } from '@idiomax/http-schemas/classrooms/get-classrooms'
-import { UpdateClassroomApiRequestSchema, type UpdateClassroomResponse, } from '@idiomax/http-schemas/classrooms/update-classroom'
-import { z } from 'zod'
-import type { CreateClassroomApiRequestSchema, CreateClassroomApiResponseSchema } from '@idiomax/http-schemas/classrooms/create-classroom'
-import { type DeleteClassroomApiRequest, type DeleteClassroomApiResponse } from '@idiomax/http-schemas/classrooms/delete-classroom';
-
-type CreateClassroomRequest = z.infer<typeof CreateClassroomApiRequestSchema>
-type CreateClassroomResponse = z.infer<typeof CreateClassroomApiResponseSchema>
-
-type GetClassroomsQuery = z.infer<typeof GetClassroomsQuerySchema>
-type GetClassroomsResponse = z.infer<typeof GetClassroomsResponseSchema>
-
-type UpdateClassroomRequest = z.infer<typeof UpdateClassroomApiRequestSchema>
+import { type CreateClassroomRequestType, type CreateClassroomResponseType } from '@idiomax/validation-schemas/classrooms/create-classroom';
+import type { GetClassroomsRequestType, GetClassroomsResponseType } from '@idiomax/validation-schemas/classrooms/get-classrooms';
+import type { UpdateClassroomRequestType, UpdateClassroomResponseType } from '@idiomax/validation-schemas/classrooms/update-classroom';
+import type { DeleteClassroomRequestType, DeleteClassroomResponseType } from '@idiomax/validation-schemas/classrooms/delete-classroom';
 
 // Criar sala de aula
-export async function createClassroom(data: CreateClassroomRequest): Promise<CreateClassroomResponse> {
+export async function createClassroom(data: CreateClassroomRequestType) {
     const response = await api.post('/classroom', data)
-    return response.data
+    return response.data as CreateClassroomResponseType
 }
 
 // Listar salas de aula
-export async function getClassrooms(params?: GetClassroomsQuery): Promise<GetClassroomsResponse> {
+export async function getClassrooms(params?: GetClassroomsRequestType) {
     const response = await api.get('/classrooms', { params })
-    return response.data
+    return response.data as GetClassroomsResponseType
 }
 
 // Atualizar sala de aula
-export async function updateClassroom(data: UpdateClassroomRequest): Promise<UpdateClassroomResponse> {
+export async function updateClassroom(data: UpdateClassroomRequestType) {
     const response = await api.put(`/classroom`, data)
-    return response.data
+    return response.data as UpdateClassroomResponseType
 }
 
 // Deletar sala de aula
-export async function deleteClassroom({ id }: DeleteClassroomApiRequest): Promise<DeleteClassroomApiResponse> {
+export async function deleteClassroom({ id }: DeleteClassroomRequestType) {
     const response = await api.delete(`/classroom/${id}`)
-    return response.data
+    return response.data as DeleteClassroomResponseType
 }

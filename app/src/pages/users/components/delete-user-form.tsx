@@ -1,4 +1,3 @@
-import type { UserWithRole } from "@idiomax/http-schemas/users/get-users";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCurrentCompanyId } from "@/lib/company-utils";
 import { useSearchParams } from "react-router";
@@ -8,8 +7,9 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { deleteUser } from "@/services/users/delete-user";
+import type { GetUserByIdResponseType } from "@idiomax/validation-schemas/users/get-user-by-id";
 
-export function DeleteUserForm({ user }: { user: UserWithRole }) {
+export function DeleteUserForm({ user }: { user: GetUserByIdResponseType }) {
 
     const queryClient = useQueryClient();
     const [, setSearchParams] = useSearchParams();

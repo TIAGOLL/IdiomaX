@@ -49,7 +49,7 @@ export async function StripeWebHooks(app: FastifyInstance) {
                 const upsertPriceRecord = async (price: Stripe.Price) => {
                     const data = await prisma.stripe_prices.findFirst({
                         where: {
-                            unit_amount: price.unit_amount,
+                            unit_amount: price.unit_amount ?? 0,
                             active: true,
                         },
                         select: {
@@ -64,10 +64,10 @@ export async function StripeWebHooks(app: FastifyInstance) {
                         currency: price.currency,
                         description: price.nickname ?? undefined,
                         type: price.type,
-                        unit_amount: price.unit_amount ?? undefined,
-                        interval: price.recurring?.interval,
-                        interval_count: price.recurring?.interval_count,
-                        trial_period_days: price.recurring?.trial_period_days,
+                        unit_amount: price.unit_amount ?? 0, // Use 0 como padrão para produtos gratuitos
+                        interval: price.recurring?.interval ?? undefined,
+                        interval_count: price.recurring?.interval_count ?? undefined,
+                        trial_period_days: price.recurring?.trial_period_days ?? undefined,
                         metadata: price.metadata,
                     };
 
@@ -153,6 +153,12 @@ export async function StripeWebHooks(app: FastifyInstance) {
 
                 const signature = request.headers['stripe-signature'];
                 const webhookSecret = ENV.STRIPE_WEBHOOK_SECRET;
+                
+                if (!signature) {
+                    console.error('Missing stripe-signature header');
+                    return reply.status(400).send({ message: 'Missing stripe-signature header' });
+                }
+
                 let receivedEvent: Stripe.Event;
                 try {
                     receivedEvent = stripe.webhooks.constructEvent(
@@ -162,7 +168,8 @@ export async function StripeWebHooks(app: FastifyInstance) {
                     );
                 } catch (error) {
                     console.error('Error verifying webhook signature:', error);
-                    return reply.status(400).send({ message: error.message });
+                    const errorMessage = error instanceof Error ? error.message : 'Invalid webhook signature';
+                    return reply.status(400).send({ message: errorMessage });
                 }
 
                 if (relevantEvents.has(receivedEvent.type)) {

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import type { UserRole, UserWithRole } from '@idiomax/http-schemas/users/get-users';
-import { removeUserRole } from '@/services/roles/manage-roles';
+import type { UserRole, UserWithRole } from '@idiomax/validation-schemas/users/get-users';
+import { removeUserRole } from '@/services/roles/alter-user-role';
 import { getCurrentCompanyId } from '@/lib/company-utils';
-import { UpdateUserRoleFormSchema } from '@idiomax/http-schemas/roles/update-user-role';
+import { UpdateUserRoleFormSchema } from '@idiomax/validation-schemas/roles/update-user-role';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';

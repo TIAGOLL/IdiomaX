@@ -612,7 +612,7 @@ async function main() {
                 data: {
                     id: generateUUID(),
                     name: `Apostila ${levelId.slice(0, 6)}`,
-                    file: Buffer.from("Conteúdo fictício da apostila"),
+                    file_url: "",
                     level_id: levelId,
                     created_at: now,
                     updated_at: now,

@@ -21,6 +21,7 @@ import {
 import { SubscriptionForm } from '@/components/subscription-form';
 import { ChevronDownIcon, SlashIcon } from "lucide-react";
 import { getBreadcrumbConfig } from '@/components/side-bar/navigation-data';
+import { getCurrentCompanyId } from '@/lib/company-utils';
 
 export function PaidRoute() {
   const { currentCompanyMember: company, isLoadingUserProfile } = useSessionContext();
@@ -105,7 +106,9 @@ export function PaidRoute() {
   useEffect(() => {
     async function checkSubscriptionIsActive() {
       if (!company?.company_id) return true;
-      const subscription = await getCompanySubscription();
+      const subscription = await getCompanySubscription({
+        company_id: getCurrentCompanyId()
+      });
       if (subscription && subscription.status !== 'active' && subscription.status !== 'trialing') {
         return false
       }

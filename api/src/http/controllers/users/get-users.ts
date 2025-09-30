@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
-import { GetUsersApiRequestSchema, GetUsersApiResponseSchema } from '@idiomax/http-schemas/users/get-users';
+import { GetUsersApiRequestSchema, GetUsersApiResponseSchema } from '@idiomax/validation-schemas/users/get-users';
 import { prisma } from '../../../lib/prisma';
 import { ForbiddenError } from '../_errors/forbidden-error';
 import { getUserPermissions } from '../../../lib/get-user-permission';
@@ -24,7 +24,7 @@ export async function getUsers(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { company_id } = request.query;
+                const { company_id, search, role } = request.query;
 
                 const userId = await request.getCurrentUserId()
                 const { member } = await request.getUserMember(company_id)
@@ -35,20 +35,11 @@ export async function getUsers(app: FastifyInstance) {
                     throw new ForbiddenError()
                 }
 
-                const {
-                    page = 1,
-                    limit = 10,
-                    search,
-                    role
-                } = request.query;
-
-                const offset = (page - 1) * limit;
-
                 const whereClause: Record<string, unknown> = {
                     member_on: {
                         some: {
                             company_id,
-                            ...(role && { role: role }),
+                            role: role ? role : undefined,
                         }
                     }
                 };
@@ -64,34 +55,19 @@ export async function getUsers(app: FastifyInstance) {
                 }
 
                 // Buscar usuários
-                const [users, totalCount] = await Promise.all([
-                    prisma.users.findMany({
-                        where: whereClause,
-                        skip: offset,
-                        take: limit,
-                        orderBy: { name: 'asc' },
-                        include: {
-                            member_on: {
-                                include: {
-                                    company: true,
-                                }
+                const users = await prisma.users.findMany({
+                    where: whereClause,
+                    orderBy: { name: 'asc' },
+                    include: {
+                        member_on: {
+                            include: {
+                                company: true,
                             }
                         }
-                    }),
-                    prisma.users.count({ where: whereClause })
-                ]);
-
-                const totalPages = Math.ceil(totalCount / limit);
-
-                return reply.status(200).send({
-                    users,
-                    pagination: {
-                        total: totalCount,
-                        page,
-                        limit,
-                        pages: totalPages,
-                    },
+                    }
                 });
+
+                return reply.status(200).send(users);
             },
         );
 }

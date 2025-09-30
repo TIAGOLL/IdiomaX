@@ -1,6 +1,6 @@
 import { api } from "@/lib/api";
 import { getCurrentCompanyId } from "@/lib/company-utils";
-import { type AdminDashboardApiResponse } from '@idiomax/http-schemas/dashboard/admin-dashboard';
+import { type AdminDashboardApiResponse } from '@idiomax/validation-schemas/dashboard/admin-dashboard';
 
 export async function getAdminDashboard() {
     const companyId = getCurrentCompanyId();

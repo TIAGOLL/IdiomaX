@@ -3,7 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { prisma } from '../../../lib/prisma';
 import { auth } from '../../../middlewares/auth';
-import { GetCompanyByIdApiRequestSchema, GetCompanyByIdApiResponseSchema } from '@idiomax/http-schemas/companies/get-company-by-id'
+import { GetCompanyByIdApiRequestSchema, GetCompanyByIdApiResponseSchema } from '@idiomax/validation-schemas/companies/get-company-by-id'
 import { getUserPermissions } from '../../../lib/get-user-permission';
 import { ForbiddenError } from '../_errors/forbidden-error';
 export async function getCompanyById(app: FastifyInstance) {

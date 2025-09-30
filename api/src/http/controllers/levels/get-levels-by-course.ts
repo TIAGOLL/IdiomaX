@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { GetLevelsApiParamsSchema, GetLevelsApiResponseSchema } from '@idiomax/http-schemas/levels/get-levels'
+import { GetLevelsApiRequestSchema, GetLevelsApiResponseSchema } from '@idiomax/validation-schemas/levels/get-levels'
 import { prisma } from '../../../lib/prisma'
 import { auth } from '../../../middlewares/auth'
 import { BadRequestError } from '../_errors/bad-request-error'
@@ -20,7 +20,7 @@ export async function getLevelsByCourse(app: FastifyInstance) {
                 tags: ['Níveis'],
                 summary: 'Obter níveis por curso',
                 security: [{ bearerAuth: [] }],
-                querystring: GetLevelsApiParamsSchema,
+                querystring: GetLevelsApiRequestSchema,
                 response: {
                     200: GetLevelsApiResponseSchema,
                     400: ErrorResponseSchema,
