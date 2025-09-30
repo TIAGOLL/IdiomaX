@@ -29,7 +29,7 @@ enum Role {
 
 model Renamedclass {
   id        String  @id @default(uuid()) @db.VarChar(256)
-  nome      String  @db.VarChar(256)
+  name      String  @db.VarChar(256)
   vacancies Decimal @db.Decimal(10, 0)
   course_id String  @db.VarChar(256)
 

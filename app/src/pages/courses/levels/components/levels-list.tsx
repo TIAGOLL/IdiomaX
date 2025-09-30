@@ -58,7 +58,7 @@ export function LevelsList({ course }: { course: GetCourseByIdResponseType }) {
                     <TableRow className='border-black/50 dark:border-white/50'>
                         <TableHead className="!text-center w-[250px] border-black/50 dark:border-white/50 border-1">Levels</TableHead>
                         <TableHead className="!text-center border-black/50 dark:border-white/50 border-1">Disciplinas</TableHead>
-                        <TableHead className="!text-center w-[200px] border-black/50 dark:border-white/50 border-1">Ações</TableHead>
+                        <TableHead className="!text-center w-[200px] border-black/50 dark:border-white/50 border-1">Ações da disciplina</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody className='border-black/50 dark:border-white/50 border-1'>

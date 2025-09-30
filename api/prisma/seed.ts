@@ -325,7 +325,7 @@ async function main() {
             await prisma.renamedclass.create({
                 data: {
                     id,
-                    nome: `Turma ${i}`,
+                    name: `Turma ${i}`,
                     vacancies: 5 + i,
                     course_id: randomFromArray(courses),
                     created_at: now,

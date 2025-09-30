@@ -27,10 +27,10 @@ export function getNavigationData() {
             {
                 title: "Turmas",
                 icon: LayoutDashboardIcon,
-                breadcrumbKey: "classes",
+                breadcrumbKey: "class",
                 links: [
-                    { name: "Ver turmas", to: "/admin/classes?tab=list", roles: ['admin'] },
-                    { name: "Cadastrar turma", to: "/admin/classes?tab=create", roles: ['admin'] },
+                    { name: "Ver turmas", to: "/admin/class?tab=list", roles: ['admin'] },
+                    { name: "Cadastrar turma", to: "/admin/class?tab=create", roles: ['admin'] },
                     { name: "Ver aulas", to: "/admin/classes?tab=list", roles: ['admin', 'teacher'] },
                     { name: "Cadastrar aula", to: "/admin/classes?tab=create", roles: ['admin', 'teacher'] },
                 ],

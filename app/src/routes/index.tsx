@@ -13,6 +13,7 @@ import CongratulationsPage from '@/pages/subscription/congratulations';
 import { FinanceDashboard } from '@/pages/company';
 import UsersPage from '@/pages/users';
 import CoursesPage from '@/pages/courses';
+import { ClassPage } from '@/pages/class';
 
 export function RoutesApp() {
 
@@ -42,6 +43,7 @@ export function RoutesApp() {
             <Route path='/my-company' element={<FinanceDashboard />} />
             <Route path='/admin/users' element={<UsersPage />} />
             <Route path='/admin/courses' element={<CoursesPage />} />
+            <Route path='/admin/class' element={<ClassPage />} />
           </Route>
         </Route>
       </Route>

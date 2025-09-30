@@ -70,6 +70,7 @@ import { createClassroom } from './controllers/classrooms/create-classroom'
 import { getClassrooms } from './controllers/classrooms/get-classrooms'
 import { updateClassroom } from './controllers/classrooms/update-classroom'
 import { deleteClassroom } from './controllers/classrooms/delete-classroom'
+import { getClass } from './controllers/class/get-class'
 
 dotenv.config()
 
@@ -184,6 +185,9 @@ app.register(createClassroom);
 app.register(getClassrooms);
 app.register(updateClassroom);
 app.register(deleteClassroom);
+
+// Class routes
+app.register(getClass);
 
 
 if (process.env.VERCEL !== "1") {
