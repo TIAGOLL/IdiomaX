@@ -12,13 +12,11 @@ export const CreateClassApiRequestSchema = z.object({
     name: z.string().min(1).max(256),
     vacancies: z.number().min(0).int(),
     course_id: z.string().uuid(),
-    created_by: z.string().nullable().optional(),
-    company_id: z.string().nullable().optional(),
+    company_id: z.string(),
 })
 
 export const CreateClassApiResponseSchema = z.object({
     message: z.string(),
-    id: z.string().optional(),
 })
 
 // ===== HTTP TYPES (Frontend Services) =====

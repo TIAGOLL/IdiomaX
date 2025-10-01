@@ -15,7 +15,7 @@ export function ClassTablePage() {
     const navigate = useNavigate();
 
     const { data, isPending, error } = useQuery({
-        queryKey: ['class',],
+        queryKey: ['class'],
         queryFn: () => getClass({
             company_id: getCurrentCompanyId(),
         }),
@@ -50,7 +50,7 @@ export function ClassTablePage() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <BookOpen className="size-5" />
-                        Turmas ({data?.length})
+                        Turmas da Instituição ({data?.length})
                     </CardTitle>
                 </CardHeader>
             </Card>
@@ -60,11 +60,15 @@ export function ClassTablePage() {
                 <CardContent className="p-0">
                     <div className="max-h-[31rem] overflow-y-auto">
                         <Table>
-                            <TableHeader className="sticky top-0 border-b-1 border-b-white/50">
+                            <TableHeader className="border-b-1 border-b-white/50">
                                 <TableRow>
                                     <TableHead>Nome da Turma</TableHead>
-                                    <TableHead>Vagas (total/ocupadas)</TableHead>
+                                    <TableHead>Dias da Semana</TableHead>
                                     <TableHead>Curso</TableHead>
+                                    <TableHead className='flex flex-col items-center justify-center mb-1'>
+                                        <span>Vagas</span>
+                                        <span>(ocupadas/disponíveis)</span>
+                                    </TableHead>
                                     <TableHead>Criado em</TableHead>
                                     <TableHead className="w-[100px]">Ações</TableHead>
                                 </TableRow>
@@ -83,10 +87,13 @@ export function ClassTablePage() {
                                                 {classItem.name}
                                             </TableCell>
                                             <TableCell>
-                                                {classItem.vacancies} / {classItem.filled_vacancies}
+                                                {classItem?.class_days?.map(cd => cd.week_date).join(', ')}
                                             </TableCell>
                                             <TableCell>
-                                                {classItem.course.name}
+                                                {classItem.courses.name}
+                                            </TableCell>
+                                            <TableCell className='flex items-center justify-center'>
+                                                {classItem._count.users_in_class}/{classItem.vacancies}
                                             </TableCell>
                                             <TableCell>
                                                 {formatDate(classItem.created_at)}

@@ -8,6 +8,10 @@ export const RoleEnum = z.enum(['STUDENT', 'TEACHER', 'ADMIN'], {
     error: 'Selecione uma função válida'
 })
 
+export const WeekDaysEnum = z.enum(["SEGUNDA", "TERÇA", "QUARTA", "QUINTA", "SEXTA", "SABADO", "DOMINGO"], {
+    error: 'Selecione um dia da semana válido'
+})
+
 // ===== STRIPE ENUMS =====
 export const StripePricingTypeEnum = z.enum(['one_time', 'recurring'])
 export const StripePricingIntervalEnum = z.enum(['day', 'week', 'month', 'year'])

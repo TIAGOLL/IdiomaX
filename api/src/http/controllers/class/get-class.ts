@@ -43,10 +43,16 @@ export async function getClass(app: FastifyInstance) {
                     },
                     include: {
                         _count: { select: { users_in_class: true } },
-                        courses: true
+                        courses: true,
+                        class_days: {
+                            select: {
+                                id: true,
+                                week_date: true
+                            }
+                        },
                     },
                 })
-                console.log(ResClass)
+
                 return reply.status(200).send(ResClass)
             }
         )

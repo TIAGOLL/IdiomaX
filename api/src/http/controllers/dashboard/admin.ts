@@ -57,7 +57,7 @@ export async function AdminDashboard(app: FastifyInstance) {
                     const students = c.users_in_class.length;
                     const vacancies = Number(c.vacancies);
                     const occupation = vacancies ? Math.round((students / vacancies) * 100) : 0;
-                    return { id: c.id, nome: c.nome, vacancies, students, occupation, courseName: c.courses.name };
+                    return { id: c.id, nome: c.name, vacancies, students, occupation, courseName: c.courses.name };
                 });
                 const avgClassOccupation = Math.round(
                     classStats.reduce((acc, c) => acc + c.occupation, 0) / (classStats.length || 1)
@@ -105,7 +105,7 @@ export async function AdminDashboard(app: FastifyInstance) {
                         ? Math.round(totalAttendancePercent / totalStudents)
                         : 0;
 
-                    return { id: c.id, nome: c.nome, attendance };
+                    return { id: c.id, nome: c.name, attendance };
                 });
                 const avgAttendance = Math.round(
                     attendanceStats.reduce((acc, c) => acc + c.attendance, 0) / (attendanceStats.length || 1)
@@ -160,7 +160,7 @@ export async function AdminDashboard(app: FastifyInstance) {
                 });
                 const classDaysList = classDays.map(cd => ({
                     id: cd.id,
-                    className: cd.class.nome,
+                    className: cd.class.name,
                     initial_date: cd.start_date,
                     final_date: cd.end_date,
                 }));

@@ -41,7 +41,7 @@ export async function createClassroom(app: FastifyInstance) {
                 const existingClassroom = await prisma.classrooms.findFirst({
                     where: {
                         company_id,
-                        number,
+                        number: Number(number),
                     }
                 })
 
@@ -51,7 +51,7 @@ export async function createClassroom(app: FastifyInstance) {
 
                 await prisma.classrooms.create({
                     data: {
-                        number,
+                        number: Number(number),
                         block,
                         company_id,
                         created_by: userId,

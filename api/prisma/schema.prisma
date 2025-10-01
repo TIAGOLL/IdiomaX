@@ -28,10 +28,10 @@ enum Role {
 }
 
 model Renamedclass {
-  id        String  @id @default(uuid()) @db.VarChar(256)
-  name      String  @db.VarChar(256)
-  vacancies Decimal @db.Decimal(10, 0)
-  course_id String  @db.VarChar(256)
+  id        String @id @default(uuid()) @db.VarChar(256)
+  name      String @db.VarChar(256)
+  vacancies Int    @db.Integer
+  course_id String @db.VarChar(256)
 
   created_at DateTime @default(now())
   created_by String   @db.VarChar(256)
@@ -52,13 +52,13 @@ model Renamedclass {
 }
 
 enum WeekDays {
-  SUNDAY
-  MONDAY
-  TUESDAY
-  WEDNESDAY
-  THURSDAY
-  FRIDAY
-  SATURDAY
+  SEGUNDA
+  TERÇA
+  QUARTA
+  QUINTA
+  SEXTA
+  SABADO
+  DOMINGO
 }
 
 model class_days {
@@ -99,10 +99,10 @@ model classes {
 }
 
 model classrooms {
-  id         String  @id @default(uuid()) @db.VarChar(256)
-  number     Decimal @db.Decimal(5, 0)
-  block      String  @db.VarChar(256)
-  company_id String  @db.VarChar(256)
+  id         String @id @default(uuid()) @db.VarChar(256)
+  number     Int    @db.Integer
+  block      String @db.VarChar(256)
+  company_id String @db.VarChar(256)
 
   created_at DateTime @default(now())
   created_by String   @db.VarChar(256)
@@ -117,9 +117,9 @@ model classrooms {
 }
 
 model configs {
-  id                String  @id @default(uuid()) @db.VarChar(256)
-  registration_time Decimal @default(6) @db.Decimal(256, 0)
-  company_id        String  @unique @db.VarChar(256)
+  id                String @id @default(uuid()) @db.VarChar(256)
+  registration_time Int    @default(6) @db.Integer
+  company_id        String @unique @db.VarChar(256)
 
   created_at DateTime @default(now())
   created_by String   @db.VarChar(256)
@@ -138,11 +138,11 @@ model courses {
   name               String  @db.VarChar(256)
   description        String? @db.VarChar(256)
   registration_value Decimal @db.Decimal(20, 2)
-  workload           Decimal @db.Decimal(5, 0)
+  workload           Int     @db.Integer
   monthly_fee_value  Decimal @db.Decimal(20, 2)
-  minimum_grade      Decimal @db.Decimal(20, 0)
-  maximum_grade      Decimal @db.Decimal(20, 0)
-  minimum_frequency  Decimal @db.Decimal(20, 0)
+  minimum_grade      Int     @db.Integer
+  maximum_grade      Int     @db.Integer
+  minimum_frequency  Int     @db.Integer
   syllabus_url       String?
   company_id         String  @db.VarChar(256)
 
@@ -181,7 +181,7 @@ model disciplines {
 model levels {
   id        String  @id @default(uuid()) @db.VarChar(256)
   name      String  @db.VarChar(256)
-  level     Decimal @db.Decimal(5, 0)
+  level     Int     @db.Integer
   course_id String? @db.VarChar(256)
 
   created_at DateTime @default(now())

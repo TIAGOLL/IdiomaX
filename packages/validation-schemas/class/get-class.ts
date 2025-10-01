@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { WeekDaysEnum } from '../enums'
 
 // ===== API SCHEMAS (Backend Validation) =====
 export const GetClassApiRequestSchema = z.object({
@@ -16,24 +17,29 @@ export const GetClassApiResponseSchema = z.array(
         created_by: z.string(),
         updated_by: z.string(),
         active: z.boolean(),
-        _count: { users_in_class: z.number().min(0) },
+        _count: z.object({ users_in_class: z.number().min(0) }),
         courses: z.object({
             id: z.string(),
             name: z.string(),
             description: z.string().nullable(),
-            registration_value: z.number(),
             workload: z.number(),
-            monthly_fee_value: z.number(),
             minimum_grade: z.number(),
             maximum_grade: z.number(),
             minimum_frequency: z.number(),
             syllabus_url: z.string().nullable(),
             company_id: z.string(),
             active: z.boolean(),
-            created_at: z.string(),
-            updated_at: z.string()
+            created_at: z.date(),
+            updated_at: z.date()
         }),
-    }))
+        class_days: z.array(
+            z.object({
+                id: z.string(),
+                week_date: WeekDaysEnum,
+            })
+        ).optional()
+    }),
+)
 
 // ===== HTTP TYPES (Frontend Services) =====
 export type GetClassRequestType = z.infer<typeof GetClassApiRequestSchema>

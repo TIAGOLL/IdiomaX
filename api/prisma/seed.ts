@@ -338,7 +338,6 @@ async function main() {
         }
 
         // CLASS_DAYS (dias da semana por turma)
-        // Supondo que o campo correto na tabela seja 'weekday' (1=Dom, 2=Seg, ..., 7=Sab)
         const classDays: string[] = [];
         for (const classId of renamedClasses) {
             // Sorteia entre 2 e 4 dias da semana para cada turma

@@ -3,7 +3,8 @@ import type { GetClassResponseType, GetClassRequestType } from '@idiomax/validat
 
 // Criar sala de aula
 export async function getClass(data: GetClassRequestType) {
-    const response = await api.post('/class', data)
+    const response = await api.get('/class', { params: data })
+    console.log(response.data)
     return response.data as GetClassResponseType
 }
 

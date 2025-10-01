@@ -8,6 +8,7 @@ export const DeleteClassFormSchema = z.object({
 // ===== API SCHEMAS (Backend Validation) =====
 export const DeleteClassApiRequestSchema = z.object({
     id: z.string().uuid(),
+    company_id: z.string().uuid(),
 })
 
 export const DeleteClassApiResponseSchema = z.object({

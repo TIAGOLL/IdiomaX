@@ -5,7 +5,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Save, LoaderIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { Resolver } from 'react-hook-form';
 import { UpdateCourseFormSchema } from '@idiomax/validation-schemas/courses/update-course';
 import { FormMessageError } from '@/components/ui/form-message-error';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -40,8 +39,8 @@ export function EditCourseForm({ course }: { course: GetCourseByIdResponseType }
         register,
         handleSubmit,
         formState: { errors }
-    } = useForm<UpdateCourseRequest>({
-        resolver: zodResolver(UpdateCourseFormSchema) as Resolver<UpdateCourseRequest>,
+    } = useForm({
+        resolver: zodResolver(UpdateCourseFormSchema),
         mode: "all",
         criteriaMode: "all",
         defaultValues: {
