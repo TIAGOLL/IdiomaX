@@ -40,7 +40,7 @@ export function CreateClassroomForm() {
         handleSubmit,
         formState: { errors },
         reset
-    } = useForm<CreateClassroomFormSchema>({
+    } = useForm({
         resolver: zodResolver(CreateClassroomFormSchema),
         mode: "all",
         criteriaMode: "all",

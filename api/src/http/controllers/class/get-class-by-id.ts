@@ -37,7 +37,7 @@ export async function getClassById(app: FastifyInstance) {
                 throw new ForbiddenError();
             }
 
-            const turma = await prisma.renamedclass.findUnique({
+            const classData = await prisma.renamedclass.findUnique({
                 where: { id: class_id },
                 include: {
                     courses: true,
@@ -50,10 +50,10 @@ export async function getClassById(app: FastifyInstance) {
                 },
             });
 
-            if (!turma) {
+            if (!classData) {
                 return reply.status(400).send({ message: 'Turma não encontrada.' });
             }
 
-            return reply.status(200).send(turma);
+            return reply.status(200).send(classData);
         });
 }

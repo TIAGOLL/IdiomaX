@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { useSearchParams } from 'react-router';
 import { EditClassForm } from './components/edit-class-form';
 import { DeleteClassForm } from './components/delete-class-form';
+import { ManageUsersInClass } from './components/manage-users-in-class';
+import { AddUserInClassForm } from './components/add-user-in-class';
 
 export function EditClassPage({ classId }: { classId: string }) {
     const [, setSearchParams] = useSearchParams()
@@ -133,12 +135,12 @@ export function EditClassPage({ classId }: { classId: string }) {
                                     </CardDescription>
                                 </div>
                                 <div>
-                                    {/* <CreateLevelForm course={course} /> */}
+                                    <AddUserInClassForm classId={data.id} />
                                 </div>
                             </div>
                         </CardHeader>
                         <CardContent>
-                            {/* <UserInClassList class={data} /> */}
+                            <ManageUsersInClass usersInClass={data.users_in_class} />
                         </CardContent>
                     </Card>
                 </div>

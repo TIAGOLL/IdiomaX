@@ -45,7 +45,7 @@ export function UpdateClassroomForm({ classroom }: { classroom: GetClassroomsRes
         formState: { errors },
         reset,
         setValue
-    } = useForm<UpdateClassroomForm>({
+    } = useForm({
         resolver: zodResolver(UpdateClassroomFormSchema),
         mode: "all",
         criteriaMode: "all",

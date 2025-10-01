@@ -5,8 +5,6 @@ import { Label } from '@/components/ui/label';
 import { LoaderIcon, Edit2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { Resolver } from 'react-hook-form';
-import { CreateLevelFormSchema, type CreateLevelFormData } from '@idiomax/validation-schemas/levels/create-level';
 import { FormMessageError } from '@/components/ui/form-message-error';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -16,6 +14,7 @@ import type { Level } from '@idiomax/validation-schemas/levels/get-levels';
 import type { GetCourseByIdResponseType } from '@idiomax/validation-schemas/courses/get-course-by-id';
 import { getCurrentCompanyId } from '@/lib/company-utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { type UpdateLevelFormData, UpdateLevelFormSchema } from '@idiomax/validation-schemas/levels/update-level';
 
 export function EditLevelForm(
     { course, level }: { course: GetCourseByIdResponseType; level: Level }
@@ -25,7 +24,7 @@ export function EditLevelForm(
 
     // Mutation para atualizar level
     const { mutate, isPending } = useMutation({
-        mutationFn: async (data: CreateLevelFormData) => {
+        mutationFn: async (data: UpdateLevelFormData) => {
             const response = await updateLevel({
                 ...data,
                 company_id: getCurrentCompanyId(),
@@ -50,8 +49,8 @@ export function EditLevelForm(
         formState: { errors },
         reset,
         setValue
-    } = useForm<CreateLevelFormData>({
-        resolver: zodResolver(CreateLevelFormSchema) as Resolver<CreateLevelFormData>,
+    } = useForm({
+        resolver: zodResolver(UpdateLevelFormSchema),
         mode: "all",
         criteriaMode: "all",
         defaultValues: {

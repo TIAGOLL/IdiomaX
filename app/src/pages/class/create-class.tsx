@@ -8,12 +8,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
 import { CreateClassFormSchema } from '@idiomax/validation-schemas/class/create-class';
 import { FormMessageError } from '@/components/ui/form-message-error';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { getCurrentCompanyId } from '@/lib/company-utils';
 import { createClass } from '@/services/class';
-import { getCourses } from '@/services/courses';
 
 type CreateClassRequest = z.infer<typeof CreateClassFormSchema>;
 
@@ -27,8 +26,8 @@ export function CreateClassPage() {
             toast.success(res.message);
             reset();
         },
-        onError: (err: any) => {
-            toast.error(err.message || 'Erro ao criar turma');
+        onError: (err) => {
+            toast.error(err.message);
         }
     });
 
@@ -37,7 +36,7 @@ export function CreateClassPage() {
         handleSubmit,
         formState: { errors },
         reset
-    } = useForm<CreateClassRequest>({
+    } = useForm({
         resolver: zodResolver(CreateClassFormSchema) as Resolver<CreateClassRequest>,
         mode: "all",
         criteriaMode: "all",

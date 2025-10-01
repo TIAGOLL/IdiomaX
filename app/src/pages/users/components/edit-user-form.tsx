@@ -30,7 +30,7 @@ export function EditUserForm({ user }: { user: GetUserByIdResponseType }) {
     const userId = searchParams.get('id') || '';
 
     const { handleSubmit, control, formState: { errors }, register } =
-        useForm<UpdateUserFormSchema>({
+        useForm({
             resolver: zodResolver(UpdateUserFormSchema),
             defaultValues: {
                 name: user.name,

@@ -47,7 +47,7 @@ export function CreateUserPage() {
         watch,
         setValue,
         control
-    } = useForm<CreateUserRequest>({
+    } = useForm({
         resolver: zodResolver(CreateUserFormSchema) as Resolver<CreateUserRequest>,
         mode: "all",
         criteriaMode: "all",

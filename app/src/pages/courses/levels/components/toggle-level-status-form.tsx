@@ -29,7 +29,7 @@ export function ToggleLevelStatusForm({ levelId, levelName, isActive, course }: 
             queryClient.invalidateQueries({ queryKey: ['levels', course.id] });
         },
         onError: (err: Error) => {
-            toast.error(err.message || 'Erro ao alterar status do level');
+            toast.error(err.message);
         }
     });
 

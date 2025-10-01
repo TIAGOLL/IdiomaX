@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { GenderEnum, RoleEnum } from '../enums';
 
 // ===== FORM SCHEMAS (Frontend Formulários) =====
 export const GetUserByIdFormSchema = z.object({
@@ -19,7 +20,7 @@ export const GetUserByIdApiResponseSchema = z.object({
     cpf: z.string(),
     phone: z.string(),
     username: z.string(),
-    gender: z.enum(['M', 'F']),
+    gender: GenderEnum,
     date_of_birth: z.date(),
     address: z.string(),
     avatar_url: z.string().nullable(),
@@ -27,7 +28,7 @@ export const GetUserByIdApiResponseSchema = z.object({
     member_on: z.array(
         z.object({
             id: z.uuid(),
-            role: z.enum(['STUDENT', 'TEACHER', 'ADMIN']),
+            role: RoleEnum,
             company_id: z.uuid(),
             user_id: z.uuid(),
             company: z.object({

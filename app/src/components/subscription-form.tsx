@@ -24,7 +24,7 @@ export function SubscriptionForm() {
         setValue,
         formState: { errors },
         watch
-    } = useForm<CreateCheckoutSessionFormData>({
+    } = useForm({
         resolver: zodResolver(CreateCheckoutSessionFormSchema),
         mode: 'all',
         criteriaMode: 'all',

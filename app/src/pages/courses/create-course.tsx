@@ -40,7 +40,7 @@ export function CreateCoursePage() {
         handleSubmit,
         formState: { errors },
         reset
-    } = useForm<CreateCourseRequest>({
+    } = useForm({
         resolver: zodResolver(CreateCourseFormSchema) as Resolver<CreateCourseRequest>,
         mode: "all",
         criteriaMode: "all",

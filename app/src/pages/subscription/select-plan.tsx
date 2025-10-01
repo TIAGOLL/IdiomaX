@@ -139,7 +139,7 @@ export function SelectPlanPage() {
         setValue,
         watch,
         formState: { errors },
-    } = useForm<CreateSubscriptionFormSchema>({
+    } = useForm({
         resolver: zodResolver(CreateSubscriptionFormSchema),
         mode: 'all',
         criteriaMode: 'all',

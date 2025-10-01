@@ -50,7 +50,7 @@ export default function ProfilePage() {
         watch,
         control,
         reset
-    } = useForm<UpdateUserFormSchema>({
+    } = useForm({
         resolver: zodResolver(UpdateUserFormSchema),
         mode: 'all',
         criteriaMode: 'all',

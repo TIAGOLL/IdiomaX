@@ -22,7 +22,7 @@ export default function ResetPasswordPage() {
         register,
         handleSubmit,
         formState: { errors }
-    } = useForm<ResetPasswordSchema>({
+    } = useForm({
         resolver: zodResolver(ResetPasswordFormSchema),
         mode: 'all',
         criteriaMode: 'all',

@@ -36,7 +36,7 @@ export function CreateLevelForm({ course, trigger }: { course: GetCourseByIdResp
             reset();
         },
         onError: (err: Error) => {
-            toast.error(err.message || 'Erro ao criar level');
+            toast.error(err.message);
         }
     });
 
@@ -45,7 +45,7 @@ export function CreateLevelForm({ course, trigger }: { course: GetCourseByIdResp
         handleSubmit,
         formState: { errors },
         reset,
-    } = useForm<CreateLevelFormData>({
+    } = useForm({
         resolver: zodResolver(CreateLevelFormSchema),
         mode: "all",
         criteriaMode: "all",

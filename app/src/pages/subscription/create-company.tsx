@@ -43,7 +43,7 @@ export function CreateCompanyPage() {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<CreateCompanyFormSchema>({
+    } = useForm({
         resolver: zodResolver(CreateCompanyFormSchema),
         mode: 'all',
         criteriaMode: 'all',

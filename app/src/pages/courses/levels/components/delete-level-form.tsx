@@ -29,7 +29,7 @@ export function DeleteLevelForm({ course, level }: { course: GetCourseByIdRespon
             setOpen(false);
         },
         onError: (err: Error) => {
-            toast.error(err.message || 'Erro ao deletar level');
+            toast.error(err.message);
         }
     });
 
