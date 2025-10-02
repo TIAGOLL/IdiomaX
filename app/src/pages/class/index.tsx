@@ -2,6 +2,7 @@ import { useSearchParams } from "react-router";
 import { ClassTablePage } from "./components/class-table-page";
 // import { CreateClassPage } from "./create-class";
 import { EditClassPage } from "./edit-class";
+import { CreateClassPage } from "./create-class";
 
 export function ClassPage() {
     const [searchParams] = useSearchParams();
@@ -10,7 +11,7 @@ export function ClassPage() {
 
     return (
         <div className="container mx-auto p-6">
-            {/* {activeTab === 'create' && <CreateClassPage />} */}
+            {activeTab === 'create' && <CreateClassPage />}
             {activeTab === 'list' && <ClassTablePage />}
             {activeTab === 'edit' && classId && <EditClassPage classId={classId} />}
         </div>

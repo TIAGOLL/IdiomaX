@@ -140,7 +140,7 @@ export function EditClassPage({ classId }: { classId: string }) {
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <ManageUsersInClass usersInClass={data.users_in_class} />
+                            <ManageUsersInClass usersInClass={data.users_in_class} classId={data.id} />
                         </CardContent>
                     </Card>
                 </div>

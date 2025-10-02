@@ -150,11 +150,11 @@ export function AddUserInClassForm({ classId }: { classId: string }) {
                                 control={control}
                                 render={({ field }) => (
                                     <Select
-                                        {...field}
-                                        onValueChange={field.onChange}
-                                        defaultValue={field.value}
+                                        value={field.value?.toString()}
+                                        onValueChange={(value) => field.onChange(value === "true")}
+                                        defaultValue={field.value?.toString()}
                                     >
-                                        <SelectTrigger>
+                                        <SelectTrigger className="w-full">
                                             <SelectValue placeholder="Selecione uma função" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -182,7 +182,7 @@ export function AddUserInClassForm({ classId }: { classId: string }) {
                                 </>
                             ) : (
                                 <>
-                                    Criar Nível
+                                    Salvar
                                     <Save className="size-4 mr-2" />
                                 </>
                             )}

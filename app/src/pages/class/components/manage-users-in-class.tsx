@@ -2,8 +2,13 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@
 import { Card, CardContent } from '@/components/ui/card';
 import type { GetClassByIdResponseType } from '@idiomax/validation-schemas/class';
 import { Badge } from '@/components/ui/badge';
+import { RemoveUserInClass } from './remove-user-in-class';
 
-export function ManageUsersInClass({ usersInClass }: { usersInClass: GetClassByIdResponseType['users_in_class'] }) {
+export function ManageUsersInClass({
+    usersInClass, classId
+}: {
+    usersInClass: GetClassByIdResponseType['users_in_class']; classId: string
+}) {
 
     return (
         <div className="space-y-6">
@@ -38,7 +43,7 @@ export function ManageUsersInClass({ usersInClass }: { usersInClass: GetClassByI
                                                 </Badge>
                                             </TableCell>
                                             <TableCell>
-                                                {/* <DeleteUserInClass userId={userInClass.id} /> */}
+                                                <RemoveUserInClass classId={classId} userInClassId={userInClass.id} />
                                             </TableCell>
                                         </TableRow>
                                     ))

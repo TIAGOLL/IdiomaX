@@ -3,23 +3,27 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PlusCircle, LoaderIcon } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { Resolver } from 'react-hook-form';
 import { CreateClassFormSchema } from '@idiomax/validation-schemas/class/create-class';
 import { FormMessageError } from '@/components/ui/form-message-error';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { getCurrentCompanyId } from '@/lib/company-utils';
-import { createClass } from '@/services/class';
+import { createClass } from '@/services/class/create-class';
+import { getCourses } from '@/services/courses';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 type CreateClassRequest = z.infer<typeof CreateClassFormSchema>;
 
 export function CreateClassPage() {
     const { mutate, isPending } = useMutation({
         mutationFn: async (data: CreateClassRequest) => {
-            const response = await createClass(data);
+            const response = await createClass({
+                company_id: getCurrentCompanyId(),
+                ...data
+            });
             return response;
         },
         onSuccess: (res) => {
@@ -31,20 +35,25 @@ export function CreateClassPage() {
         }
     });
 
+    const { data: courses, isLoading } = useQuery({
+        queryKey: ['courses'],
+        queryFn: () => getCourses({ company_id: getCurrentCompanyId() }),
+    });
+
     const {
         register,
         handleSubmit,
         formState: { errors },
-        reset
+        reset,
+        control
     } = useForm({
-        resolver: zodResolver(CreateClassFormSchema) as Resolver<CreateClassRequest>,
+        resolver: zodResolver(CreateClassFormSchema),
         mode: "all",
         criteriaMode: "all",
         defaultValues: {
-            company_id: getCurrentCompanyId(),
             name: '',
             vacancies: 1,
-            course_id: ''
+            course_id: '',
         }
     });
 
@@ -71,16 +80,28 @@ export function CreateClassPage() {
                     </div>
                     <div>
                         <Label htmlFor="course_id">Curso</Label>
-                        <select id="course_id" {...register('course_id')} className="w-full border rounded px-2 py-1">
-                            <option value="">Selecione um curso</option>
-                            {loadingCourses ? (
-                                <option disabled>Carregando...</option>
-                            ) : (
-                                courses?.map((c: any) => (
-                                    <option key={c.id} value={c.id}>{c.name}</option>
-                                ))
+                        <Controller
+                            name="course_id"
+                            control={control}
+                            render={({ field }) => (
+                                <Select
+                                    value={field.value?.toString()}
+                                    onValueChange={(value) => field.onChange(value === "true")}
+                                    defaultValue={field.value?.toString()}
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Selecione uma função" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {
+                                            courses?.map((c) => (
+                                                <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                                            ))
+                                        }
+                                    </SelectContent>
+                                </Select>
                             )}
-                        </select>
+                        />
                         <FormMessageError error={errors.course_id} />
                     </div>
                 </CardContent>

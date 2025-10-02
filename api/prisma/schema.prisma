@@ -510,6 +510,8 @@ model users_in_class {
 
   creator users? @relation("UsersInClassCreatedBy", fields: [created_by], references: [id])
   updater users? @relation("UsersInClassUpdatedBy", fields: [updated_by], references: [id])
+
+  @@unique([class_id, user_id])
 }
 
 // --- INTEGRAÇÃO STRIPE ---
