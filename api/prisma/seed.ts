@@ -349,6 +349,8 @@ async function main() {
                     data: {
                         id,
                         week_date: weekday,
+                        start_time: new Date(`08:00:00.000Z`), // 08:00
+                        end_time: new Date(`10:00:00.000Z`), // 10:00
                         class_id: classId,
                         created_at: now,
                         updated_at: now,

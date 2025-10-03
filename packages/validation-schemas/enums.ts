@@ -8,7 +8,7 @@ export const RoleEnum = z.enum(['STUDENT', 'TEACHER', 'ADMIN'], {
     error: 'Selecione uma função válida'
 })
 
-export const WeekDaysEnum = z.enum(["SEGUNDA", "TERÇA", "QUARTA", "QUINTA", "SEXTA", "SABADO", "DOMINGO"], {
+export const WeekDaysEnum = z.enum(["SEGUNDA", "TERCA", "QUARTA", "QUINTA", "SEXTA", "SABADO", "DOMINGO"], {
     error: 'Selecione um dia da semana válido'
 })
 

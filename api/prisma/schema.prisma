@@ -53,7 +53,7 @@ model Renamedclass {
 
 enum WeekDays {
   SEGUNDA
-  TERÇA
+  TERCA
   QUARTA
   QUINTA
   SEXTA
@@ -62,9 +62,11 @@ enum WeekDays {
 }
 
 model class_days {
-  id        String   @id @default(uuid()) @db.VarChar(256)
-  week_date WeekDays
-  class_id  String   @db.VarChar(256)
+  id         String   @id @default(uuid()) @db.VarChar(256)
+  week_date  WeekDays
+  start_time DateTime @db.Time(3) // Horário de início da aula (ex: 08:00:00)
+  end_time   DateTime @db.Time(3) // Horário de fim da aula (ex: 10:00:00)
+  class_id   String   @db.VarChar(256)
 
   created_at DateTime @default(now())
   created_by String   @db.VarChar(256)

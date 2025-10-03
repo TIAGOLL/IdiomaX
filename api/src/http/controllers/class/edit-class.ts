@@ -6,6 +6,7 @@ import { auth } from '../../../middlewares/auth';
 import { getUserPermissions } from '../../../lib/get-user-permission';
 import { ForbiddenError } from '../_errors/forbidden-error';
 import { ErrorResponseSchema } from '../../../types/error-response-schema';
+import { WeekDays } from '@prisma/client';
 
 export async function editClass(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
@@ -28,6 +29,7 @@ export async function editClass(app: FastifyInstance) {
                 company_id,
                 name,
                 vacancies,
+                class_days,
             } = request.body;
 
             const userId = await request.getCurrentUserId();
@@ -53,12 +55,38 @@ export async function editClass(app: FastifyInstance) {
                 });
             }
 
-            await prisma.renamedclass.update({
-                where: { id },
-                data: {
-                    name,
-                    vacancies,
-                    updated_by: userId,
+            // Usar transação para atualizar a turma e os dias da semana
+            await prisma.$transaction(async (tx) => {
+                // Atualizar a turma
+                await tx.renamedclass.update({
+                    where: { id },
+                    data: {
+                        name,
+                        vacancies,
+                        updated_by: userId,
+                    }
+                });
+
+                // Atualizar os dias da semana se fornecidos
+                if (class_days) {
+                    // Remover todos os dias existentes
+                    await tx.class_days.deleteMany({
+                        where: { class_id: id }
+                    });
+
+                    // Adicionar os novos dias
+                    if (class_days.length > 0) {
+                        await tx.class_days.createMany({
+                            data: class_days.map(day => ({
+                                class_id: id,
+                                week_date: day.week_date as WeekDays,
+                                start_time: new Date(`1970-01-01T${day.start_time}:00.000Z`),
+                                end_time: new Date(`1970-01-01T${day.end_time}:00.000Z`),
+                                created_by: userId,
+                                updated_by: userId,
+                            }))
+                        });
+                    }
                 }
             });
 

@@ -6,6 +6,8 @@ import { auth } from '../../../middlewares/auth';
 import { z } from 'zod';
 import { getUserPermissions } from '../../../lib/get-user-permission';
 import { ForbiddenError } from '../_errors/forbidden-error';
+import { WeekDays } from '@prisma/client';
+import { BadRequestError } from '../_errors/bad-request-error';
 
 const ErrorResponseSchema = z.object({
     message: z.string(),
@@ -31,7 +33,9 @@ export async function createClass(app: FastifyInstance) {
                 company_id,
                 name,
                 vacancies,
-                course_id
+                course_id,
+                class_days,
+                users_in_class
             } = request.body;
 
             const userId = await request.getCurrentUserId();
@@ -52,19 +56,50 @@ export async function createClass(app: FastifyInstance) {
             });
 
             if (existingClass) {
-                return reply.status(400).send({
-                    message: 'Já existe uma turma com este nome neste curso.'
-                });
+                throw new BadRequestError('Já existe uma turma com esse nome neste curso.');
             }
 
-            await prisma.renamedclass.create({
-                data: {
-                    name,
-                    vacancies,
-                    course_id,
-                    created_by: userId,
-                    updated_by: userId,
+            // Criar turma com transação para garantir consistência
+            await prisma.$transaction(async (tx) => {
+                // Criar a turma
+                const turma = await tx.renamedclass.create({
+                    data: {
+                        name,
+                        vacancies,
+                        course_id,
+                        created_by: userId,
+                        updated_by: userId,
+                    }
+                });
+
+                // Criar dias da semana se fornecidos
+                if (class_days && class_days.length > 0) {
+                    await tx.class_days.createMany({
+                        data: class_days.map(day => ({
+                            week_date: day.week_date as WeekDays,
+                            start_time: new Date(`${day.start_time}`),
+                            end_time: new Date(`${day.end_time}`),
+                            class_id: turma.id,
+                            created_by: userId,
+                            updated_by: userId,
+                        }))
+                    });
                 }
+
+                // Criar usuários na turma se fornecidos
+                if (users_in_class && users_in_class.length > 0) {
+                    await tx.users_in_class.createMany({
+                        data: users_in_class.map(user => ({
+                            class_id: turma.id,
+                            user_id: user.user_id,
+                            teacher: user.teacher,
+                            created_by: userId,
+                            updated_by: userId,
+                        }))
+                    });
+                }
+
+                return turma;
             });
 
             return reply.status(201).send({

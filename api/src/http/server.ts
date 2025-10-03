@@ -77,6 +77,7 @@ import { getClassById } from './controllers/class/get-class-by-id'
 import { removeUserInClass } from './controllers/class/remove-user-in-class'
 import { addUserInClass } from './controllers/class/add-user-in-class'
 import { deleteClass } from './controllers/class/delete-class'
+import { removeClassDay } from './controllers/class/remove-class-day'
 
 dotenv.config()
 
@@ -200,6 +201,7 @@ app.register(getClassById);
 app.register(removeUserInClass);
 app.register(addUserInClass);
 app.register(deleteClass);
+app.register(removeClassDay);
 
 
 

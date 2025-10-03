@@ -70,7 +70,7 @@ export async function getLevelsByCourse(app: FastifyInstance) {
             const formattedLevels = levels.map(level => ({
                 id: level.id,
                 name: level.name,
-                level: level.level.toNumber(),
+                level: level.level,
                 created_at: level.created_at.toISOString(),
                 updated_at: level.updated_at.toISOString(),
                 active: level.active,

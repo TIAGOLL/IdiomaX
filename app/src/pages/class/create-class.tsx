@@ -14,7 +14,6 @@ import { getCurrentCompanyId } from '@/lib/company-utils';
 import { createClass } from '@/services/class/create-class';
 import { getCourses } from '@/services/courses';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -42,32 +41,38 @@ type AddedUser = {
     role: string;
 };
 
+
+
 const WEEK_DAYS = [
-    { id: 'MONDAY', label: 'Segunda-feira' },
-    { id: 'TUESDAY', label: 'Terça-feira' },
-    { id: 'WEDNESDAY', label: 'Quarta-feira' },
-    { id: 'THURSDAY', label: 'Quinta-feira' },
-    { id: 'FRIDAY', label: 'Sexta-feira' },
-    { id: 'SATURDAY', label: 'Sábado' },
-    { id: 'SUNDAY', label: 'Domingo' },
+    { id: 'SEGUNDA', label: 'Segunda-feira' },
+    { id: 'TERCA', label: 'Terça-feira' },
+    { id: 'QUARTA', label: 'Quarta-feira' },
+    { id: 'QUINTA', label: 'Quinta-feira' },
+    { id: 'SEXTA', label: 'Sexta-feira' },
+    { id: 'SABADO', label: 'Sábado' },
+    { id: 'DOMINGO', label: 'Domingo' },
 ];
 
 export function CreateClassPage() {
     const [addedUsers, setAddedUsers] = useState<AddedUser[]>([]);
-    const [selectedDays, setSelectedDays] = useState<string[]>([]);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [comboboxOpen, setComboboxOpen] = useState(false);
     const { mutate, isPending } = useMutation({
         mutationFn: async (data: CreateClassRequest) => {
             const response = await createClass({
                 company_id: getCurrentCompanyId(),
-                ...data
+                ...data,
+                users_in_class: addedUsers.map(user => ({
+                    user_id: user.id,
+                    teacher: user.role === 'TEACHER'
+                }))
             });
             return response;
         },
         onSuccess: (res) => {
             toast.success(res.message);
             reset();
+            setAddedUsers([]);
         },
         onError: (err) => {
             toast.error(err.message);
@@ -93,17 +98,23 @@ export function CreateClassPage() {
         handleSubmit,
         formState: { errors },
         reset,
-        control
-    } = useForm({
+        control,
+        watch,
+        setValue
+    } = useForm<CreateClassRequest>({
         resolver: zodResolver(CreateClassFormSchema),
-        mode: "all",
+        mode: "onChange",
         criteriaMode: "all",
         defaultValues: {
             name: '',
             vacancies: 1,
             course_id: '',
+            class_days: []
         }
     });
+
+    // Watch class_days para reatividade
+    const classDays = watch('class_days') || [];
 
     // Form para adicionar usuário no dialog
     const {
@@ -111,7 +122,7 @@ export function CreateClassPage() {
         formState: { errors: addUserErrors },
         reset: resetAddUser,
         control: addUserControl
-    } = useForm<AddUserFormData>({
+    } = useForm({
         resolver: zodResolver(addUserSchema),
         mode: "all",
         criteriaMode: "all",
@@ -197,29 +208,105 @@ export function CreateClassPage() {
 
                     <Separator className='col-span-3' />
 
-                    {/* Dias da semana */}
+                    {/* Dias da semana e horários */}
                     <div className='space-y-3 col-span-3'>
-                        <Label>Dias da semana</Label>
-                        <div className='grid grid-cols-7 gap-3'>
-                            {WEEK_DAYS.map((day) => (
-                                <div key={day.id} className="flex flex-col items-center space-x-2">
-                                    <Checkbox
-                                        id={day.id}
-                                        checked={selectedDays.includes(day.id)}
-                                        onCheckedChange={(checked: boolean) => {
-                                            if (checked) {
-                                                setSelectedDays([...selectedDays, day.id]);
-                                            } else {
-                                                setSelectedDays(selectedDays.filter(d => d !== day.id));
-                                            }
-                                        }}
-                                    />
-                                    <Label htmlFor={day.id} className="text-sm font-normal cursor-pointer">
-                                        {day.label}
-                                    </Label>
-                                </div>
-                            ))}
+                        <div className="flex items-center justify-between">
+                            <Label>Dias da semana e horários</Label>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                    setValue('class_days', [...classDays, { week_date: 'SEGUNDA', start_time: '08:00', end_time: '10:00' }]);
+                                }}
+                            >
+                                <PlusCircle className="w-4 h-4 mr-2" />
+                                Adicionar Horário
+                            </Button>
                         </div>
+
+                        {/* Mostrar erros de validação dos horários */}
+                        {errors.class_days && (
+                            <FormMessageError
+                                error={typeof errors.class_days.message === 'string'
+                                    ? errors.class_days.message
+                                    : 'Verifique os horários informados'
+                                }
+                            />
+                        )}
+
+                        {classDays.length > 0 ? (
+                            <div className="space-y-3">
+                                {classDays.map((classDay, index) => (
+                                    <div key={index} className="grid grid-cols-12 gap-3 items-center p-3 border rounded-md">
+                                        <div className="col-span-4">
+                                            <Select
+                                                value={classDay.week_date}
+                                                onValueChange={(value: 'SEGUNDA' | 'TERCA' | 'QUARTA' | 'QUINTA' | 'SEXTA' | 'SABADO' | 'DOMINGO') => {
+                                                    const newClassDays = [...classDays];
+                                                    newClassDays[index].week_date = value;
+                                                    setValue('class_days', newClassDays);
+                                                }}
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {WEEK_DAYS.map((day) => (
+                                                        <SelectItem key={day.id} value={day.id}>
+                                                            {day.label}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="col-span-3">
+                                            <Input
+                                                type="time"
+                                                value={classDay.start_time}
+                                                onChange={(e) => {
+                                                    const newClassDays = [...classDays];
+                                                    newClassDays[index].start_time = e.target.value;
+                                                    setValue('class_days', newClassDays);
+                                                }}
+                                            />
+                                        </div>
+                                        <div className="col-span-1 text-center text-sm text-muted-foreground">
+                                            às
+                                        </div>
+                                        <div className="col-span-3">
+                                            <Input
+                                                type="time"
+                                                value={classDay.end_time}
+                                                onChange={(e) => {
+                                                    const newClassDays = [...classDays];
+                                                    newClassDays[index].end_time = e.target.value;
+                                                    setValue('class_days', newClassDays);
+                                                }}
+                                            />
+                                        </div>
+                                        <div className="col-span-1">
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => {
+                                                    setValue('class_days', classDays.filter((_, i) => i !== index));
+                                                }}
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-8 text-muted-foreground border border-dashed rounded-md">
+                                Nenhum horário definido ainda.
+                                <br />
+                                <span className="text-sm">Clique em "Adicionar Horário" para começar.</span>
+                            </div>
+                        )}
                     </div>
 
                     <Separator className='col-span-3' />
@@ -257,6 +344,7 @@ export function CreateClassPage() {
                                                             <PopoverTrigger asChild>
                                                                 <Button
                                                                     variant="outline"
+                                                                    type="button"
                                                                     role="combobox"
                                                                     aria-expanded={comboboxOpen}
                                                                     className="w-full justify-between"

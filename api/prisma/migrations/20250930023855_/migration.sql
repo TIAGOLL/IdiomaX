@@ -2,7 +2,7 @@
 CREATE TYPE "public"."Role" AS ENUM ('STUDENT', 'TEACHER', 'ADMIN');
 
 -- CreateEnum
-CREATE TYPE "public"."WeekDays" AS ENUM ('SEGUNDA', 'TERÇA', 'QUARTA', 'QUINTA', 'SEXTA', 'SABADO', 'DOMINGO');
+CREATE TYPE "public"."WeekDays" AS ENUM ('SEGUNDA', 'TERCA', 'QUARTA', 'QUINTA', 'SEXTA', 'SABADO', 'DOMINGO');
 
 -- CreateEnum
 CREATE TYPE "public"."Gender" AS ENUM ('M', 'F');

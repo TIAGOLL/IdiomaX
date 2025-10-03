@@ -38,7 +38,7 @@ export function ManageUsersInClass({
                                                 {userInClass.users.name}
                                             </TableCell>
                                             <TableCell>
-                                                <Badge>
+                                                <Badge variant={userInClass.teacher ? "destructive" : "default"}>
                                                     {userInClass.teacher ? 'Professor' : 'Aluno'}
                                                 </Badge>
                                             </TableCell>
