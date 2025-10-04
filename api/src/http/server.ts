@@ -79,6 +79,13 @@ import { addUserInClass } from './controllers/class/add-user-in-class'
 import { deleteClass } from './controllers/class/delete-class'
 import { removeClassDay } from './controllers/class/remove-class-day'
 
+// Registrations controllers
+import { getRegistrations } from './controllers/registrations/get-registrations'
+import { getRegistrationById } from './controllers/registrations/get-registration-by-id'
+import { createRegistration } from './controllers/registrations/create-registration'
+import { editRegistration } from './controllers/registrations/edit-registration'
+import { deleteRegistration } from './controllers/registrations/delete-registration'
+
 dotenv.config()
 
 export const env = envSchema.safeParse(process.env)
@@ -203,7 +210,12 @@ app.register(addUserInClass);
 app.register(deleteClass);
 app.register(removeClassDay);
 
-
+// Registrations routes
+app.register(getRegistrations);
+app.register(getRegistrationById);
+app.register(createRegistration);
+app.register(editRegistration);
+app.register(deleteRegistration);
 
 if (process.env.VERCEL !== "1") {
   app.listen({ port: Number(ENV.PORT) }).then(() => {

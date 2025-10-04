@@ -345,12 +345,26 @@ async function main() {
             for (const weekday of daysForClass) {
                 const id = generateUUID();
                 classDays.push(id);
+
+                // Gera horário de início aleatório entre 7h e 20h
+                const startHour = Math.floor(Math.random() * 14) + 7; // 7 às 20
+                const startMinute = Math.random() < 0.5 ? 0 : 30; // 00 ou 30 minutos
+
+                // Gera duração aleatória entre 30 minutos e 2 horas
+                const durationMinutes = Math.floor(Math.random() * 90) + 30; // 30 a 120 minutos
+
+                const startTime = new Date();
+                startTime.setHours(startHour, startMinute, 0, 0);
+
+                const endTime = new Date(startTime);
+                endTime.setMinutes(endTime.getMinutes() + durationMinutes);
+
                 await prisma.class_days.create({
                     data: {
                         id,
                         week_date: weekday,
-                        start_time: new Date(`08:00:00.000Z`), // 08:00
-                        end_time: new Date(`10:00:00.000Z`), // 10:00
+                        start_time: startTime,
+                        end_time: endTime,
                         class_id: classId,
                         created_at: now,
                         updated_at: now,
@@ -442,16 +456,21 @@ async function main() {
             const id = generateUUID()
             registrations.push(id)
             // Use a referência correta do prisma dentro da transação
+            const startDate = randomDate(new Date("2025-09-01"), new Date("2025-12-01"));
+            const endDate = new Date(startDate);
+            endDate.setMonth(endDate.getMonth() + 6);
+
             await prisma.registrations.create({
                 data: {
                     id,
-                    start_date: randomDate(new Date("2025-09-01"), new Date("2025-12-01")),
+                    start_date: startDate,
                     monthly_fee_amount: 350 + i * 10,
                     locked: i % 5 === 0,
                     completed: i % 4 === 0,
                     user_id: users[i + 1].id,
                     company_id: uuid,
                     created_at: now,
+                    end_date: endDate,
                     updated_at: now,
                     created_by: ownerId,
                     updated_by: ownerId,

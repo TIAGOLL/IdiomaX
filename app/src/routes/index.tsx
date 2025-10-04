@@ -14,6 +14,7 @@ import { FinanceDashboard } from '@/pages/company';
 import UsersPage from '@/pages/users';
 import CoursesPage from '@/pages/courses';
 import { ClassPage } from '@/pages/class';
+import RegistrationsPage from '@/pages/registrations';
 
 export function RoutesApp() {
 
@@ -44,6 +45,7 @@ export function RoutesApp() {
             <Route path='/admin/users' element={<UsersPage />} />
             <Route path='/admin/courses' element={<CoursesPage />} />
             <Route path='/admin/class' element={<ClassPage />} />
+            <Route path='/admin/registrations' element={<RegistrationsPage />} />
           </Route>
         </Route>
       </Route>

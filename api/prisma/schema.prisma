@@ -282,12 +282,13 @@ model records_of_students {
 
 model registrations {
   id                 String   @id @default(uuid()) @db.VarChar(256)
-  start_date         DateTime @default(now())
+  start_date         DateTime
+  end_date           DateTime
   monthly_fee_amount Decimal  @default(0) @db.Decimal(20, 2)
-  locked             Boolean? @default(false)
-  completed          Boolean? @default(false)
-  user_id            String?  @db.VarChar(256)
-  company_id         String?  @db.VarChar(256)
+  locked             Boolean  @default(false)
+  completed          Boolean  @default(false)
+  user_id            String   @db.VarChar(256)
+  company_id         String   @db.VarChar(256)
 
   created_at DateTime @default(now())
   created_by String   @db.VarChar(256)
@@ -297,8 +298,8 @@ model registrations {
 
   monthly_fee         monthly_fees[]
   records_of_students records_of_students[]
-  companies           companies?            @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
-  users               users?                @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
+  companies           companies             @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
+  users               users                 @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
   tasks_delivery      tasks_deliveries[]
 
   creator users? @relation("RegistrationsCreatedBy", fields: [created_by], references: [id])
