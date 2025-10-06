@@ -15,6 +15,7 @@ import UsersPage from '@/pages/users';
 import CoursesPage from '@/pages/courses';
 import { ClassPage } from '@/pages/class';
 import RegistrationsPage from '@/pages/registrations';
+import ClassesPage from '@/pages/classes';
 
 export function RoutesApp() {
 
@@ -46,6 +47,7 @@ export function RoutesApp() {
             <Route path='/admin/courses' element={<CoursesPage />} />
             <Route path='/admin/class' element={<ClassPage />} />
             <Route path='/admin/registrations' element={<RegistrationsPage />} />
+            <Route path='/admin/classes' element={<ClassesPage />} />
           </Route>
         </Route>
       </Route>

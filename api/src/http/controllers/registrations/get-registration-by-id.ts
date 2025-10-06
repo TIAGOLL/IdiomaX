@@ -48,6 +48,18 @@ export async function getRegistrationById(app: FastifyInstance) {
                                 name: true,
                                 email: true,
                             }
+                        },
+                        monthly_fee: {
+                            select: {
+                                id: true,
+                                due_date: true,
+                                paid: true,
+                                value: true,
+                                created_at: true,
+                            },
+                            orderBy: {
+                                due_date: 'desc'
+                            }
                         }
                     }
                 });
@@ -56,10 +68,17 @@ export async function getRegistrationById(app: FastifyInstance) {
                     throw new NotFoundError('Inscrição não encontrada');
                 }
 
+                // Verificar mensalidades em atraso
+                const now = new Date();
+                const overduePayments = registration.monthly_fee.filter(fee =>
+                    !fee.paid && fee.due_date < now
+                );
+
                 const mappedRegistration = {
                     id: registration.id,
                     start_date: registration.start_date.toISOString(),
                     monthly_fee_amount: Number(registration.monthly_fee_amount),
+                    discount_payment_before_due_date: Number(registration.discount_payment_before_due_date),
                     locked: registration.locked,
                     completed: registration.completed,
                     end_date: registration.end_date.toISOString(),
@@ -68,11 +87,14 @@ export async function getRegistrationById(app: FastifyInstance) {
                     created_at: registration.created_at.toISOString(),
                     updated_at: registration.updated_at.toISOString(),
                     active: registration.active,
-                    users: registration.users ? {
+                    users: {
                         id: registration.users.id,
                         name: registration.users.name,
                         email: registration.users.email,
-                    } : null,
+                    },
+                    has_overdue_payments: overduePayments.length > 0,
+                    total_overdue_amount: overduePayments.reduce((sum, fee) => sum + Number(fee.value), 0),
+                    overdue_payments_count: overduePayments.length,
                 };
 
                 return reply.status(200).send(mappedRegistration);

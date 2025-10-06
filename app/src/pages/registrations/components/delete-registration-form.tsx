@@ -17,7 +17,7 @@ export function DeleteRegistrationForm({ registration }: { registration: Registr
     const { mutate, isPending } = useMutation({
         mutationFn: () => deleteRegistration({
             id: registration.id,
-            company_id: registration.company_id || getCurrentCompanyId(),
+            company_id: getCurrentCompanyId(),
         }),
         onSuccess: (res) => {
             toast.success(res.message);

@@ -16,6 +16,8 @@ import { getRegistrations } from '@/services/registrations';
 import { ToggleLockRegistrationForm } from './components/toggle-lock-registration-form';
 import { DeleteRegistrationForm } from './components/delete-registration-form';
 import { EditPriceForm } from './components/edit-price-form';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Info } from 'lucide-react';
 
 export function RegistrationsTablePage() {
 
@@ -142,6 +144,33 @@ export function RegistrationsTablePage() {
                             <TableHeader className="sticky top-0 bg-background border-b">
                                 <TableRow>
                                     <TableHead>Estudante</TableHead>
+                                    <TableHead>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <span className="cursor-help flex flex-row items-center">
+                                                    Financeiro
+                                                    <Info className="size-4 ml-2" />
+                                                </span>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <div className="space-y-1">
+                                                    <p className="font-semibold">Status Financeiro</p>
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-3 h-3 rounded-full bg-green-500" />
+                                                        <span>Pagamentos em dia</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-3 h-3 rounded-full bg-orange-500" />
+                                                        <span>1 mensalidade em atraso</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-3 h-3 rounded-full bg-red-500" />
+                                                        <span>Múltiplas mensalidades em atraso</span>
+                                                    </div>
+                                                </div>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TableHead>
                                     <TableHead>Data de Início</TableHead>
                                     <TableHead>Data de Término</TableHead>
                                     <TableHead>Valor Mensal</TableHead>
@@ -168,6 +197,34 @@ export function RegistrationsTablePage() {
                                                     <UserCheck className="h-4 w-4 text-muted-foreground" />
                                                     {registration.users?.name || 'Usuário não encontrado'}
                                                 </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <div
+                                                            className={`w-4 h-4 rounded-full ${registration.has_overdue_payments
+                                                                ? registration.overdue_payments_count > 1
+                                                                    ? 'bg-red-500'
+                                                                    : 'bg-orange-500'
+                                                                : 'bg-green-500'
+                                                                }`}
+                                                        />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        {registration.has_overdue_payments ? (
+                                                            <div className="space-y-1">
+                                                                <p className="font-semibold">Situação Financeira</p>
+                                                                <p>{registration.overdue_payments_count} mensalidade(s) em atraso</p>
+                                                                <p>Total: R$ {registration.total_overdue_amount.toLocaleString('pt-BR', {
+                                                                    minimumFractionDigits: 2,
+                                                                    maximumFractionDigits: 2
+                                                                })}</p>
+                                                            </div>
+                                                        ) : (
+                                                            <p>Pagamentos em dia</p>
+                                                        )}
+                                                    </TooltipContent>
+                                                </Tooltip>
                                             </TableCell>
                                             <TableCell>
                                                 {formatDate(registration.start_date)}

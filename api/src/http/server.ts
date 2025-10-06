@@ -79,6 +79,14 @@ import { addUserInClass } from './controllers/class/add-user-in-class'
 import { deleteClass } from './controllers/class/delete-class'
 import { removeClassDay } from './controllers/class/remove-class-day'
 
+// Lessons controllers
+import { createLesson } from './controllers/lessons/create-lesson'
+import { getLessons } from './controllers/lessons/get-lessons'
+import { getLessonById } from './controllers/lessons/get-lesson-by-id'
+import { updateLesson } from './controllers/lessons/update-lesson'
+import { deleteLesson } from './controllers/lessons/delete-lesson'
+import { updatePresence } from './controllers/lessons/update-presence'
+
 // Registrations controllers
 import { getRegistrations } from './controllers/registrations/get-registrations'
 import { getRegistrationById } from './controllers/registrations/get-registration-by-id'
@@ -209,6 +217,14 @@ app.register(removeUserInClass);
 app.register(addUserInClass);
 app.register(deleteClass);
 app.register(removeClassDay);
+
+// Lessons routes
+app.register(createLesson);
+app.register(getLessons);
+app.register(getLessonById);
+app.register(updateLesson);
+app.register(deleteLesson);
+app.register(updatePresence);
 
 // Registrations routes
 app.register(getRegistrations);

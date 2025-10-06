@@ -290,11 +290,12 @@ model registrations {
   user_id            String   @db.VarChar(256)
   company_id         String   @db.VarChar(256)
 
-  created_at DateTime @default(now())
-  created_by String   @db.VarChar(256)
-  updated_at DateTime @updatedAt
-  updated_by String   @db.VarChar(256)
-  active     Boolean  @default(true)
+  created_at                       DateTime @default(now())
+  created_by                       String   @db.VarChar(256)
+  updated_at                       DateTime @updatedAt
+  updated_by                       String   @db.VarChar(256)
+  active                           Boolean  @default(true)
+  discount_payment_before_due_date Decimal  @default(0) @db.Decimal(10, 2)
 
   monthly_fee         monthly_fees[]
   records_of_students records_of_students[]

@@ -14,8 +14,12 @@ export const CreateRegistrationFormSchema = z.object({
     monthly_fee_amount: z.number()
         .min(0, 'Valor da mensalidade não pode ser negativo')
         .max(99999.99, 'Valor da mensalidade muito alto'),
-    locked: z.boolean().optional().default(false),
-    completed: z.boolean().optional().default(false),
+    discount_payment_before_due_date: z.number()
+        .min(0, 'Valor do desconto não pode ser negativo')
+        .max(99999.99, 'Valor do desconto muito alto')
+}).refine((data) => data.discount_payment_before_due_date <= data.monthly_fee_amount, {
+    message: 'Desconto não pode ser maior que o valor da mensalidade',
+    path: ['discount_payment_before_due_date']
 });
 
 // ===== API SCHEMAS (Backend Validation) =====
@@ -26,9 +30,8 @@ export const CreateRegistrationApiRequestSchema = z.object({
         const parsed = new Date(date);
         return !isNaN(parsed.getTime());
     }),
+    discount_payment_before_due_date: z.number().min(0).max(99999.99),
     monthly_fee_amount: z.number().min(0).max(99999.99),
-    locked: z.boolean().optional().default(false),
-    completed: z.boolean().optional().default(false),
 });
 
 export const CreateRegistrationApiResponseSchema = z.object({
