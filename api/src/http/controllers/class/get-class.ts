@@ -35,7 +35,7 @@ export async function getClass(app: FastifyInstance) {
                     throw new ForbiddenError()
                 }
 
-                const ResClass = await prisma.renamedclass.findMany({
+                const ResClass = await prisma.classes.findMany({
                     where: {
                         courses: {
                             company_id: company_id

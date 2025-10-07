@@ -1,8 +1,9 @@
 import { z } from 'zod'
+import { PresenceItemSchema, ClassInfoSchema } from './shared-types'
 
 // ===== API SCHEMAS (Backend Validation) =====
 export const GetLessonByIdApiRequestSchema = z.object({
-    id: z.string().uuid(),
+    lesson_id: z.string().uuid(),
     company_id: z.string().uuid(),
 })
 
@@ -15,33 +16,8 @@ export const GetLessonByIdApiResponseSchema = z.object({
     created_at: z.date(),
     updated_at: z.date(),
     active: z.boolean(),
-    class: z.object({
-        id: z.string(),
-        name: z.string(),
-        vacancies: z.number(),
-        courses: z.object({
-            name: z.string(),
-        }),
-        users_in_class: z.array(z.object({
-            user_id: z.string(),
-            teacher: z.boolean(),
-            users: z.object({
-                id: z.string(),
-                name: z.string(),
-                email: z.string(),
-            })
-        }))
-    }),
-    presence_list: z.array(z.object({
-        id: z.string(),
-        is_present: z.boolean(),
-        user_id: z.string(),
-        users: z.object({
-            id: z.string(),
-            name: z.string(),
-            email: z.string(),
-        })
-    }))
+    class: ClassInfoSchema,
+    presence_list: z.array(PresenceItemSchema)
 })
 
 // ===== HTTP TYPES (Frontend Services) =====

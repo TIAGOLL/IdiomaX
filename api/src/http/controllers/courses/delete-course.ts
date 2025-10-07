@@ -36,7 +36,7 @@ export async function deleteCourse(app: FastifyInstance) {
                     throw new ForbiddenError()
                 }
 
-                const activeClasses = await prisma.renamedclass.findFirst({
+                const activeClasses = await prisma.classes.findFirst({
                     where: {
                         course_id: targetCourseId,
                         active: true

@@ -41,23 +41,8 @@ export async function createLesson(app: FastifyInstance) {
 
             const { cannot } = getUserPermissions(userId, member.role)
 
-            if (cannot('create', 'Classroom')) { // Usando Classroom como referência de permissão
+            if (cannot('create', 'Lesson')) {
                 throw new ForbiddenError()
-            }
-
-            // Verificar se a turma existe e pertence à empresa
-            const classExists = await prisma.renamedclass.findFirst({
-                where: {
-                    id: class_id,
-                    courses: {
-                        company_id: company_id
-                    },
-                    active: true
-                }
-            })
-
-            if (!classExists) {
-                throw new BadRequestError('Turma não encontrada ou não pertence a esta empresa.')
             }
 
             // Validar se data de início é anterior à data de fim
@@ -69,7 +54,7 @@ export async function createLesson(app: FastifyInstance) {
             }
 
             // Verificar se há conflito de horários para a mesma turma
-            const conflictingLesson = await prisma.classes.findFirst({
+            const conflictingLesson = await prisma.lessons.findFirst({
                 where: {
                     class_id: class_id,
                     active: true,
@@ -100,42 +85,47 @@ export async function createLesson(app: FastifyInstance) {
                 throw new BadRequestError('Já existe uma aula agendada para este horário nesta turma.')
             }
 
-            // Criar a aula
-            const lesson = await prisma.classes.create({
-                data: {
-                    theme,
-                    start_date: startDateTime,
-                    end_date: endDateTime,
-                    class_id,
-                    created_by: userId,
-                    updated_by: userId,
-                }
-            })
 
-            // Buscar todos os alunos da turma (não professores)
-            const studentsInClass = await prisma.users_in_class.findMany({
-                where: {
-                    class_id: class_id,
-                    teacher: false
-                }
-            })
-
-            // Criar lista de presença para todos os alunos (inicialmente ausentes)
-            if (studentsInClass.length > 0) {
-                await prisma.presence_lists.createMany({
-                    data: studentsInClass.map(student => ({
-                        is_present: false,
-                        user_id: student.user_id,
-                        classe_id: lesson.id,
+            // Criar a aula e lista de presença em uma transação
+            await prisma.$transaction(async (tx) => {
+                // Criar a aula
+                const createdLesson = await tx.lessons.create({
+                    data: {
+                        theme,
+                        start_date: startDateTime,
+                        end_date: endDateTime,
+                        class_id,
                         created_by: userId,
                         updated_by: userId,
-                    }))
+                    }
                 })
-            }
+
+                // Buscar todos os alunos da turma (não professores)
+                const studentsInClass = await tx.users_in_class.findMany({
+                    where: {
+                        class_id: class_id,
+                        teacher: false
+                    }
+                })
+
+                // Criar lista de presença para todos os alunos (inicialmente ausentes)
+                if (studentsInClass.length > 0) {
+                    await tx.presence_lists.createMany({
+                        data: studentsInClass.map(student => ({
+                            is_present: false,
+                            user_id: student.user_id,
+                            classe_id: createdLesson.id,
+                            created_by: userId,
+                            updated_by: userId,
+                        }))
+                    })
+                }
+
+                return createdLesson
+            })
 
             return reply.status(201).send({
                 message: 'Aula criada com sucesso!',
-                lesson_id: lesson.id,
             })
         })
 }

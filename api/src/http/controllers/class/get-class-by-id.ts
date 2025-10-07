@@ -37,7 +37,7 @@ export async function getClassById(app: FastifyInstance) {
                 throw new ForbiddenError();
             }
 
-            const classData = await prisma.renamedclass.findUnique({
+            const classData = await prisma.classes.findUnique({
                 where: { id: class_id },
                 include: {
                     courses: true,

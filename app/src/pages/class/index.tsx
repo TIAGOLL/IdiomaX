@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router";
-import { ClassTablePage } from "./components/class-table-page";
+import { ClassTablePage } from "./class-table";
 // import { CreateClassPage } from "./create-class";
 import { EditClassPage } from "./edit-class";
 import { CreateClassPage } from "./create-class";

@@ -49,11 +49,11 @@ export function LessonsTablePage() {
             {/* Header */}
             <Card>
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Calendar className="size-5" />
-                        Aulas da Instituição ({data?.length})
-                    </CardTitle>
-                    <div className="flex justify-end">
+                    <CardTitle className="flex items-center gap-2 justify-between">
+                        <div className='flex items-center gap-2'>
+                            <Calendar className="size-5" />
+                            Aulas da Instituição ({data?.length})
+                        </div>
                         <Button
                             onClick={() => navigate('?tab=create')}
                             className="flex items-center gap-2"
@@ -61,7 +61,7 @@ export function LessonsTablePage() {
                             <Plus className="size-4" />
                             Nova Aula
                         </Button>
-                    </div>
+                    </CardTitle>
                 </CardHeader>
             </Card>
 
@@ -76,8 +76,7 @@ export function LessonsTablePage() {
                                     <TableHead>Turma</TableHead>
                                     <TableHead>Curso</TableHead>
                                     <TableHead>Data/Hora</TableHead>
-                                    <TableHead>Presença</TableHead>
-                                    <TableHead>Criado em</TableHead>
+                                    <TableHead>Presença/Ausência</TableHead>
                                     <TableHead className="w-[100px]">Ações</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -102,13 +101,8 @@ export function LessonsTablePage() {
                                             <TableCell className="font-medium">
                                                 {lesson.theme}
                                             </TableCell>
-                                            <TableCell>
-                                                <div className="flex flex-col">
-                                                    <span className="font-medium">{lesson.class.name}</span>
-                                                    <span className="text-sm text-muted-foreground">
-                                                        {lesson.class.vacancies} vagas
-                                                    </span>
-                                                </div>
+                                            <TableCell className="font-medium">
+                                                {lesson.class.name}
                                             </TableCell>
                                             <TableCell>
                                                 {lesson.class.courses.name}
@@ -131,9 +125,6 @@ export function LessonsTablePage() {
                                                 <Badge variant="secondary">
                                                     {lesson._count.presence_list} presentes
                                                 </Badge>
-                                            </TableCell>
-                                            <TableCell>
-                                                {formatDate(lesson.created_at)}
                                             </TableCell>
                                             <TableCell>
                                                 <DropdownMenu>

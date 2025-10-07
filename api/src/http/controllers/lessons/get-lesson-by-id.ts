@@ -17,7 +17,7 @@ export async function getLessonById(app: FastifyInstance) {
         .withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .get(
-            '/lesson',
+            '/lesson-by-id',
             {
                 schema: {
                     tags: ['Lessons'],
@@ -32,19 +32,19 @@ export async function getLessonById(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { company_id, id } = request.query;
+                const { company_id, lesson_id } = request.query;
                 const userId = await request.getCurrentUserId()
                 const { member } = await request.getUserMember(company_id)
 
                 const { cannot } = getUserPermissions(userId, member.role)
 
-                if (cannot('get', 'Classroom')) { // Usando Classroom como referência de permissão
+                if (cannot('get', 'Lesson')) {
                     throw new ForbiddenError()
                 }
 
-                const lesson = await prisma.classes.findFirst({
+                const lesson = await prisma.lessons.findFirst({
                     where: {
-                        id: id,
+                        id: lesson_id,
                         active: true,
                         class: {
                             courses: {

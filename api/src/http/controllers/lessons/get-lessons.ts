@@ -30,7 +30,7 @@ export async function getLessons(app: FastifyInstance) {
 
                 const { cannot } = getUserPermissions(userId, member.role)
 
-                if (cannot('get', 'Classroom')) { // Usando Classroom como referência de permissão
+                if (cannot('get', 'Lesson')) { 
                     throw new ForbiddenError()
                 }
 
@@ -44,7 +44,7 @@ export async function getLessons(app: FastifyInstance) {
                     ...(class_id && { class_id: class_id })
                 }
 
-                const lessons = await prisma.classes.findMany({
+                const lessons = await prisma.lessons.findMany({
                     where: whereClause,
                     include: {
                         class: {

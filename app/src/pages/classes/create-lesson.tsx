@@ -16,7 +16,6 @@ import { getClass } from '@/services/class';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useNavigate } from 'react-router';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 
 type CreateLessonRequest = z.infer<typeof CreateLessonFormSchema>;
 
@@ -91,11 +90,9 @@ export function CreateLessonPage() {
                         Preencha os dados para criar uma nova aula. A lista de presença será gerada automaticamente com todos os alunos da turma selecionada.
                     </CardDescription>
                 </CardHeader>
-            </Card>
 
-            <Card className="max-w-2xl mx-auto">
-                <form onSubmit={handleSubmit((data) => mutate(data))}>
-                    <CardContent className="space-y-4 pt-6">
+                <CardContent className="space-y-4 pt-6">
+                    <form onSubmit={handleSubmit((data) => mutate(data))} className='grid grid-cols-1 lg:grid-cols-3 gap-2'>
                         <div className='space-y-2'>
                             <Label htmlFor="theme">Tema da Aula</Label>
                             <Input
@@ -156,49 +153,45 @@ export function CreateLessonPage() {
                             </div>
                         )}
 
-                        <div className='grid grid-cols-2 gap-4'>
-                            <div className='space-y-2'>
-                                <Label htmlFor="start_date">Data/Hora de Início</Label>
-                                <Controller
-                                    name="start_date"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Input
-                                            type="datetime-local"
-                                            value={field.value ? new Date(field.value.getTime() - field.value.getTimezoneOffset() * 60000).toISOString().slice(0, 16) : ''}
-                                            onChange={(e) => {
-                                                const date = e.target.value ? new Date(e.target.value) : null;
-                                                field.onChange(date);
-                                            }}
-                                        />
-                                    )}
-                                />
-                                <FormMessageError error={errors.start_date} />
-                            </div>
-
-                            <div className='space-y-2'>
-                                <Label htmlFor="end_date">Data/Hora de Fim</Label>
-                                <Controller
-                                    name="end_date"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Input
-                                            type="datetime-local"
-                                            value={field.value ? new Date(field.value.getTime() - field.value.getTimezoneOffset() * 60000).toISOString().slice(0, 16) : ''}
-                                            onChange={(e) => {
-                                                const date = e.target.value ? new Date(e.target.value) : null;
-                                                field.onChange(date);
-                                            }}
-                                        />
-                                    )}
-                                />
-                                <FormMessageError error={errors.end_date} />
-                            </div>
+                        <div className='space-y-2'>
+                            <Label htmlFor="start_date">Data/Hora de Início</Label>
+                            <Controller
+                                name="start_date"
+                                control={control}
+                                render={({ field }) => (
+                                    <Input
+                                        type="datetime-local"
+                                        value={field.value && field.value instanceof Date ? field.value.toISOString().slice(0, 16) : ''}
+                                        onChange={(e) => {
+                                            const dateValue = e.target.value ? new Date(e.target.value) : undefined;
+                                            field.onChange(dateValue);
+                                        }}
+                                    />
+                                )}
+                            />
+                            <FormMessageError error={errors.start_date} />
                         </div>
 
-                        <Separator />
+                        <div className='space-y-2'>
+                            <Label htmlFor="end_date">Data/Hora de Fim</Label>
+                            <Controller
+                                name="end_date"
+                                control={control}
+                                render={({ field }) => (
+                                    <Input
+                                        type="datetime-local"
+                                        value={field.value && field.value instanceof Date ? field.value.toISOString().slice(0, 16) : ''}
+                                        onChange={(e) => {
+                                            const dateValue = e.target.value ? new Date(e.target.value) : undefined;
+                                            field.onChange(dateValue);
+                                        }}
+                                    />
+                                )}
+                            />
+                            <FormMessageError error={errors.end_date} />
+                        </div>
 
-                        <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
+                        <div className="lg:col-span-3 w-[30rem] p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
                             <div className="flex items-center gap-2 text-blue-700 dark:text-blue-300">
                                 <PlusCircle className="w-5 h-5" />
                                 <span className="font-medium">Lista de Presença Automática</span>
@@ -208,22 +201,23 @@ export function CreateLessonPage() {
                                 Você poderá marcar as presenças na tela de edição da aula.
                             </p>
                         </div>
-                    </CardContent>
-                    <CardFooter className="flex justify-end gap-2">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => navigate('?tab=list')}
-                        >
-                            Cancelar
-                        </Button>
-                        <Button type="submit" disabled={isPending}>
-                            {isPending && <LoaderIcon className="w-4 h-4 mr-2 animate-spin" />}
-                            {isPending ? "Criando..." : "Criar Aula"}
-                            {!isPending && <Save className="ml-2 w-4 h-4" />}
-                        </Button>
-                    </CardFooter>
-                </form>
+
+                        <CardFooter className="flex justify-end gap-2 lg:col-span-3">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => navigate('?tab=list')}
+                            >
+                                Cancelar
+                            </Button>
+                            <Button type="submit" disabled={isPending}>
+                                {isPending && <LoaderIcon className="w-4 h-4 mr-2 animate-spin" />}
+                                {isPending ? "Criando..." : "Criar Aula"}
+                                {!isPending && <Save className="ml-2 w-4 h-4" />}
+                            </Button>
+                        </CardFooter>
+                    </form>
+                </CardContent>
             </Card>
         </div>
     );

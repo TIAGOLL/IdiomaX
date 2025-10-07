@@ -40,6 +40,7 @@ export const permissions: Record<Role, PermissionsByRole> = {
         // === GESTÃO DE TURMAS ===
         can(['get', 'create', 'update', 'delete'], 'Classroom') // Gerenciar salas
         can(['get', 'create', 'update', 'delete'], 'Class') // Gerenciar turmas
+        can(['get', 'create', 'update', 'delete'], 'Lesson') // Gerenciar aulas
 
         // === GESTÃO DE MATRÍCULAS ===
         can(['get', 'create', 'update'], 'Registration') // Matricular e gerenciar alunos

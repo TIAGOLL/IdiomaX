@@ -46,7 +46,7 @@ export async function deleteClass(app: FastifyInstance) {
                 }
 
                 // Deletar a turma
-                await prisma.renamedclass.delete({
+                await prisma.classes.delete({
                     where: { id: targetClassId }
                 });
 

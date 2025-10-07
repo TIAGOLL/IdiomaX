@@ -7,6 +7,7 @@ import { useState } from "react";
 import { deleteRegistration } from "@/services/registrations/delete-registration";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import type { GetRegistrationsResponseType } from "@idiomax/validation-schemas/registrations/get-registrations";
+import { Button } from "@/components/ui/button";
 
 type Registration = GetRegistrationsResponseType[0];
 
@@ -62,9 +63,11 @@ export function DeleteRegistrationForm({ registration }: { registration: Registr
                     <AlertDialogAction
                         onClick={() => mutate()}
                         disabled={isPending}
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        asChild
                     >
-                        {isPending ? 'Excluindo...' : 'Confirmar Exclusão'}
+                        <Button variant="destructive" disabled={isPending}>
+                            {isPending ? 'Excluindo...' : 'Confirmar Exclusão'}
+                        </Button>
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

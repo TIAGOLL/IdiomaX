@@ -41,7 +41,7 @@ export async function editClass(app: FastifyInstance) {
             }
 
             // Verificar se já existe uma turma com o mesmo nome no curso (exceto a atual)
-            const existingClass = await prisma.renamedclass.findFirst({
+            const existingClass = await prisma.classes.findFirst({
                 where: {
                     name,
                     id: { not: id },
@@ -58,7 +58,7 @@ export async function editClass(app: FastifyInstance) {
             // Usar transação para atualizar a turma e os dias da semana
             await prisma.$transaction(async (tx) => {
                 // Atualizar a turma
-                await tx.renamedclass.update({
+                await tx.classes.update({
                     where: { id },
                     data: {
                         name,

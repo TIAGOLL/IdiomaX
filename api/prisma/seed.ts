@@ -317,12 +317,12 @@ async function main() {
             })
         }
 
-        // RENAMEDCLASS (10)
-        const renamedClasses: string[] = []
+        // classes (10)
+        const classes: string[] = []
         for (let i = 1; i <= 10; i++) {
             const id = generateUUID()
-            renamedClasses.push(id)
-            await prisma.renamedclass.create({
+            classes.push(id)
+            await prisma.classes.create({
                 data: {
                     id,
                     name: `Turma ${i}`,
@@ -339,7 +339,7 @@ async function main() {
 
         // CLASS_DAYS (dias da semana por turma)
         const classDays: string[] = [];
-        for (const classId of renamedClasses) {
+        for (const classId of classes) {
             // Sorteia entre 2 e 4 dias da semana para cada turma
             const daysForClass = [...Object.values(WeekDays)].sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 3) + 2);
             for (const weekday of daysForClass) {
@@ -376,23 +376,23 @@ async function main() {
             }
         }
 
-        // CLASSES (5)
-        const classes: string[] = []
+        // LESSONS (5)
+        const lessons: string[] = []
         for (let i = 1; i <= 5; i++) {
             const id = generateUUID()
-            classes.push(id)
+            lessons.push(id)
             // Gera um horário de início aleatório
             const startDate = randomDate(new Date("2025-09-01T19:00:00"), new Date("2025-12-01T21:00:00"));
             // Gera uma duração aleatória entre 1 e 2 horas
             const durationHours = Math.random() < 0.5 ? 1 : 2;
             const endDate = new Date(startDate.getTime() + durationHours * 60 * 60 * 1000);
-            await prisma.classes.create({
+            await prisma.lessons.create({
                 data: {
                     id,
                     theme: `Tema da aula ${i}`,
                     start_date: startDate,
                     end_date: endDate,
-                    class_id: randomFromArray(renamedClasses),
+                    class_id: randomFromArray(classes),
                     created_at: now,
                     updated_at: now,
                     created_by: ownerId,
@@ -411,7 +411,7 @@ async function main() {
             // Sorteia quantas turmas o professor terá (entre 1 e 5)
             const turmasCount = Math.floor(Math.random() * 5) + 1;
             // Sorteia turmas únicas para o professor
-            const turmas = [...renamedClasses].sort(() => 0.5 - Math.random()).slice(0, turmasCount);
+            const turmas = [...classes].sort(() => 0.5 - Math.random()).slice(0, turmasCount);
             for (const turmaId of turmas) {
                 await prisma.users_in_class.create({
                     data: {
@@ -430,7 +430,7 @@ async function main() {
         }
 
         // Alocar alunos: cada turma recebe 3 alunos aleatórios
-        for (const classId of renamedClasses) {
+        for (const classId of classes) {
             // Sorteia 3 alunos únicos para a turma
             const alunos = [...studentUsers].sort(() => 0.5 - Math.random()).slice(0, 3);
             for (const aluno of alunos) {
@@ -567,7 +567,7 @@ async function main() {
         }
 
         // PRESENCE_LIST (garante 1 presença por aluno por aula)
-        for (const classId of classes) {
+        for (const lessonId of lessons) {
             // Sorteia de 2 a 5 alunos para cada aula
             const alunosNaAula = [...studentUsers].sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 4) + 2);
             for (const aluno of alunosNaAula) {
@@ -576,7 +576,7 @@ async function main() {
                         id: generateUUID(),
                         is_present: Math.random() > 0.2,
                         user_id: aluno.id,
-                        classe_id: classId,
+                        classe_id: lessonId,
                         created_at: now,
                         updated_at: now,
                         created_by: ownerId,

@@ -38,12 +38,12 @@ export async function deleteLesson(app: FastifyInstance) {
 
             const { cannot } = getUserPermissions(userId, member.role)
 
-            if (cannot('delete', 'Classroom')) { // Usando Classroom como referência de permissão
+            if (cannot('delete', 'Lesson')) {
                 throw new ForbiddenError()
             }
 
             // Verificar se a aula existe e pertence à empresa
-            const existingLesson = await prisma.classes.findFirst({
+            const existingLesson = await prisma.lessons.findFirst({
                 where: {
                     id: id,
                     active: true,

@@ -49,7 +49,7 @@ export async function AdminDashboard(app: FastifyInstance) {
                 });
 
                 // Ocupação média das turmas
-                const classes = await prisma.renamedclass.findMany({
+                const classes = await prisma.classes.findMany({
                     where: { courses: { company_id: company_id } },
                     include: { users_in_class: true, courses: true },
                 });
@@ -69,7 +69,7 @@ export async function AdminDashboard(app: FastifyInstance) {
                 };
 
                 // Assiduidade média por turma
-                const attendanceByClass = await prisma.renamedclass.findMany({
+                const attendanceByClass = await prisma.classes.findMany({
                     where: { courses: { company_id: company_id } },
                     include: {
                         users_in_class: {
@@ -119,8 +119,9 @@ export async function AdminDashboard(app: FastifyInstance) {
                         member_on: { some: { company_id: company_id } },
                         users_in_class: {
                             some: {
-                                teacher: true, class: {
-                                    classes: {
+                                teacher: true,
+                                class: {
+                                    lessons: {
                                         some: {}
                                     }
                                 }
@@ -133,7 +134,7 @@ export async function AdminDashboard(app: FastifyInstance) {
                             include: {
                                 class: {
                                     include: {
-                                        classes: true
+                                        lessons: true
                                     }
                                 }
                             }
@@ -144,7 +145,7 @@ export async function AdminDashboard(app: FastifyInstance) {
                     // Soma as horas trabalhadas
                     let hours = 0;
                     for (const uic of t.users_in_class) {
-                        for (const cd of uic.class.classes) {
+                        for (const cd of uic.class.lessons) {
                             const start = new Date(cd.start_date).getTime();
                             const end = new Date(cd.end_date).getTime();
                             hours += (end - start) / (1000 * 60 * 60);
@@ -153,9 +154,15 @@ export async function AdminDashboard(app: FastifyInstance) {
                     return { name: t.name, hours: Math.round(hours) };
                 });
 
-                // Calendário de encontros (classes)
-                const classDays = await prisma.classes.findMany({
-                    where: { class: { courses: { company_id: company_id } } },
+                // Calendário de encontros (aulas)
+                const classDays = await prisma.lessons.findMany({
+                    where: {
+                        class: {
+                            courses: {
+                                company_id: company_id
+                            }
+                        }
+                    },
                     include: { class: true },
                 });
                 const classDaysList = classDays.map(cd => ({

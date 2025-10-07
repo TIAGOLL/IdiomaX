@@ -27,7 +27,7 @@ enum Role {
   ADMIN
 }
 
-model Renamedclass {
+model classes {
   id        String @id @default(uuid()) @db.VarChar(256)
   name      String @db.VarChar(256)
   vacancies Int    @db.Integer
@@ -40,15 +40,13 @@ model Renamedclass {
   active     Boolean  @default(true)
 
   class_days     class_days[]
-  classes        classes[]
+  lessons        lessons[]
   users_in_class users_in_class[]
 
   courses courses @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "courses_fk")
 
-  creator users? @relation("RenamedclassCreatedBy", fields: [created_by], references: [id])
-  updater users? @relation("RenamedclassUpdatedBy", fields: [updated_by], references: [id])
-
-  @@map("class")
+  creator users? @relation("classesCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("classesUpdatedBy", fields: [updated_by], references: [id])
 }
 
 enum WeekDays {
@@ -74,13 +72,13 @@ model class_days {
   updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
-  class Renamedclass @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "class_fk")
+  class classes @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "class_fk")
 
   creator users? @relation("ClassDaysCreatedBy", fields: [created_by], references: [id])
   updater users? @relation("ClassDaysUpdatedBy", fields: [updated_by], references: [id])
 }
 
-model classes {
+model lessons {
   id         String   @id @default(uuid()) @db.VarChar(256)
   theme      String   @db.VarChar(256)
   start_date DateTime
@@ -93,11 +91,11 @@ model classes {
   updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
-  class         Renamedclass     @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "class_fk")
+  class         classes          @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "class_fk")
   presence_list presence_lists[]
 
-  creator users? @relation("ClassesCreatedBy", fields: [created_by], references: [id])
-  updater users? @relation("ClassesUpdatedBy", fields: [updated_by], references: [id])
+  creator users? @relation("LessonsCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("LessonsUpdatedBy", fields: [updated_by], references: [id])
 }
 
 model classrooms {
@@ -154,9 +152,9 @@ model courses {
   updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
-  class     Renamedclass[]
+  classes   classes[]
   levels    levels[]
-  companies companies      @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
+  companies companies @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
 
   creator users? @relation("CoursesCreatedBy", fields: [created_by], references: [id])
   updater users? @relation("CoursesUpdatedBy", fields: [updated_by], references: [id])
@@ -253,7 +251,7 @@ model presence_lists {
   updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
-  classes classes @relation(fields: [classe_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "classes_fk")
+  lessons lessons @relation(fields: [classe_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "lessons_fk")
   users   users   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
 
   creator users? @relation("PresenceListCreatedBy", fields: [created_by], references: [id])
@@ -442,12 +440,12 @@ model users {
   members_updated             members[]             @relation("MembersUpdatedBy")
   courses_created             courses[]             @relation("CoursesCreatedBy")
   courses_updated             courses[]             @relation("CoursesUpdatedBy")
-  renamedclass_created        Renamedclass[]        @relation("RenamedclassCreatedBy")
-  renamedclass_updated        Renamedclass[]        @relation("RenamedclassUpdatedBy")
+  classes_created             classes[]             @relation("classesCreatedBy")
+  classes_updated             classes[]             @relation("classesUpdatedBy")
   class_days_created          class_days[]          @relation("ClassDaysCreatedBy")
   class_days_updated          class_days[]          @relation("ClassDaysUpdatedBy")
-  classes_created             classes[]             @relation("ClassesCreatedBy")
-  classes_updated             classes[]             @relation("ClassesUpdatedBy")
+  lessons_created             lessons[]             @relation("LessonsCreatedBy")
+  lessons_updated             lessons[]             @relation("LessonsUpdatedBy")
   classrooms_created          classrooms[]          @relation("ClassroomsCreatedBy")
   classrooms_updated          classrooms[]          @relation("ClassroomsUpdatedBy")
   configs_created             configs[]             @relation("ConfigsCreatedBy")
@@ -509,8 +507,8 @@ model users_in_class {
   updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
-  class Renamedclass @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "class_fk")
-  users users        @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
+  class classes @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "class_fk")
+  users users   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
 
   creator users? @relation("UsersInClassCreatedBy", fields: [created_by], references: [id])
   updater users? @relation("UsersInClassUpdatedBy", fields: [updated_by], references: [id])

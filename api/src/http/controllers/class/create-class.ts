@@ -47,7 +47,7 @@ export async function createClass(app: FastifyInstance) {
             }
 
             // Verificar se já existe uma turma com o mesmo nome no curso
-            const existingClass = await prisma.renamedclass.findFirst({
+            const existingClass = await prisma.classes.findFirst({
                 where: {
                     name,
                     course_id,
@@ -62,7 +62,7 @@ export async function createClass(app: FastifyInstance) {
             // Criar turma com transação para garantir consistência
             await prisma.$transaction(async (tx) => {
                 // Criar a turma
-                const turma = await tx.renamedclass.create({
+                const turma = await tx.classes.create({
                     data: {
                         name,
                         vacancies,

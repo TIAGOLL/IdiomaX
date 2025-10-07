@@ -43,12 +43,12 @@ export async function updateLesson(app: FastifyInstance) {
 
             const { cannot } = getUserPermissions(userId, member.role)
 
-            if (cannot('update', 'Classroom')) { // Usando Classroom como referência de permissão
+            if (cannot('update', 'Lesson')) { 
                 throw new ForbiddenError()
             }
 
             // Verificar se a aula existe e pertence à empresa
-            const existingLesson = await prisma.classes.findFirst({
+            const existingLesson = await prisma.lessons.findFirst({
                 where: {
                     id: id,
                     active: true,
@@ -80,7 +80,7 @@ export async function updateLesson(app: FastifyInstance) {
             }
 
             // Verificar se há conflito de horários para a mesma turma (excluindo a aula atual)
-            const conflictingLesson = await prisma.classes.findFirst({
+            const conflictingLesson = await prisma.lessons.findFirst({
                 where: {
                     id: { not: id },
                     class_id: existingLesson.class_id,
@@ -113,7 +113,7 @@ export async function updateLesson(app: FastifyInstance) {
             }
 
             // Atualizar a aula
-            await prisma.classes.update({
+            await prisma.lessons.update({
                 where: {
                     id: id
                 },

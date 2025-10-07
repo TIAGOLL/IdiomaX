@@ -41,12 +41,12 @@ export async function updatePresence(app: FastifyInstance) {
 
             const { cannot } = getUserPermissions(userId, member.role)
 
-            if (cannot('update', 'Classroom')) { // Usando Classroom como referência de permissão
+            if (cannot('update', 'Lesson')) { 
                 throw new ForbiddenError()
             }
 
             // Verificar se a aula existe e pertence à empresa
-            const existingLesson = await prisma.classes.findFirst({
+            const existingLesson = await prisma.lessons.findFirst({
                 where: {
                     id: lesson_id,
                     active: true,

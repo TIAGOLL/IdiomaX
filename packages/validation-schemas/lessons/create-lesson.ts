@@ -32,7 +32,6 @@ export const CreateLessonApiRequestSchema = z.object({
 
 export const CreateLessonApiResponseSchema = z.object({
     message: z.string(),
-    lesson_id: z.string().uuid(),
 })
 
 // ===== HTTP TYPES (Frontend Services) =====
