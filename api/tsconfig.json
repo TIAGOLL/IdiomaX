@@ -5,7 +5,9 @@
       "ES2020"
     ],
     "module": "ESNext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "Node",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
     "strict": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
