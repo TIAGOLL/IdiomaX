@@ -5,8 +5,7 @@
       "ES2020"
     ],
     "module": "ESNext",
-    "moduleResolution": "Node",
-    "resolveJsonModule": true,
+    "moduleResolution": "bundler",
     "strict": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -18,6 +17,10 @@
   "include": [
     "src/**/*",
     "@types/*.d.ts",
+    "src/http/controllers/users",
+    "src/http/server.ts",
+    "prisma/seed.ts",
+    "eslint.config.js",
     "prisma/seed.ts"
   ],
   "exclude": [
