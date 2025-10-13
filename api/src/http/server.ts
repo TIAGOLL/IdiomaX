@@ -1,7 +1,8 @@
-import { fastifyJwt } from '@fastify/jwt'
-import { fastifySwagger } from '@fastify/swagger'
-import { fastifySwaggerUi } from '@fastify/swagger-ui'
-import { fastify } from 'fastify'
+import fastifyCors from '@fastify/cors'
+import fastifyJwt from '@fastify/jwt'
+import fastifySwagger from '@fastify/swagger'
+import fastifySwaggerUi from '@fastify/swagger-ui'
+import fastify from 'fastify'
 import {
   jsonSchemaTransform,
   serializerCompiler,
@@ -143,10 +144,10 @@ app.register(fastifyJwt, {
   }
 })
 
-// app.register(fastifyCors, {
-//   origin: true,
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-// });
+app.register(fastifyCors, {
+  origin: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+});
 
 
 //routes
