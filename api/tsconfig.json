@@ -6,6 +6,11 @@
     ],
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
     "declaration": false,
     "outDir": "./build"
   },
@@ -15,8 +20,7 @@
     "src/http/controllers/users",
     "src/http/server.ts",
     "prisma/seed.ts",
-    "eslint.config.js",
-    "prisma/seed.ts"
+    "eslint.config.js"
   ],
   "exclude": [
     "node_modules",
