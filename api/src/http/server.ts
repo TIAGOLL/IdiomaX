@@ -1,15 +1,15 @@
-import fastifyCors from '@fastify/cors'
-import fastifyJwt from '@fastify/jwt'
-import fastifySwagger from '@fastify/swagger'
-import fastifySwaggerUI from '@fastify/swagger-ui'
-import fastify from 'fastify'
+import { fastifyCors } from '@fastify/cors'
+import { fastifyJwt } from '@fastify/jwt'
+import { fastifySwagger } from '@fastify/swagger'
+import { fastifySwaggerUi } from '@fastify/swagger-ui'
+import { fastify } from 'fastify'
 import {
   jsonSchemaTransform,
   serializerCompiler,
   validatorCompiler,
   ZodTypeProvider,
 } from 'fastify-type-provider-zod'
-import z from 'zod'
+import { z } from 'zod'
 import * as dotenv from 'dotenv'
 import { SignIn } from './controllers/auth/sign-in'
 import { SignUp } from './controllers/auth/sign-up'
@@ -133,7 +133,7 @@ app.register(fastifySwagger, {
   transform: jsonSchemaTransform,
 })
 
-app.register(fastifySwaggerUI, {
+app.register(fastifySwaggerUi, {
   routePrefix: '/docs',
 })
 
