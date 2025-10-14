@@ -1,20 +1,16 @@
 {
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "isolatedModules": true,
-    "noEmit": true
-  },
   "include": [
-    "./**/*.ts"
+    "src/**/*",
+    "@types/*.d.ts",
+    "src/http/controllers/users",
+    "src/http/server.ts",
+    "prisma/seed.ts",
+    "eslint.config.js"
   ],
   "exclude": [
-    "node_modules"
-  ]
+    "node_modules",
+    "dist",
+    "build",
+    "scripts"
+  ],
 }

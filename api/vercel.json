@@ -1,13 +1,15 @@
 {
+  "version": 2,
   "builds": [
     {
-      "src": "api/http/server.ts",
+      "src": "src/http/server.ts",
       "use": "@vercel/node"
     }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "/api/http/server.ts" }
-  ],
-  "installCommand": "pnpm install",
-  "buildCommand": "pnpm prisma migrate deploy"
+    {
+      "src": "(.*)",
+      "dest": "src/http/server.ts"
+    }
+  ]
 }
