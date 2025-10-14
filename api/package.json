@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/http/server.ts",
-    "vercel-build": "tsc && npx prisma migrate deploy",
+    "vercel-build": "tsc && tsc-alias && npx prisma migrate deploy",
     "start": "node dist/http/server.js",
     "type-check": "tsc --project tsconfig.json --noEmit",
     "db:migrate:dev": "prisma migrate dev",
@@ -54,6 +54,7 @@
     "eslint-plugin-unused-imports": "^4.2.0",
     "globals": "^16.4.0",
     "prisma": "^6.15.0",
+    "tsc-alias": "^1.8.16",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.44.0"
   }
