@@ -244,7 +244,7 @@ model presence_lists {
   id         String  @id @default(uuid())
   is_present Boolean
   user_id    String
-  class_id  String
+  lesson_id  String
 
   created_at DateTime @default(now())
   created_by String   @db.VarChar(256)
@@ -252,13 +252,13 @@ model presence_lists {
   updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
-  lessons lessons @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "lessons_fk")
-  users   users   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
+  lesson lessons @relation(fields: [lesson_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "lessons_fk")
+  users  users   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
 
   creator users? @relation("PresenceListCreatedBy", fields: [created_by], references: [id])
   updater users? @relation("PresenceListUpdatedBy", fields: [updated_by], references: [id])
 
-  @@unique([user_id, class_id])
+  @@unique([user_id, lesson_id])
 }
 
 model records_of_students {
