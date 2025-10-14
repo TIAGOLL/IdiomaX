@@ -5,16 +5,19 @@
       "ES2020"
     ],
     "module": "ESNext",
-    "moduleResolution": "node",
-    "rootDir": "src",
-    "outDir": "dist",
+    "moduleResolution": "bundler",
     "strict": true,
+    "noEmit": false,
+    "outDir": "dist",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true
   },
   "include": [
-    "src/**/*"
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
   ]
 }

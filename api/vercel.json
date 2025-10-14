@@ -1,11 +1,8 @@
 {
   "buildCommand": "pnpm run vercel-build",
-  "outputDirectory": "dist",
   "installCommand": "pnpm install",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/dist/http/server.js"
-    }
+  "outputDirectory": "dist",
+  "routes": [
+    { "src": "/(.*)", "dest": "/http/server.js" }
   ]
 }
