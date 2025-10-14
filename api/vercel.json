@@ -3,6 +3,6 @@
   "outputDirectory": "dist",
   "installCommand": "pnpm install",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/dist/http/server.js" }
+    { "source": "/(.*)", "destination": "./http/server.js" }
   ]
 }
