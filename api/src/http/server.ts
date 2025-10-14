@@ -233,15 +233,16 @@ app.register(createRegistration);
 app.register(editRegistration);
 app.register(deleteRegistration);
 
-app.listen({
-  host: '0.0.0.0',
-  port: process.env.PORT ? Number(process.env.PORT) : 3333,
-}).then(() => {
-  console.log('HTTP Server Running')
-})
+if (process.env.VERCEL != "1") {
+  app.listen({
+    host: '0.0.0.0',
+    port: process.env.PORT ? Number(process.env.PORT) : 3333,
+  }).then(() => {
+    console.log('HTTP Server Running')
+  })
+}
 
-// if (process.env.VERCEL !== "1") {
-//   app.listen({ port: Number(ENV.PORT) }).then(() => {
-//     console.log(`HTTP server running in http://localhost:${ENV.PORT}`);
-//   });
-// }
+export default async function handler(req: unknown, res: unknown) {
+  await app.ready()
+  app.server.emit('request', req, res)
+}
