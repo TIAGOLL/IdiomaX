@@ -1,7 +1,5 @@
 {
   "version": 2,
-  "buildCommand": "pnpm run vercel-build",
-  "outputDirectory": "build",
   "builds": [
     {
       "src": "src/http/server.ts",
@@ -10,7 +8,7 @@
   ],
   "routes": [
     {
-      "src": "(.*)",
+      "src": "/(.*)",
       "dest": "src/http/server.ts"
     }
   ]
