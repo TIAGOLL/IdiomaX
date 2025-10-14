@@ -4,14 +4,14 @@
   "outputDirectory": "build",
   "builds": [
     {
-      "src": "build/http/server.ts",
+      "src": "src/http/server.ts",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "/build/http/server.ts"
+      "src": "(.*)",
+      "dest": "src/http/server.ts"
     }
   ]
 }

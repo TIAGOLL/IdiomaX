@@ -6,8 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/http/server.ts",
-    "build": "tsup",
-    "vercel-build": "tsup && npx prisma generate",
+    "vercel-build": "npx prisma migrate deploy",
     "start": "node build/http/server.js",
     "type-check": "tsc --project tsconfig.json --noEmit",
     "db:migrate:dev": "prisma migrate dev",
