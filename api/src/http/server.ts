@@ -233,16 +233,9 @@ app.register(createRegistration);
 app.register(editRegistration);
 app.register(deleteRegistration);
 
-if (process.env.VERCEL != "1") {
-  app.listen({
-    host: '0.0.0.0',
-    port: process.env.PORT ? Number(process.env.PORT) : 3333,
-  }).then(() => {
-    console.log('HTTP Server Running')
-  })
-}
-
-export default async function handler(req: unknown, res: unknown) {
-  await app.ready()
-  app.server.emit('request', req, res)
-}
+app.listen({
+  host: '0.0.0.0',
+  port: process.env.PORT ? Number(process.env.PORT) : 3333,
+}).then(() => {
+  console.log('HTTP Server Running')
+})
