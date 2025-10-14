@@ -1,19 +1,33 @@
 {
   "compilerOptions": {
+    "moduleResolution": "node",
+    "target": "es6",
     "lib": [
-      "es2023"
+      "esnext"
     ],
-    "module": "ESNext",
-    "target": "es2022",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "moduleResolution": "Node",
-    "baseUrl": ".",
-    "allowSyntheticDefaultImports": true,
+    "module": "commonjs",
+    "rootDir": ".",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "outDir": "build",
     "forceConsistentCasingInFileNames": true,
-    "declaration": false,
-    "outDir": "./build"
+    "strict": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noEmitOnError": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "declarationMap": true
   },
   "include": [
     "src/**/*",
