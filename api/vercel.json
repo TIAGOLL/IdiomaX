@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/api/src/http/server.ts"
+      "destination": "/src/http/server.ts"
     }
   ]
 }
