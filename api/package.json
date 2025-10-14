@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/http/server.ts",
-    "vercel-build": "echo 'Vercel build - TS handled internally'",
-    "start": "node dist/http/server.js",
+    "build": "tsup src",
+    "start": "node dist/http/server.cjs",
     "type-check": "tsc --project tsconfig.json --noEmit",
     "db:migrate:dev": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
@@ -41,7 +41,7 @@
     "nodemailer": "^7.0.6",
     "stripe": "^18.5.0",
     "ts-node": "^10.9.2",
-    "tsup": "^8.5.0",
+    "tsup": "6.6.3",
     "tsx": "^4.20.4",
     "uuid": "^11.1.0",
     "zod": "^4.1.9"
