@@ -1,22 +1,23 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "ES2020",
     "lib": [
       "ES2020"
     ],
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
+    "declaration": false,
+    "outDir": "./build"
   },
   "include": [
     "src/**/*",
     "@types/*.d.ts",
-    "src/http/controllers/users",
-    "src/http/server.ts",
-    "prisma/seed.ts",
-    "eslint.config.js"
+    "prisma/seed.ts"
   ],
   "exclude": [
     "node_modules",
