@@ -2,29 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "build/http/server.js",
+      "src": "src/http/server.ts",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/docs(.*)",
-      "dest": "build/http/server.js"
-    },
-    {
-      "src": "/auth(.*)",
-      "dest": "build/http/server.js"
-    },
-    {
-      "src": "/api(.*)",
-      "dest": "build/http/server.js"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "build/http/server.js"
+      "src": "(.*)",
+      "dest": "src/http/server.ts"
     }
   ]
 }
