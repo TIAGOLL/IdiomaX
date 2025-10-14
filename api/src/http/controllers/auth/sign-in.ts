@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import * as bcrypt from 'bcrypt';
 import { BadRequestError } from '../_errors/bad-request-error';
-import { prisma } from '../../../services/prisma';
+import { prisma } from '../../../lib/prisma';
 import { SignInApiRequest, SignInApiResponse } from '@idiomax/validation-schemas/auth/sign-in';
 
 export async function SignIn(app: FastifyInstance) {

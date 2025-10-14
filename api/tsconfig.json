@@ -1,4 +1,19 @@
 {
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": [
+      "ES2020"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "declaration": false,
+    "outDir": "./build"
+  },
   "include": [
     "src/**/*",
     "@types/*.d.ts",
@@ -12,5 +27,5 @@
     "dist",
     "build",
     "scripts"
-  ],
+  ]
 }
