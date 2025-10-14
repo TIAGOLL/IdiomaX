@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { UpdateUserPasswordApiRequestSchema, UpdateUserPasswordApiResponseSchema } from '@idiomax/validation-schemas/users/update-user-password';
-import { prisma } from '../../../services/prisma';
+import { prisma } from '../../../lib/prisma';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { hash, compare } from 'bcryptjs';
 import { getUserPermissions } from '../../../lib/get-user-permission';
