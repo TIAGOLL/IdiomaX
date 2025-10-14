@@ -239,18 +239,7 @@ if (process.env.VERCEL !== "1") {
   });
 }
 
-// Função handler para a Vercel
-export default async function handler(req: any, res: any) {
+export default async function handler(req: unknown, res: unknown) {
   await app.ready()
-
-  // Certifique-se de que o app está pronto antes de processar a requisição
-  if (!app.server.listening) {
-    await new Promise<void>((resolve) => {
-      app.server.once('listening', () => {
-        resolve()
-      })
-    })
-  }
-
   app.server.emit('request', req, res)
 }
