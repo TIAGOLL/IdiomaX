@@ -73,7 +73,7 @@ export async function deleteLesson(app: FastifyInstance) {
             // Também marcar lista de presença como inativa
             await prisma.presence_lists.updateMany({
                 where: {
-                    classe_id: id,
+                    lesson_id: id,
                     active: true
                 },
                 data: {
