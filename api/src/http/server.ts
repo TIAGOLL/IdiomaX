@@ -233,14 +233,7 @@ app.register(createRegistration);
 app.register(editRegistration);
 app.register(deleteRegistration);
 
-const start = async () => {
-  try {
-    await app.listen({ port: Number(process.env.PORT) || 3030, host: '0.0.0.0' });
-    console.log("Server is running");
-  } catch (err) {
-    app.log.error(err);
-    process.exit(1);
-  }
-};
-
-start();
+export default async function handler(req: any, res: any) {
+  await app.ready()
+  app.server.emit('request', req, res)
+}
