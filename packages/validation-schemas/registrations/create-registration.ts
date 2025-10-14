@@ -32,6 +32,7 @@ export const CreateRegistrationApiRequestSchema = z.object({
     }),
     discount_payment_before_due_date: z.number().min(0).max(99999.99),
     monthly_fee_amount: z.number().min(0).max(99999.99),
+    course_id: z.string().uuid(),
 });
 
 export const CreateRegistrationApiResponseSchema = z.object({
