@@ -299,7 +299,7 @@ model registrations {
   records_of_students records_of_students[]
   companies           companies             @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
   users               users                 @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
-  tasks_delivery      tasks_deliveries[]
+  tasks_submitted     tasks_submitted[]
 
   creator users? @relation("RegistrationsCreatedBy", fields: [created_by], references: [id])
   updater users? @relation("RegistrationsUpdatedBy", fields: [updated_by], references: [id])
@@ -320,14 +320,14 @@ model tasks {
   updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
 
-  disciplines    disciplines        @relation(fields: [discipline_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "disciplines_fk")
-  tasks_delivery tasks_deliveries[]
+  disciplines     disciplines       @relation(fields: [discipline_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "disciplines_fk")
+  tasks_submitted tasks_submitted[]
 
   creator users? @relation("TasksCreatedBy", fields: [created_by], references: [id])
   updater users? @relation("TasksUpdatedBy", fields: [updated_by], references: [id])
 }
 
-model tasks_deliveries {
+model tasks_submitted {
   id              String   @id @default(uuid()) @db.VarChar(256)
   task_id         String   @db.VarChar(256)
   registration_id String   @db.VarChar(256)
@@ -344,8 +344,8 @@ model tasks_deliveries {
   registrations registrations @relation(fields: [registration_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   tasks         tasks         @relation(fields: [task_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  creator users? @relation("TasksDeliveryCreatedBy", fields: [created_by], references: [id])
-  updater users? @relation("TasksDeliveryUpdatedBy", fields: [updated_by], references: [id])
+  creator users? @relation("TasksSubmittedCreatedBy", fields: [created_by], references: [id])
+  updater users? @relation("TasksSubmittedUpdatedBy", fields: [updated_by], references: [id])
 }
 
 model tokens {
@@ -466,8 +466,8 @@ model users {
   registrations_updated       registrations[]       @relation("RegistrationsUpdatedBy")
   tasks_created               tasks[]               @relation("TasksCreatedBy")
   tasks_updated               tasks[]               @relation("TasksUpdatedBy")
-  tasks_delivery_created      tasks_deliveries[]    @relation("TasksDeliveryCreatedBy")
-  tasks_delivery_updated      tasks_deliveries[]    @relation("TasksDeliveryUpdatedBy")
+  tasks_submitted_created     tasks_submitted[]     @relation("TasksSubmittedCreatedBy")
+  tasks_submitted_updated     tasks_submitted[]     @relation("TasksSubmittedUpdatedBy")
   tokens_created              tokens[]              @relation("TokensCreatedBy")
   tokens_updated              tokens[]              @relation("TokensUpdatedBy")
   users_in_class_created      users_in_class[]      @relation("UsersInClassCreatedBy")
