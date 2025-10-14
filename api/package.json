@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "tsx watch src/http/server.ts",
     "vercel-build": "pnpm build && pnpm db:migrate:deploy && pnpm db:generate",
