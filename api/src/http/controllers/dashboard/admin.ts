@@ -85,15 +85,15 @@ export async function AdminDashboard(app: FastifyInstance) {
                 });
                 const attendanceStats = attendanceByClass.map(c => {
                     const totalStudents = c.users_in_class.length;
-                    // Encontros únicos da turma (cada  classe_id representa uma aula)
+                    // Encontros únicos da turma (cada  lesson_id representa uma aula)
                     const allPresences = c.users_in_class.flatMap(uic => uic.users.presence_list);
-                    const uniqueMeetings = Array.from(new Set(allPresences.map(p => p.classe_id)));
+                    const uniqueMeetings = Array.from(new Set(allPresences.map(p => p.lesson_id)));
                     const totalMeetings = uniqueMeetings.length;
 
                     // Para cada aluno, conta em quantas aulas ele esteve presente (1 presença por aula)
                     let totalAttendancePercent = 0;
                     for (const uic of c.users_in_class) {
-                        const uniqueStudentMeetings = new Set(uic.users.presence_list.map(p => p.classe_id));
+                        const uniqueStudentMeetings = new Set(uic.users.presence_list.map(p => p.lesson_id));
                         const studentAttendance = totalMeetings
                             ? (uniqueStudentMeetings.size / totalMeetings) * 100
                             : 0;
