@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { DeleteLessonApiRequestSchema, DeleteLessonApiResponseSchema } from '@idiomax/validation-schemas/lessons/delete-lesson'
-import { prisma } from '../../../lib/prisma'
+import { prisma } from '../../../services/prisma'
 import { auth } from '../../../middlewares/auth'
 import { z } from 'zod'
 import { getUserPermissions } from '../../../lib/get-user-permission'
@@ -73,7 +73,7 @@ export async function deleteLesson(app: FastifyInstance) {
             // Também marcar lista de presença como inativa
             await prisma.presence_lists.updateMany({
                 where: {
-                    classe_id: id,
+                    lesson_id: id,
                     active: true
                 },
                 data: {

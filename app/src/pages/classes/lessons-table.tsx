@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router';
 import { getCurrentCompanyId } from '@/lib/company-utils';
 import { formatDate } from '@/lib/utils';
 import { getLessons } from '@/services/lessons';
-import { Badge } from '@/components/ui/badge';
 
 export function LessonsTablePage() {
     const navigate = useNavigate();
@@ -76,7 +75,6 @@ export function LessonsTablePage() {
                                     <TableHead>Turma</TableHead>
                                     <TableHead>Curso</TableHead>
                                     <TableHead>Data/Hora</TableHead>
-                                    <TableHead>Presença/Ausência</TableHead>
                                     <TableHead className="w-[100px]">Ações</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -120,11 +118,6 @@ export function LessonsTablePage() {
                                                         })}
                                                     </span>
                                                 </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Badge variant="secondary">
-                                                    {lesson._count.presence_list} presentes
-                                                </Badge>
                                             </TableCell>
                                             <TableCell>
                                                 <DropdownMenu>

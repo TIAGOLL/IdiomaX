@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '../../../services/prisma';
 import { hash } from 'bcryptjs';
 import { getUserPermissions } from '../../../lib/get-user-permission';
 import { ForbiddenError } from '../_errors/forbidden-error';

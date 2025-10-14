@@ -3,7 +3,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { ForbiddenError } from '../_errors/forbidden-error';
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '../../../services/prisma';
 import { ResetPasswordApiRequest, ResetPasswordApiResponse } from '@idiomax/validation-schemas/auth/reset-password'
 
 export async function resetPassword(app: FastifyInstance) {

@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { ServiceUnavailableException } from '../_errors/service-unavailable-exception';
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '../../../services/prisma';
 import { requestPasswordRecoverBody, requestPasswordRecoverSubject } from '../../../mails/request-password-recover';
 import { SendEmail } from '../../../services/mail-sender';
 import { RequestPasswordRecoverApiRequest, RequestPasswordRecoverApiResponse } from '@idiomax/validation-schemas/auth/request-password-recover'

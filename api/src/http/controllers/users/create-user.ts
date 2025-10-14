@@ -3,7 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { BadRequestError } from '../_errors/bad-request-error';
 import { auth } from '../../../middlewares/auth';
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '../../../services/prisma';
 import { CreateUserApiRequestSchema, CreateUserApiResponseSchema } from '@idiomax/validation-schemas/users';
 import { hash } from 'bcryptjs';
 import { getUserPermissions } from '../../../lib/get-user-permission';

@@ -1,6 +1,6 @@
 import { Gender, Role, WeekDays } from "@prisma/client";
 import * as bcrypt from "bcryptjs"
-import { prisma } from "../src/lib/prisma";
+import { prisma } from "../src/services/prisma";
 import { generateUUID } from "../src/lib/uuid";
 
 function randomDate(start: Date, end: Date) {
@@ -468,6 +468,7 @@ async function main() {
                     locked: i % 5 === 0,
                     completed: i % 4 === 0,
                     user_id: users[i + 1].id,
+                    course_id: randomFromArray(courses),
                     company_id: uuid,
                     created_at: now,
                     end_date: endDate,
@@ -576,7 +577,7 @@ async function main() {
                         id: generateUUID(),
                         is_present: Math.random() > 0.2,
                         user_id: aluno.id,
-                        classe_id: lessonId,
+                        lesson_id: lessonId,
                         created_at: now,
                         updated_at: now,
                         created_by: ownerId,
@@ -610,7 +611,7 @@ async function main() {
 
         // TASKS_DELIVERY (30)
         for (let i = 0; i < 30; i++) {
-            await prisma.tasks_deliveries.create({
+            await prisma.tasks_submitted.create({
                 data: {
                     id: generateUUID(),
                     task_id: randomFromArray(tasks),

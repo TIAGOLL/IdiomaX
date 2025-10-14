@@ -3,7 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { auth } from '../../../middlewares/auth';
 import { GetCompanySubscriptionApiRequestSchema, GetCompanySubscriptionApiResponseSchema } from '@idiomax/validation-schemas/subscriptions/get-company-subscription'
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '../../../services/prisma';
 import { NotFoundError } from '../_errors/not-found-error';
 import { getUserPermissions } from '../../../lib/get-user-permission';
 import { ForbiddenError } from '../_errors/forbidden-error';

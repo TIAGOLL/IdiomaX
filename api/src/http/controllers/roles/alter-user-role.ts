@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 
-import { prisma } from '../../../lib/prisma'
+import { prisma } from '../../../services/prisma'
 import { UpdateUserRoleApiRequestSchema, UpdateUserRoleApiResponseSchema } from '@idiomax/validation-schemas/users/update-user-role'
 import { UnauthorizedError } from '../_errors/unauthorized-error'
 import { BadRequestError } from '../_errors/bad-request-error'

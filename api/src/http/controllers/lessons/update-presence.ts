@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { UpdatePresenceApiRequestSchema, UpdatePresenceApiResponseSchema } from '@idiomax/validation-schemas/lessons/update-presence'
-import { prisma } from '../../../lib/prisma'
+import { prisma } from '../../../services/prisma'
 import { auth } from '../../../middlewares/auth'
 import { z } from 'zod'
 import { getUserPermissions } from '../../../lib/get-user-permission'
@@ -41,7 +41,7 @@ export async function updatePresence(app: FastifyInstance) {
 
             const { cannot } = getUserPermissions(userId, member.role)
 
-            if (cannot('update', 'Lesson')) { 
+            if (cannot('update', 'Lesson')) {
                 throw new ForbiddenError()
             }
 
@@ -67,7 +67,7 @@ export async function updatePresence(app: FastifyInstance) {
             const existingPresences = await prisma.presence_lists.findMany({
                 where: {
                     id: { in: presenceIds },
-                    classe_id: lesson_id,
+                    lesson_id,
                     active: true
                 }
             })
@@ -94,7 +94,7 @@ export async function updatePresence(app: FastifyInstance) {
             // Contar quantos alunos estão presentes após a atualização
             const presentCount = await prisma.presence_lists.count({
                 where: {
-                    classe_id: lesson_id,
+                    lesson_id,
                     is_present: true,
                     active: true
                 }
@@ -102,7 +102,7 @@ export async function updatePresence(app: FastifyInstance) {
 
             const totalCount = await prisma.presence_lists.count({
                 where: {
-                    classe_id: lesson_id,
+                    lesson_id,
                     active: true
                 }
             })

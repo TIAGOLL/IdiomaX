@@ -5,7 +5,7 @@ import {
     GetCompanySettingsApiRequestSchema,
     GetCompanySettingsApiResponseSchema
 } from '@idiomax/validation-schemas/settings/get-company-settings';
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '../../../services/prisma';
 import { NotFoundError } from '../_errors/not-found-error';
 import { getUserPermissions } from '../../../lib/get-user-permission';
 import { ForbiddenError } from '../_errors/forbidden-error';

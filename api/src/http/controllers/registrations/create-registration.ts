@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { CreateRegistrationApiRequestSchema, CreateRegistrationApiResponseSchema } from '@idiomax/validation-schemas/registrations/create-registration'
-import { prisma } from '../../../lib/prisma'
+import { prisma } from '../../../services/prisma'
 import { auth } from '../../../middlewares/auth'
 import { getUserPermissions } from '../../../lib/get-user-permission'
 import { ForbiddenError } from '../_errors/forbidden-error'
@@ -29,7 +29,8 @@ export async function createRegistration(app: FastifyInstance) {
                 user_id,
                 start_date,
                 monthly_fee_amount,
-                discount_payment_before_due_date
+                discount_payment_before_due_date,
+                course_id
             } = request.body
 
             const userId = await request.getCurrentUserId()
@@ -57,6 +58,7 @@ export async function createRegistration(app: FastifyInstance) {
                     const registration = await trx.registrations.create({
                         data: {
                             company_id,
+                            course_id,
                             user_id,
                             start_date: new Date(start_date),
                             end_date: endDate,

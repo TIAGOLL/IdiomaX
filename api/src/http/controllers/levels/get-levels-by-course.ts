@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { GetLevelsApiRequestSchema, GetLevelsApiResponseSchema } from '@idiomax/validation-schemas/levels/get-levels'
-import { prisma } from '../../../lib/prisma'
+import { prisma } from '../../../services/prisma'
 import { auth } from '../../../middlewares/auth'
 import { BadRequestError } from '../_errors/bad-request-error'
 import { z } from 'zod'

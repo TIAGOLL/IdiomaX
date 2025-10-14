@@ -4,7 +4,7 @@
 Este é um sistema de gestão para escolas de idiomas com arquitetura **monorepo pnpm** dividida em:
 - `api/` - Backend Fastify + Prisma + PostgreSQL + Stripe
 - `app/` - Frontend React + Vite + shadcn/ui + TailwindCSS  
-- `packages/http-schemas/` - Schemas Zod compartilhados entre API e frontend
+- `packages/validation-schemas/` - Schemas Zod compartilhados entre API e frontend
 
 ## Comandos Essenciais
 ```bash
@@ -81,7 +81,7 @@ export function MinhaPagina() {
 - **Vercel**: Deploy configurado com `vercel.json` no backend e frontend
 
 ## Convenções Específicas
-- Workspace schemas em `packages/http-schemas/` são importados como `@idiomax/validation-schemas/[file]`
+- Workspace schemas em `packages/validation-schemas/` são importados como `@idiomax/validation-schemas/[file]`
 - Migrações Prisma sempre com nomes descritivos via `pnpm db:migrate:dev`
 - Roles: `STUDENT`, `TEACHER`, `ADMIN` (enum no Prisma)
 - Multi-tenancy por `company_id` em quase todas as entidades

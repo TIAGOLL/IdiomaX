@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { CreateLessonApiRequestSchema, CreateLessonApiResponseSchema } from '@idiomax/validation-schemas/lessons/create-lesson'
-import { prisma } from '../../../lib/prisma'
+import { prisma } from '../../../services/prisma'
 import { auth } from '../../../middlewares/auth'
 import { z } from 'zod'
 import { getUserPermissions } from '../../../lib/get-user-permission'
@@ -113,8 +113,9 @@ export async function createLesson(app: FastifyInstance) {
                     await tx.presence_lists.createMany({
                         data: studentsInClass.map(student => ({
                             is_present: false,
+                            class_id: class_id,
+                            lesson_id: createdLesson.id,
                             user_id: student.user_id,
-                            classe_id: createdLesson.id,
                             created_by: userId,
                             updated_by: userId,
                         }))

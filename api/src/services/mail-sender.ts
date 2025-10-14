@@ -1,6 +1,6 @@
 import type { Address } from 'nodemailer/lib/mailer';
 import { Options } from 'nodemailer/lib/mailer';
-import { mailTransport } from '../lib/mail-transport';
+import { mailTransport } from './mail-transport';
 import { ENV } from '../http/server';
 
 
