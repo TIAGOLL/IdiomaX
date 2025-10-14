@@ -11,7 +11,7 @@ import {
 } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 import * as dotenv from 'dotenv'
-import { SignUp } from './controllers/auth/sign-up'
+import { SignUp } from './controllers/auth/sign-up.js'
 import { SignIn } from './controllers/auth/sign-in'
 import { requestPasswordRecover } from './controllers/auth/request-password-recover'
 import { getUserProfile } from './controllers/users/get-user-profile'
