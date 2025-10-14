@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "tsx watch src/http/server.ts",
     "build": "tsup src --out-dir build && npx prisma migrate deploy && npx prisma generate",
