@@ -5,7 +5,10 @@
       "ES2020"
     ],
     "module": "ESNext",
-    "strict": true,
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
   },
   "include": [
     "src/**/*",
