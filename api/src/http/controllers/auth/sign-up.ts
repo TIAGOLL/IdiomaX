@@ -1,9 +1,9 @@
 import { hash } from 'bcryptjs';
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { BadRequestError } from '../_errors/bad-request-error';
-import { SignUpApiRequest, SignUpApiResponse } from '@idiomax/validation-schemas/auth/sign-up';
-import { prisma } from '../../../services/prisma';
+import { BadRequestError } from '../_errors/bad-request-error.js';
+import { SignUpApiRequest, SignUpApiResponse } from '@idiomax/validation-schemas/auth/sign-up.js';
+import { prisma } from '../../../services/prisma.js';
 
 export async function SignUp(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
