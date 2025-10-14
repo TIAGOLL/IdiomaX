@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { DeleteLessonApiRequestSchema, DeleteLessonApiResponseSchema } from '@idiomax/validation-schemas/lessons/delete-lesson'
-import { prisma } from '../../../lib/prisma'
+import { prisma } from '../../../services/prisma'
 import { auth } from '../../../middlewares/auth'
 import { z } from 'zod'
 import { getUserPermissions } from '../../../lib/get-user-permission'

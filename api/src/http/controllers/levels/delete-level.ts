@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 
 import { BadRequestError } from '../_errors/bad-request-error'
-import { prisma } from '../../../lib/prisma'
+import { prisma } from '../../../services/prisma'
 import { DeleteLevelApiRequest, DeleteLevelApiResponse } from '@idiomax/validation-schemas/levels/delete-level'
 import { auth } from '../../../middlewares/auth'
 import { getUserPermissions } from '../../../lib/get-user-permission'

@@ -5,7 +5,7 @@ import {
     UpdateRegistrationTimeApiRequestSchema,
     UpdateRegistrationTimeApiResponseSchema
 } from '@idiomax/validation-schemas/settings/update-registration-time';
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '../../../services/prisma';
 import { ForbiddenError } from '../_errors/forbidden-error';
 import { getUserPermissions } from '../../../lib/get-user-permission';
 import { BadRequestError } from '../_errors/bad-request-error';

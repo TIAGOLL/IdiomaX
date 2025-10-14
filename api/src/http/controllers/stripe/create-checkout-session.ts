@@ -2,10 +2,10 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { auth } from '../../../middlewares/auth';
-import { stripe } from '../../../lib/stripe';
+import { stripe } from '../../../services/stripe';
 import { ENV } from '../../server';
 import { CreateCheckoutSessionApiRequestSchema, CreateCheckoutSessionApiResponseSchema } from '@idiomax/validation-schemas/subscriptions/create-checkout-session';
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '../../../services/prisma';
 import { getUserPermissions } from '../../../lib/get-user-permission';
 import { ForbiddenError } from '../_errors/forbidden-error';
 

@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { UpdatePresenceApiRequestSchema, UpdatePresenceApiResponseSchema } from '@idiomax/validation-schemas/lessons/update-presence'
-import { prisma } from '../../../lib/prisma'
+import { prisma } from '../../../services/prisma'
 import { auth } from '../../../middlewares/auth'
 import { z } from 'zod'
 import { getUserPermissions } from '../../../lib/get-user-permission'
@@ -41,7 +41,7 @@ export async function updatePresence(app: FastifyInstance) {
 
             const { cannot } = getUserPermissions(userId, member.role)
 
-            if (cannot('update', 'Lesson')) { 
+            if (cannot('update', 'Lesson')) {
                 throw new ForbiddenError()
             }
 

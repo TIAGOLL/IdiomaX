@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import { fastifyPlugin } from 'fastify-plugin'
 import { UnauthorizedError } from '../http/controllers/_errors/unauthorized-error'
-import { prisma } from '../lib/prisma'
+import { prisma } from '../services/prisma'
 import { ForbiddenError } from '../http/controllers/_errors/forbidden-error'
 
 export const auth = fastifyPlugin(async (app: FastifyInstance) => {

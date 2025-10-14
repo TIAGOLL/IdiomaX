@@ -1,6 +1,6 @@
 import { Gender, Role, WeekDays } from "@prisma/client";
 import * as bcrypt from "bcryptjs"
-import { prisma } from "../src/lib/prisma";
+import { prisma } from "../src/services/prisma";
 import { generateUUID } from "../src/lib/uuid";
 
 function randomDate(start: Date, end: Date) {

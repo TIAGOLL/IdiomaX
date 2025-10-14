@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { auth } from "../../../middlewares/auth";
-import { prisma } from "../../../lib/prisma";
+import { prisma } from "../../../services/prisma";
 import { AdminDashboardApiRequestSchema, AdminDashboardApiResponseSchema } from "@idiomax/validation-schemas/dashboard";
 
 

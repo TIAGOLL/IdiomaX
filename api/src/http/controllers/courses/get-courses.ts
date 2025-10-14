@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
 import { GetCoursesApiRequestSchema, GetCoursesApiResponseSchema } from "@idiomax/validation-schemas/courses/get-courses"
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '../../../services/prisma';
 import { getUserPermissions } from '../../../lib/get-user-permission';
 import { ForbiddenError } from '../_errors/forbidden-error';
 

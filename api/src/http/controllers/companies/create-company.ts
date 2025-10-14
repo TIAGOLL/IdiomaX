@@ -3,7 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { BadRequestError } from '../_errors/bad-request-error';
 import { auth } from '../../../middlewares/auth';
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '../../../services/prisma';
 import { CreateCompanyApiRequestSchema, CreateCompanyApiResponseSchema } from '@idiomax/validation-schemas/companies/create-company'
 
 export async function createCompany(app: FastifyInstance) {

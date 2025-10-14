@@ -1,8 +1,8 @@
 import { type FastifyInstance } from 'fastify';
-import { stripe } from '../../../lib/stripe';
+import { stripe } from '../../../services/stripe';
 import Stripe from 'stripe';
 import { ENV } from '../../server';
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '../../../services/prisma';
 import { NotFoundError } from '../_errors/not-found-error';
 
 export async function StripeWebHooks(app: FastifyInstance) {
