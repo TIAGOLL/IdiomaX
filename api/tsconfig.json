@@ -4,8 +4,8 @@
     "lib": [
       "ES2020"
     ],
-    "module": "ESNext",
-    "moduleResolution": "Node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "strict": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,

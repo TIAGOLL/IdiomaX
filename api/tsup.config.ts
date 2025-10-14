@@ -1,21 +1,19 @@
 import { defineConfig } from 'tsup'
 
 export default defineConfig({
-  entry: ['src/**/*.ts'],
+  entry: ['src/http/server.ts'],
   format: ['esm'],
-  dts: true,
-  splitting: false,
+  target: 'node18',
+  platform: 'node',
   sourcemap: true,
   clean: true,
   bundle: true,
   minify: false,
-  outExtension: () => ({
-    js: '.js'
-  }),
-  platform: 'node',
+  noExternal: [/@idiomax\/.*/],
   esbuildOptions(options) {
     options.mainFields = ['module', 'main']
-    options.conditions = ['module']
     options.format = 'esm'
+    options.platform = 'node'
+    options.target = 'node18'
   }
 })
