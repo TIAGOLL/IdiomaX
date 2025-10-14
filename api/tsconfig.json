@@ -5,19 +5,16 @@
       "ES2020"
     ],
     "module": "ESNext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "strict": true,
-    "noEmit": true,
+    "outDir": "dist",
+    "rootDir": "src",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true
   },
   "include": [
-    "**/*.ts",
-    "src"
-  ],
-  "exclude": [
-    "node_modules"
+    "src/**/*"
   ]
 }

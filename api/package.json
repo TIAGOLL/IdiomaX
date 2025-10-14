@@ -6,12 +6,12 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/http/server.ts",
-    "vercel-build": "pnpm i --force && npx prisma migrate deploy",
-    "start": "node build/http/server.js",
+    "vercel-build": "tsc && npx prisma migrate deploy",
+    "start": "node dist/http/server.js",
     "type-check": "tsc --project tsconfig.json --noEmit",
     "db:migrate:dev": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
-  "db:seed": "tsx prisma/seed.ts",
+    "db:seed": "tsx prisma/seed.ts",
     "db:push": "prisma db push",
     "db:pull": "prisma db pull",
     "db:generate": "prisma generate",
@@ -26,8 +26,8 @@
     "@fastify/jwt": "^10.0.0",
     "@fastify/swagger": "^9.5.1",
     "@fastify/swagger-ui": "^5.2.3",
-    "@idiomax/validation-schemas": "workspace:^",
     "@idiomax/authorization": "workspace:^",
+    "@idiomax/validation-schemas": "workspace:^",
     "@prisma/client": "^6.15.0",
     "@types/bcryptjs": "^3.0.0",
     "@types/node": "^24.3.0",
@@ -41,7 +41,6 @@
     "nodemailer": "^7.0.6",
     "stripe": "^18.5.0",
     "ts-node": "^10.9.2",
-    "tsup": "^8.5.0",
     "tsx": "^4.20.4",
     "uuid": "^11.1.0",
     "zod": "^4.1.9"
@@ -55,6 +54,7 @@
     "eslint-plugin-unused-imports": "^4.2.0",
     "globals": "^16.4.0",
     "prisma": "^6.15.0",
+    "tsup": "^8.5.0",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.44.0"
   }
