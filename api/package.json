@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/http/server.ts",
-    "vercel-build": "tsc && tsc-alias && npx prisma migrate deploy",
+    "vercel-build": "echo 'Vercel build - TS handled internally'",
     "start": "node dist/http/server.js",
     "type-check": "tsc --project tsconfig.json --noEmit",
     "db:migrate:dev": "prisma migrate dev",

@@ -1,14 +1,13 @@
 {
-  "buildCommand": "pnpm run vercel-build",
-  "installCommand": "pnpm install",
-  "outputDirectory": "dist",
   "builds": [
     {
-      "src": "http/server.js",
+      "src": "api/http/server.ts",
       "use": "@vercel/node"
     }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "/http/server.js" }
-  ]
+    { "src": "/(.*)", "dest": "/api/http/server.ts" }
+  ],
+  "installCommand": "pnpm install",
+  "buildCommand": "pnpm prisma migrate deploy"
 }
