@@ -4,7 +4,7 @@
   "outputDirectory": "dist",
   "builds": [
     {
-      "src": "./http/server.js",
+      "src": "http/server.js",
       "use": "@vercel/node"
     }
   ],
