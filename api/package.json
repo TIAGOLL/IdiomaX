@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/http/server.ts",
-    "vercel-build": "pnpm build && pnpm db:migrate:deploy && pnpm db:generate",
+    "vercel-build": "pnpm db:migrate:deploy && pnpm db:generate",
     "build": "tsup src",
     "start": "node dist/http/server.js",
     "type-check": "tsc --project tsconfig.json --noEmit",
