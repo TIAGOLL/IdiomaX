@@ -16,7 +16,8 @@ export const CreateRegistrationFormSchema = z.object({
         .max(99999.99, 'Valor da mensalidade muito alto'),
     discount_payment_before_due_date: z.number()
         .min(0, 'Valor do desconto não pode ser negativo')
-        .max(99999.99, 'Valor do desconto muito alto')
+        .max(99999.99, 'Valor do desconto muito alto'),
+    course_id: z.string().uuid('ID do curso deve ser um UUID válido'),
 }).refine((data) => data.discount_payment_before_due_date <= data.monthly_fee_amount, {
     message: 'Desconto não pode ser maior que o valor da mensalidade',
     path: ['discount_payment_before_due_date']

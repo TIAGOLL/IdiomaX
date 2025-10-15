@@ -611,7 +611,7 @@ async function main() {
 
         // TASKS_DELIVERY (30)
         for (let i = 0; i < 30; i++) {
-            await prisma.tasks_deliveries.create({
+            await prisma.tasks_submitted.create({
                 data: {
                     id: generateUUID(),
                     task_id: randomFromArray(tasks),
