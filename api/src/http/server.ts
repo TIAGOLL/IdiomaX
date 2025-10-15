@@ -233,7 +233,9 @@ app.register(createRegistration);
 app.register(editRegistration);
 app.register(deleteRegistration);
 
-export default async function handler(req: any, res: any) {
-  await app.ready()
-  app.server.emit('request', req, res)
-}
+app.listen({ port: ENV.PORT, host: '0.0.0.0' }).then(() => {
+  console.log(`🚀 Server running on http://localhost:${ENV.PORT}`);
+}).catch((err) => {
+  console.error('Error starting server:', err);
+  process.exit(1);
+});
