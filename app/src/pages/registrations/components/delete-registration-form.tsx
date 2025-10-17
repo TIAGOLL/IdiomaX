@@ -5,15 +5,15 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { deleteRegistration } from "@/services/registrations/delete-registration";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import type { GetRegistrationsResponseType } from "@idiomax/validation-schemas/registrations/get-registrations";
 import { Button } from "@/components/ui/button";
+import type { GetRegistrationByIdResponseType } from "@idiomax/validation-schemas/registrations";
+import { useSearchParams } from "react-router";
 
-type Registration = GetRegistrationsResponseType[0];
 
-export function DeleteRegistrationForm({ registration }: { registration: Registration }) {
+export function DeleteRegistrationForm({ registration }: { registration: GetRegistrationByIdResponseType }) {
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
+    const [, setSearchParams] = useSearchParams();
 
     const { mutate, isPending } = useMutation({
         mutationFn: () => deleteRegistration({
@@ -22,8 +22,9 @@ export function DeleteRegistrationForm({ registration }: { registration: Registr
         }),
         onSuccess: (res) => {
             toast.success(res.message);
-            queryClient.invalidateQueries({ queryKey: ['registrations', getCurrentCompanyId()] });
+            queryClient.invalidateQueries({ queryKey: ['registration', registration.id] });
             setOpen(false);
+            setSearchParams({ tab: 'list' })
         },
         onError: (error: Error) => {
             toast.error(error.message);
@@ -33,19 +34,19 @@ export function DeleteRegistrationForm({ registration }: { registration: Registr
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
-                <DropdownMenuItem onSelect={(e) => {
-                    e.preventDefault();
-                    setOpen(true);
-                }}>
+                <Button variant="destructive"
+                    onClick={() => setOpen(true)}
+                    className="w-full"
+                >
                     <Trash2 className="h-4 w-4 mr-2" />
                     Excluir Matrícula
-                </DropdownMenuItem>
+                </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>Excluir Matrícula</AlertDialogTitle>
                     <AlertDialogDescription>
-                        Tem certeza que deseja excluir a matrícula de <strong>{registration.users?.name}</strong>?
+                        Tem certeza que deseja excluir a matrícula de <strong>{registration.user?.name}</strong>?
                         Esta ação não pode ser desfeita e todos os dados da matrícula serão permanentemente removidos.
                         <br /><br />
                         <strong>Data de Início:</strong> {new Date(registration.start_date).toLocaleDateString('pt-BR')}

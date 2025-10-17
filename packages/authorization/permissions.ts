@@ -14,7 +14,7 @@ export const permissions: Record<Role, PermissionsByRole> = {
      * ADMIN - Administrador da empresa
      * Pode gerenciar tudo na sua empresa
      */
-    ADMIN(user, { can }) {
+    ADMIN(user, { can, }) {
         // Permissão total para tudo na aplicação
         can('manage', 'all')
     },
@@ -56,9 +56,6 @@ export const permissions: Record<Role, PermissionsByRole> = {
 
         // === CONTROLE DE PRESENÇA ===
         can(['get', 'create', 'update', 'delete', 'mark'], 'Presence') // Controlar presença
-
-        // === RELATÓRIOS ===
-        can(['get', 'generate', 'export'], 'Report') // Gerar relatórios
 
         // === NOTIFICAÇÕES ===
         can(['get', 'send', 'receive'], 'Notification') // Gerenciar notificações

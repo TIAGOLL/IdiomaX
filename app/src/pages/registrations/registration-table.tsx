@@ -6,20 +6,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { UserCheck, Users, Search, X } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { UserCheck, Users, Search, X, Edit } from 'lucide-react';
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { getCurrentCompanyId } from '@/lib/company-utils';
 import { formatDate } from './../../lib/utils';
 import { getRegistrations } from '@/services/registrations';
-import { ToggleLockRegistrationForm } from './components/toggle-lock-registration-form';
-import { DeleteRegistrationForm } from './components/delete-registration-form';
-import { EditPriceForm } from './components/edit-price-form';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Info } from 'lucide-react';
+import { useNavigate } from 'react-router';
 
 export function RegistrationsTablePage() {
+    const navigate = useNavigate();
 
     // Estados locais para filtros
     const [searchFilter, setSearchFilter] = useState('');
@@ -260,11 +259,10 @@ export function RegistrationsTablePage() {
                                                     <DropdownMenuContent align="end">
                                                         <DropdownMenuLabel>Ações</DropdownMenuLabel>
                                                         <DropdownMenuSeparator />
-
-                                                        <EditPriceForm registration={registration} />
-                                                        <ToggleLockRegistrationForm registration={registration} />
-                                                        <DropdownMenuSeparator />
-                                                        <DeleteRegistrationForm registration={registration} />
+                                                        <DropdownMenuItem onClick={() => navigate(`/admin/registrations?tab=edit&id=${registration.id}`)}>
+                                                            <Edit className="h-4 w-4 mr-2" />
+                                                            Editar
+                                                        </DropdownMenuItem>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
                                             </TableCell>
