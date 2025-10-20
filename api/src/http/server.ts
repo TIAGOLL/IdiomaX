@@ -1,7 +1,7 @@
 import fastifyCors from '@fastify/cors'
 import fastifyJwt from '@fastify/jwt'
 import fastifySwagger from '@fastify/swagger'
-import fastifySwaggerUi from '@fastify/swagger-ui'
+import fastifySwaggerUI from '@fastify/swagger-ui'
 import fastify from 'fastify'
 import {
   jsonSchemaTransform,
@@ -9,10 +9,10 @@ import {
   validatorCompiler,
   ZodTypeProvider,
 } from 'fastify-type-provider-zod'
-import { z } from 'zod'
+import z from 'zod'
 import * as dotenv from 'dotenv'
-import { SignUp } from './controllers/auth/sign-up'
 import { SignIn } from './controllers/auth/sign-in'
+import { SignUp } from './controllers/auth/sign-up'
 import { requestPasswordRecover } from './controllers/auth/request-password-recover'
 import { getUserProfile } from './controllers/users/get-user-profile'
 import { resetPassword } from './controllers/auth/reset-password'
@@ -133,7 +133,7 @@ app.register(fastifySwagger, {
   transform: jsonSchemaTransform,
 })
 
-app.register(fastifySwaggerUi, {
+app.register(fastifySwaggerUI, {
   routePrefix: '/docs',
 })
 
@@ -233,7 +233,6 @@ app.register(createRegistration);
 app.register(editRegistration);
 app.register(deleteRegistration);
 
-export default async function handler(req: any, res: any) {
-  await app.ready()
-  app.server.emit('request', req, res)
-}
+app.listen({ port: Number(ENV.PORT) }).then(() => {
+  console.log(`HTTP server running in http://localhost:${ENV.PORT}`);
+});
