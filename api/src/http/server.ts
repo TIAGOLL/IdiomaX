@@ -93,6 +93,7 @@ import { getRegistrationById } from './controllers/registrations/get-registratio
 import { createRegistration } from './controllers/registrations/create-registration'
 import { editRegistration } from './controllers/registrations/edit-registration'
 import { deleteRegistration } from './controllers/registrations/delete-registration'
+import { registerMonthlyFeePayment } from './controllers/registrations/register-monthly-fee-payment'
 
 dotenv.config()
 
@@ -232,7 +233,12 @@ app.register(getRegistrationById);
 app.register(createRegistration);
 app.register(editRegistration);
 app.register(deleteRegistration);
+app.register(registerMonthlyFeePayment);
 
-app.listen({ port: Number(ENV.PORT) }).then(() => {
-  console.log(`HTTP server running in http://localhost:${ENV.PORT}`);
+
+app.listen({ port: ENV.PORT, host: '0.0.0.0' }).then(() => {
+  console.log(`Server running on http://localhost:${ENV.PORT}`);
+}).catch((err) => {
+  console.error('Error starting server:', err);
+  process.exit(1);
 });

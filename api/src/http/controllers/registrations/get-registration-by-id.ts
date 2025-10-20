@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { auth } from '../../../middlewares/auth';
-import { GetRegistrationByIdApiRequestSchema, GetRegistrationByIdApiResponseSchema } from "@idiomax/validation-schemas/registrations/get-registrations"
+import { GetRegistrationByIdApiRequestSchema, GetRegistrationByIdApiResponseSchema } from "@idiomax/validation-schemas/registrations"
 import { prisma } from '../../../services/prisma';
 import { getUserPermissions } from '../../../lib/get-user-permission';
 import { ForbiddenError } from '../_errors/forbidden-error';
@@ -25,7 +25,7 @@ export async function getRegistrationById(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { id, company_id } = request.query;
+                const { registration_id, company_id } = request.query;
                 const userId = await request.getCurrentUserId()
                 const { member } = await request.getUserMember(company_id)
 
@@ -37,7 +37,7 @@ export async function getRegistrationById(app: FastifyInstance) {
 
                 const registration = await prisma.registrations.findFirst({
                     where: {
-                        id: id,
+                        id: registration_id,
                         company_id: company_id,
                         active: true,
                     },
@@ -49,12 +49,21 @@ export async function getRegistrationById(app: FastifyInstance) {
                                 email: true,
                             }
                         },
+                        courses: {
+                            select: {
+                                id: true,
+                                name: true,
+                            }
+                        },
                         monthly_fee: {
                             select: {
                                 id: true,
+                                registration_id: true,
                                 due_date: true,
-                                paid: true,
                                 value: true,
+                                paid: true,
+                                payment_method: true,
+                                date_of_payment: true,
                                 created_at: true,
                             },
                             orderBy: {
@@ -68,33 +77,39 @@ export async function getRegistrationById(app: FastifyInstance) {
                     throw new NotFoundError('Inscrição não encontrada');
                 }
 
-                // Verificar mensalidades em atraso
-                const now = new Date();
-                const overduePayments = registration.monthly_fee.filter(fee =>
-                    !fee.paid && fee.due_date < now
-                );
-
                 const mappedRegistration = {
                     id: registration.id,
+                    company_id: registration.company_id,
+                    user_id: registration.user_id,
+                    course_id: registration.course_id,
                     start_date: registration.start_date.toISOString(),
+                    completed: registration.completed,
                     monthly_fee_amount: Number(registration.monthly_fee_amount),
                     discount_payment_before_due_date: Number(registration.discount_payment_before_due_date),
+                    active: registration.active,
                     locked: registration.locked,
-                    completed: registration.completed,
-                    end_date: registration.end_date.toISOString(),
-                    user_id: registration.user_id,
-                    company_id: registration.company_id,
                     created_at: registration.created_at.toISOString(),
                     updated_at: registration.updated_at.toISOString(),
-                    active: registration.active,
-                    users: {
+                    user: {
                         id: registration.users.id,
                         name: registration.users.name,
                         email: registration.users.email,
                     },
-                    has_overdue_payments: overduePayments.length > 0,
-                    total_overdue_amount: overduePayments.reduce((sum, fee) => sum + Number(fee.value), 0),
-                    overdue_payments_count: overduePayments.length,
+                    course: {
+                        id: registration.courses.id,
+                        name: registration.courses.name,
+                    },
+                    monthly_fees: registration.monthly_fee.map(fee => ({
+                        id: fee.id,
+                        registration_id: fee.registration_id,
+                        due_date: fee.due_date.toISOString(),
+                        amount: Number(fee.value),
+                        amount_with_discount: Number(fee.value) - Number(registration.discount_payment_before_due_date),
+                        paid_at: fee.date_of_payment?.toISOString() || null,
+                        paid_amount: fee.paid ? Number(fee.value) : null,
+                        status: fee.paid ? 'PAID' as const : (fee.due_date < new Date() ? 'OVERDUE' as const : 'PENDING' as const),
+                        created_at: fee.created_at.toISOString()
+                    }))
                 };
 
                 return reply.status(200).send(mappedRegistration);

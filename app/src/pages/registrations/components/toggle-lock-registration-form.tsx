@@ -1,17 +1,14 @@
 import { editRegistration } from "@/services/registrations/edit-registration";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import type { GetRegistrationsResponseType } from "@idiomax/validation-schemas/registrations/get-registrations";
 import { Lock, Unlock } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCurrentCompanyId } from '@/lib/company-utils';
 import { Button } from "@/components/ui/button";
+import type { GetRegistrationByIdResponseType } from "@idiomax/validation-schemas/registrations";
 
-type Registration = GetRegistrationsResponseType[0];
-
-export function ToggleLockRegistrationForm({ registration }: { registration: Registration }) {
+export function ToggleLockRegistrationForm({ registration }: { registration: GetRegistrationByIdResponseType }) {
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
     const isLocked = registration.locked;
@@ -27,7 +24,7 @@ export function ToggleLockRegistrationForm({ registration }: { registration: Reg
         }),
         onSuccess: (res) => {
             toast.success(res.message);
-            queryClient.invalidateQueries({ queryKey: ['registrations', getCurrentCompanyId()] });
+            queryClient.invalidateQueries({ queryKey: ['registration', registration.id] });
             setOpen(false);
         },
         onError: (error: Error) => {
@@ -43,17 +40,18 @@ export function ToggleLockRegistrationForm({ registration }: { registration: Reg
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
-                <DropdownMenuItem onSelect={(e) => {
-                    e.preventDefault();
-                    setOpen(true);
-                }}>
+                <Button
+                    variant="outline"
+                    onClick={() => setOpen(true)}
+                    className="w-full"
+                >
                     {isLocked ? (
                         <Unlock className="h-4 w-4 mr-2" />
                     ) : (
                         <Lock className="h-4 w-4 mr-2" />
                     )}
                     {actionText} Matrícula
-                </DropdownMenuItem>
+                </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
@@ -61,7 +59,7 @@ export function ToggleLockRegistrationForm({ registration }: { registration: Reg
                     <AlertDialogDescription>
                         Tem certeza que deseja {actionDescription}
                         <br /><br />
-                        <strong>Estudante:</strong> {registration.users?.name}
+                        <strong>Estudante:</strong> {registration.user.name}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter className="!justify-between">

@@ -13,7 +13,8 @@
   "include": [
     "src/**/*",
     "@types/*.d.ts",
-    "prisma/seed.ts"
+    "prisma/**/*.ts",
+    "@"
   ],
   "exclude": [
     "node_modules",

@@ -2,8 +2,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { LoaderIcon, Users, Save } from 'lucide-react';
+import { LoaderIcon, Users, Save, Check, ChevronsUpDown } from 'lucide-react';
 import { useForm, Controller } from 'react-hook-form';
+import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CreateRegistrationFormSchema } from '@idiomax/validation-schemas/registrations/create-registration';
 import { FormMessageError } from '@/components/ui/form-message-error';
@@ -12,16 +13,31 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import { getCurrentCompanyId } from '@/lib/company-utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { cn } from '@/lib/utils';
 import { getUsers } from '@/services/users/get-users';
 import { createRegistration } from '@/services/registrations';
+import { getCourses } from '@/services/courses/get-courses';
 
 type CreateRegistrationFormSchema = z.infer<typeof CreateRegistrationFormSchema>;
 
 export function CreateRegistrationPage() {
+    const [comboboxOpen, setComboboxOpen] = useState(false);
+
     // Query para buscar usuários disponíveis
     const { data: users, isPending: isLoadingUsers } = useQuery({
         queryKey: ['users', 'ALL', getCurrentCompanyId()],
         queryFn: () => getUsers({
+            company_id: getCurrentCompanyId(),
+        }),
+        enabled: !!getCurrentCompanyId(),
+    });
+
+    // Query para buscar cursos disponíveis
+    const { data: courses, isPending: isLoadingCourses } = useQuery({
+        queryKey: ['courses', getCurrentCompanyId()],
+        queryFn: () => getCourses({
             company_id: getCurrentCompanyId(),
         }),
         enabled: !!getCurrentCompanyId(),
@@ -78,30 +94,93 @@ export function CreateRegistrationPage() {
                     <CardContent className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="space-y-2">
-                                <Label>Estudante *</Label>
+                                <Label htmlFor="user_id">Estudante *</Label>
                                 <Controller
                                     name="user_id"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Popover open={comboboxOpen} onOpenChange={setComboboxOpen}>
+                                            <PopoverTrigger asChild>
+                                                <Button
+                                                    variant="outline"
+                                                    type="button"
+                                                    role="combobox"
+                                                    aria-expanded={comboboxOpen}
+                                                    className="w-full justify-between"
+                                                    disabled={isLoadingUsers}
+                                                >
+                                                    {field.value
+                                                        ? users?.find((user) => user.id === field.value)?.name
+                                                        : "Selecione o estudante..."}
+                                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-full p-0">
+                                                <Command>
+                                                    <CommandInput placeholder="Buscar estudante..." />
+                                                    <CommandList className="max-h-[200px]">
+                                                        <CommandEmpty>Nenhum estudante encontrado.</CommandEmpty>
+                                                        <CommandGroup>
+                                                            {isLoadingUsers ? (
+                                                                <CommandItem disabled>
+                                                                    <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
+                                                                    Carregando estudantes...
+                                                                </CommandItem>
+                                                            ) : (
+                                                                users?.map((user) => (
+                                                                    <CommandItem
+                                                                        key={user.id}
+                                                                        value={`${user.name} ${user.email}`}
+                                                                        onSelect={() => {
+                                                                            field.onChange(user.id === field.value ? "" : user.id);
+                                                                            setComboboxOpen(false);
+                                                                        }}
+                                                                    >
+                                                                        <Check
+                                                                            className={cn(
+                                                                                "mr-2 h-4 w-4",
+                                                                                field.value === user.id ? "opacity-100" : "opacity-0"
+                                                                            )}
+                                                                        />
+                                                                        {user.name} ({user.email})
+                                                                    </CommandItem>
+                                                                ))
+                                                            )}
+                                                        </CommandGroup>
+                                                    </CommandList>
+                                                </Command>
+                                            </PopoverContent>
+                                        </Popover>
+                                    )}
+                                />
+                                <FormMessageError error={errors.user_id?.message} />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label>Curso *</Label>
+                                <Controller
+                                    name="course_id"
                                     control={control}
                                     render={({ field }) => (
                                         <Select
                                             value={field.value}
                                             onValueChange={field.onChange}
-                                            disabled={isLoadingUsers}
+                                            disabled={isLoadingCourses}
                                         >
                                             <SelectTrigger className='w-full'>
-                                                <SelectValue placeholder={isLoadingUsers ? "Carregando..." : "Selecione um estudante"} />
+                                                <SelectValue placeholder={isLoadingCourses ? "Carregando..." : "Selecione um curso"} />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {users?.map((user) => (
-                                                    <SelectItem key={user.id} value={user.id}>
-                                                        {user.name} ({user.email})
+                                                {courses?.map((course) => (
+                                                    <SelectItem key={course.id} value={course.id}>
+                                                        {course.name}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
                                     )}
                                 />
-                                <FormMessageError error={errors.user_id?.message} />
+                                <FormMessageError error={errors.course_id?.message} />
                             </div>
 
                             <div className="space-y-2">

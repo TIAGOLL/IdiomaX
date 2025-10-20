@@ -2,22 +2,22 @@ import { z } from 'zod';
 
 // ===== FORM SCHEMAS (Frontend Formulários) =====
 export const CreateRegistrationFormSchema = z.object({
-    user_id: z.string()
+    user_id: z.string({ error: "Selecione um estudante" })
         .min(1, 'Selecione um estudante')
         .uuid('ID do usuário deve ser um UUID válido'),
-    start_date: z.string()
+    start_date: z.string({ error: "Data de início é obrigatória" })
         .min(1, 'Data de início é obrigatória')
         .refine((date) => {
             const parsed = new Date(date);
             return !isNaN(parsed.getTime());
         }, 'Data deve estar em formato válido'),
-    monthly_fee_amount: z.number()
+    monthly_fee_amount: z.number({ error: "Valor da mensalidade é obrigatório" })
         .min(0, 'Valor da mensalidade não pode ser negativo')
         .max(99999.99, 'Valor da mensalidade muito alto'),
-    discount_payment_before_due_date: z.number()
+    discount_payment_before_due_date: z.number({ error: "Valor do desconto é obrigatório", })
         .min(0, 'Valor do desconto não pode ser negativo')
         .max(99999.99, 'Valor do desconto muito alto'),
-    course_id: z.string().uuid('ID do curso deve ser um UUID válido'),
+    course_id: z.string({ error: "Selecione um curso" }).uuid('ID do curso deve ser um UUID válido'),
 }).refine((data) => data.discount_payment_before_due_date <= data.monthly_fee_amount, {
     message: 'Desconto não pode ser maior que o valor da mensalidade',
     path: ['discount_payment_before_due_date']

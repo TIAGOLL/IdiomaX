@@ -5,11 +5,6 @@ export const GetRegistrationsApiRequestSchema = z.object({
     company_id: z.string().uuid('ID da empresa deve ser um UUID válido'),
 });
 
-export const GetRegistrationByIdApiRequestSchema = z.object({
-    id: z.string().uuid('ID da inscrição deve ser um UUID válido'),
-    company_id: z.string().uuid('ID da empresa deve ser um UUID válido'),
-});
-
 // Schema para o objeto de resposta de uma inscrição individual
 export const RegistrationResponseSchema = z.object({
     id: z.string(),
@@ -36,10 +31,7 @@ export const RegistrationResponseSchema = z.object({
 
 export const GetRegistrationsApiResponseSchema = z.array(RegistrationResponseSchema);
 
-export const GetRegistrationByIdApiResponseSchema = RegistrationResponseSchema;
 
 // ===== HTTP TYPES (Frontend Services) =====
 export type GetRegistrationsRequestType = z.infer<typeof GetRegistrationsApiRequestSchema>;
 export type GetRegistrationsResponseType = z.infer<typeof GetRegistrationsApiResponseSchema>;
-export type GetRegistrationByIdRequestType = z.infer<typeof GetRegistrationByIdApiRequestSchema>;
-export type GetRegistrationByIdResponseType = z.infer<typeof GetRegistrationByIdApiResponseSchema>;
