@@ -8,13 +8,13 @@ import { DollarSign, Info, Save } from "lucide-react";
 import { useState } from "react";
 import { editRegistration } from "@/services/registrations/edit-registration";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import type { GetRegistrationByIdResponseType } from "@idiomax/validation-schemas/registrations/get-registrations";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { FormMessageError } from "@/components/ui/form-message-error";
 import { EditRegistrationFormSchema } from "@idiomax/validation-schemas/registrations/edit-registration";
+import type { GetRegistrationByIdResponseType } from "@idiomax/validation-schemas/registrations";
 
 type EditRegistrationFormSchema = z.infer<typeof EditRegistrationFormSchema>;
 

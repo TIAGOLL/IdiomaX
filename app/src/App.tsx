@@ -13,7 +13,7 @@ import type { AppAbility } from '@idiomax/authorization';
 
 function AppContent() {
   const { userProfile, currentCompanyMember } = useSessionContext();
-  const [ability, setAbility] = useState<AppAbility | null>(null);
+  const [ability, setAbility] = useState<AppAbility | null>();
 
   useEffect(() => {
     if (userProfile && currentCompanyMember) {
@@ -34,7 +34,6 @@ function AppContent() {
     <AbilityContext.Provider value={ability}>
       <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
         <Toaster />
-        <RoutesApp />
         <SpeedInsights />
         <Analytics />
       </ThemeProvider>
@@ -50,6 +49,7 @@ export function App() {
       <SessionProvider>
         <QueryClientProvider client={queryClient}>
           <AppContent />
+          <RoutesApp />
         </QueryClientProvider>
       </SessionProvider>
     </BrowserRouter>

@@ -1,15 +1,15 @@
 // Imports da biblioteca CASL para controle de acesso baseado em habilidades
 import {
     AbilityBuilder,
-    CreateAbility,
+    type CreateAbility,
     createMongoAbility,
-    MongoAbility,
+    type MongoAbility,
 } from '@casl/ability'
 // Zod para validação de schemas
 import { z } from 'zod'
 
 // Modelo de usuário para definição de permissões
-import { User } from './models/user'
+import { type User } from './models/user'
 // Configurações de permissões por role
 import { permissions } from './permissions'
 
