@@ -1,9 +1,9 @@
-import { useEffect, useState, } from 'react';
-import { Outlet, useNavigate, Link, useLocation } from 'react-router';
+import { Outlet, Link, useLocation } from 'react-router';
 import { useSessionContext } from '@/contexts/session-context';
 import { getCompanySubscription } from '@/services/stripe/get-company-subscription';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { Sidebar } from '@/components/side-bar';
+import { useQuery } from '@tanstack/react-query';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -24,13 +24,29 @@ import { getBreadcrumbConfig } from '@/components/side-bar/navigation-data';
 import { getCurrentCompanyId } from '@/lib/company-utils';
 
 export function PaidRoute() {
-  const { currentCompanyMember: company, isLoadingUserProfile } = useSessionContext();
-  const [subscriptionIsActive, setSubscriptionIsActive] = useState(true);
-  const navigate = useNavigate();
+  const { currentCompanyMember: company, isLoadingUserProfile, currentRole } = useSessionContext();
   const location = useLocation();
 
-  // Configuração dos breadcrumbs baseada na navegação da sidebar
   const breadcrumbConfig = getBreadcrumbConfig();
+
+  const { data: subscriptionIsActive = true } = useQuery({
+    queryKey: ['company-subscription', company?.company_id],
+    queryFn: async () => {
+      if (!company?.company_id) return true;
+
+      const subscription = await getCompanySubscription({
+        company_id: getCurrentCompanyId()
+      });
+
+      if (subscription && subscription.status !== 'active' && subscription.status !== 'trialing') {
+        return false;
+      }
+
+      return true;
+    },
+    enabled: !!company?.company_id && !isLoadingUserProfile,
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
 
   const pathnames = location.pathname.split('/').filter((x) => x);
 
@@ -103,48 +119,69 @@ export function PaidRoute() {
     return items;
   };
 
-  useEffect(() => {
-    async function checkSubscriptionIsActive() {
-      if (!company?.company_id) return true;
-      const subscription = await getCompanySubscription({
-        company_id: getCurrentCompanyId()
-      });
-      if (subscription && subscription.status !== 'active' && subscription.status !== 'trialing') {
-        return false
-      }
-      return true;
-    }
-
-    if (company !== undefined || !isLoadingUserProfile) {
-      checkSubscriptionIsActive()
-        .then((isActive) => setSubscriptionIsActive(isActive))
-        .catch(() => {
-          setSubscriptionIsActive(false);
-        });
-    }
-
-  }, [company, isLoadingUserProfile, navigate]);
-
   const breadcrumbItems = generateBreadcrumbItems();
 
-  if (!subscriptionIsActive) return (
-    <SidebarProvider>
-      <Sidebar />
-      <main className='flex-1 min-h-screen min-w-[calc(100vw-16rem)]'>
-        <div className='hidden fixed top-0 z-50 w-full p-2 border-b h-12 bg-sidebar border-b-slate-200/5 items-center gap-4 sm:flex'>
-          <SidebarTrigger />
-          <Breadcrumb>
-            <BreadcrumbList>
-              {breadcrumbItems}
-            </BreadcrumbList>
-          </Breadcrumb>
-        </div>
-        <div className="flex-1 min-h-screen pt-12 flex items-center justify-center">
-          <SubscriptionForm />
-        </div>
-      </main>
-    </SidebarProvider>
-  )
+  // Se não tem assinatura ativa, mostrar tela apropriada baseada na role
+  if (!subscriptionIsActive) {
+    // ADMIN pode gerenciar assinatura
+    if (currentRole === 'ADMIN') {
+      return (
+        <SidebarProvider>
+          <Sidebar />
+          <main className='flex-1 min-h-screen min-w-[calc(100vw-16rem)]'>
+            <div className='hidden fixed top-0 z-50 w-full p-2 border-b h-12 bg-sidebar border-b-slate-200/5 items-center gap-4 sm:flex'>
+              <SidebarTrigger />
+              <Breadcrumb>
+                <BreadcrumbList>
+                  {breadcrumbItems}
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div>
+            <div className="flex-1 min-h-screen pt-12 flex items-center justify-center">
+              <SubscriptionForm />
+            </div>
+          </main>
+        </SidebarProvider>
+      );
+    }
+
+    // TEACHER e STUDENT veem mensagem para contatar gestores
+    return (
+      <SidebarProvider>
+        <Sidebar />
+        <main className='flex-1 min-h-screen min-w-[calc(100vw-16rem)]'>
+          <div className='hidden fixed top-0 z-50 w-full p-2 border-b h-12 bg-sidebar border-b-slate-200/5 items-center gap-4 sm:flex'>
+            <SidebarTrigger />
+            <Breadcrumb>
+              <BreadcrumbList>
+                {breadcrumbItems}
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+          <div className="flex-1 min-h-screen pt-12 flex items-center justify-center">
+            <div className="max-w-md p-8 space-y-4 text-center">
+              <div className="space-y-2">
+                <h1 className="text-2xl font-bold text-destructive">Assinatura Inativa</h1>
+                <p className="text-muted-foreground">
+                  A assinatura da instituição não está ativa no momento.
+                </p>
+              </div>
+              <div className="p-4 bg-muted rounded-lg space-y-2">
+                <p className="text-sm font-medium">
+                  Entre em contato com os gestores da escola para regularizar a situação.
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Apenas administradores podem gerenciar a assinatura da instituição.
+                </p>
+              </div>
+            </div>
+          </div>
+        </main>
+      </SidebarProvider>
+    );
+  }
+
+  // Assinatura ativa - renderizar conteúdo normalmente
 
   return (
     <SidebarProvider>

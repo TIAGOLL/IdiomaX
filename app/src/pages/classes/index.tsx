@@ -1,18 +1,33 @@
-import { useSearchParams } from 'react-router';
-import { LessonsTablePage } from './lessons-table';
-import { CreateLessonPage } from './create-lesson';
-import { EditLessonPage } from './edit-lesson';
+import { useSearchParams } from "react-router";
+import { ClassTablePage } from "./class-table";
+import { CreateClassPage } from "./create-class";
+import { EditClassPage } from "./edit-class";
+import { Can } from '@/lib/Can';
 
-export default function ClassesPage() {
+export function ClassesPage() {
     const [searchParams] = useSearchParams();
     const activeTab = searchParams.get('tab') || 'list';
-    const lessonId = searchParams.get('id');
+    const classId = searchParams.get('id');
 
     return (
         <div className="container mx-auto p-6">
-            {activeTab === 'create' && <CreateLessonPage />}
-            {activeTab === 'list' && <LessonsTablePage />}
-            {activeTab === 'edit' && lessonId && <EditLessonPage lessonId={lessonId} />}
+            {activeTab === 'create' && (
+                <Can I="create" a="Class">
+                    <CreateClassPage />
+                </Can>
+            )}
+
+            {activeTab === 'list' && (
+                <Can I="get" a="Class">
+                    <ClassTablePage />
+                </Can>
+            )}
+
+            {activeTab === 'edit' && classId && (
+                <Can I="update" a="Class">
+                    <EditClassPage classId={classId} />
+                </Can>
+            )}
         </div>
     );
 }

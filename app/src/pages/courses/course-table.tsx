@@ -16,7 +16,7 @@ export function CoursesTablePage() {
     const navigate = useNavigate();
 
     const { data, isPending, error } = useQuery({
-        queryKey: ['courses', ],
+        queryKey: ['courses',],
         queryFn: () => getCourses({ company_id: getCurrentCompanyId() }),
         enabled: !!getCurrentCompanyId(),
     });
@@ -49,7 +49,7 @@ export function CoursesTablePage() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <BookOpen className="size-5" />
-                        Cursos da Instituição ({data?.length})
+                        Cursos ({data?.length})
                     </CardTitle>
                 </CardHeader>
             </Card>

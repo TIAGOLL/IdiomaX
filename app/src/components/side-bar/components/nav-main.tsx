@@ -1,24 +1,15 @@
-import { useState } from "react"
-import { ChevronRight, type LucideIcon } from "lucide-react"
+import { type LucideIcon } from "lucide-react"
 
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-} from "@/components/ui/collapsible"
 import {
     SidebarGroup,
     SidebarGroupLabel,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    SidebarMenuSub,
-    SidebarMenuSubButton,
-    SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
-import { NavLink } from "react-router"
-import { Button } from "@/components/ui/button"
-import { useSessionContext } from "@/contexts/session-context"
+import { NavLink, useLocation } from "react-router"
+import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 export function NavMain({
     items,
@@ -26,74 +17,53 @@ export function NavMain({
     items: {
         title: string
         icon?: LucideIcon
-        links: { name: string; to: string, roles: string[] }[]
-        isActive?: boolean
+        to: string
+        breadcrumbKey?: string
     }[]
 }) {
-    const [allOpen, setAllOpen] = useState(false)
-    const { currentRole } = useSessionContext()
+    const location = useLocation()
 
-    // Função para verificar se o usuário tem permissão para ver o link
-    const hasPermission = (requiredRoles: string[]): boolean => {
-        if (!currentRole) return false
+    // Função para verificar se o item está ativo
+    const isItemActive = (itemTo: string) => {
+        // Remover query params para comparação
+        const itemPath = itemTo.split('?')[0]
+        const currentPath = location.pathname
 
-        // Converter role para minúscula para comparação case-insensitive
-        const userRole = currentRole.toLowerCase()
-        const allowedRoles = requiredRoles.map(role => role.toLowerCase())
+        // Para a rota raiz '/', verificar se é exatamente igual
+        if (itemPath === '/') {
+            return currentPath === '/'
+        }
 
-        return allowedRoles.includes(userRole)
+        // Para outras rotas, verificar se o pathname é igual ou começa com a rota
+        return currentPath === itemPath || currentPath.startsWith(itemPath + '/')
     }
-
-    // Filtrar items que têm pelo menos um link visível
-    const filteredItems = items.map(item => ({
-        ...item,
-        links: item.links.filter(link => hasPermission(link.roles))
-    })).filter(item => item.links.length > 0)
 
     return (
         <SidebarGroup>
-            <SidebarGroupLabel className="mb-2 flex items-center justify-between">
+            <SidebarGroupLabel>
                 Navegação
-                <Button
-                    variant="ghost"
-                    className="ml-2 rounded px-2 py-1 text-xs"
-                    onClick={() => setAllOpen((prev) => !prev)}
-                >
-                    {allOpen ? "Fechar tudo" : "Abrir tudo"}
-                </Button>
             </SidebarGroupLabel>
             <SidebarMenu>
-                {filteredItems.map((item) => (
-                    <Collapsible
-                        key={item.title}
-                        asChild
-                        open={allOpen ? true : item.isActive}
-                        className="group/collapsible"
-                    >
-                        <SidebarMenuItem>
-                            <CollapsibleTrigger asChild>
-                                <SidebarMenuButton tooltip={item.title}>
+                {items.map((item) => {
+                    const isActive = isItemActive(item.to)
+
+                    return (
+                        <SidebarMenuItem key={item.title}>
+                            <SidebarMenuButton
+                                asChild
+                                tooltip={item.title}
+                                className={cn(
+                                    isActive && buttonVariants({ variant: "default", size: "sm" }), "justify-start"
+                                )}
+                            >
+                                <NavLink to={item.to}>
                                     {item.icon && <item.icon />}
                                     <span>{item.title}</span>
-                                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                                </SidebarMenuButton>
-                            </CollapsibleTrigger>
-                            <CollapsibleContent>
-                                <SidebarMenuSub>
-                                    {item.links?.map((subItem) => (
-                                        <SidebarMenuSubItem key={subItem.name}>
-                                            <SidebarMenuSubButton asChild>
-                                                <NavLink to={subItem.to}>
-                                                    <span>{subItem.name}</span>
-                                                </NavLink>
-                                            </SidebarMenuSubButton>
-                                        </SidebarMenuSubItem>
-                                    ))}
-                                </SidebarMenuSub>
-                            </CollapsibleContent>
+                                </NavLink>
+                            </SidebarMenuButton>
                         </SidebarMenuItem>
-                    </Collapsible>
-                ))}
+                    )
+                })}
             </SidebarMenu>
         </SidebarGroup>
     )

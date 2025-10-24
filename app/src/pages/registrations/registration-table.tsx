@@ -87,7 +87,7 @@ export function RegistrationsTablePage() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Users className="size-5" />
-                        Matrículas da Instituição ({filteredData.length})
+                        Matrículas ({filteredData.length})
                     </CardTitle>
                 </CardHeader>
                 <CardContent>

@@ -13,9 +13,9 @@ import CongratulationsPage from '@/pages/subscription/congratulations';
 import { FinanceDashboard } from '@/pages/company';
 import UsersPage from '@/pages/users';
 import CoursesPage from '@/pages/courses';
-import { ClassPage } from '@/pages/class';
 import RegistrationsPage from '@/pages/registrations';
-import ClassesPage from '@/pages/classes';
+import LessonsPage from '@/pages/lessons';
+import { ClassesPage } from '@/pages/classes';
 
 export function RoutesApp() {
 
@@ -25,7 +25,6 @@ export function RoutesApp() {
       <Route path='/auth/sign-up' element={<SignUpPage />} />
       <Route path='/auth/reset-password/:token' element={<ResetPasswordPage />} />
       <Route element={<PrivateRoute />}>
-        {/* ADMIN, TEACHER e STUDENT IRÃO DIVIDIR A MESMA DASHBOARD */}
         <Route element={
           <div className='min-h-screen flex'>
             <Outlet />
@@ -39,15 +38,16 @@ export function RoutesApp() {
           <Route element={
             <div className='min-h-[calc(100vh-48px)] flex flex-1'>
               <Outlet />
-            </div>}>
+            </div>
+          }>
             <Route index element={<DashboardPage />} />
             <Route path='/profile' element={<ProfilePage />} />
             <Route path='/my-company' element={<FinanceDashboard />} />
             <Route path='/admin/users' element={<UsersPage />} />
             <Route path='/admin/courses' element={<CoursesPage />} />
-            <Route path='/admin/class' element={<ClassPage />} />
-            <Route path='/admin/registrations' element={<RegistrationsPage />} />
             <Route path='/admin/classes' element={<ClassesPage />} />
+            <Route path='/admin/registrations' element={<RegistrationsPage />} />
+            <Route path='/admin/lessons' element={<LessonsPage />} />
           </Route>
         </Route>
       </Route>

@@ -12,19 +12,19 @@ export default function RegistrationsPage() {
     return (
         <div className="container mx-auto p-6">
             {activeTab === 'create' && (
-                <Can do="create" on="Registration">
+                <Can I="create" a="Registration">
                     <CreateRegistrationPage />
                 </Can>
             )}
 
             {activeTab === 'list' && (
-                <Can do="get" on="Registration">
+                <Can I="get" a="Registration">
                     <RegistrationsTablePage />
                 </Can>
             )}
 
             {activeTab === 'edit' && registrationId && (
-                <Can do="update" on="Registration">
+                <Can I="update" a="Registration">
                     <RegistrationsEditPage registrationId={registrationId} />
                 </Can>
             )}

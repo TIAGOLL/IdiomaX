@@ -1,39 +1,28 @@
 import { useNavigate } from "react-router"
-import { useSessionContext } from "@/contexts/session-context"
 import {
     DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import { getNavigationData } from "../navigation-data"
+import { useContext } from "react"
+import { AbilityContext } from "@/lib/Can"
 
 export function NavUserMenuItems() {
     const navigate = useNavigate()
-    const { currentRole } = useSessionContext()
+    const ability = useContext(AbilityContext)
 
-    // Função para verificar se o usuário tem permissão para ver o item
-    const hasPermission = (requiredRoles: string[]): boolean => {
-        if (!currentRole) return false
+    // Obter dados do menu filtrados por permissão
+    const { userMenu } = getNavigationData(ability)
 
-        // Converter role para minúscula para comparação case-insensitive
-        const userRole = currentRole.toLowerCase()
-        const allowedRoles = requiredRoles.map(role => role.toLowerCase())
-
-        return allowedRoles.includes(userRole)
-    }
-
-    // Obter dados do menu e filtrar itens que o usuário pode ver
-    const userMenuItems = getNavigationData().userMenu
-    const visibleMenuItems = userMenuItems.filter(item => hasPermission(item.roles))
-
-    if (visibleMenuItems.length === 0) {
+    if (userMenu.length === 0) {
         return null
     }
 
     return (
         <>
             <DropdownMenuGroup>
-                {visibleMenuItems.map((item) => {
+                {userMenu.map((item) => {
                     const IconComponent = item.icon
                     return (
                         <DropdownMenuItem

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import { getUserProfile } from '@/services/users/get-user-profile';
 import { useQuery } from '@tanstack/react-query';
 import nookies from 'nookies';
@@ -7,6 +7,8 @@ import { getCompanySubscription } from '@/services/stripe/get-company-subscripti
 import { type GetProfileResponseType } from '@idiomax/validation-schemas/auth/get-profile';
 import { type GetCompanySubscriptionResponseType } from '@idiomax/validation-schemas/subscriptions/get-company-subscription';
 import { getCurrentCompanyId } from '@/lib/company-utils';
+import { AbilityContext, defineAbilityFor, type AppAbility } from '@/lib/Can';
+import type { User } from '@idiomax/authorization';
 
 
 type SessionContextType = {
@@ -23,6 +25,7 @@ type SessionContextType = {
     subscriptionError: unknown;
     isInitializingCompany: boolean;
     getCompanyId: () => string | null;
+    ability: AppAbility;
 };
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
@@ -42,6 +45,25 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
         retry: false,
         enabled: !!nookies.get(null).token,
     });
+
+    // Criar ability baseado no usuário e role atual
+    const ability = useMemo(() => {
+        if (!userProfile || !currentRole) {
+            // Retornar ability vazio se não houver usuário
+            return defineAbilityFor({
+                id: '',
+                role: 'STUDENT' as const
+            });
+        }
+
+        // Criar objeto User compatível com o pacote de autorização
+        const user: User = {
+            id: userProfile.id,
+            role: currentRole as 'ADMIN' | 'TEACHER' | 'STUDENT'
+        };
+
+        return defineAbilityFor(user);
+    }, [userProfile, currentRole]);
 
     const { data: subscription, isLoading: isLoadingSubscription, error: subscriptionError } = useQuery({
         queryKey: ['company-subscription', currentCompanyMember?.company.id, userProfile?.cpf],
@@ -116,23 +138,26 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     };
 
     return (
-        <SessionContext.Provider value={{
-            userProfile: userProfile || null,
-            getCompanyId,
-            isLoadingUserProfile,
-            logout,
-            error,
-            token,
-            currentCompanyMember,
-            setCompany,
-            currentRole,
-            subscription: subscription || null,
-            isLoadingSubscription,
-            subscriptionError,
-            isInitializingCompany
-        }}>
-            {children}
-        </SessionContext.Provider>
+        <AbilityContext.Provider value={ability}>
+            <SessionContext.Provider value={{
+                userProfile: userProfile || null,
+                getCompanyId,
+                isLoadingUserProfile,
+                logout,
+                error,
+                token,
+                currentCompanyMember,
+                setCompany,
+                currentRole,
+                subscription: subscription || null,
+                isLoadingSubscription,
+                subscriptionError,
+                isInitializingCompany,
+                ability
+            }}>
+                {children}
+            </SessionContext.Provider>
+        </AbilityContext.Provider>
     );
 };
 

@@ -51,7 +51,7 @@ export function LessonsTablePage() {
                     <CardTitle className="flex items-center gap-2 justify-between">
                         <div className='flex items-center gap-2'>
                             <Calendar className="size-5" />
-                            Aulas da Instituição ({data?.length})
+                            Aulas ({data?.length})
                         </div>
                         <Button
                             onClick={() => navigate('?tab=create')}

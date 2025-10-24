@@ -164,7 +164,7 @@ export function AdminDashboard() {
                     <Table>
                         <TableBody>
                             <TableRow>
-                                <TableCell className="font-semibold text-blue-200">
+                                <TableCell className="font-semibold text-blue-700 dark:text-blue-200">
                                     <span className="flex flex-row gap-2 items-center">
                                         MRR devido:
                                         <TooltipProvider>
@@ -181,10 +181,10 @@ export function AdminDashboard() {
                                         </TooltipProvider>
                                     </span>
                                 </TableCell>
-                                <TableCell className="text-blue-200">R$ {stats.mrrDue}</TableCell>
+                                <TableCell className="text-blue-700 dark:text-blue-200">R$ {stats.mrrDue}</TableCell>
                             </TableRow>
                             <TableRow>
-                                <TableCell className="font-semibold text-green-200">
+                                <TableCell className="font-semibold text-green-700 dark:text-green-200">
                                     <span className="flex flex-row gap-2 items-center">
                                         MRR recebido:
                                         <TooltipProvider>
@@ -201,10 +201,10 @@ export function AdminDashboard() {
                                         </TooltipProvider>
                                     </span>
                                 </TableCell>
-                                <TableCell className="text-green-200">R$ {stats.mrrReceived}</TableCell>
+                                <TableCell className="text-green-700 dark:text-green-200">R$ {stats.mrrReceived}</TableCell>
                             </TableRow>
                             <TableRow>
-                                <TableCell className="font-semibold text-yellow-200">
+                                <TableCell className="font-semibold text-yellow-700 dark:text-yellow-200">
                                     <span className="flex flex-row gap-2 items-center">
                                         MRR aberto:
                                         <TooltipProvider>
@@ -221,7 +221,7 @@ export function AdminDashboard() {
                                         </TooltipProvider>
                                     </span>
                                 </TableCell>
-                                <TableCell className="text-yellow-200">R$ {stats.mrrOpen}</TableCell>
+                                <TableCell className="text-yellow-700 dark:text-yellow-200">R$ {stats.mrrOpen}</TableCell>
                             </TableRow>
                             <TableRow>
                                 <TableCell className="font-semibold">
@@ -267,10 +267,10 @@ export function AdminDashboard() {
                                 <TableCell className="font-semibold align-top">Mensalidades em atraso (Em dias):</TableCell>
                                 <TableCell>
                                     <ul className="ml-2 mt-1 text-sm">
-                                        <li>0–30d: <span className="font-bold text-blue-400">R$ {stats.aging["0-30"]}</span></li>
-                                        <li>31–60d: <span className="font-bold text-blue-400">R$ {stats.aging["31-60"]}</span></li>
-                                        <li>61–90d: <span className="font-bold text-blue-400">R$ {stats.aging["61-90"]}</span></li>
-                                        <li>90+d: <span className="font-bold text-blue-400">R$ {stats.aging["90+"]}</span></li>
+                                        <li>0–30d: <span className="font-bold">R$ {stats.aging["0-30"]}</span></li>
+                                        <li>31–60d: <span className="font-bold">R$ {stats.aging["31-60"]}</span></li>
+                                        <li>61–90d: <span className="font-bold">R$ {stats.aging["61-90"]}</span></li>
+                                        <li>90+d: <span className="font-bold">R$ {stats.aging["90+"]}</span></li>
                                     </ul>
                                 </TableCell>
                             </TableRow>
@@ -381,7 +381,7 @@ export function AdminDashboard() {
                         const chartConfig = {
                             hours: {
                                 label: "Horas",
-                                color: "#8884d8",
+                                color: "var(--color-primary)",
                             },
                         };
                         return (
@@ -392,7 +392,7 @@ export function AdminDashboard() {
                                     <YAxis />
                                     <ChartTooltip content={<ChartTooltipContent />} />
                                     <ChartLegend content={<ChartLegendContent />} />
-                                    <Bar dataKey="hours" fill="#8884d8" />
+                                    <Bar dataKey="hours" fill="var(--color-primary)" />
                                 </BarChart>
                             </ChartContainer>
                         );

@@ -1,5 +1,6 @@
 import { AdminDashboard } from "./admin";
 import { useSessionContext } from "@/contexts/session-context";
+import { Can } from '@/lib/Can';
 
 
 export function DashboardPage() {
@@ -7,9 +8,11 @@ export function DashboardPage() {
 
     return (
         <div className="flex justify-center items-center sm:w-full">
-            {
-                currentRole === 'ADMIN' && <AdminDashboard />
-            }
+            {currentRole === 'ADMIN' && (
+                <Can I="manage" a="all">
+                    <AdminDashboard />
+                </Can>
+            )}
         </div>
     );
 }

@@ -1,73 +1,129 @@
 import { BadgeCheck, BriefcaseBusiness, Cog, LayoutDashboardIcon, LifeBuoyIcon, MessageCircleMore } from "lucide-react"
+import type { AppAbility } from '@/lib/Can';
 
-export function getNavigationData() {
+type NavigationPermission = {
+    action: string;
+    subject: string;
+}
+
+export function getNavigationData(ability?: AppAbility) {
+    // Função helper para verificar se deve mostrar o item baseado nas permissões
+    const shouldShowItem = (permissions: NavigationPermission[]) => {
+        if (!ability) return false;
+
+        // Se o usuário tem pelo menos uma das permissões necessárias, mostra o item
+        return permissions.some(({ action, subject }) => {
+            // Usar verificação genérica para evitar problemas de tipo
+            try {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                return (ability as any).can(action, subject);
+            } catch {
+                return false;
+            }
+        });
+    };
+
+    const allNavItems = [
+        {
+            title: "Dashboard",
+            icon: LayoutDashboardIcon,
+            breadcrumbKey: "admin",
+            to: "/",
+            permissions: [
+                { action: 'manage', subject: 'all' }
+            ]
+        },
+        {
+            title: "Cursos",
+            icon: LayoutDashboardIcon,
+            breadcrumbKey: "courses",
+            to: "/admin/courses?tab=list",
+            permissions: [
+                { action: 'get', subject: 'Course' },
+                { action: 'create', subject: 'Course' },
+                { action: 'update', subject: 'Course' },
+                { action: 'delete', subject: 'Course' }
+            ]
+        },
+        {
+            title: "Matrículas",
+            icon: LayoutDashboardIcon,
+            breadcrumbKey: "registrations",
+            to: "/admin/registrations?tab=list",
+            permissions: [
+                { action: 'get', subject: 'Registration' },
+                { action: 'create', subject: 'Registration' },
+                { action: 'update', subject: 'Registration' }
+            ]
+        },
+        {
+            title: "Turmas",
+            icon: LayoutDashboardIcon,
+            breadcrumbKey: "classes",
+            to: "/admin/classes?tab=list",
+            permissions: [
+                { action: 'get', subject: 'Class' },
+                { action: 'create', subject: 'Class' },
+                { action: 'update', subject: 'Class' },
+                { action: 'delete', subject: 'Class' }
+            ]
+        },
+        {
+            title: "Aulas",
+            icon: LayoutDashboardIcon,
+            breadcrumbKey: "lessons",
+            to: "/admin/lessons?tab=list",
+            permissions: [
+                { action: 'get', subject: 'Lesson' },
+                { action: 'create', subject: 'Lesson' },
+                { action: 'update', subject: 'Lesson' },
+                { action: 'delete', subject: 'Lesson' }
+            ]
+        },
+        {
+            title: "Usuários",
+            icon: LayoutDashboardIcon,
+            breadcrumbKey: "users",
+            to: "/admin/users?tab=list",
+            permissions: [
+                { action: 'manage', subject: 'all' }
+            ]
+        },
+    ];
+
+    // Filtrar apenas os itens que o usuário tem permissão
+    const navMain = ability
+        ? allNavItems.filter(item => shouldShowItem(item.permissions))
+        : allNavItems;
+
     return {
-        navMain: [
-            {
-                title: "Dashboard",
-                icon: LayoutDashboardIcon,
-                breadcrumbKey: "admin",
-                links: [{
-                    name: "Visão geral",
-                    to: "/",
-                    roles: ['admin']
-                }]
-            },
-            {
-                title: "Cursos",
-                icon: LayoutDashboardIcon,
-                breadcrumbKey: "courses",
-                links: [
-                    { name: "Ver cursos", to: "/admin/courses?tab=list", roles: ['admin'] },
-                    { name: "Cadastrar curso", to: "/admin/courses?tab=create", roles: ['admin'] },
-                    { name: "Ver matrículas", to: "/admin/registrations?tab=list", roles: ['admin'] },
-                    { name: "Matricular aluno", to: "/admin/registrations?tab=create", roles: ['admin'] },
-                ],
-            },
-            {
-                title: "Turmas",
-                icon: LayoutDashboardIcon,
-                breadcrumbKey: "class",
-                links: [
-                    { name: "Ver turmas", to: "/admin/class?tab=list", roles: ['admin'] },
-                    { name: "Cadastrar turma", to: "/admin/class?tab=create", roles: ['admin'] },
-                    { name: "Ver aulas", to: "/admin/classes?tab=list", roles: ['admin', 'teacher'] },
-                    { name: "Cadastrar aula", to: "/admin/classes?tab=create", roles: ['admin', 'teacher'] },
-                ],
-            },
-            {
-                title: "Usuários",
-                icon: LayoutDashboardIcon,
-                breadcrumbKey: "users",
-                links: [
-                    { name: "Criar usuário", to: "/admin/users?tab=create", roles: ['admin'] },
-                    { name: "Listar usuários", to: "/admin/users?tab=list", roles: ['admin'] },
-                ],
-            },
-        ],
+        navMain,
         navSecondary: [
             { title: "Suporte", url: "https://wa.me/+5542984066420", icon: LifeBuoyIcon },
             { title: "Feedback", url: "https://wa.me/+5542984066420", icon: MessageCircleMore },
         ],
-        userMenu: [
+        userMenu: ability && ability.can('manage', 'all') ? [
             {
                 label: "Meu perfil",
                 href: '/profile',
                 icon: BadgeCheck,
-                roles: ['STUDENT', 'TEACHER', 'ADMIN']
             },
             {
                 label: "Perfil da empresa",
                 href: '/my-company?tab=profile',
                 icon: BriefcaseBusiness,
-                roles: ['ADMIN']
             },
             {
                 label: "Configurar instituição",
                 href: '/my-company?tab=settings',
                 icon: Cog,
-                roles: ['ADMIN']
             },
+        ] : [
+            {
+                label: "Meu perfil",
+                href: '/profile',
+                icon: BadgeCheck,
+            }
         ]
     }
 }
@@ -83,10 +139,10 @@ export function getBreadcrumbConfig() {
         const key = section.breadcrumbKey || section.title.toLowerCase();
         breadcrumbConfig[key] = {
             label: section.title,
-            items: section.links.map(link => ({
-                label: link.name,
-                href: link.to
-            }))
+            items: [{
+                label: section.title,
+                href: section.to
+            }]
         };
     });
 

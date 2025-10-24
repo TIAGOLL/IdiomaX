@@ -50,7 +50,7 @@ export function ClassTablePage() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <BookOpen className="size-5" />
-                        Turmas da Instituição ({data?.length})
+                        Turmas ({data?.length})
                     </CardTitle>
                 </CardHeader>
             </Card>
