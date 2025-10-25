@@ -5,12 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { BookOpen, Edit } from 'lucide-react';
+import { BookOpen, Edit, Plus } from 'lucide-react';
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from 'react-router';
 import { getCourses } from '@/services/courses/get-courses';
 import { getCurrentCompanyId } from '@/lib/company-utils';
 import { formatDate } from './../../lib/utils';
+import { Can } from '@/lib/Can';
 
 export function CoursesTablePage() {
     const navigate = useNavigate();
@@ -47,9 +48,20 @@ export function CoursesTablePage() {
             {/* Header */}
             <Card>
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <BookOpen className="size-5" />
-                        Cursos ({data?.length})
+                    <CardTitle className="flex items-center gap-2 justify-between">
+                        <div className='flex items-center gap-2'>
+                            <BookOpen className="size-5" />
+                            Cursos ({data?.length})
+                        </div>
+                        <Can I="create" a="Course">
+                            <Button
+                                onClick={() => navigate('?tab=create')}
+                                className="flex items-center gap-2"
+                            >
+                                <Plus className="size-4" />
+                                Novo Curso
+                            </Button>
+                        </Can>
                     </CardTitle>
                 </CardHeader>
             </Card>
@@ -72,7 +84,17 @@ export function CoursesTablePage() {
                                 {data?.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                                            Nenhum curso encontrado
+                                            Nenhum curso encontrado.
+                                            <Can I="create" a="Course">
+                                                <br />
+                                                <Button
+                                                    variant="link"
+                                                    onClick={() => navigate('?tab=create')}
+                                                    className="mt-2"
+                                                >
+                                                    Criar primeiro curso
+                                                </Button>
+                                            </Can>
                                         </TableCell>
                                     </TableRow>
                                 ) : (

@@ -72,11 +72,9 @@ export async function createCompany(app: FastifyInstance) {
                         social_reason,
                         state_registration,
                         tax_regime,
-                        owner: {
-                            connect: {
-                                id: userId,
-                            }
-                        },
+                        owner_id: userId, // ID do dono da empresa
+                        created_by: userId, // Usuário que está criando a empresa
+                        updated_by: userId, // Usuário que está criando a empresa
                         members: {
                             create: {
                                 user_id: userId,

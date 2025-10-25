@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Search, Users, Edit, X } from 'lucide-react';
+import { Search, Users, Edit, X, Plus } from 'lucide-react';
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { useNavigate } from 'react-router';
@@ -15,6 +15,7 @@ import { getCurrentCompanyId } from '@/lib/company-utils';
 import { getUsers } from '@/services/users/get-users';
 import type { Role } from '@idiomax/validation-schemas/enums';
 import { formatDate } from '@/lib/utils';
+import { Can } from '@/lib/Can';
 
 export function UsersTablePage() {
     const navigate = useNavigate();
@@ -86,9 +87,20 @@ export function UsersTablePage() {
             {/* Header com filtros */}
             <Card>
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Users className="size-5" />
-                        Usuários da Instituição ({filteredUsers.length})
+                    <CardTitle className="flex items-center gap-2 justify-between">
+                        <div className='flex items-center gap-2'>
+                            <Users className="size-5" />
+                            Usuários da Instituição ({filteredUsers.length})
+                        </div>
+                        <Can I="manage" a="all">
+                            <Button
+                                onClick={() => navigate('?tab=create')}
+                                className="flex items-center gap-2"
+                            >
+                                <Plus className="size-4" />
+                                Novo Usuário
+                            </Button>
+                        </Can>
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -160,6 +172,18 @@ export function UsersTablePage() {
                                                 ? "Nenhum usuário encontrado com os filtros aplicados"
                                                 : "Nenhum usuário encontrado"
                                             }
+                                            {!searchFilter && !roleFilter && (
+                                                <Can I="manage" a="all">
+                                                    <br />
+                                                    <Button
+                                                        variant="link"
+                                                        onClick={() => navigate('?tab=create')}
+                                                        className="mt-2"
+                                                    >
+                                                        Criar primeiro usuário
+                                                    </Button>
+                                                </Can>
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 ) : (

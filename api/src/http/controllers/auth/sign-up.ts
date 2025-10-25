@@ -51,8 +51,12 @@ export async function SignUp(app: FastifyInstance) {
       const date_of_birth_date = new Date(date_of_birth);
 
       const { token } = await prisma.$transaction(async (prisma) => {
-        const { id: userId } = await prisma.users.create({
+        // Gerar ID antecipadamente para usar em created_by e updated_by
+        const userId = crypto.randomUUID();
+
+        await prisma.users.create({
           data: {
+            id: userId,
             name,
             email,
             password: passwordHash,
@@ -62,6 +66,8 @@ export async function SignUp(app: FastifyInstance) {
             cpf,
             username,
             phone,
+            created_by: userId, // Usuário se auto-cria
+            updated_by: userId, // Usuário se auto-atualiza
           },
         })
 

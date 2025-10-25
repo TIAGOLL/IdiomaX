@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { UserCheck, Users, Search, X, Edit } from 'lucide-react';
+import { UserCheck, Users, Search, X, Edit, Plus } from 'lucide-react';
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { getCurrentCompanyId } from '@/lib/company-utils';
@@ -16,6 +16,7 @@ import { getRegistrations } from '@/services/registrations';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Info } from 'lucide-react';
 import { useNavigate } from 'react-router';
+import { Can } from '@/lib/Can';
 
 export function RegistrationsTablePage() {
     const navigate = useNavigate();
@@ -85,9 +86,20 @@ export function RegistrationsTablePage() {
             {/* Header com filtros */}
             <Card>
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Users className="size-5" />
-                        Matrículas ({filteredData.length})
+                    <CardTitle className="flex items-center gap-2 justify-between">
+                        <div className='flex items-center gap-2'>
+                            <Users className="size-5" />
+                            Matrículas ({filteredData.length})
+                        </div>
+                        <Can I="create" a="Registration">
+                            <Button
+                                onClick={() => navigate('?tab=create')}
+                                className="flex items-center gap-2"
+                            >
+                                <Plus className="size-4" />
+                                Nova Matrícula
+                            </Button>
+                        </Can>
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -186,6 +198,18 @@ export function RegistrationsTablePage() {
                                                 ? "Nenhuma matrícula encontrada com os filtros aplicados"
                                                 : "Nenhuma matrícula encontrada"
                                             }
+                                            {!searchFilter && statusFilter === 'all' && (
+                                                <Can I="create" a="Registration">
+                                                    <br />
+                                                    <Button
+                                                        variant="link"
+                                                        onClick={() => navigate('?tab=create')}
+                                                        className="mt-2"
+                                                    >
+                                                        Criar primeira matrícula
+                                                    </Button>
+                                                </Can>
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 ) : (

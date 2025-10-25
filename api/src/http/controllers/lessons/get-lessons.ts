@@ -34,7 +34,7 @@ export async function getLessons(app: FastifyInstance) {
                     throw new ForbiddenError()
                 }
 
-                const whereClause = {
+                const whereClause: any = {
                     active: true,
                     class: {
                         courses: {
@@ -42,6 +42,19 @@ export async function getLessons(app: FastifyInstance) {
                         }
                     },
                     ...(class_id && { class_id: class_id })
+                }
+
+                // TEACHER e STUDENT veem apenas aulas das suas turmas
+                if (member.role === 'TEACHER' || member.role === 'STUDENT') {
+                    whereClause.class = {
+                        ...whereClause.class,
+                        users_in_class: {
+                            some: {
+                                user_id: userId,
+                                teacher: member.role === 'TEACHER'
+                            }
+                        }
+                    }
                 }
 
                 const lessons = await prisma.lessons.findMany({

@@ -4,12 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { BookOpen, Edit } from 'lucide-react';
+import { BookOpen, Edit, Plus } from 'lucide-react';
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from 'react-router';
 import { getCurrentCompanyId } from '@/lib/company-utils';
 import { formatDate } from '@/lib/utils';
 import { getClass } from '@/services/class';
+import { Can } from '@/lib/Can';
 
 export function ClassTablePage() {
     const navigate = useNavigate();
@@ -48,9 +49,20 @@ export function ClassTablePage() {
             {/* Header */}
             <Card>
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <BookOpen className="size-5" />
-                        Turmas ({data?.length})
+                    <CardTitle className="flex items-center gap-2 justify-between">
+                        <div className='flex items-center gap-2'>
+                            <BookOpen className="size-5" />
+                            Turmas ({data?.length})
+                        </div>
+                        <Can I="create" a="Class">
+                            <Button
+                                onClick={() => navigate('?tab=create')}
+                                className="flex items-center gap-2"
+                            >
+                                <Plus className="size-4" />
+                                Nova Turma
+                            </Button>
+                        </Can>
                     </CardTitle>
                 </CardHeader>
             </Card>
@@ -77,7 +89,17 @@ export function ClassTablePage() {
                                 {data?.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                                            Nenhum curso encontrado
+                                            Nenhuma turma encontrada.
+                                            <Can I="create" a="Class">
+                                                <br />
+                                                <Button
+                                                    variant="link"
+                                                    onClick={() => navigate('?tab=create')}
+                                                    className="mt-2"
+                                                >
+                                                    Criar primeira turma
+                                                </Button>
+                                            </Can>
                                         </TableCell>
                                     </TableRow>
                                 ) : (
@@ -108,7 +130,7 @@ export function ClassTablePage() {
                                                     <DropdownMenuContent align="end">
                                                         <DropdownMenuLabel>Ações</DropdownMenuLabel>
                                                         <DropdownMenuSeparator />
-                                                        <DropdownMenuItem onClick={() => navigate(`/admin/class?tab=edit&id=${classItem.id}`)}>
+                                                        <DropdownMenuItem onClick={() => navigate(`/admin/classes?tab=edit&id=${classItem.id}`)}>
                                                             <Edit className="h-4 w-4 mr-2" />
                                                             Editar
                                                         </DropdownMenuItem>

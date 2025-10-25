@@ -34,10 +34,26 @@ export async function getCourses(app: FastifyInstance) {
                     throw new ForbiddenError()
                 }
 
+                const whereClause: any = {
+                    company_id: company_id,
+                }
+
+                // TEACHER e STUDENT veem apenas cursos das suas turmas
+                if (member.role === 'TEACHER' || member.role === 'STUDENT') {
+                    whereClause.classes = {
+                        some: {
+                            users_in_class: {
+                                some: {
+                                    user_id: userId,
+                                    teacher: member.role === 'TEACHER'
+                                }
+                            }
+                        }
+                    }
+                }
+
                 const courses = await prisma.courses.findMany({
-                    where: {
-                        company_id: company_id,
-                    },
+                    where: whereClause,
                 });
 
                 const mappedCourses = courses.map(course => ({

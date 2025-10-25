@@ -2,7 +2,7 @@ import { useSearchParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { X, Users, Loader2 } from 'lucide-react';
+import { ArrowLeft, Users, Loader2 } from 'lucide-react';
 import { getRegistrationById } from '@/services/registrations/get-registration-by-id';
 import { Badge } from '@/components/ui/badge';
 import { getCurrentCompanyId } from '@/lib/company-utils';
@@ -54,20 +54,26 @@ export function RegistrationsEditPage({ registrationId }: { registrationId: stri
             {/* Header */}
             <Card className='flex justify-between flex-row pr-6'>
                 <CardHeader className='w-full'>
-                    <CardTitle className="flex gap-2">
-                        <Users className="size-5" />
-                        Editar Matrícula
-                        <Badge variant={registration.active ? 'default' : 'destructive'}>
-                            {registration.active ? 'Ativa' : 'Inativa'}
-                        </Badge>
-                    </CardTitle>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setSearchParams({ tab: 'list' })}
+                        >
+                            <ArrowLeft className="w-4 h-4" />
+                        </Button>
+                        <CardTitle className="flex gap-2">
+                            <Users className="size-5" />
+                            Editar Matrícula
+                            <Badge variant={registration.active ? 'default' : 'destructive'}>
+                                {registration.active ? 'Ativa' : 'Inativa'}
+                            </Badge>
+                        </CardTitle>
+                    </div>
                     <CardDescription className="text-muted-foreground">
                         Edite a matrícula do estudante: {registration.user.name}
                     </CardDescription>
                 </CardHeader>
-                <Button variant="outline" size="sm" onClick={() => setSearchParams({ tab: 'list' })}>
-                    <X className="h-4 w-4" />
-                </Button>
             </Card>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

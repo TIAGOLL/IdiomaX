@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { X, BookOpen, Loader2, GraduationCap } from 'lucide-react';
+import { ArrowLeft, BookOpen, Loader2, GraduationCap } from 'lucide-react';
 import { useSearchParams } from 'react-router';
 import { getCourseById } from '@/services/courses';
 import { Badge } from '@/components/ui/badge';
@@ -57,20 +57,26 @@ export function EditCoursePage({ courseId }: { courseId: string }) {
             {/* Header */}
             <Card className='flex justify-between flex-row pr-6'>
                 <CardHeader className='w-full'>
-                    <CardTitle className="flex gap-2">
-                        <BookOpen className="size-5" />
-                        Editar Curso
-                        <Badge variant={course.active ? 'default' : 'destructive'}>
-                            {course.active ? 'Ativo' : 'Inativo'}
-                        </Badge>
-                    </CardTitle>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setSearchParams({ tab: 'list' })}
+                        >
+                            <ArrowLeft className="w-4 h-4" />
+                        </Button>
+                        <CardTitle className="flex gap-2">
+                            <BookOpen className="size-5" />
+                            Editar Curso
+                            <Badge variant={course.active ? 'default' : 'destructive'}>
+                                {course.active ? 'Ativo' : 'Inativo'}
+                            </Badge>
+                        </CardTitle>
+                    </div>
                     <CardDescription className="text-muted-foreground">
                         Edite as informações do curso: {course.name}
                     </CardDescription>
                 </CardHeader>
-                <Button variant="outline" size="sm" onClick={() => setSearchParams({ tab: 'list' })}>
-                    <X className="h-4 w-4" />
-                </Button>
             </Card>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

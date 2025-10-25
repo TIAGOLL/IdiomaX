@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import { getUserProfile } from '@/services/users/get-user-profile';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import nookies from 'nookies';
 import { useNavigate } from 'react-router';
 import { getCompanySubscription } from '@/services/stripe/get-company-subscription';
@@ -26,6 +26,7 @@ type SessionContextType = {
     isInitializingCompany: boolean;
     getCompanyId: () => string | null;
     ability: AppAbility;
+    isReady: boolean; // Indica quando sessão está completamente inicializada
 };
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
@@ -35,10 +36,12 @@ const CURRENT_COMPANY_KEY = 'idiomaX_currentCompanyId';
 
 export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const [currentCompanyMember, setCurrentCompanyMember] = useState<GetProfileResponseType['member_on'][number] | undefined>();
     const [currentRole, setCurrentRole] = useState<string | undefined>();
     const [isInitializingCompany, setIsInitializingCompany] = useState(true);
 
+    // Query do perfil do usuário
     const { data: userProfile, isLoading: isLoadingUserProfile, error } = useQuery({
         queryKey: ['user-session'],
         queryFn: async () => await getUserProfile(),
@@ -46,10 +49,14 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
         enabled: !!nookies.get(null).token,
     });
 
-    // Criar ability baseado no usuário e role atual
+    /**
+     * Criar ability com fallback para guest user
+     * SEMPRE retorna um ability válido, mesmo sem usuário logado
+     * Isso previne erros quando ability é acessado antes do login
+     */
     const ability = useMemo(() => {
         if (!userProfile || !currentRole) {
-            // Retornar ability vazio se não houver usuário
+            // Fallback: ability de guest (permissões mínimas de STUDENT)
             return defineAbilityFor({
                 id: '',
                 role: 'STUDENT' as const
@@ -64,6 +71,18 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
         return defineAbilityFor(user);
     }, [userProfile, currentRole]);
+
+    /**
+     * Indicador global de "prontidão" da sessão
+     * True quando: 
+     * - Não tem token (usuário não logado - pode mostrar login)
+     * - OU tem token e perfil já carregou (usuário logado - pode mostrar app)
+     */
+    const isReady = useMemo(() => {
+        const hasToken = !!nookies.get(null).token;
+        if (!hasToken) return true; // Sem token = pronto para mostrar login
+        return !isLoadingUserProfile; // Com token = espera carregar perfil
+    }, [isLoadingUserProfile]);
 
     const { data: subscription, isLoading: isLoadingSubscription, error: subscriptionError } = useQuery({
         queryKey: ['company-subscription', currentCompanyMember?.company.id, userProfile?.cpf],
@@ -92,14 +111,24 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
         localStorage.removeItem(CURRENT_COMPANY_KEY);
     };
 
-    // Efeito para inicializar a empresa quando o perfil do usuário carrega
+    /**
+     * Efeito para inicializar a empresa quando o perfil do usuário carrega
+     * Também reinicializa se currentRole estiver undefined (caso de re-login)
+     */
     useEffect(() => {
+        // Se não tem perfil ou não tem empresas, marca como não inicializando e sai
         if (!userProfile || userProfile.member_on.length === 0) {
             setIsInitializingCompany(false);
             return;
         }
 
-        // Tenta usar a empresa salva no localStorage
+        // Se já tem currentRole definido e empresa definida, não precisa reinicializar
+        if (currentRole && currentCompanyMember) {
+            setIsInitializingCompany(false);
+            return;
+        }
+
+        // Precisa inicializar/reinicializar a empresa
         const savedCompanyId = getCompanyId();
         let companyToSet: GetProfileResponseType['member_on'][number] | undefined;
 
@@ -118,7 +147,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setCurrentRole(companyToSet.role);
         saveCompanyId(companyToSet.company.id);
         setIsInitializingCompany(false);
-    }, [userProfile]);
+    }, [userProfile, currentRole, currentCompanyMember]);
 
     const token = nookies.get(null).token;
 
@@ -129,11 +158,21 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     };
 
     const logout = () => {
+        // Limpar cookie de autenticação
         nookies.destroy(null, 'token', { path: '/' });
+
+        // Limpar localStorage
         clearSavedCompanyId();
+
+        // Limpar estados locais
         setCurrentCompanyMember(undefined);
         setCurrentRole(undefined);
         setIsInitializingCompany(true);
+
+        // Invalidar todo o cache do React Query para garantir dados frescos no próximo login
+        queryClient.clear();
+
+        // Navegar para login
         navigate('/auth/sign-in');
     };
 
@@ -153,7 +192,8 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
                 isLoadingSubscription,
                 subscriptionError,
                 isInitializingCompany,
-                ability
+                ability,
+                isReady, // Exporta o indicador de prontidão
             }}>
                 {children}
             </SessionContext.Provider>

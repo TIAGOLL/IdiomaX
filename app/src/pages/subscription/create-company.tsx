@@ -56,59 +56,62 @@ export function CreateCompanyPage() {
     });
 
     return (
-        <Card className='flex justify-center items-center sm:w-full'>
-            <form onSubmit={handleSubmit((data) => mutate(data))} className='space-y-4 min-w-4/12'>
-                <CardHeader className='flex items-center space-x-4'>
-                    <div className='flex flex-col items-center justify-center'>
-                        <img src='/images/logo.png' alt='Logo da loja' className='size-12' />
-                    </div>
-                    <div className='flex-col'>
-                        <CardTitle>
-                            Cadastro da Instituição
-                        </CardTitle>
-                        <CardDescription>Preencha os dados da instituição.</CardDescription>
-                    </div>
-                </CardHeader>
-                <CardContent className='grid grid-cols-2 gap-4'>
-                    <div className="col-span-2 space-y-1">
-                        <Label htmlFor='name'>Nome da empresa</Label>
-                        <Input type='text' id='name' {...register('name')} />
-                        <FormMessageError error={errors.name?.message} />
-                    </div>
-                    <div className="col-span-1 space-y-1">
-                        <Label htmlFor='cnpj'>CNPJ</Label>
-                        <Input type='text' id='cnpj' {...register('cnpj')} />
-                        <FormMessageError error={errors.cnpj?.message} />
-                    </div>
-                    <div className="col-span-1 space-y-1">
-                        <Label htmlFor='address'>Endereço</Label>
-                        <Input type='text' id='address' {...register('address')} />
-                        <FormMessageError error={errors.address?.message} />
-                    </div>
-                    <div className="col-span-1 space-y-1">
-                        <Label htmlFor='phone'>Telefone</Label>
-                        <Input type='text' id='phone' {...register('phone')} />
-                        <FormMessageError error={errors.phone?.message} />
-                    </div>
-                </CardContent>
-                <CardFooter className='flex justify-between flex-row-reverse'>
-                    <Button
-                        variant='default'
-                        type='submit'
-                        disabled={isPending}
-                        data-test='signUpSubmitButton'>
-                        Continuar
-                        {isPending ? (
-                            <LoaderIcon className='ml-2 h-4 w-4 animate-spin' />
-                        ) : (
-                            <LogIn className='ml-2 h-4 w-4' />
-                        )}
-                    </Button>
-                    <Button variant='ghost' type='button' onClick={() => navigate('/auth/sign-in')} className='ml-4'>
-                        Já possuo uma conta
-                    </Button>
-                </CardFooter>
-            </form>
-        </Card >
+        <div className='relative flex justify-center min-h-screen items-center w-screen bg-cover bg-right bg-no-repeat' style={{ backgroundImage: "url('/images/bg2.png')" }}>
+            <div className='absolute inset-0 bg-black/70 z-0' />
+            <Card className='flex justify-center items-center z-10 w-auto'>
+                <form onSubmit={handleSubmit((data) => mutate(data))} className='space-y-4 min-w-4/12'>
+                    <CardHeader className='flex items-center space-x-4'>
+                        <div className='flex flex-col items-center justify-center'>
+                            <img src='/images/logo.png' alt='Logo da loja' className='size-12' />
+                        </div>
+                        <div className='flex-col'>
+                            <CardTitle>
+                                Cadastro da Instituição
+                            </CardTitle>
+                            <CardDescription>Preencha os dados da instituição.</CardDescription>
+                        </div>
+                    </CardHeader>
+                    <CardContent className='grid grid-cols-2 gap-4'>
+                        <div className="col-span-2 space-y-1">
+                            <Label htmlFor='name'>Nome da empresa</Label>
+                            <Input type='text' id='name' {...register('name')} />
+                            <FormMessageError error={errors.name?.message} />
+                        </div>
+                        <div className="col-span-1 space-y-1">
+                            <Label htmlFor='cnpj'>CNPJ</Label>
+                            <Input type='text' id='cnpj' {...register('cnpj')} />
+                            <FormMessageError error={errors.cnpj?.message} />
+                        </div>
+                        <div className="col-span-1 space-y-1">
+                            <Label htmlFor='address'>Endereço</Label>
+                            <Input type='text' id='address' {...register('address')} />
+                            <FormMessageError error={errors.address?.message} />
+                        </div>
+                        <div className="col-span-1 space-y-1">
+                            <Label htmlFor='phone'>Telefone</Label>
+                            <Input type='text' id='phone' {...register('phone')} />
+                            <FormMessageError error={errors.phone?.message} />
+                        </div>
+                    </CardContent>
+                    <CardFooter className='flex justify-between flex-row-reverse'>
+                        <Button
+                            variant='default'
+                            type='submit'
+                            disabled={isPending}
+                            data-test='signUpSubmitButton'>
+                            Continuar
+                            {isPending ? (
+                                <LoaderIcon className='ml-2 h-4 w-4 animate-spin' />
+                            ) : (
+                                <LogIn className='ml-2 h-4 w-4' />
+                            )}
+                        </Button>
+                        <Button variant='ghost' type='button' onClick={() => navigate('/auth/sign-in')} className='ml-4'>
+                            Já possuo uma conta
+                        </Button>
+                    </CardFooter>
+                </form>
+            </Card >
+        </div >
     );
 }

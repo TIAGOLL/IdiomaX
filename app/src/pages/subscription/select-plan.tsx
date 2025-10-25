@@ -70,90 +70,93 @@ export function SelectPlanPage() {
     }
 
     return (
-        <form onSubmit={handleSubmit((data) => mutate(data))} className="m-auto">
-            <div className="container">
-                <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 text-center">
-                    <h2 className="text-4xl font-semibold text-pretty lg:text-6xl">
-                        Preços
-                    </h2>
-                    <div className="flex flex-col items-stretch gap-6 md:flex-row">
-                        {products.map((product) => (
-                            <Card
-                                onClick={() => setValue("priceId", product.prices[0]?.id)}
-                                key={product.id}
-                                className={`cursor-pointer flex w-80 flex-col justify-between text-left ${product.prices[0]?.id === watch('priceId') ? 'border-2 border-primary' : ''}`}>
-                                <CardHeader>
-                                    <CardTitle>
-                                        <p>{product.name}</p>
-                                    </CardTitle>
-                                    <Badge>
-                                        {product.description}
-                                    </Badge>
-                                    <div className="flex items-end">
-                                        <span className="text-4xl font-semibold">
-                                            {product.prices[0]?.unit_amount
-                                                ? `R$ ${(Number(product.prices[0].unit_amount) / 100).toFixed(2)}`
-                                                : "--"}
-                                        </span>
-                                        <span className="text-2xl font-semibold text-muted-foreground">
-                                            {product.prices[0]?.recurring?.interval === "year" ? "/ano" : "/mês"}
-                                        </span>
-                                    </div>
-                                </CardHeader>
-                                <CardContent>
-                                    <Separator className="mb-6" />
-                                    <ul className="space-y-4">
-                                        <li className="flex items-center gap-2">
-                                            <CircleCheck className="size-4 text-primary" />
-                                            <span className="text-sm">Gestão completa de estudantes</span>
-                                        </li>
-                                        <li className="flex items-center gap-2">
-                                            <CircleCheck className="size-4 text-primary" />
-                                            <span className="text-sm">Controle de matrículas e mensalidades</span>
-                                        </li>
-                                        <li className="flex items-center gap-2">
-                                            <CircleCheck className="size-4 text-primary" />
-                                            <span className="text-sm">Dashboard administrativo avançado</span>
-                                        </li>
-                                        <li className="flex items-center gap-2">
-                                            <CircleCheck className="size-4 text-primary" />
-                                            <span className="text-sm">Organização de cursos e turmas</span>
-                                        </li>
-                                        <li className="flex items-center gap-2">
-                                            <CircleCheck className="size-4 text-primary" />
-                                            <span className="text-sm">Controle de presença e frequência</span>
-                                        </li>
-                                        <li className="flex items-center gap-2">
-                                            <CircleCheck className="size-4 text-primary" />
-                                            <span className="text-sm">Gestão de professores e horários</span>
-                                        </li>
-                                        <li className="flex items-center gap-2">
-                                            <CircleCheck className="size-4 text-primary" />
-                                            <span className="text-sm">Sistema de tarefas e materiais</span>
-                                        </li>
-                                        <li className="flex items-center gap-2">
-                                            <CircleCheck className="size-4 text-primary" />
-                                            <span className="text-sm">Controle de acesso com permissões</span>
-                                        </li>
-                                    </ul>
-                                </CardContent>
-                                <CardFooter className="mt-auto">
-                                    <Button
-                                        className="w-full"
-                                        onClick={() => setValue("priceId", product.prices[0]?.id || "")}
-                                        variant="default"
-                                    >
-                                        Comprar
-                                        {isPending && <Loader className="ml-2 size-4 animate-spin" />}
-                                    </Button>
-                                </CardFooter>
-                            </Card>
-                        ))}
+        <div className='relative flex justify-center min-h-screen items-center sm:!w-screen bg-cover bg-right bg-no-repeat' style={{ backgroundImage: "url('/images/bg2.png')" }}>
+            <div className='absolute inset-0 bg-black/70 z-0' />
+            <form onSubmit={handleSubmit((data) => mutate(data))} className="m-auto z-10">
+                <div className="container">
+                    <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 text-center">
+                        <h2 className="text-4xl font-semibold text-pretty lg:text-6xl">
+                            Preços
+                        </h2>
+                        <div className="flex flex-col items-stretch gap-6 md:flex-row">
+                            {products.map((product) => (
+                                <Card
+                                    onClick={() => setValue("priceId", product.prices[0]?.id)}
+                                    key={product.id}
+                                    className={`cursor-pointer flex w-80 flex-col justify-between text-left ${product.prices[0]?.id === watch('priceId') ? 'border-2 border-primary' : ''}`}>
+                                    <CardHeader>
+                                        <CardTitle>
+                                            <p>{product.name}</p>
+                                        </CardTitle>
+                                        <Badge>
+                                            {product.description}
+                                        </Badge>
+                                        <div className="flex items-end">
+                                            <span className="text-4xl font-semibold">
+                                                {product.prices[0]?.unit_amount
+                                                    ? `R$ ${(Number(product.prices[0].unit_amount) / 100).toFixed(2)}`
+                                                    : "--"}
+                                            </span>
+                                            <span className="text-2xl font-semibold text-muted-foreground">
+                                                {product.prices[0]?.recurring?.interval === "year" ? "/ano" : "/mês"}
+                                            </span>
+                                        </div>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <Separator className="mb-6" />
+                                        <ul className="space-y-4">
+                                            <li className="flex items-center gap-2">
+                                                <CircleCheck className="size-4 text-primary" />
+                                                <span className="text-sm">Gestão completa de estudantes</span>
+                                            </li>
+                                            <li className="flex items-center gap-2">
+                                                <CircleCheck className="size-4 text-primary" />
+                                                <span className="text-sm">Controle de matrículas e mensalidades</span>
+                                            </li>
+                                            <li className="flex items-center gap-2">
+                                                <CircleCheck className="size-4 text-primary" />
+                                                <span className="text-sm">Dashboard administrativo avançado</span>
+                                            </li>
+                                            <li className="flex items-center gap-2">
+                                                <CircleCheck className="size-4 text-primary" />
+                                                <span className="text-sm">Organização de cursos e turmas</span>
+                                            </li>
+                                            <li className="flex items-center gap-2">
+                                                <CircleCheck className="size-4 text-primary" />
+                                                <span className="text-sm">Controle de presença e frequência</span>
+                                            </li>
+                                            <li className="flex items-center gap-2">
+                                                <CircleCheck className="size-4 text-primary" />
+                                                <span className="text-sm">Gestão de professores e horários</span>
+                                            </li>
+                                            <li className="flex items-center gap-2">
+                                                <CircleCheck className="size-4 text-primary" />
+                                                <span className="text-sm">Sistema de tarefas e materiais</span>
+                                            </li>
+                                            <li className="flex items-center gap-2">
+                                                <CircleCheck className="size-4 text-primary" />
+                                                <span className="text-sm">Controle de acesso com permissões</span>
+                                            </li>
+                                        </ul>
+                                    </CardContent>
+                                    <CardFooter className="mt-auto">
+                                        <Button
+                                            className="w-full"
+                                            onClick={() => setValue("priceId", product.prices[0]?.id || "")}
+                                            variant="default"
+                                        >
+                                            Comprar
+                                            {isPending && <Loader className="ml-2 size-4 animate-spin" />}
+                                        </Button>
+                                    </CardFooter>
+                                </Card>
+                            ))}
 
-                        <FormMessageError error={errors?.priceId?.message} />
+                            <FormMessageError error={errors?.priceId?.message} />
+                        </div>
                     </div>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     );
 };

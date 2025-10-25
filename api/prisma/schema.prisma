@@ -302,7 +302,7 @@ model registrations {
   tasks_submitted     tasks_submitted[]
   companies           companies             @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "companies_fk")
   users               users                 @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_fk")
-  courses             courses               @relation(fields: [course_id], references: [id])
+  course              courses               @relation(fields: [course_id], references: [id])
 
   creator users? @relation("RegistrationsCreatedBy", fields: [created_by], references: [id])
   updater users? @relation("RegistrationsUpdatedBy", fields: [updated_by], references: [id])

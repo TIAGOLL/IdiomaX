@@ -121,7 +121,6 @@ export function PaidRoute() {
 
   const breadcrumbItems = generateBreadcrumbItems();
 
-  // Se não tem assinatura ativa, mostrar tela apropriada baseada na role
   if (!subscriptionIsActive) {
     // ADMIN pode gerenciar assinatura
     if (currentRole === 'ADMIN') {
@@ -180,8 +179,6 @@ export function PaidRoute() {
       </SidebarProvider>
     );
   }
-
-  // Assinatura ativa - renderizar conteúdo normalmente
 
   return (
     <SidebarProvider>

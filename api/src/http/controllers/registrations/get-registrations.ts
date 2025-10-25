@@ -34,11 +34,49 @@ export async function getRegistrations(app: FastifyInstance) {
                     throw new ForbiddenError()
                 }
 
+                const whereClause: any = {
+                    company_id: company_id,
+                    active: true,
+                }
+
+                // STUDENT vê apenas suas próprias matrículas
+                if (member.role === 'STUDENT') {
+                    whereClause.user_id = userId
+                }
+
+                // TEACHER vê matrículas dos alunos das suas turmas
+                if (member.role === 'TEACHER') {
+                    // Buscar IDs dos alunos das turmas do professor
+                    const teacherClasses = await prisma.users_in_class.findMany({
+                        where: {
+                            user_id: userId,
+                            teacher: true
+                        },
+                        select: {
+                            class_id: true
+                        }
+                    })
+
+                    const classIds = teacherClasses.map(tc => tc.class_id)
+
+                    // Buscar IDs dos alunos dessas turmas
+                    const studentsInClasses = await prisma.users_in_class.findMany({
+                        where: {
+                            class_id: { in: classIds },
+                            teacher: false
+                        },
+                        select: {
+                            user_id: true
+                        }
+                    })
+
+                    const studentIds = studentsInClasses.map(s => s.user_id)
+
+                    whereClause.user_id = { in: studentIds }
+                }
+
                 const registrations = await prisma.registrations.findMany({
-                    where: {
-                        company_id: company_id,
-                        active: true,
-                    },
+                    where: whereClause,
                     include: {
                         users: {
                             select: {

@@ -35,7 +35,7 @@ export async function getUsers(app: FastifyInstance) {
                     throw new ForbiddenError()
                 }
 
-                const whereClause: Record<string, unknown> = {
+                const whereClause: any = {
                     member_on: {
                         some: {
                             company_id,
@@ -43,6 +43,42 @@ export async function getUsers(app: FastifyInstance) {
                         }
                     }
                 };
+
+                // TEACHER vê apenas alunos das suas turmas
+                if (member.role === 'TEACHER') {
+                    // Buscar turmas do professor
+                    const teacherClasses = await prisma.users_in_class.findMany({
+                        where: {
+                            user_id: userId,
+                            teacher: true
+                        },
+                        select: {
+                            class_id: true
+                        }
+                    })
+
+                    const classIds = teacherClasses.map(tc => tc.class_id)
+
+                    // Buscar IDs dos alunos dessas turmas
+                    const studentsInClasses = await prisma.users_in_class.findMany({
+                        where: {
+                            class_id: { in: classIds },
+                            teacher: false
+                        },
+                        select: {
+                            user_id: true
+                        }
+                    })
+
+                    const studentIds = studentsInClasses.map(s => s.user_id)
+
+                    whereClause.id = { in: studentIds }
+                }
+
+                // STUDENT vê apenas ele mesmo
+                if (member.role === 'STUDENT') {
+                    whereClause.id = userId
+                }
 
                 if (search) {
                     whereClause.OR = [

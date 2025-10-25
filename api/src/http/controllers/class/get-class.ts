@@ -35,12 +35,25 @@ export async function getClass(app: FastifyInstance) {
                     throw new ForbiddenError()
                 }
 
-                const ResClass = await prisma.classes.findMany({
-                    where: {
-                        courses: {
-                            company_id: company_id
+                // Filtro baseado no role do usuário
+                const whereClause: any = {
+                    courses: {
+                        company_id: company_id
+                    }
+                }
+
+                // TEACHER e STUDENT veem apenas suas turmas
+                if (member.role === 'TEACHER' || member.role === 'STUDENT') {
+                    whereClause.users_in_class = {
+                        some: {
+                            user_id: userId,
+                            teacher: member.role === 'TEACHER' // true para professor, false para aluno
                         }
-                    },
+                    }
+                }
+
+                const ResClass = await prisma.classes.findMany({
+                    where: whereClause,
                     include: {
                         _count: { select: { users_in_class: true } },
                         courses: true,

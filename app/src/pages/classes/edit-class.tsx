@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { BookOpen, GraduationCap, Loader2, X } from 'lucide-react';
+import { BookOpen, GraduationCap, Loader2, ArrowLeft } from 'lucide-react';
 import { getCurrentCompanyId } from '@/lib/company-utils';
 import { getClassById } from '@/services/class/get-class-by-id';
 import { Badge } from '@/components/ui/badge';
@@ -46,20 +46,26 @@ export function EditClassPage({ classId }: { classId: string }) {
             {/* Header */}
             <Card className='flex justify-between flex-row pr-6'>
                 <CardHeader className='w-full'>
-                    <CardTitle className="flex gap-2">
-                        <BookOpen className="size-5" />
-                        Editar Turma
-                        <Badge variant={data.active ? 'default' : 'destructive'}>
-                            {data.active ? 'Ativo' : 'Inativo'}
-                        </Badge>
-                    </CardTitle>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setSearchParams({ tab: 'list' })}
+                        >
+                            <ArrowLeft className="w-4 h-4" />
+                        </Button>
+                        <CardTitle className="flex gap-2">
+                            <BookOpen className="size-5" />
+                            Editar Turma
+                            <Badge variant={data.active ? 'default' : 'destructive'}>
+                                {data.active ? 'Ativo' : 'Inativo'}
+                            </Badge>
+                        </CardTitle>
+                    </div>
                     <CardDescription className="text-muted-foreground">
                         Edite as informações do curso: {data.name}
                     </CardDescription>
                 </CardHeader>
-                <Button variant="outline" size="sm" onClick={() => setSearchParams({ tab: 'list' })}>
-                    <X className="h-4 w-4" />
-                </Button>
             </Card>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

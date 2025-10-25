@@ -49,7 +49,7 @@ export async function getRegistrationById(app: FastifyInstance) {
                                 email: true,
                             }
                         },
-                        courses: {
+                        course: {
                             select: {
                                 id: true,
                                 name: true,
@@ -96,8 +96,8 @@ export async function getRegistrationById(app: FastifyInstance) {
                         email: registration.users.email,
                     },
                     course: {
-                        id: registration.courses.id,
-                        name: registration.courses.name,
+                        id: registration.course.id,
+                        name: registration.course.name,
                     },
                     monthly_fees: registration.monthly_fee.map(fee => ({
                         id: fee.id,

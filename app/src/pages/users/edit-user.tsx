@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { X, Users, Loader2, } from 'lucide-react';
+import { ArrowLeft, Users, Loader2, } from 'lucide-react';
 import { useSessionContext } from '@/contexts/session-context';
 import { AlterRoleForm } from './components/alter-role-form';
 import { DeactivateUserForm } from './components/deactivate-user-form';
@@ -61,19 +61,25 @@ export function EditUserPage() {
             {/* Header */}
             <Card className='flex justify-between flex-row pr-6'>
                 <CardHeader className='w-full'>
-                    <CardTitle className="flex gap-2">
-                        Editar Usuário
-                        <Badge variant={user.active ? 'default' : 'destructive'}>
-                            {user.active ? 'Ativo' : 'Inativo'}
-                        </Badge>
-                    </CardTitle>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setSearchParams({ tab: 'list' })}
+                        >
+                            <ArrowLeft className="w-4 h-4" />
+                        </Button>
+                        <CardTitle className="flex gap-2">
+                            Editar Usuário
+                            <Badge variant={user.active ? 'default' : 'destructive'}>
+                                {user.active ? 'Ativo' : 'Inativo'}
+                            </Badge>
+                        </CardTitle>
+                    </div>
                     <CardDescription className="text-muted-foreground">
                         Edite as informações do usuário: {user.name}
                     </CardDescription>
                 </CardHeader>
-                <Button variant="outline" size="sm" onClick={() => setSearchParams({ tab: 'list' })}>
-                    <X className="h-4 w-4" />
-                </Button>
             </Card>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

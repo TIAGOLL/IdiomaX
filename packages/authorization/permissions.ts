@@ -31,20 +31,14 @@ export const permissions: Record<Role, PermissionsByRole> = {
         can('get', 'Member') // Ver membros da empresa
 
         // === GESTÃO ACADÊMICA ===
-        can(['get', 'create', 'update', 'delete'], 'Course') // Gerenciar cursos
-        can(['get', 'create', 'update', 'delete'], 'Level') // Gerenciar níveis
-        can(['get', 'create', 'update', 'delete'], 'Discipline') // Gerenciar disciplinas
+        can(['get'], 'Course') // Gerenciar cursos
+        can(['get'], 'Level') // Gerenciar níveis
+        can(['get'], 'Discipline') // Gerenciar disciplinas
 
         // === GESTÃO DE TURMAS ===
-        can(['get', 'create', 'update', 'delete'], 'Classroom') // Gerenciar salas
-        can(['get', 'create', 'update', 'delete'], 'Class') // Gerenciar turmas
+        can(['get'], 'Classroom') // Gerenciar salas
+        can(['get'], 'Class') // Gerenciar turmas
         can(['get', 'create', 'update', 'delete'], 'Lesson') // Gerenciar aulas
-
-        // === GESTÃO DE MATRÍCULAS ===
-        can(['get', 'create', 'update'], 'Registration') // Matricular e gerenciar alunos
-
-        // === GESTÃO FINANCEIRA ===
-        can(['get', 'update'], 'MonthlyFee') // Ver e marcar mensalidades como pagas
 
         // === GESTÃO DE TAREFAS ===
         can(['get', 'create', 'update', 'delete', 'grade'], 'Task') // Gerenciar e corrigir tarefas
@@ -54,9 +48,6 @@ export const permissions: Record<Role, PermissionsByRole> = {
 
         // === CONTROLE DE PRESENÇA ===
         can(['get', 'create', 'update', 'delete', 'mark'], 'Presence') // Controlar presença
-
-        // === NOTIFICAÇÕES ===
-        can(['get', 'send', 'receive'], 'Notification') // Gerenciar notificações
     },
 
     /**
@@ -68,23 +59,14 @@ export const permissions: Record<Role, PermissionsByRole> = {
         can('get', 'User') // Ver seu próprio perfil
         can('update', 'User') // Atualizar seus dados (limitado no frontend)
 
-        // === VISUALIZAÇÃO DA EMPRESA ===
-        can('get', 'Company') // Ver dados da escola
-        can('get', 'Member') // Ver professores e staff
-
         // === VISUALIZAÇÃO ACADÊMICA ===
         can('get', 'Course') // Ver cursos disponíveis
         can('get', 'Level') // Ver níveis
         can('get', 'Discipline') // Ver disciplinas
-        can('get', 'Classroom') // Ver salas de aula
         can('get', 'Class') // Ver suas turmas
 
-        // === GESTÃO DE MATRÍCULA ===
-        can(['get', 'create'], 'Registration') // Ver suas matrículas e se matricular
-
         // === GESTÃO FINANCEIRA ===
-        can(['get', 'pay'], 'MonthlyFee') // Ver e pagar suas mensalidades
-        can('manage', 'Billing') // Gerenciar assinatura e pagamentos Stripe
+        can(['get'], 'MonthlyFee') // Ver e pagar suas mensalidades
 
         // === TAREFAS ===
         can(['get', 'submit'], 'Task') // Ver e entregar tarefas
@@ -94,9 +76,6 @@ export const permissions: Record<Role, PermissionsByRole> = {
 
         // === PRESENÇA ===
         can('get', 'Presence') // Ver sua frequência
-
-        // === RELATÓRIOS ===
-        can('get', 'Report') // Ver seus relatórios de notas/frequência
 
         // === NOTIFICAÇÕES ===
         can(['get', 'receive'], 'Notification') // Receber notificações

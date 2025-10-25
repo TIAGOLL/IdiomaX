@@ -6,52 +6,51 @@ import { ThemeProvider } from './components/ui/theme-provider';
 import { RoutesApp } from './routes/index';
 import { Toaster } from 'sonner';
 import { SessionProvider, useSessionContext } from './contexts/session-context';
-import { AbilityContext } from './lib/Can';
-import { defineAbilityFor } from '@idiomax/authorization';
-import { useEffect, useState } from 'react';
-import type { AppAbility } from '@idiomax/authorization';
+import { GlobalLoading } from './components/global-loading';
 
+// QueryClient criado uma única vez (persiste entre re-renders)
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutos
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+/**
+ * Componente interno que espera sessão estar pronta
+ * Mostra loading enquanto inicializa, previne flash de conteúdo
+ */
 function AppContent() {
-  const { userProfile, currentCompanyMember } = useSessionContext();
-  const [ability, setAbility] = useState<AppAbility | null>();
+  const { isReady, isLoadingUserProfile } = useSessionContext();
 
-  useEffect(() => {
-    if (userProfile && currentCompanyMember) {
-      const user = {
-        id: userProfile.id,
-        role: currentCompanyMember.role
-      };
-      const newAbility = defineAbilityFor(user);
-      setAbility(newAbility);
-    }
-  }, [userProfile, currentCompanyMember]);
-
-  if (!ability) {
-    return null; // Ou um loader
+  // Mostra loading enquanto inicializa sessão
+  if (!isReady || isLoadingUserProfile) {
+    return <GlobalLoading />;
   }
 
   return (
-    <AbilityContext.Provider value={ability}>
-      <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
-        <Toaster />
-        <SpeedInsights />
-        <Analytics />
-      </ThemeProvider>
-    </AbilityContext.Provider>
+    <>
+      <Toaster />
+      <SpeedInsights />
+      <Analytics />
+      <RoutesApp />
+    </>
   );
 }
 
 export function App() {
-  const queryClient = new QueryClient();
-
   return (
     <BrowserRouter>
-      <SessionProvider>
-        <QueryClientProvider client={queryClient}>
-          <AppContent />
-          <RoutesApp />
-        </QueryClientProvider>
-      </SessionProvider>
+      <QueryClientProvider client={queryClient}>
+        <SessionProvider>
+          <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
+            <AppContent />
+          </ThemeProvider>
+        </SessionProvider>
+      </QueryClientProvider>
     </BrowserRouter>
   );
 }
