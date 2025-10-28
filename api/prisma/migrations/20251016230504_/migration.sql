@@ -4,8 +4,8 @@
   - You are about to drop the `tasks_deliveries` table. If the table is not empty, all the data it contains will be lost.
 
 */
--- DropForeignKey
-ALTER TABLE "public"."registrations" DROP CONSTRAINT "courses_fk";
+-- DropForeignKey (se existir)
+ALTER TABLE "public"."registrations" DROP CONSTRAINT IF EXISTS "courses_fk";
 
 -- DropForeignKey
 ALTER TABLE "public"."tasks_deliveries" DROP CONSTRAINT "tasks_deliveries_created_by_fkey";

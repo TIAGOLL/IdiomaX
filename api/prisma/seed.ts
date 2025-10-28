@@ -597,9 +597,10 @@ async function main() {
                 data: {
                     id,
                     title: `Tarefa ${i}`,
+                    value: 10,
                     description: `Descrição da tarefa ${i}`,
                     discipline_id: randomFromArray(disciplines),
-                    due_date: randomDate(new Date("2025-09-15"), new Date("2025-12-15")),
+                    submit_date: randomDate(new Date("2025-09-15"), new Date("2025-12-15")),
                     created_at: now,
                     updated_at: now,
                     created_by: ownerId,

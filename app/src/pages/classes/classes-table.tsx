@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { BookOpen, Edit, Plus } from 'lucide-react';
+import { BookOpen, BookOpenTextIcon, Edit, Plus } from 'lucide-react';
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from 'react-router';
 import { getCurrentCompanyId } from '@/lib/company-utils';
@@ -12,7 +12,7 @@ import { formatDate } from '@/lib/utils';
 import { getClass } from '@/services/class';
 import { Can } from '@/lib/Can';
 
-export function ClassTablePage() {
+export function ClassesTablePage() {
     const navigate = useNavigate();
 
     const { data, isPending, error } = useQuery({
@@ -130,10 +130,18 @@ export function ClassTablePage() {
                                                     <DropdownMenuContent align="end">
                                                         <DropdownMenuLabel>Ações</DropdownMenuLabel>
                                                         <DropdownMenuSeparator />
-                                                        <DropdownMenuItem onClick={() => navigate(`/admin/classes?tab=edit&id=${classItem.id}`)}>
-                                                            <Edit className="h-4 w-4 mr-2" />
-                                                            Editar
-                                                        </DropdownMenuItem>
+                                                        <Can I="update" a="Class">
+                                                            <DropdownMenuItem onClick={() => navigate(`/admin/classes?tab=edit&id=${classItem.id}`)}>
+                                                                <Edit className="h-4 w-4 mr-2" />
+                                                                Editar
+                                                            </DropdownMenuItem>
+                                                        </Can>
+                                                        <Can I="create" a="Task">
+                                                            <DropdownMenuItem onClick={() => navigate(`/admin/tasks?tab=create&id=${classItem.id}`)}>
+                                                                <BookOpenTextIcon className="h-4 w-4 mr-2" />
+                                                                Criar atividade
+                                                            </DropdownMenuItem>
+                                                        </Can>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
                                             </TableCell>

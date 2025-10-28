@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router";
-import { ClassTablePage } from "./class-table";
+import { ClassesTablePage } from "./classes-table";
 import { CreateClassPage } from "./create-class";
 import { EditClassPage } from "./edit-class";
 import { Can } from '@/lib/Can';
@@ -19,7 +19,7 @@ export function ClassesPage() {
 
             {activeTab === 'list' && (
                 <Can I="get" a="Class">
-                    <ClassTablePage />
+                    <ClassesTablePage />
                 </Can>
             )}
 

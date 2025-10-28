@@ -309,13 +309,13 @@ model registrations {
 }
 
 model tasks {
-  id            String    @id @default(uuid()) @db.VarChar(256)
+  id            String   @id @default(uuid()) @db.VarChar(256)
   file          Bytes?
-  score         Float?
-  description   String?   @db.VarChar(1024)
-  title         String    @db.VarChar(256)
-  discipline_id String    @db.VarChar(256)
-  due_date      DateTime? @db.Time(3)
+  value         Float
+  description   String?  @db.VarChar(1024)
+  title         String   @db.VarChar(256)
+  discipline_id String   @db.VarChar(256)
+  submit_date   DateTime
 
   created_at DateTime @default(now())
   created_by String   @db.VarChar(256)

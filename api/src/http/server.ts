@@ -95,6 +95,13 @@ import { editRegistration } from './controllers/registrations/edit-registration'
 import { deleteRegistration } from './controllers/registrations/delete-registration'
 import { registerMonthlyFeePayment } from './controllers/registrations/register-monthly-fee-payment'
 
+// Tasks controllers
+import { getTasks } from './controllers/tasks/get-tasks'
+import { getTaskById } from './controllers/tasks/get-task-by-id'
+import { createTask } from './controllers/tasks/create-task'
+import { updateTask } from './controllers/tasks/update-task'
+import { deleteTask } from './controllers/tasks/delete-task'
+
 dotenv.config()
 
 export const env = envSchema.safeParse(process.env)
@@ -234,6 +241,13 @@ app.register(createRegistration);
 app.register(editRegistration);
 app.register(deleteRegistration);
 app.register(registerMonthlyFeePayment);
+
+// Tasks routes
+app.register(getTasks);
+app.register(getTaskById);
+app.register(createTask);
+app.register(updateTask);
+app.register(deleteTask);
 
 
 app.listen({ port: ENV.PORT, host: '0.0.0.0' }).then(() => {
