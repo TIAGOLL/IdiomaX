@@ -152,7 +152,7 @@ export function RegistrationsTablePage() {
                 <CardContent className="p-0">
                     <div className="max-h-[31rem] overflow-y-auto">
                         <Table>
-                            <TableHeader className="sticky top-0 bg-background border-b">
+                            <TableHeader className="sticky top-0 border-b">
                                 <TableRow>
                                     <TableHead>Estudante</TableHead>
                                     <TableHead>

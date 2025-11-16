@@ -21,6 +21,8 @@ import { createCompany } from './controllers/companies/create-company'
 import { getCompanyById } from './controllers/companies/get-company-by-id'
 import { getUserById } from './controllers/users/get-user-by-id'
 import { AdminDashboard } from './controllers/dashboard/admin'
+import { StudentDashboard } from './controllers/dashboard/student'
+import { TeacherDashboard } from './controllers/dashboard/teacher'
 import { CreateCheckoutSession } from './controllers/stripe/create-checkout-session'
 import { envSchema } from '@idiomax/validation-schemas/env'
 import { StripeWebHooks } from './controllers/stripe/stripe-web-hooks'
@@ -162,6 +164,8 @@ app.register(getCompanyById);
 app.register(CreateCheckoutSession);
 app.register(getUserById);
 app.register(AdminDashboard);
+app.register(StudentDashboard);
+app.register(TeacherDashboard);
 app.register(StripeWebHooks);
 app.register(CreateSubscription);
 app.register(GetProducts);

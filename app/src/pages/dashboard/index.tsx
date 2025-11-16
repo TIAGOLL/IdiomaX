@@ -1,4 +1,6 @@
 import { AdminDashboard } from "./admin";
+import { StudentDashboard } from "./student";
+import { TeacherDashboard } from "./teacher";
 import { useSessionContext } from "@/contexts/session-context";
 import { Can } from '@/lib/Can';
 
@@ -12,6 +14,12 @@ export function DashboardPage() {
                 <Can I="manage" a="all">
                     <AdminDashboard />
                 </Can>
+            )}
+            {currentRole === 'STUDENT' && (
+                <StudentDashboard />
+            )}
+            {currentRole === 'TEACHER' && (
+                <TeacherDashboard />
             )}
         </div>
     );

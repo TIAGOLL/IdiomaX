@@ -1,4 +1,4 @@
-import { type LucideIcon } from "lucide-react"
+import { LayoutDashboardIcon, type LucideIcon } from "lucide-react"
 
 import {
     SidebarGroup,
@@ -64,6 +64,20 @@ export function NavMain({
                         </SidebarMenuItem>
                     )
                 })}
+                <SidebarMenuItem>
+                    <SidebarMenuButton
+                        asChild
+                        tooltip={<LayoutDashboardIcon />}
+                        className={cn(
+                            isItemActive("/notes") && buttonVariants({ variant: "default", size: "sm" }), "justify-start"
+                        )}
+                    >
+                        <NavLink to="/notes">
+                            <LayoutDashboardIcon />
+                            <span>Notas</span>
+                        </NavLink>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
             </SidebarMenu>
         </SidebarGroup>
     )

@@ -10,10 +10,9 @@ export function getNavigationData(ability?: AppAbility) {
     // Função helper para verificar se deve mostrar o item baseado nas permissões
     const shouldShowItem = (permissions: NavigationPermission[]) => {
         if (!ability) return false;
-
-        // Se o usuário tem pelo menos uma das permissões necessárias, mostra o item
+        if (permissions.length === 0) return true;
+        
         return permissions.some(({ action, subject }) => {
-            // Usar verificação genérica para evitar problemas de tipo
             try {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 return (ability as any).can(action, subject);
@@ -30,7 +29,6 @@ export function getNavigationData(ability?: AppAbility) {
             breadcrumbKey: "admin",
             to: "/",
             permissions: [
-                { action: 'manage', subject: 'all' }
             ]
         },
         {
