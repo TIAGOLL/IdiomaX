@@ -33,8 +33,8 @@ export const GetClassByIdApiResponseSchema = z.object({
     class_days: z.array(z.object({
         id: z.string(),
         week_date: WeekDaysEnum,
-        start_time: z.date(),
-        end_time: z.date(),
+        start_time: z.number(),
+        end_time: z.number(),
     })).optional(),
     users_in_class: z.array(
         z.object({
