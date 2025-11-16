@@ -19,14 +19,14 @@ CREATE TYPE "public"."stripe_subscription_status" AS ENUM ('trialing', 'active',
 -- CreateTable
 CREATE TABLE "public"."classes" (
     "id" VARCHAR(256) NOT NULL,
-    "name" VARCHAR(256) NOT NULL,
-    "vacancies" INTEGER NOT NULL,
-    "course_id" VARCHAR(256) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "created_by" VARCHAR(256) NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "updated_by" VARCHAR(256) NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
+    "course_id" VARCHAR(256) NOT NULL,
+    "name" VARCHAR(256) NOT NULL,
+    "vacancies" INTEGER NOT NULL,
 
     CONSTRAINT "classes_pkey" PRIMARY KEY ("id")
 );
@@ -35,14 +35,14 @@ CREATE TABLE "public"."classes" (
 CREATE TABLE "public"."class_days" (
     "id" VARCHAR(256) NOT NULL,
     "week_date" "public"."WeekDays" NOT NULL,
-    "start_time" TIME(3) NOT NULL,
-    "end_time" TIME(3) NOT NULL,
     "class_id" VARCHAR(256) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "created_by" VARCHAR(256) NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "updated_by" VARCHAR(256) NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
+    "end_time" INTEGER NOT NULL,
+    "start_time" INTEGER NOT NULL,
 
     CONSTRAINT "class_days_pkey" PRIMARY KEY ("id")
 );
@@ -183,12 +183,12 @@ CREATE TABLE "public"."presence_lists" (
     "id" TEXT NOT NULL,
     "is_present" BOOLEAN NOT NULL,
     "user_id" TEXT NOT NULL,
-    "lesson_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "created_by" VARCHAR(256) NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "updated_by" VARCHAR(256) NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
+    "lesson_id" TEXT NOT NULL,
 
     CONSTRAINT "presence_lists_pkey" PRIMARY KEY ("id")
 );
@@ -212,19 +212,19 @@ CREATE TABLE "public"."records_of_students" (
 CREATE TABLE "public"."registrations" (
     "id" VARCHAR(256) NOT NULL,
     "start_date" TIMESTAMP(3) NOT NULL,
-    "end_date" TIMESTAMP(3) NOT NULL,
     "monthly_fee_amount" DECIMAL(20,2) NOT NULL DEFAULT 0,
     "locked" BOOLEAN NOT NULL DEFAULT false,
     "completed" BOOLEAN NOT NULL DEFAULT false,
     "user_id" VARCHAR(256) NOT NULL,
     "company_id" VARCHAR(256) NOT NULL,
-    "course_id" VARCHAR(256) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "created_by" VARCHAR(256) NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "updated_by" VARCHAR(256) NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
+    "end_date" TIMESTAMP(3) NOT NULL,
     "discount_payment_before_due_date" DECIMAL(10,2) NOT NULL DEFAULT 0,
+    "course_id" VARCHAR(256) NOT NULL,
 
     CONSTRAINT "registrations_pkey" PRIMARY KEY ("id")
 );
@@ -233,11 +233,11 @@ CREATE TABLE "public"."registrations" (
 CREATE TABLE "public"."tasks" (
     "id" VARCHAR(256) NOT NULL,
     "file" BYTEA,
-    "value" DOUBLE PRECISION NOT NULL,
+    "score" DOUBLE PRECISION,
     "description" VARCHAR(1024),
     "title" VARCHAR(256) NOT NULL,
     "discipline_id" VARCHAR(256) NOT NULL,
-    "submit_date" TIME(3) NOT NULL,
+    "due_date" TIME(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "created_by" VARCHAR(256) NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -255,6 +255,7 @@ CREATE TABLE "public"."tasks_submitted" (
     "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "file" BYTEA,
     "link" VARCHAR(512),
+    "grade" INTEGER,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "created_by" VARCHAR(256) NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -443,22 +444,22 @@ CREATE UNIQUE INDEX "users_in_class_class_id_user_id_key" ON "public"."users_in_
 CREATE UNIQUE INDEX "stripe_company_subscriptions_company_customer_id_key" ON "public"."stripe_company_subscriptions"("company_customer_id");
 
 -- AddForeignKey
-ALTER TABLE "public"."classes" ADD CONSTRAINT "courses_fk" FOREIGN KEY ("course_id") REFERENCES "public"."courses"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
-
--- AddForeignKey
 ALTER TABLE "public"."classes" ADD CONSTRAINT "classes_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."classes" ADD CONSTRAINT "classes_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."class_days" ADD CONSTRAINT "class_fk" FOREIGN KEY ("class_id") REFERENCES "public"."classes"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+ALTER TABLE "public"."classes" ADD CONSTRAINT "courses_fk" FOREIGN KEY ("course_id") REFERENCES "public"."courses"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "public"."class_days" ADD CONSTRAINT "class_days_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."class_days" ADD CONSTRAINT "class_days_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."class_days" ADD CONSTRAINT "class_fk" FOREIGN KEY ("class_id") REFERENCES "public"."classes"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "public"."lessons" ADD CONSTRAINT "class_fk" FOREIGN KEY ("class_id") REFERENCES "public"."classes"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
@@ -470,13 +471,13 @@ ALTER TABLE "public"."lessons" ADD CONSTRAINT "lessons_created_by_fkey" FOREIGN 
 ALTER TABLE "public"."lessons" ADD CONSTRAINT "lessons_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."classrooms" ADD CONSTRAINT "companies_fk" FOREIGN KEY ("company_id") REFERENCES "public"."companies"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
-
--- AddForeignKey
 ALTER TABLE "public"."classrooms" ADD CONSTRAINT "classrooms_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."classrooms" ADD CONSTRAINT "classrooms_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."classrooms" ADD CONSTRAINT "companies_fk" FOREIGN KEY ("company_id") REFERENCES "public"."companies"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "public"."configs" ADD CONSTRAINT "companies_fk" FOREIGN KEY ("company_id") REFERENCES "public"."companies"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -497,10 +498,10 @@ ALTER TABLE "public"."courses" ADD CONSTRAINT "courses_created_by_fkey" FOREIGN 
 ALTER TABLE "public"."courses" ADD CONSTRAINT "courses_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."disciplines" ADD CONSTRAINT "disciplines_level_id_fkey" FOREIGN KEY ("level_id") REFERENCES "public"."levels"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."disciplines" ADD CONSTRAINT "disciplines_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."disciplines" ADD CONSTRAINT "disciplines_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."disciplines" ADD CONSTRAINT "disciplines_level_id_fkey" FOREIGN KEY ("level_id") REFERENCES "public"."levels"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."disciplines" ADD CONSTRAINT "disciplines_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -524,19 +525,16 @@ ALTER TABLE "public"."materials" ADD CONSTRAINT "materials_created_by_fkey" FORE
 ALTER TABLE "public"."materials" ADD CONSTRAINT "materials_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."monthly_fees" ADD CONSTRAINT "registrations_fk" FOREIGN KEY ("registration_id") REFERENCES "public"."registrations"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
-
--- AddForeignKey
 ALTER TABLE "public"."monthly_fees" ADD CONSTRAINT "monthly_fees_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."monthly_fees" ADD CONSTRAINT "monthly_fees_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."presence_lists" ADD CONSTRAINT "lessons_fk" FOREIGN KEY ("lesson_id") REFERENCES "public"."lessons"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+ALTER TABLE "public"."monthly_fees" ADD CONSTRAINT "registrations_fk" FOREIGN KEY ("registration_id") REFERENCES "public"."registrations"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "public"."presence_lists" ADD CONSTRAINT "users_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+ALTER TABLE "public"."presence_lists" ADD CONSTRAINT "lessons_fk" FOREIGN KEY ("lesson_id") REFERENCES "public"."lessons"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "public"."presence_lists" ADD CONSTRAINT "presence_lists_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -545,7 +543,7 @@ ALTER TABLE "public"."presence_lists" ADD CONSTRAINT "presence_lists_created_by_
 ALTER TABLE "public"."presence_lists" ADD CONSTRAINT "presence_lists_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."records_of_students" ADD CONSTRAINT "registrations_fk" FOREIGN KEY ("registration_id") REFERENCES "public"."registrations"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+ALTER TABLE "public"."presence_lists" ADD CONSTRAINT "users_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "public"."records_of_students" ADD CONSTRAINT "records_of_students_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -554,10 +552,10 @@ ALTER TABLE "public"."records_of_students" ADD CONSTRAINT "records_of_students_c
 ALTER TABLE "public"."records_of_students" ADD CONSTRAINT "records_of_students_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."registrations" ADD CONSTRAINT "companies_fk" FOREIGN KEY ("company_id") REFERENCES "public"."companies"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "public"."records_of_students" ADD CONSTRAINT "registrations_fk" FOREIGN KEY ("registration_id") REFERENCES "public"."registrations"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "public"."registrations" ADD CONSTRAINT "users_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+ALTER TABLE "public"."registrations" ADD CONSTRAINT "companies_fk" FOREIGN KEY ("company_id") REFERENCES "public"."companies"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "public"."registrations" ADD CONSTRAINT "registrations_course_id_fkey" FOREIGN KEY ("course_id") REFERENCES "public"."courses"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -569,6 +567,9 @@ ALTER TABLE "public"."registrations" ADD CONSTRAINT "registrations_created_by_fk
 ALTER TABLE "public"."registrations" ADD CONSTRAINT "registrations_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "public"."registrations" ADD CONSTRAINT "users_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+
+-- AddForeignKey
 ALTER TABLE "public"."tasks" ADD CONSTRAINT "disciplines_fk" FOREIGN KEY ("discipline_id") REFERENCES "public"."disciplines"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
@@ -578,19 +579,16 @@ ALTER TABLE "public"."tasks" ADD CONSTRAINT "tasks_created_by_fkey" FOREIGN KEY 
 ALTER TABLE "public"."tasks" ADD CONSTRAINT "tasks_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "public"."tasks_submitted" ADD CONSTRAINT "tasks_submitted_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "public"."tasks_submitted" ADD CONSTRAINT "tasks_submitted_registration_id_fkey" FOREIGN KEY ("registration_id") REFERENCES "public"."registrations"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "public"."tasks_submitted" ADD CONSTRAINT "tasks_submitted_task_id_fkey" FOREIGN KEY ("task_id") REFERENCES "public"."tasks"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "public"."tasks_submitted" ADD CONSTRAINT "tasks_submitted_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "public"."tasks_submitted" ADD CONSTRAINT "tasks_submitted_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."tokens" ADD CONSTRAINT "users_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "public"."tokens" ADD CONSTRAINT "tokens_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -599,10 +597,13 @@ ALTER TABLE "public"."tokens" ADD CONSTRAINT "tokens_created_by_fkey" FOREIGN KE
 ALTER TABLE "public"."tokens" ADD CONSTRAINT "tokens_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."companies" ADD CONSTRAINT "companies_owner_id_fkey" FOREIGN KEY ("owner_id") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."tokens" ADD CONSTRAINT "users_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "public"."companies" ADD CONSTRAINT "companies_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."companies" ADD CONSTRAINT "companies_owner_id_fkey" FOREIGN KEY ("owner_id") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."companies" ADD CONSTRAINT "companies_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -617,13 +618,13 @@ ALTER TABLE "public"."users" ADD CONSTRAINT "users_updated_by_fkey" FOREIGN KEY 
 ALTER TABLE "public"."members" ADD CONSTRAINT "members_company_id_fkey" FOREIGN KEY ("company_id") REFERENCES "public"."companies"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."members" ADD CONSTRAINT "members_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "public"."members" ADD CONSTRAINT "members_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."members" ADD CONSTRAINT "members_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."members" ADD CONSTRAINT "members_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."users_in_class" ADD CONSTRAINT "class_fk" FOREIGN KEY ("class_id") REFERENCES "public"."classes"("id") ON DELETE CASCADE ON UPDATE NO ACTION;

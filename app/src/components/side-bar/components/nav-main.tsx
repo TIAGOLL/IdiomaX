@@ -72,10 +72,6 @@ export function NavMain({
                             isItemActive("/notes") && buttonVariants({ variant: "default", size: "sm" }), "justify-start"
                         )}
                     >
-                        <NavLink to="/notes">
-                            <LayoutDashboardIcon />
-                            <span>Notas</span>
-                        </NavLink>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
             </SidebarMenu>

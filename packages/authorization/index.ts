@@ -33,6 +33,7 @@ import { reportSubject } from './subjects/report'
 import { notificationSubject } from './subjects/notification'
 import { roleSubject } from './subjects/role'
 import { lessonSubject } from './subjects/lesson'
+import { gradeSubject } from './subjects/grade'
 
 // Exporta modelos e roles
 export * from './models/user'
@@ -58,6 +59,7 @@ const appAbilitiesSchema = z.union([
     registrationSubject,
     monthlyFeeSubject,
     taskSubject,
+    gradeSubject,
     materialSubject,
     presenceSubject,
     billingSubject,

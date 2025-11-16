@@ -104,6 +104,12 @@ import { createTask } from './controllers/tasks/create-task'
 import { updateTask } from './controllers/tasks/update-task'
 import { deleteTask } from './controllers/tasks/delete-task'
 
+// Grades controllers
+import { getClassGrades } from './controllers/grades/get-class-grades'
+import { updateGrade } from './controllers/grades/update-grade'
+import { getStudentGrades } from './controllers/grades/get-student-grades'
+import { submitTask } from './controllers/grades/submit-task'
+
 dotenv.config()
 
 export const env = envSchema.safeParse(process.env)
@@ -252,6 +258,12 @@ app.register(getTaskById);
 app.register(createTask);
 app.register(updateTask);
 app.register(deleteTask);
+
+// Grades routes
+app.register(getClassGrades);
+app.register(updateGrade);
+app.register(getStudentGrades);
+app.register(submitTask);
 
 
 app.listen({ port: ENV.PORT, host: '0.0.0.0' }).then(() => {

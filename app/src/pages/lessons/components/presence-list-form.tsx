@@ -58,8 +58,15 @@ export function PresenceListForm({ lesson }: { lesson: GetLessonByIdResponseType
         updatePresenceMutation.mutate({ presenceId, isPresent });
     };
 
-    const presentCount = presenceList.filter(p => p.is_present).length;
-    const totalStudents = lesson.class.users_in_class.filter(u => !u.teacher).length;
+    // Filtrar apenas alunos (não professores) da lista de presença
+    const studentPresenceList = presenceList.filter(p => {
+        // Verificar se o usuário não é professor
+        const isTeacher = lesson.class.users_in_class.find(u => u.user_id === p.user_id)?.teacher;
+        return !isTeacher;
+    });
+
+    const presentCount = studentPresenceList.filter(p => p.is_present).length;
+    const totalStudents = studentPresenceList.length;
 
     return (
         <Card>

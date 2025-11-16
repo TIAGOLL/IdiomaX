@@ -332,7 +332,7 @@ export function CreateClassPage() {
                                     <AlertDialogHeader>
                                         <AlertDialogTitle>Adicionar usuário para a turma</AlertDialogTitle>
                                     </AlertDialogHeader>
-                                    <form onSubmit={handleSubmitAddUser(handleAddUser)} className="space-y-4">
+                                    <form className="space-y-4">
                                         <div className="w-[30em] gap-4 flex justify-center flex-col">
                                             <div className="space-y-2">
                                                 <Label htmlFor="user_id">Usuário</Label>
@@ -429,7 +429,7 @@ export function CreateClassPage() {
                                             >
                                                 Cancelar
                                             </AlertDialogCancel>
-                                            <AlertDialogAction type="submit">
+                                            <AlertDialogAction type="button" onClick={handleSubmitAddUser(handleAddUser)}>
                                                 Adicionar
                                                 <Save className="size-4 ml-2" />
                                             </AlertDialogAction>

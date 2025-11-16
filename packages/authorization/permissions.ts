@@ -43,6 +43,9 @@ export const permissions: Record<Role, PermissionsByRole> = {
         // === GESTÃO DE TAREFAS ===
         can(['get', 'create', 'update', 'delete', 'grade'], 'Task') // Gerenciar e corrigir tarefas
 
+        // === GESTÃO DE NOTAS ===
+        can(['get', 'update'], 'Grade') // Ver e atualizar notas dos alunos
+
         // === GESTÃO DE MATERIAIS ===
         can(['get', 'create', 'update', 'delete'], 'Material') // Gerenciar materiais didáticos
 
@@ -70,6 +73,9 @@ export const permissions: Record<Role, PermissionsByRole> = {
 
         // === TAREFAS ===
         can(['get', 'submit'], 'Task') // Ver e entregar tarefas
+
+        // === NOTAS ===
+        can('get', 'Grade') // Ver suas próprias notas
 
         // === MATERIAIS DIDÁTICOS ===
         can('get', 'Material') // Acessar materiais das suas turmas

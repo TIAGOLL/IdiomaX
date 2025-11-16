@@ -4,16 +4,26 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { BookOpen, BookOpenTextIcon, Edit, Plus } from 'lucide-react';
+import { BookOpen, BookOpenTextIcon, Edit, Plus, GraduationCap } from 'lucide-react';
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from 'react-router';
 import { getCurrentCompanyId } from '@/lib/company-utils';
 import { formatDate } from '@/lib/utils';
 import { getClass } from '@/services/class';
 import { Can } from '@/lib/Can';
+import { useSessionContext } from '@/contexts/session-context';
 
 export function ClassesTablePage() {
     const navigate = useNavigate();
+    const { currentRole } = useSessionContext();
+
+    const handleNotesClick = (classId: string) => {
+        if (currentRole === 'STUDENT') {
+            navigate(`/notes?class_id=${classId}`);
+        } else {
+            navigate(`/admin/classes/notes?class_id=${classId}`);
+        }
+    };
 
     const { data, isPending, error } = useQuery({
         queryKey: ['class'],
@@ -140,6 +150,12 @@ export function ClassesTablePage() {
                                                             <DropdownMenuItem onClick={() => navigate(`/admin/tasks?tab=create&id=${classItem.id}`)}>
                                                                 <BookOpenTextIcon className="h-4 w-4 mr-2" />
                                                                 Criar atividade
+                                                            </DropdownMenuItem>
+                                                        </Can>
+                                                        <Can I="get" a="Grade">
+                                                            <DropdownMenuItem onClick={() => handleNotesClick(classItem.id)}>
+                                                                <GraduationCap className="h-4 w-4 mr-2" />
+                                                                Notas
                                                             </DropdownMenuItem>
                                                         </Can>
                                                     </DropdownMenuContent>

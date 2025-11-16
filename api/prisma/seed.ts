@@ -353,18 +353,16 @@ async function main() {
                 // Gera duração aleatória entre 30 minutos e 2 horas
                 const durationMinutes = Math.floor(Math.random() * 90) + 30; // 30 a 120 minutos
 
-                const startTime = new Date();
-                startTime.setHours(startHour, startMinute, 0, 0);
-
-                const endTime = new Date(startTime);
-                endTime.setMinutes(endTime.getMinutes() + durationMinutes);
+                // Converte para minutos desde meia-noite
+                const startTimeInMinutes = startHour * 60 + startMinute;
+                const endTimeInMinutes = startTimeInMinutes + durationMinutes;
 
                 await prisma.class_days.create({
                     data: {
                         id,
                         week_date: weekday,
-                        start_time: startTime,
-                        end_time: endTime,
+                        start_time: startTimeInMinutes,
+                        end_time: endTimeInMinutes,
                         class_id: classId,
                         created_at: now,
                         updated_at: now,
@@ -597,10 +595,10 @@ async function main() {
                 data: {
                     id,
                     title: `Tarefa ${i}`,
-                    value: 10,
+                    score: 10,
                     description: `Descrição da tarefa ${i}`,
                     discipline_id: randomFromArray(disciplines),
-                    submit_date: randomDate(new Date("2025-09-15"), new Date("2025-12-15")),
+                    due_date: randomDate(new Date("2025-09-15"), new Date("2025-12-15")),
                     created_at: now,
                     updated_at: now,
                     created_by: ownerId,
