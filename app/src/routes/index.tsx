@@ -16,6 +16,7 @@ import CoursesPage from '@/pages/courses';
 import RegistrationsPage from '@/pages/registrations';
 import LessonsPage from '@/pages/lessons';
 import { ClassesPage } from '@/pages/classes';
+import { TasksPage } from '@/pages/tasks';
 
 export function RoutesApp() {
 
@@ -48,6 +49,7 @@ export function RoutesApp() {
             <Route path='/admin/classes' element={<ClassesPage />} />
             <Route path='/admin/registrations' element={<RegistrationsPage />} />
             <Route path='/admin/lessons' element={<LessonsPage />} />
+            <Route path='/admin/tasks' element={<TasksPage />} />
           </Route>
         </Route>
       </Route>
