@@ -34,12 +34,11 @@ model class_days {
   updated_at DateTime @updatedAt
   updated_by String   @db.VarChar(256)
   active     Boolean  @default(true)
-  end_time   Int      @db.Integer
-  start_time Int      @db.Integer
-
-  creator users   @relation("ClassDaysCreatedBy", fields: [created_by], references: [id])
-  updater users   @relation("ClassDaysUpdatedBy", fields: [updated_by], references: [id])
-  class   classes @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "class_fk")
+  end_time   Int
+  start_time Int
+  creator    users    @relation("ClassDaysCreatedBy", fields: [created_by], references: [id])
+  updater    users    @relation("ClassDaysUpdatedBy", fields: [updated_by], references: [id])
+  class      classes  @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "class_fk")
 }
 
 model lessons {
@@ -265,7 +264,7 @@ model tasks_submitted {
   date            DateTime      @default(now())
   file            Bytes?
   link            String?       @db.VarChar(512)
-  grade           Int?          @db.Integer
+  grade           Int?
   created_at      DateTime      @default(now())
   created_by      String        @db.VarChar(256)
   updated_at      DateTime      @updatedAt
