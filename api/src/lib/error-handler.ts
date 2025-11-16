@@ -37,5 +37,5 @@ export const errorHandler: FastifyErrorHandler = (error, _, reply) => {
   }
 
   console.error(error)
-  return reply.status(500).send({ message: 'Ocorreu um erro inesperado, entre em contato com o fornecedor do software!' })
+  return reply.status(500).send({ error: error, message: 'Ocorreu um erro inesperado, entre em contato com o fornecedor do software!' })
 }
