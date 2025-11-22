@@ -113,7 +113,6 @@ export async function createLesson(app: FastifyInstance) {
                     await tx.presence_lists.createMany({
                         data: studentsInClass.map(student => ({
                             is_present: false,
-                            class_id: class_id,
                             lesson_id: createdLesson.id,
                             user_id: student.user_id,
                             created_by: userId,

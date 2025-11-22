@@ -75,14 +75,20 @@ export async function createClass(app: FastifyInstance) {
                 // Criar dias da semana se fornecidos
                 if (class_days && class_days.length > 0) {
                     await tx.class_days.createMany({
-                        data: class_days.map(day => ({
-                            week_date: day.week_date as WeekDays,
-                            start_time: new Date(`${day.start_time}`),
-                            end_time: new Date(`${day.end_time}`),
-                            class_id: turma.id,
-                            created_by: userId,
-                            updated_by: userId,
-                        }))
+                        data: class_days.map(day => {
+                            // Converter HH:MM para minutos desde meia-noite
+                            const [startHours, startMinutes] = day.start_time.split(':').map(Number);
+                            const [endHours, endMinutes] = day.end_time.split(':').map(Number);
+                            
+                            return {
+                                week_date: day.week_date as WeekDays,
+                                start_time: startHours * 60 + startMinutes,
+                                end_time: endHours * 60 + endMinutes,
+                                class_id: turma.id,
+                                created_by: userId,
+                                updated_by: userId,
+                            };
+                        })
                     });
                 }
 

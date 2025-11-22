@@ -40,7 +40,7 @@ export default function CongratulationsPage() {
                 <CardFooter className='flex justify-center'>
                     <Button
                         variant='default'
-                        onClick={() => navigate('/')}
+                        onClick={() => { navigate('/'); window.location.reload(); }}
                         data-test='goToDashboardButton'
                     >
                         Ir para o painel

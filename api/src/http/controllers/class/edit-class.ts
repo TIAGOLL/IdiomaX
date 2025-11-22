@@ -77,14 +77,20 @@ export async function editClass(app: FastifyInstance) {
                     // Adicionar os novos dias
                     if (class_days.length > 0) {
                         await tx.class_days.createMany({
-                            data: class_days.map(day => ({
-                                class_id: id,
-                                week_date: day.week_date as WeekDays,
-                                start_time: new Date(`1970-01-01T${day.start_time}:00.000Z`),
-                                end_time: new Date(`1970-01-01T${day.end_time}:00.000Z`),
-                                created_by: userId,
-                                updated_by: userId,
-                            }))
+                            data: class_days.map(day => {
+                                // Converter HH:MM para minutos desde meia-noite
+                                const [startHours, startMinutes] = day.start_time.split(':').map(Number);
+                                const [endHours, endMinutes] = day.end_time.split(':').map(Number);
+                                
+                                return {
+                                    class_id: id,
+                                    week_date: day.week_date as WeekDays,
+                                    start_time: startHours * 60 + startMinutes,
+                                    end_time: endHours * 60 + endMinutes,
+                                    created_by: userId,
+                                    updated_by: userId,
+                                };
+                            })
                         });
                     }
                 }

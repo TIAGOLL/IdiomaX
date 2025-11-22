@@ -39,14 +39,20 @@ export async function updateRegistrationTime(app: FastifyInstance) {
                     throw new ForbiddenError()
                 }
 
-                // Atualizar o tempo de matrícula
-                const res = await prisma.configs.update({
+                // Criar ou atualizar o tempo de matrícula
+                const res = await prisma.configs.upsert({
                     where: {
                         company_id,
                     },
-                    data: {
+                    update: {
                         registration_time,
                         updated_at: new Date(),
+                        updated_by: userId,
+                    },
+                    create: {
+                        company_id,
+                        registration_time,
+                        created_by: userId,
                         updated_by: userId,
                     },
                 });
