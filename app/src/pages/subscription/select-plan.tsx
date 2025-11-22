@@ -9,7 +9,7 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getProducts } from "@/services/stripe/get-products";
 import { useForm } from "react-hook-form";
@@ -20,12 +20,13 @@ import { toast } from "sonner";
 import { FormMessageError } from "@/components/ui/form-message-error";
 import { Badge } from "@/components/ui/badge";
 import type z from "zod";
-import { getCurrentCompanyId } from "@/lib/company-utils";
 
 type CreateSubscriptionFormSchema = z.infer<typeof CreateSubscriptionFormSchema>;
 
 export function SelectPlanPage() {
     const navigate = useNavigate();
+
+    const [searchParams] = useSearchParams();
 
     const { data: products, isLoading } = useQuery({
         queryKey: ['products'],
@@ -46,9 +47,12 @@ export function SelectPlanPage() {
 
     const { mutate, isPending } = useMutation({
         mutationFn: async (data: CreateSubscriptionFormSchema) => {
+            if (searchParams.get("companyId") === null) {
+                throw new Error("ID da empresa não fornecido.");
+            }
             const response = await createSubscription({
                 price_id: data.priceId,
-                company_id: getCurrentCompanyId()
+                company_id: searchParams.get("companyId")!
             })
             return response
         },
